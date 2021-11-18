@@ -8,6 +8,8 @@ from ancients_log_book import AncientsLogBook
 from software_update import SoftwareUpdate
 from stargate_audio import StargateAudio
 
+enableUpdates = False # TODO: move to config
+
 """
 This is the stargate program for running the stargate from https://thestargateproject.com
 This main.py file is run automatically on boot. It is executed in the .bashrc file for the sg1 user.
@@ -19,6 +21,8 @@ log = AncientsLogBook()
 ### Check for new software updates ###
 swUpdater = SoftwareUpdate(log)
 swUpdater.check_and_install()
+if enableUpdates:
+	swUpdater.check_and_install()
 
 ### Check/set the correct USB audio adapter. This is necessary because different raspberries detects the USB audio adapter differently.
 audio = StargateAudio(log)

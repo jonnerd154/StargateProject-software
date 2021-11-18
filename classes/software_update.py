@@ -14,7 +14,8 @@ class SoftwareUpdate:
         self.current_version = current_version
         self.log = log
 
-        pass
+    def get_current_version(self):
+        return self.current_version
 
     def check_and_install(self):
         """
