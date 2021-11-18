@@ -5,7 +5,7 @@ class Chevron:
     The motor_number is the number for the motor as an int.
     """
     from time import sleep
-    def __init__(self, led_gpio, motor_number):
+    def __init__(self, led_gpio, motor_number, motorHardwareMode):
         from pathlib import Path
         from gpiozero import LED
         import simpleaudio as sound
@@ -29,45 +29,48 @@ class Chevron:
         self.chev7 = sound.WaveObject.from_wave_file(str(self.root_path / "../soundfx/chev_usual_7.wav"))
         self.possible_incoming_sounds = [self.chev4, self.chev5, self.chev6, self.chev7]
 
+        self.motorHardwareMode = motorHardwareMode
 
     def on(self):
         from adafruit_motorkit import MotorKit
 
-       ### determine the right motor for the chevron ###
-        if self.motor_number == 1:
-            motor = MotorKit().motor1
-        elif self.motor_number == 2:
-            motor = MotorKit().motor2
-        elif self.motor_number == 3:
-            motor = MotorKit().motor3
-        elif self.motor_number == 4:
-            motor = MotorKit().motor4
-        elif self.motor_number == 5:
-            motor = MotorKit(address=0x61).motor1
-        elif self.motor_number == 6:
-            motor = MotorKit(address=0x61).motor2
-        elif self.motor_number == 7:
-            motor = MotorKit(address=0x61).motor3
-        elif self.motor_number == 8:
-            motor = MotorKit(address=0x61).motor4
-        elif self.motor_number == 9:
-            motor = MotorKit(address=0x62).motor1
-        elif self.motor_number == 10:
-            motor = MotorKit(address=0x62).motor2
-        elif self.motor_number == 11:
-            motor = MotorKit(address=0x62).motor3
-        elif self.motor_number == 12:
-            motor = MotorKit(address=0x62).motor4
-        else:
-            motor = None
+       	### determine the right motor for the chevron ###
+        if ( self.motorHardwareMode == 1 ):
+            if self.motor_number == 1:
+                motor = MotorKit().motor1
+            elif self.motor_number == 2:
+                motor = MotorKit().motor2
+            elif self.motor_number == 3:
+                motor = MotorKit().motor3
+            elif self.motor_number == 4:
+                motor = MotorKit().motor4
+            elif self.motor_number == 5:
+                motor = MotorKit(address=0x61).motor1
+            elif self.motor_number == 6:
+                motor = MotorKit(address=0x61).motor2
+            elif self.motor_number == 7:
+                motor = MotorKit(address=0x61).motor3
+            elif self.motor_number == 8:
+                motor = MotorKit(address=0x61).motor4
+            elif self.motor_number == 9:
+                motor = MotorKit(address=0x62).motor1
+            elif self.motor_number == 10:
+                motor = MotorKit(address=0x62).motor2
+            elif self.motor_number == 11:
+                motor = MotorKit(address=0x62).motor3
+            elif self.motor_number == 12:
+                motor = MotorKit(address=0x62).motor4
+            else:
+                motor = None
 
         ### Chevron Down ###
         self.chev1.play() # chev down audio
         self.sleep(0.2)
 
-        motor.throttle = -0.65
-        self.sleep(0.1) # Motor movement time
-        motor.throttle = None
+        if ( self.motorHardwareMode > 0 ):
+            motor.throttle = -0.65
+            self.sleep(0.1) # Motor movement time
+            motor.throttle = None
 
         ### Turn on the LED ###
         self.sleep(0.35) # wait time without motion
@@ -78,9 +81,10 @@ class Chevron:
 
         ### Chevron Up ###
         self.chev2.play() # chev up audio
-        motor.throttle = 0.65
-        self.sleep(0.2) # motor movement time
-        motor.throttle = None
+        if ( self.motorHardwareMode > 0 ):
+            motor.throttle = 0.65
+            self.sleep(0.2) # motor movement time
+            motor.throttle = None
 
     def incoming_on(self):
         from random import choice

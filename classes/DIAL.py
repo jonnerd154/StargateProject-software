@@ -1,3 +1,6 @@
+from classes.HardwareDetector import HardwareDetector
+from pprint import pprint
+
 class Dial:
     """
     The dialing sequence.
@@ -20,7 +23,13 @@ class Dial:
         self.stp = stp
         self.saved_pos = self.ring_position('get')
         self.stepper_pos = 0
-        self.stepper = MotorKit().stepper1
+
+        self.hwDetector = HardwareDetector()
+        self.motorHardwareMode = self.hwDetector.getMotorHardwareMode()
+
+        if self.motorHardwareMode > 0:
+            self.stepper = MotorKit().stepper1
+
         # The symbols position on the symbol ring
         self.symbols = {1: 0, 2: 32, 3: 64, 4: 96, 5: 128, 6: 160, 7: 192, 8: 224, 9: 256, 10: 288, 11: 320, 12: 352, 13: 384, 14: 416, 15: 448, 16: 480, 17: 512, 18: 544, 19: 576, 20: 608, 21: 640, 22: 672, 23: 704, 24: 736, 25: 768, 26: 800, 27: 832, 28: 864, 29: 896, 30: 928, 31: 960, 32: 992, 33: 1024, 34: 1056, 35: 1088, 36: 1120, 37: 1152, 38: 1184, 39: 1216}
         # The chevrons position on the stargate.
@@ -55,7 +64,10 @@ class Dial:
         :return: Nothing is returned
         """
         # easier naming
-        stepper = self.stepper
+        if self.motorHardwareMode > 0:
+            stepper = self.stepper
+        else:
+            stepper = None
         sleep = self.sleep
         stp = self.stp
 
@@ -79,7 +91,13 @@ class Dial:
         from homing_sensor import read_adc  # get the homing sensor function
         roll_object = roll.play()  # play the audio movement
         for i in range(steps):
-            stepper_micro_pos = stepper.onestep(direction=direct, style=stp.DOUBLE) + 8 # this line moves the motor.
+            if (self.motorHardwareMode > 0):
+                stepper_micro_pos = stepper.onestep(direction=direct, style=stp.DOUBLE) + 8 # this line moves the motor.
+            else:
+                try:
+                    stepper_micro_pos = stepper_micro_pos + 8
+                except:
+                    stepper_micro_pos = 8
             self.stepper_pos = (stepper_micro_pos // self.micro_steps) % self.total_steps # Update the self.stepper_pos value as the ring moves. Will have a value from 0 till self.total_steps = 1250.
 
             ## homing sensor ##
@@ -131,7 +149,8 @@ class Dial:
         :return: Nothing is returned.
         """
         self.sleep(0.4)
-        self.stepper.release()
+        if (self.motorHardwareMode > 0):
+            self.stepper.release()
     def dial(self, symbol_number, chevron):
         """
         This function moves the symbol_number to the desired chevron. It also updates the ring position file.
