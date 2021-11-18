@@ -34,6 +34,7 @@ class DHD:
 
 import PyCmdMessenger
 from pprint import pprint
+
 class DHDv2:
 
     def __init__(self, port, baud_rate):
@@ -142,7 +143,7 @@ class DHDv2:
         self.c.send("latch")
         return True
 
-class DhdKeyboardMode:
+class KeyboardMode:
     """
     This is just a fallback class that disables all the DHD LED functions in case the DHD is not present. You can use a regular keyboard instead.
     To dial Aphopis's base, just hit cFX1K98A on your keyboard.
