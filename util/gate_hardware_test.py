@@ -11,7 +11,7 @@ from stargate_audio import StargateAudio
 
 from time import sleep
 from HardwareDetector import HardwareDetector
-from chevrons import chevrons
+from chevrons import ChevronManager
 
 from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper as stp
@@ -20,11 +20,15 @@ import neopixel, board
 ### Load our config file
 cfg = StargateConfig()
 
+### Setup the logger
+log = AncientsLogBook()
+
 ### Initialize the audio stuffs
 audio = StargateAudio(log)
 audio.set_correct_audio_output_device()
 
-print (f'Test Starting')
+
+log.log('Gate Hardware Test: Starting.')
 
 # ########### WORMHOLE NEOPIXEL TESTS ###############
 
@@ -32,7 +36,7 @@ neoPin = board.D12  # The standard data pin is board.D18
 tot_leds = 122
 pixels = neopixel.NeoPixel(neoPin, tot_leds, auto_write=False, brightness=0.61)
 
-print("Testing wormhole neopixels. Press ctrl+c to continue to next test.")
+log.log("Testing wormhole neopixels. Press ctrl+c to continue to next test.")
 while(True):
     try:
         for i in range(20):
@@ -59,10 +63,10 @@ hwDetector = HardwareDetector()
 motorHardwareMode = hwDetector.getMotorHardwareMode()
 modeName = hwDetector.getMotorHardwareModeName()
 if (not modeName):
-    print("Warning: No supported motor hardware controllers detected")
+    log.log("Warning: No supported motor hardware controllers detected")
 
 else:
-    print("Motor Hardware FOUND: {}".format(modeName))
+    log.log("Motor Hardware FOUND: {}".format(modeName))
 
 # ########### SYMBOL RING MOTOR TESTS ###############
 #
@@ -159,10 +163,10 @@ else:
 # ########### CHEVRON TESTS ###############
 
 # Load the chevron configuration and initialize their objects
-chevrons = ChevronManager()
-print( "Testing Chevron lights and motors. Motor should move inward, the light should turn on, then the motor should move outward. ")
+chevrons = ChevronManager(log, cfg)
+log.log( "Testing Chevron lights and motors. Motor should move inward, the light should turn on, then the motor should move outward. ")
 for i in range(1,8):
-    print("Testing Chevron {}.".format(i))
+    log.log("Testing Chevron {}.".format(i))
     chevrons.get(i).on()
     sleep(1)
 
@@ -171,5 +175,4 @@ for i in range(1,8):
 
 
 # Exit
-print('Exiting')
-log('sg1.log', 'The Stargate program is no longer running')
+log.log('Gate Hardware Test: Done.')

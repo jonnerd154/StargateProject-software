@@ -1,11 +1,11 @@
-from classes.HardwareDetector import HardwareDetector
+from HardwareDetector import HardwareDetector
 
 # You can change or the values in this file to match your setup. This file should not be overwritten with an automatic update
 # The first number in the parenthesis is the gpio led number and the second value is the motor number.
 
 class ChevronManager:
 
-	def __init__(self, log):
+	def __init__(self, log, cfg):
 
 		# Detect the connected Motor Hardware
 		hwDetector = HardwareDetector()
