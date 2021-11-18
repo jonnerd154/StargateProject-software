@@ -29,8 +29,8 @@ class SoftwareUpdate:
             self.log.log('Checking for software updates.')
 
             ## Verify that we have an internet connection, if not, return false.
-            if ( not NetworkTools().has_internet_access()):
-                self.log.log('No internet connection available.')
+            if ( not NetworkTools(self.log).has_internet_access()):
+                self.log.log('No internet connection available. Aborting Software Update.')
                 return False
 
             ## Some needed variables

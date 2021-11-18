@@ -2,12 +2,12 @@ import subprocess
 
 class NetworkTools:
 
-    def __init__(self):
+    def __init__(self, log):
 
         self.cloudflare = '1.1.1.1'
         self.google = '8.8.8.8'
 
-        pass
+        self.log = log
 
     def has_internet_access(self): # was called check_internet_connection
         """
@@ -17,13 +17,13 @@ class NetworkTools:
 
         # noinspection PyTypeChecker
         if 'succeeded' in self.check_net(self.cloudflare):
-            # log('sg1.log', 'We have Internet connection!')
+            # self.log.log('We have Internet connection!')
             return True
         elif 'succeeded' in self.check_net(self.google):
-            # log('sg1.log', 'We have Internet connection!')
+            # self.log.log('We have Internet connection!')
             return True
         else:
-            log('sg1.log', 'No Internet connection! Some features will not work!')
+            self.log.log('No Internet connection! Some features will not work!')
             return False
 
     def check_net(self, host):
