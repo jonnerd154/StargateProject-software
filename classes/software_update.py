@@ -3,16 +3,20 @@ from os import stat, makedirs, path
 from base64 import b64decode
 from ast import literal_eval
 from pathlib import Path
+
 from network_tools import NetworkTools
-import subspace_network
+from database import Database
 
 class SoftwareUpdate:
 
     def __init__(self, app):
 
-        from version import version as current_version
+        from version import version as current_version # TODO: move to a json file
         self.current_version = current_version
         self.log = app.log
+        self.cfg = app.cfg
+        
+        self.database = Database()
 
     def get_current_version(self):
         return self.current_version
@@ -40,15 +44,10 @@ class SoftwareUpdate:
             root_path = Path(__file__).parent.absolute()
             # get the user ID and group ID of the owner of this file (__file__). (In most instances this would result in the UID 1001 for the sg1 user.
             uid = pwd.getpwnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).pw_uid
-            gid = 20 #grp.getgrnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).gr_gid
-
+            gid = grp.getgrnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).gr_gid
+            
             ### Get the information from the DB ###
-            db = pymysql.connect(host=subspace_network.db_host, user=subspace_network.db_user, password=str(b64decode(subspace_network.db_pass), 'utf-8'), database=subspace_network.db_name)
-            cursor = db.cursor()
-            sql = f"SELECT * FROM `software_update`"
-            cursor.execute(sql)
-            sw_update = cursor.fetchall()
-            db.close()
+            sw_update = self.database.get_software_updates()
 
             ## check the db information for a new update
             for entry in sw_update:

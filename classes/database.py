@@ -34,6 +34,21 @@ class Database:
         sql = f"SELECT * FROM `fan_gates`"
         cursor.execute(sql)
         result = cursor.fetchall()
+        
+        self.disconnect()
+        
+        return result
+    
+    def get_software_updates(self):
+        self.log.log("Retrieving Software Updates")
+
+        self.connect()
+        
+        cursor = self.db.cursor()
+        sql = f"SELECT * FROM `software_update`"
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        
         self.disconnect()
         
         return result
