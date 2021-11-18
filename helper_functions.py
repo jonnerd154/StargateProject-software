@@ -37,7 +37,7 @@ def send_to_remote_stargate(server_ip, message_string):
     disconnect_message = '!DISCONNECT'
     server_ip = server_ip
     server_address = (server_ip, port)
-    timeout = 15 # the timeout value when connecting to a remote stargate (seconds)
+    timeout = 10 # the timeout value when connecting to a remote stargate (seconds)
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.settimeout(timeout) # set the timeout
     connection_to_server = False
@@ -428,3 +428,68 @@ def keep_alive(IP_address, interval, stargate_object):
     while stargate_object.running:
         sleep(interval)
         ping(IP_address, count=1, timeout=1)
+def get_usb_audio_device_card_number():
+    """
+    This function gets the card number for the USB audio adapter.
+    :return: It will return a number (string) that should correspond to the card number for the USB adapter. If it can't find it, it returns 1
+    """
+    import subprocess
+    audio_devices = subprocess.run(['aplay', '-l'], capture_output=True, text=True).stdout.splitlines()
+    for line in audio_devices:
+        if 'USB' in line:
+            return line[5]
+    return 1
+def get_active_audio_card_number():
+    """
+    This function gets the active audio card number from the /usr/share/alsa/alsa.conf file.
+    :return: It will return an integer that should correspond to the card number for the USB adapter. If it can't find it, it returns 1
+    """
+    # Get the contents of the file
+    with open('/usr/share/alsa/alsa.conf') as alsa_file:
+        lines = alsa_file.readlines()
+    for line in lines:
+        if 'defaults.ctl.card ' in line:
+            return line[-2]
+def set_correct_audio_output_device():
+    """
+    This functions checks if the USB audio adapter is correctly set in the alsa.conf file and fixes it if not.
+    :return: Nothing is returned
+    """
+    import subprocess
+    # If the wrong card is set in the alsa.conf file
+    if get_usb_audio_device_card_number() != get_active_audio_card_number():
+        log('sg1.log', f'Updating the alsa.conf file with card {get_usb_audio_device_card_number()}')
+        print(f'Updating the alsa.conf file with card {get_usb_audio_device_card_number()}')
+
+        ctl = 'defaults.ctl.card ' + str(get_usb_audio_device_card_number())
+        pcm = 'defaults.pcm.card ' + str(get_usb_audio_device_card_number())
+        # replace the lines in the alsa.conf file.
+        subprocess.run(['sudo', 'sed', '-i', f"/defaults.ctl.card /c\{ctl}", '/usr/share/alsa/alsa.conf'])
+        subprocess.run(['sudo', 'sed', '-i', f"/defaults.pcm.card /c\{pcm}", '/usr/share/alsa/alsa.conf'])
+def get_DHD_port():
+    """
+    This is a simple helper function to help locate the port for the DHD
+    :return: The file path for the DHD is returned. If it is not found, returns None.
+    """
+    # A list for places to check for the DHD
+    possible_files = ["/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00", "/dev/ttyACM0", "/dev/ttyACM1"]
+
+    # Run through the list and check if the file exists.
+    for file in possible_files:
+        # If the file exists, return the path and end the function.
+        if os.path.exists(file):
+            return file
+
+    # If the DHD is not detected
+    return None
+def get_planet_name_from_IP(IP, fan_gates):
+    """
+    This function gets the planet name of the IP in the fan_gate dictionary.
+    :param fan_gates: The dictionary of fan_gates from the database
+    :param IP: the IP address as a string
+    :return: The planet/stargate name is returned as a string.
+    """
+    try:
+        return [k for k, v in fan_gates.items() if v[1] == IP][0]
+    except:
+        return 'Unknown'
