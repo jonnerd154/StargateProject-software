@@ -20,7 +20,6 @@ log = AncientsLogBook()
 
 ### Check for new software updates ###
 swUpdater = SoftwareUpdate(log)
-swUpdater.check_and_install()
 if enableUpdates:
 	swUpdater.check_and_install()
 
@@ -29,13 +28,12 @@ audio = StargateAudio(log)
 audio.set_correct_audio_output_device()
 
 
-#
-# # Create the Stargate object
-# log('sg1.log', f'Booting up the Stargate! Version {version}')
-# print (f'Booting up the Stargate! Version {version}')
-# import StargateSG1
-# stargate = StargateSG1()
-#
+
+# Create the Stargate object
+log.log('Booting up the Stargate! Version {}'.format(swUpdater.get_current_version()))
+import StargateSG1
+stargate = StargateSG1()
+
 # # Keep the script running and monitor for updates with the update() method.
 # stargate.update() #This will keep running as long as stargate.running is True.
 #
