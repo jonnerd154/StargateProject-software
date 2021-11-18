@@ -57,8 +57,9 @@ class StargateSG1:
 
         ### Set up the needed classes and make them ready to use ###
         ### Initiate the spinning ring dial object.
-        self.ring = Dial()
+        self.ring = Dial(self)
         self.ring.release()
+        self.ring.homingManager.set_ring(self.ring)
 
         ### initiate the Chevrons:
         # The chevron config is moved to the chevrons.py file. The chevron.py file is not overwritten with the automatic update

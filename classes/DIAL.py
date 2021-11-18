@@ -1,5 +1,5 @@
 from classes.HardwareDetector import HardwareDetector
-from pprint import pprint
+from homing import SymbolRingHomingManager
 
 class Dial:
     """
@@ -10,7 +10,7 @@ class Dial:
     # A range of 32 is approximately one symbol movement.
     """
 
-    def __init__(self):
+    def __init__(self, stargate):
         from adafruit_motorkit import MotorKit
         from adafruit_motor import stepper as stp
         from time import sleep
@@ -35,9 +35,9 @@ class Dial:
         # The chevrons position on the stargate.
         self.chevrons = {1: 139, 2: 278, 3: 417, 4: 834, 5: 973, 6: 1112, 7: 0, 8: 556, 9: 695}
 
-        ## homing sensor values
-        self.offset = 0
-        self.homing_sensor_sensitivity = 0.15 #This is the voltage level for when the ring is in the home position.
+        ## Initialize the Homing Manager
+        self.homingManager = SymbolRingHomingManager(stargate)
+        
 
     @staticmethod
     def find_offset(position, max_steps):
@@ -87,42 +87,10 @@ class Dial:
         current_speed = 0.01  # the initial speed
         acceleration_length = 40  # the number of steps used for acceleration
 
-        # Move the ring
-        from homing_sensor import read_adc  # get the homing sensor function
-        roll_object = roll.play()  # play the audio movement
-        for i in range(steps):
-            if (self.motorHardwareMode > 0):
-                stepper_micro_pos = stepper.onestep(direction=direct, style=stp.DOUBLE) + 8 # this line moves the motor.
-            else:
-                try:
-                    stepper_micro_pos = stepper_micro_pos + 8
-                except:
-                    stepper_micro_pos = 8
-            self.stepper_pos = (stepper_micro_pos // self.micro_steps) % self.total_steps # Update the self.stepper_pos value as the ring moves. Will have a value from 0 till self.total_steps = 1250.
-
-            ## homing sensor ##
-            try:
-                if 0.000 < read_adc(1) < 1: # If the jumper for the sensor is present
-                    if read_adc(0) < self.homing_sensor_sensitivity:  # if the ring is in the "home position"
-                        # print('HOME detected!')
-                        actual_position = (self.stepper_pos + self.saved_pos) % self.total_steps
-                        self.offset = (self.find_offset(actual_position, self.total_steps))
-            except:
-                pass
-
-            ## acceleration
-            if i < acceleration_length:
-                current_speed -= (slow_speed - normal_speed) / acceleration_length
-                sleep(current_speed)
-            ## de acceleration
-            elif i > (steps - acceleration_length):
-                current_speed += (slow_speed - normal_speed) / acceleration_length
-                sleep(current_speed)
-            ## slow without acceleration when short distance
-            elif steps < acceleration_length:
-                current_speed = normal_speed
-                sleep(current_speed)
-        roll_object.stop()  # stop the audio
+        # Home the symbol ring
+        self.homingManager.find_home()
+        
+       
 
     def ring_position(self, action):
         """

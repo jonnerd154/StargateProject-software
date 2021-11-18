@@ -1,10 +1,20 @@
+import simpleaudio as sound
+
 class StargateAudio:
 
     def __init__(self, app):
 
         self.log = app.log
 
-        pass
+        
+        self.sounds = {}
+        self.sounds['rolling_ring'] = sound.WaveObject.from_wave_file(str(self.root_path / "/roll.wav"))
+
+    def sound_start(self):
+        self.sounds['rolling_ring'].play()
+        
+    def sound_stop(self, clip_name):
+        self.sounds['rolling_ring'].stop()
 
     def play_random_audio_clip(self, path_to_folder):
         from os import listdir, path
