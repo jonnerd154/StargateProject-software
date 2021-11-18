@@ -13,15 +13,18 @@ This is the stargate program for running the stargate from https://thestargatepr
 This main.py file is run automatically on boot. It is executed in the .bashrc file for the sg1 user.
 """
 
+### Setup the logger
+log = AncientsLogBook()
+
 ### Check for new software updates ###
-swUpdater = SoftwareUpdate()
+swUpdater = SoftwareUpdate(log)
 swUpdater.check_and_install()
 
 ### Check/set the correct USB audio adapter. This is necessary because different raspberries detects the USB audio adapter differently.
-audio = StargateAudio()
+audio = StargateAudio(log)
 audio.set_correct_audio_output_device()
 
-log = AncientsLogBook()
+
 #
 # # Create the Stargate object
 # log('sg1.log', f'Booting up the Stargate! Version {version}')
@@ -38,4 +41,4 @@ log = AncientsLogBook()
 
 # Exit
 print('Exiting')
-log('The Stargate program is no longer running')
+log.log('The Stargate program is no longer running')

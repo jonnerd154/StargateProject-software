@@ -1,9 +1,12 @@
 class StargateAudio:
 
-    def __init__(self):
+    def __init__(self, log):
+
+        self.log = log
+
         pass
 
-    def play_random_audio_clip(path_to_folder):
+    def play_random_audio_clip(self, path_to_folder):
         from os import listdir, path
         from random import choice
         import simpleaudio as sa
@@ -22,7 +25,7 @@ class StargateAudio:
         return random_audio.play()
 
 
-    def get_usb_audio_device_card_number():
+    def get_usb_audio_device_card_number(self):
         """
         This function gets the card number for the USB audio adapter.
         :return: It will return a number (string) that should correspond to the card number for the USB adapter. If it can't find it, it returns 1
@@ -35,7 +38,7 @@ class StargateAudio:
         return 1
 
 
-    def get_active_audio_card_number():
+    def get_active_audio_card_number(self):
         """
         This function gets the active audio card number from the /usr/share/alsa/alsa.conf file.
         :return: It will return an integer that should correspond to the card number for the USB adapter. If it can't find it, it returns 1
@@ -48,7 +51,7 @@ class StargateAudio:
                 return line[-2]
 
 
-    def set_correct_audio_output_device():
+    def set_correct_audio_output_device(self):
         """
         This functions checks if the USB audio adapter is correctly set in the alsa.conf file and fixes it if not.
         :return: Nothing is returned
@@ -68,7 +71,7 @@ class StargateAudio:
     except:
         pass
 
-    def audio_volume(percent_value):
+    def audio_volume(self, percent_value):
         """
         Attempt to set the audio volume level according to the percent_value.
         :param percent_value: an integer between 0 and 100. 65 seems good.
@@ -79,6 +82,6 @@ class StargateAudio:
             subprocess.run(['amixer', '-M', 'set', 'Headphone', f'{str(percent_value)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             subprocess.run(['amixer', '-M', 'set', 'PCM', f'{str(percent_value)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             subprocess.run(['amixer', '-M', 'set', 'Speaker', f'{str(percent_value)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            log('sg1.log', f'Audio set to {percent_value}%')
+            self.log.log(f'Audio set to {percent_value}%')
         except:
-            log('sg1.log', 'Unable to set the volume. You can set the volume level manually by running the alsamixer command.')
+            self.log.log('Unable to set the volume. You can set the volume level manually by running the alsamixer command.')

@@ -3,15 +3,17 @@ from os import stat, makedirs, path
 from base64 import b64decode
 from ast import literal_eval
 from pathlib import Path
-import NetworkTools
+from network_tools import NetworkTools
 import SubspaceServer
 
 class SoftwareUpdate:
 
-    def __init__(self):
+    def __init__(self, log):
 
         from version import version as current_version
         self.current_version = current_version
+        self.log = log
+
         pass
 
     def check_and_install(self):
@@ -24,14 +26,13 @@ class SoftwareUpdate:
         """
 
         try:
-            log('sg1.log', 'Checking for software updates.')
+            self.log.log('Checking for software updates.')
             print('Checking for software updates.')
 
             ## Verify that we have an internet connection, if not, return false.
-            if ( not NetworkTools.has_internet_access()):
-                log('sg1.log', 'No internet connection available.')
-                print('No internet connection available.')
-            return False
+            if ( not NetworkTools().has_internet_access()):
+                self.log.log('No internet connection available.')
+                return False
 
             ## Some needed variables
             update_found = None
@@ -57,7 +58,7 @@ class SoftwareUpdate:
                     update_audio = play_random_audio_clip(str(root_path / "soundfx/update/"))
                     update_found = True
                     print(f'Newer version {entry[1]} detected!')
-                    log('sg1.log', f'Newer version {entry[1]} detected!')
+                    self.log.log(f'Newer version {entry[1]} detected!')
 
                     new_files = literal_eval(entry[2]) # make a list of the new files
                     # Get the new files
@@ -71,7 +72,7 @@ class SoftwareUpdate:
                         open(filepath, 'wb').write(r.content) # save the file
                         os.chown(str(root_path / file), uid, gid) # Set correct owner and group for the file
                         print (f'{file} is updated!')
-                        log('sg1.log', f'{file} is updated!')
+                        self.log.log(f'{file} is updated!')
 
                         #If requirements.txt is new, run install of requirements.
                         if file == 'requirements.txt':
@@ -80,10 +81,10 @@ class SoftwareUpdate:
                     if update_audio.is_playing():
                         update_audio.wait_done()
             if update_found:
-                log('sg1.log', 'Update installed -> restarting the program')
+                self.log.log('Update installed -> restarting the program')
                 print('Update installed -> restarting the program')
                 os.execl(sys.executable, *([sys.executable] + sys.argv))  # Restart the program
 
         except Exception as ex:
             print(ex)
-            log('sg1.log', f'Software update failed with error: {ex}')
+            self.log.log(f'Software update failed with error: {ex}')
