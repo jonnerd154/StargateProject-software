@@ -35,7 +35,7 @@ class SoftwareUpdate:
                 return False
 
             ## Some needed variables
-            update_found = None
+            update_found = False
             base_url = 'https://thestargateproject.com/stargate_software_updates/' #TODO: move to config
             root_path = Path(__file__).parent.absolute()
             # get the user ID and group ID of the owner of this file (__file__). (In most instances this would result in the UID 1001 for the sg1 user.
@@ -80,10 +80,15 @@ class SoftwareUpdate:
                     # Don't cut the update audio short the update
                     if update_audio.is_playing():
                         update_audio.wait_done()
-            if update_found:
-                self.log.log('Update installed -> restarting the program')
-                print('Update installed -> restarting the program')
-                os.execl(sys.executable, *([sys.executable] + sys.argv))  # Restart the program
+
+                    # Install the update and restart.
+                    self.log.log('Update installed -> restarting the program')
+                    print('Update installed -> restarting the program')
+                    os.execl(sys.executable, *([sys.executable] + sys.argv))  # Restart the program
+
+            if not update_found:
+                self.log.log("The Stargate is up-to-date.")
+
 
         except Exception as ex:
             print(ex)
