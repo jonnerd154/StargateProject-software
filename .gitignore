@@ -4,6 +4,7 @@ soundfx/
 
 # Ignore the data file that stores ring position
 ring_position
+stargate_address.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
