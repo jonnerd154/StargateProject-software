@@ -27,7 +27,6 @@ class SoftwareUpdate:
 
         try:
             self.log.log('Checking for software updates.')
-            print('Checking for software updates.')
 
             ## Verify that we have an internet connection, if not, return false.
             if ( not NetworkTools().has_internet_access()):
@@ -57,7 +56,6 @@ class SoftwareUpdate:
                 if entry[1] > self.current_version:
                     update_audio = play_random_audio_clip(str(root_path / "soundfx/update/"))
                     update_found = True
-                    print(f'Newer version {entry[1]} detected!')
                     self.log.log(f'Newer version {entry[1]} detected!')
 
                     new_files = literal_eval(entry[2]) # make a list of the new files
@@ -71,7 +69,6 @@ class SoftwareUpdate:
                             pass
                         open(filepath, 'wb').write(r.content) # save the file
                         os.chown(str(root_path / file), uid, gid) # Set correct owner and group for the file
-                        print (f'{file} is updated!')
                         self.log.log(f'{file} is updated!')
 
                         #If requirements.txt is new, run install of requirements.
@@ -83,13 +80,10 @@ class SoftwareUpdate:
 
                     # Install the update and restart.
                     self.log.log('Update installed -> restarting the program')
-                    print('Update installed -> restarting the program')
                     os.execl(sys.executable, *([sys.executable] + sys.argv))  # Restart the program
 
             if not update_found:
                 self.log.log("The Stargate is up-to-date.")
 
-
         except Exception as ex:
-            print(ex)
             self.log.log(f'Software update failed with error: {ex}')

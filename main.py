@@ -40,5 +40,4 @@ audio.set_correct_audio_output_device()
 #
 
 # Exit
-print('Exiting')
 log.log('The Stargate program is no longer running')
