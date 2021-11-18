@@ -21,6 +21,7 @@ class StargateServer:
         # Get server IP, preferable the IP of the stargate in subspace.
         self.server_ip = self.get_stargate_server_ip()
 
+        #TODO: move some of this to config.json
         self.header = 8
         self.port = 3838  # I chose 3838 because the Stargate can stay open for 38 minutes. :)
         self.server_address = (self.server_ip, self.port)

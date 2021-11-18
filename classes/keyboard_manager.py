@@ -9,6 +9,8 @@ class KeyboardManager:
         self.cfg = stargate.cfg
         self.audio = stargate.audio
         
+        self.soundFxRoot = "/home/sg1/sg1/soundfx" #No trailing slash ## TODO: Move to config or Parent(__file__)
+        
     def key_press(self):
         """
         This helper function stops the program (thread) and waits for a single keypress.
@@ -25,15 +27,14 @@ class KeyboardManager:
         return ch
 
     
-    def ask_for_input(self, stargate_object):
+    def ask_for_input(self, stargate):
         """
-        This function takes the stargate_object as input and listens for user input (from the DHD or keyboard). The pressed key
+        This function takes the stargate as input and listens for user input (from the DHD or keyboard). The pressed key
         is converted to a stargate symbol number as seen in this document: https://www.rdanderson.com/stargate/glyphs/index.htm
         This function is run in parallel in its own thread.
-        :param stargate_object: The stargate object itself.
-        :return: Nothing is returned, but the stargate_object is manipulated.
+        :param stargate: The stargate object itself.
+        :return: Nothing is returned, but the stargate is manipulated.
         """
-        root_path = Path(__file__).parent.absolute()
 
         ## the dictionary containing the key to symbol-number relations.
         key_symbol_map = {'8': 1, 'C': 2, 'V': 3, 'U': 4, 'a': 5, '3': 6, '5': 7, 'S': 8, 'b': 9, 'K': 10, 'X': 11, 'Z': 12,
@@ -55,34 +56,34 @@ class KeyboardManager:
                 if key == 'A':
                     symbol_number = 'centre_button_outgoing'
 
-            self.audio.play_random_audio_clip(str(root_path / "soundfx/DHD/"))
+            self.audio.play_random_audio_clip(str(self.soundFxRoot + "/DHD/"))
             self.log.log(f'key: {key} -> symbol: {symbol_number}')
 
             ## If the user inputs the - key to abort. Not possible from the DHD.
             if key == '-':
-                stargate_object.running = False # Stop the stargate object from running.
+                stargate.running = False # Stop the stargate object from running.
                 break # This will break us out of the while loop and end the function.
 
             ## If the user hits the centre_button
             elif key == 'A':
                 # If we are dialling
-                if len(stargate_object.address_buffer_outgoing) > 0 and not stargate_object.wormhole:
-                    stargate_object.centre_button_outgoing = True
-                    stargate_object.dhd.setPixel(0, 255, 0, 0) # Activate the centre_button_outgoing light
-                    stargate_object.dhd.latch()
+                if len(stargate.address_buffer_outgoing) > 0 and not stargate.wormhole:
+                    stargate.centre_button_outgoing = True
+                    stargate.dialer.hardware.setPixel(0, 255, 0, 0) # Activate the centre_button_outgoing light
+                    stargate.dialer.hardware.latch()
                 # If an outgoing wormhole is established
-                if stargate_object.wormhole == 'outgoing':
-                    if stargate_object.fan_gate_online_status: # If we are connected to a fan_gate
-                        send_to_remote_stargate(get_ip_from_stargate_address(stargate_object.address_buffer_outgoing, stargate_object.fan_gates), 'centre_button_incoming')
-                    if not stargate_object.black_hole: # If we did not dial the black hole.
-                        stargate_object.wormhole = False # cancel outgoing wormhole
+                if stargate.wormhole == 'outgoing':
+                    if stargate.fan_gate_online_status: # If we are connected to a fan_gate
+                        send_to_remote_stargate(get_ip_from_stargate_address(stargate.address_buffer_outgoing, stargate.fan_gates), 'centre_button_incoming')
+                    if not stargate.black_hole: # If we did not dial the black hole.
+                        stargate.wormhole = False # cancel outgoing wormhole
 
             # If we are hitting symbols on the DHD.
-            elif symbol_number != 'unknown' and symbol_number not in stargate_object.address_buffer_outgoing:
+            elif symbol_number != 'unknown' and symbol_number not in stargate.address_buffer_outgoing:
                 # If we have not yet activated the centre_button
-                if not (stargate_object.centre_button_outgoing or stargate_object.centre_button_incoming):
+                if not (stargate.centre_button_outgoing or stargate.centre_button_incoming):
                     ### DHD lights ###
-                    stargate_object.dhd.setPixel(symbol_number, 250, 117, 0)
-                    stargate_object.dhd.latch()
-                    stargate_object.address_buffer_outgoing.append(symbol_number)
-                    self.log.log(f'address_buffer_outgoing: {stargate_object.address_buffer_outgoing}') # Log the address_buffer
+                    stargate.dialer.hardware.setPixel(symbol_number, 250, 117, 0)
+                    stargate.dialer.hardware.latch()
+                    stargate.address_buffer_outgoing.append(symbol_number)
+                    self.log.log(f'address_buffer_outgoing: {stargate.address_buffer_outgoing}') # Log the address_buffer

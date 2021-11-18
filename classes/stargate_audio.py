@@ -15,6 +15,7 @@ class StargateAudio:
         :param path_to_folder: The path to the folder containing the audio clips as a string, including the trailing slash.
         :return: the play object is returned.
         """
+        
         rand_file = choice(listdir(path_to_folder))
         filepath =  path.join(path_to_folder, rand_file)
 

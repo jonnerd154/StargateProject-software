@@ -11,15 +11,17 @@ class Dialer:
         self.DHD_port = "/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00"
         self.DHD_baud_rate = 115200
 
-        self.dialerHardware = None
+        self.hardware = None
+        
+        self._connect_dialer()
         
     def _connect_dialer(self):
         # Detect if we have a DHD connected, else use the keyboard
         try:
-            self.dialerHardware = self.connect_dhd()
+            self.hardware = self.connect_dhd()
         except:
             self.log.log('No DHD found, switching to keyboard mode')
-            self.dialerHardware = KeyboardMode()
+            self.hardware = KeyboardMode()
 
     def _connect_dhd(self):
         ### Connect to the DHD object. Will throw exception if not present
