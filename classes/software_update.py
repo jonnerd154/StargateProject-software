@@ -4,7 +4,7 @@ from base64 import b64decode
 from ast import literal_eval
 from pathlib import Path
 from network_tools import NetworkTools
-import SubspaceServer
+import subspace_network
 
 class SoftwareUpdate:
 
@@ -40,10 +40,10 @@ class SoftwareUpdate:
             root_path = Path(__file__).parent.absolute()
             # get the user ID and group ID of the owner of this file (__file__). (In most instances this would result in the UID 1001 for the sg1 user.
             uid = pwd.getpwnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).pw_uid
-            gid = grp.getgrnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).gr_gid
+            gid = 20 #grp.getgrnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).gr_gid
 
             ### Get the information from the DB ###
-            db = pymysql.connect(host=dbinfo.db_host, user=dbinfo.db_user, password=str(b64decode(dbinfo.db_pass), 'utf-8'), database=dbinfo.db_name)
+            db = pymysql.connect(host=subspace_network.db_host, user=subspace_network.db_user, password=str(b64decode(subspace_network.db_pass), 'utf-8'), database=subspace_network.db_name)
             cursor = db.cursor()
             sql = f"SELECT * FROM `software_update`"
             cursor.execute(sql)
