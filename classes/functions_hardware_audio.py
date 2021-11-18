@@ -50,17 +50,19 @@ def set_correct_audio_output_device():
     :return: Nothing is returned
     """
     import subprocess
-    # If the wrong card is set in the alsa.conf file
-    if get_usb_audio_device_card_number() != get_active_audio_card_number():
-        log('sg1.log', f'Updating the alsa.conf file with card {get_usb_audio_device_card_number()}')
-        print(f'Updating the alsa.conf file with card {get_usb_audio_device_card_number()}')
+	try:
+	    # If the wrong card is set in the alsa.conf file
+	    if get_usb_audio_device_card_number() != get_active_audio_card_number():
+	        log('sg1.log', f'Updating the alsa.conf file with card {get_usb_audio_device_card_number()}')
+	        print(f'Updating the alsa.conf file with card {get_usb_audio_device_card_number()}')
 
-        ctl = 'defaults.ctl.card ' + str(get_usb_audio_device_card_number())
-        pcm = 'defaults.pcm.card ' + str(get_usb_audio_device_card_number())
-        # replace the lines in the alsa.conf file.
-        subprocess.run(['sudo', 'sed', '-i', f"/defaults.ctl.card /c\{ctl}", '/usr/share/alsa/alsa.conf'])
-        subprocess.run(['sudo', 'sed', '-i', f"/defaults.pcm.card /c\{pcm}", '/usr/share/alsa/alsa.conf'])
-
+	        ctl = 'defaults.ctl.card ' + str(get_usb_audio_device_card_number())
+	        pcm = 'defaults.pcm.card ' + str(get_usb_audio_device_card_number())
+	        # replace the lines in the alsa.conf file.
+	        subprocess.run(['sudo', 'sed', '-i', f"/defaults.ctl.card /c\{ctl}", '/usr/share/alsa/alsa.conf'])
+	        subprocess.run(['sudo', 'sed', '-i', f"/defaults.pcm.card /c\{pcm}", '/usr/share/alsa/alsa.conf'])
+	except:
+	    pass
 
 def audio_volume(percent_value):
     """
