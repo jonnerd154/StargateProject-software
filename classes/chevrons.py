@@ -5,19 +5,26 @@ from HardwareDetector import HardwareDetector
 
 class ChevronManager:
 
-	def __init__(self, log, cfg):
+    def __init__(self, app):
 
-		# Detect the connected Motor Hardware
-		hwDetector = HardwareDetector()
-		mode = hwDetector.getMotorHardwareMode()
+        self.log = app.log
+        self.cfg = app.cfg
+        
+       
+        self.loadFromConfig()
+        
+    def loadFromConfig(self):
+        # Detect the connected Motor Hardware
+        hwDetector = HardwareDetector()
+        mode = hwDetector.getMotorHardwareMode()
 
-		# Retrieve the Chevron config and initialize the Chevron objects
-		self.chevrons = {}
-		for key, value in cfg.get("chevronMapping").items():
-			self.chevrons[key] = Chevron(value['ledPin'], value['motorNumber'], mode)
-
-	def get( self, chevronNumber ):
-		return self.chevrons[chevronNumber]
+        # Retrieve the Chevron config and initialize the Chevron objects
+        self.chevrons = {}
+        for key, value in self.cfg.get("chevronMapping").items():
+            self.chevrons[key] = Chevron(value['ledPin'], value['motorNumber'], mode)
+            
+    def get( self, chevronNumber ):
+        return self.chevrons[chevronNumber]
 
 class Chevron:
     """
@@ -55,7 +62,7 @@ class Chevron:
     def on(self):
         from adafruit_motorkit import MotorKit
 
-       	### determine the right motor for the chevron ###
+        ### determine the right motor for the chevron ###
         if ( self.motorHardwareMode == 1 ):
             if self.motor_number == 1:
                 motor = MotorKit().motor1

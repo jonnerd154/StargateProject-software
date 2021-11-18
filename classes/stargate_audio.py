@@ -1,8 +1,8 @@
 class StargateAudio:
 
-    def __init__(self, log):
+    def __init__(self, app):
 
-        self.log = log
+        self.log = app.log
 
         pass
 

@@ -8,11 +8,11 @@ import subspace_network
 
 class SoftwareUpdate:
 
-    def __init__(self, log):
+    def __init__(self, app):
 
         from version import version as current_version
         self.current_version = current_version
-        self.log = log
+        self.log = app.log
 
     def get_current_version(self):
         return self.current_version

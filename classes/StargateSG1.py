@@ -9,7 +9,9 @@ import simpleaudio as sa
 from random import randrange
 
 from stargate_address import local_stargate_address
-from chevrons import chevrons
+from chevrons import ChevronManager
+from dialers import Dialer
+
 from stargate_address import fan_gates
 from hardcoded_addresses import known_planets
 
@@ -18,9 +20,10 @@ class StargateSG1:
     """
     This is the class to create the stargate object itself.
     """
-    def __init__(self, log):
+    def __init__(self, app):
 
-        self.log = log
+        self.log = app.log
+        self.cfg = app.cfg
 
         self.root_path = Path(__file__).parent.absolute()
 
@@ -51,10 +54,10 @@ class StargateSG1:
         ### initiate the Chevrons:
         # The chevron config is moved to the chevrons.py file. The chevron.py file is not overwritten with the automatic update
         # so you can keep your custom setup if you have one.
-        self.chevrons = chevrons
+        self.chevrons = ChevronManager(self.log, self.cfg)
 
         # A "Dialer" is either a Keyboard or DHDv2
-        self.dialer = Dialer()
+        self.dialer = Dialer(self.log)
 
         ### Initiate the Wormhole object.
         self.wh = Wormhole(self)
