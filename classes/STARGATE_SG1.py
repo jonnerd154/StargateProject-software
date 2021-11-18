@@ -1,15 +1,29 @@
+from classes.DIAL import Dial
+from classes.DHD import DHDv2, DhdKeyboardMode
+from classes.WORMHOLE import Wormhole
+from classes.STARGATE_SERVER import StargateServer
+from helper_functions import log, key_press, play_random_audio_clip, ask_for_input, get_fan_gates_from_db,\
+	is_it_a_known_fan_made_stargate, send_to_remote_stargate, get_ip_from_stargate_address, all_chevrons_off, \
+	get_status_of_remote_gate, audio_volume, check_internet_connection
+         
+from threading import Thread
+from time import time, sleep
+from pathlib import Path
+import simpleaudio as sa
+from random import randrange
+
+from stargate_address import local_stargate_address
+from chevrons import chevrons
+from stargate_address import fan_gates
+from hardcoded_addresses import known_planets
+
+
 class StargateSG1:
     """
     This is the class to create the stargate object itself.
     """
     def __init__(self):
-        from classes.DIAL import Dial
-        from classes.DHD import DHDv2, DhdKeyboardMode
-        from classes.WORMHOLE import Wormhole
-        from classes.STARGATE_SERVER import StargateServer
-        from helper_functions import log, key_press, play_random_audio_clip, ask_for_input, get_fan_gates_from_db,\
-            is_it_a_known_fan_made_stargate, send_to_remote_stargate, get_ip_from_stargate_address, all_chevrons_off, \
-            get_status_of_remote_gate, audio_volume, check_internet_connection
+        
         self.log = log
         self.key_press = key_press
         self.play_random_audio_clip = play_random_audio_clip
@@ -21,16 +35,11 @@ class StargateSG1:
         self.get_status_of_remote_gate = get_status_of_remote_gate
         self.audio_volume = audio_volume
         self.check_internet_connection = check_internet_connection
-        from threading import Thread
         self.Thread = Thread
-        from time import time, sleep
         self.time = time
         self.sleep = sleep
-        import simpleaudio as sa
         self.sa = sa
-        from pathlib import Path
         self.root_path = Path(__file__).parent.absolute()
-        from random import randrange
         self.randrange = randrange
 
         ### This is the states and features of the StargateSG1 object. ###
@@ -49,7 +58,7 @@ class StargateSG1:
 
         ### Set the local stargate address so that it's ready to accept incoming connections from the internet, or other local stargates.
         # The local stargate address is set in a separate file; stargate_address.py. This way it won't get overwritten with an automatic update.
-        from stargate_address import local_stargate_address
+        
         self.local_stargate_address = local_stargate_address
 
         ### Set up the needed classes and make them ready to use ###
@@ -60,7 +69,6 @@ class StargateSG1:
         ### initiate the Chevrons:
         # The chevron config is moved to the chevrons.py file. The chevron.py file is not overwritten with the automatic update
         # so you can keep your custom setup if you have one.
-        from chevrons import chevrons
         self.chevrons = chevrons
 
         ### Initiate the DHD object.
@@ -88,7 +96,6 @@ class StargateSG1:
 
         ### Stargate fan-made gate addresses ###
         # The custom fan_gate addresses is set in a separate file; stargate_address.py. This way it won't get overwritten with an automatic update.
-        from stargate_address import fan_gates
         self.fan_gates = fan_gates
 
         ### Check if we have an internet connection.
@@ -319,9 +326,6 @@ class StargateSG1:
         # Eliminate the local(self) address:
         if copy_of_address == self.local_stargate_address:
             return False
-
-        # import hardcoded_addresses
-        from hardcoded_addresses import known_planets
 
         # Check if we dialled the black hole planet
         if copy_of_address == known_planets["P3W-451"]:
