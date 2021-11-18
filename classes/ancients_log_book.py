@@ -1,10 +1,10 @@
 class AncientsLogBook:
 
-    def __init__(self):
+    def __init__(self, log_file):
 
         self.printToConsole = True
 
-        self.gateLog = "sg1.log"
+        self.gateLog = log_file
 
         # TODO: Open the log file here, and do any creation/permission repairs.
         #    log() should only be appending to the file.

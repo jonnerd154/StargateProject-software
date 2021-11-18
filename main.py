@@ -21,10 +21,10 @@ class GateApplication:
 	def __init__(self):
 	
 		### Load our config file
-		self.cfg = StargateConfig()
+		self.cfg = StargateConfig("config.json")
 
 		### Setup the logger
-		self.log = AncientsLogBook()
+		self.log = AncientsLogBook("sg1.log")
 
 		### Check for new software updates ###
 		self.swUpdater = SoftwareUpdate(self)

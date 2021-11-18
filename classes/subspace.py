@@ -1,7 +1,16 @@
+import ast
+
+from database import Database
+
 class Subspace:
 
-    def __init__(self):
-        pass
+    def __init__(self, stargate):
+        
+        self.log = stargate.log
+        self.cfg = stargate.cfg
+        
+        self.database = Database()
+        
         
     def send_raw(self, msg):
         message = msg.encode(encoding_format)
@@ -116,19 +125,11 @@ class Subspace:
         :param hard_coded_fan_gates_dictionary: The dictionary containing any hard coded fan_gates not in the database, or a local gate perhaps
         :return: The updated fan_gate dictionary is returned.
         """
-        import pymysql, dbinfo, ast
-        from base64 import b64decode
-        db = pymysql.connect(host=dbinfo.db_host, user=dbinfo.db_user, password=str(b64decode(dbinfo.db_pass), 'utf-8'), database=dbinfo.db_name)
-        cursor = db.cursor()
-        sql = f"SELECT * FROM `fan_gates`"
-        cursor.execute(sql)
-        db_fan_gates = cursor.fetchall()
-        db.close()
-        for gate in db_fan_gates:
-            hard_coded_fan_gates_dictionary[gate[0]] = [ast.literal_eval(gate[1]), get_ip(gate[2])]
+        for gate in self.database.get_fan_gates():
+            hard_coded_fan_gates_dictionary[gate[0]] = [ast.literal_eval(gate[1]), self.get_ip(gate[2])]
         return hard_coded_fan_gates_dictionary
-
-
+    
+    
     def get_status_of_remote_gate(self, remote_ip):
         """
         This helper functions tries to determine if the wormhole of the remote gate is already active, or if we are currently dialing out.

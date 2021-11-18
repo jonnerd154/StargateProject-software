@@ -78,7 +78,7 @@ class StargateSG1:
 
         ### Other known remote fan_gates will be added automatically to this dictionary
         from subspace import Subspace
-        self.subspace = Subspace()
+        self.subspace = Subspace(self)
         if self.internet:
             self.fan_gates = self.subspace.get_fan_gates_from_db(self.fan_gates)
 
