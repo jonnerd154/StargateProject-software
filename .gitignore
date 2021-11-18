@@ -2,6 +2,9 @@
 soundfx/
 !soundfx/.gitkeep
 
+# Ignore the data file that stores ring position
+ring_position
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
