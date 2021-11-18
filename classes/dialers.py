@@ -2,15 +2,17 @@ from time import sleep
 
 class Dialer:
 
-    def __init__(self, log):
+    def __init__(self, stargate):
 
+        self.log = stargate.log
+        self.cfg = stargate.cfg
+        
         # TODO: Move to config
         self.DHD_port = "/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00"
         self.DHD_baud_rate = 115200
 
         self.dialerHardware = None
-        self.log = log
-
+        
     def _connect_dialer(self):
         # Detect if we have a DHD connected, else use the keyboard
         try:

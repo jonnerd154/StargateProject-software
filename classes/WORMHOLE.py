@@ -1,29 +1,35 @@
+from random import choice, randint
+import simpleaudio as sa
+import neopixel, board
+from time import sleep, time
+from datetime import timedelta
+from pathlib import Path
+
 class Wormhole:
     """
     This class handles all things wormhole. It takes the stargate object as input.
     """
     def __init__(self, stargate_object):
-        from random import choice, randint
+        
+        # For convenience
+        self.stargate_object = stargate_object
+        self.log = stargate_object.log
+        self.cfg = stargate_object.cfg
+        self.audio = stargate_object.app.audio
+
+        # TODO: Remove these
         self.choice = choice
         self.randint = randint
-        from helper_functions import play_random_audio_clip, log
-        self.play_random_audio_clip = play_random_audio_clip
-        self.log = log
-        import simpleaudio as sa
         self.sa = sa
-        from pathlib import Path
+        self.sleep = sleep
+        self.time = time
+        self.timedelta = timedelta
+        
         self.root_path = Path(__file__).parent.absolute()
-        import neopixel, board
         self.tot_leds = 122
         self.pin = board.D12  # The standard data pin is board.D18
         self.pixels = neopixel.NeoPixel(self.pin, self.tot_leds, auto_write=False, brightness=0.61)
-        from time import sleep, time
-        self.sleep = sleep
-        self.time = time
-        self.stargate_object = stargate_object
-        from datetime import timedelta
-        self.timedelta = timedelta
-
+        
         # Wormhole variables
         self.wormhole_max_time = 38 * 60  # A wormhole can only be maintained for about 38 minutes without tremendous amounts of power. (Black hole)
         self.audio_clip_wait_time = 17  # The frequency of the random audio clips.
@@ -315,7 +321,7 @@ class Wormhole:
         possible_directions = ['cw', 'ccw']
 
         # Open The wormhole
-        self.log('sg1.log', 'Opening Wormhole!')
+        self.log('Opening Wormhole!')
         self.open_wormhole()
 
         # this will play the worm hole active audio. It lasts about 4min 22sec. It is deliberately not looping or restarting.
@@ -350,20 +356,20 @@ class Wormhole:
             # Play random audio clips
             if (self.time() - random_audio_start_time) > self.audio_clip_wait_time:  # If there has been "silence" for more than audio_clip_wait_time
                 if not random_audio_clip:  # if the variable is False. Will only trigger for the first loop.
-                    random_audio_clip = self.play_random_audio_clip(str(self.root_path / audio_path))
+                    random_audio_clip = self.audio.play_random_audio_clip(str(self.root_path / audio_path))
                 elif hasattr(random_audio_clip, 'is_playing') and not random_audio_clip.is_playing():  # If it's not already playing
-                    random_audio_clip = self.play_random_audio_clip(str(self.root_path / audio_path))
+                    random_audio_clip = self.audio.play_random_audio_clip(str(self.root_path / audio_path))
                 random_audio_start_time = self.time()
 
         # when the loop exits, shut down the wormhole etc.
         if (self.time() - open_time) > self.wormhole_max_time:  # if the wormhole closes due to the 38min time limit.
             if hasattr(random_audio_clip, 'is_playing') and random_audio_clip.is_playing():  # If the random audio clip is still playing:
                 random_audio_clip.wait_done()  # wait until it's finished.
-            time_limit_audio = self.play_random_audio_clip(str(self.root_path / "../soundfx/38min/"))  # The 38min ones.
+            time_limit_audio = self.audio.play_random_audio_clip(str(self.root_path / "../soundfx/38min/"))  # The 38min ones.
             time_limit_audio.wait_done()
 
         self.close_wormhole()
         if established_audio_play_object.is_playing():
             established_audio_play_object.stop()
         self.stargate_object.wormhole = False # The close_wormhole method also does this.. shouldn't be needed.
-        self.log('sg1.log', f'Disengaged Wormhole after {self.timedelta(seconds=int(self.time() - open_time))}')
+        self.log(f'Disengaged Wormhole after {self.timedelta(seconds=int(self.time() - open_time))}')

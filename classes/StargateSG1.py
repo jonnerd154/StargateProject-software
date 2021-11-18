@@ -9,11 +9,15 @@ import simpleaudio as sa
 from random import randrange
 
 from stargate_address import local_stargate_address
-from chevrons import ChevronManager
-from dialers import Dialer
+
 
 from stargate_address import fan_gates
 from hardcoded_addresses import known_planets
+
+# New
+from chevrons import ChevronManager
+from dialers import Dialer
+from network_tools import NetworkTools
 
 
 class StargateSG1:
@@ -22,6 +26,7 @@ class StargateSG1:
     """
     def __init__(self, app):
 
+        self.app = app
         self.log = app.log
         self.cfg = app.cfg
 
@@ -54,10 +59,10 @@ class StargateSG1:
         ### initiate the Chevrons:
         # The chevron config is moved to the chevrons.py file. The chevron.py file is not overwritten with the automatic update
         # so you can keep your custom setup if you have one.
-        self.chevrons = ChevronManager(self.log, self.cfg)
+        self.chevrons = ChevronManager(self)
 
         # A "Dialer" is either a Keyboard or DHDv2
-        self.dialer = Dialer(self.log)
+        self.dialer = Dialer(self)
 
         ### Initiate the Wormhole object.
         self.wh = Wormhole(self)
@@ -68,11 +73,14 @@ class StargateSG1:
         self.fan_gates = fan_gates
 
         ### Check if we have an internet connection.
-        self.internet = self.check_internet_connection()
+        netTools = NetworkTools(self.log)
+        self.internet = netTools.has_internet_access()
 
         ### Other known remote fan_gates will be added automatically to this dictionary
+        from subspace import Subspace
+        self.subspace = Subspace()
         if self.internet:
-            self.fan_gates = get_fan_gates_from_db(self.fan_gates)
+            self.fan_gates = self.subspace.get_fan_gates_from_db(self.fan_gates)
 
         ## Create a background thread that runs in parallel and asks for user inputs from the DHD or keyboard.
         self.ask_for_input_thread = Thread(target=self.ask_for_input, args=(self,))
@@ -85,7 +93,7 @@ class StargateSG1:
             self.stargate_server_thread.start()
 
         ### Set volume ###
-        self.audio_volume(65)
+        self.audio.set_volume(65)
 
         ### Notify that the Stargate is ready
         self.play_random_audio_clip(str(self.root_path / "../soundfx/startup/"))

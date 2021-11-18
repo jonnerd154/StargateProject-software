@@ -71,7 +71,7 @@ class StargateAudio:
     except:
         pass
 
-    def audio_volume(self, percent_value):
+    def set_volume(self, percent_value):
         """
         Attempt to set the audio volume level according to the percent_value.
         :param percent_value: an integer between 0 and 100. 65 seems good.
