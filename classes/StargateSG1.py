@@ -1,11 +1,9 @@
-from classes.DIAL import Dial
-from classes.DHD import DHDv2, DhdKeyboardMode
-from classes.WORMHOLE import Wormhole
-from classes.STARGATE_SERVER import StargateServer
-from helper_functions import log, key_press, play_random_audio_clip, ask_for_input, get_fan_gates_from_db,\
-	is_it_a_known_fan_made_stargate, send_to_remote_stargate, get_ip_from_stargate_address, all_chevrons_off, \
-	get_status_of_remote_gate, audio_volume, check_internet_connection
-         
+from DIAL import Dial
+from DHD import DHDv2, DhdKeyboardMode
+from WORMHOLE import Wormhole
+from STARGATE_SERVER import StargateServer
+
+
 from threading import Thread
 from time import time, sleep
 from pathlib import Path
@@ -22,26 +20,12 @@ class StargateSG1:
     """
     This is the class to create the stargate object itself.
     """
-    def __init__(self):
-        
-        self.log = log
-        self.key_press = key_press
-        self.play_random_audio_clip = play_random_audio_clip
-        self.ask_for_input = ask_for_input
-        self.is_it_a_known_fan_made_stargate = is_it_a_known_fan_made_stargate
-        self.send_to_remote_stargate = send_to_remote_stargate
-        self.get_ip_from_stargate_address = get_ip_from_stargate_address
-        self.all_chevrons_off = all_chevrons_off
-        self.get_status_of_remote_gate = get_status_of_remote_gate
-        self.audio_volume = audio_volume
-        self.check_internet_connection = check_internet_connection
-        self.Thread = Thread
-        self.time = time
-        self.sleep = sleep
-        self.sa = sa
-        self.root_path = Path(__file__).parent.absolute()
-        self.randrange = randrange
+    def __init__(self, log):
 
+        self.log = log
+
+        self.root_path = Path(__file__).parent.absolute()
+        
         ### This is the states and features of the StargateSG1 object. ###
         self.running = True
         self.last_activity_time = None # A variable to store the last user input time
@@ -58,7 +42,7 @@ class StargateSG1:
 
         ### Set the local stargate address so that it's ready to accept incoming connections from the internet, or other local stargates.
         # The local stargate address is set in a separate file; stargate_address.py. This way it won't get overwritten with an automatic update.
-        
+
         self.local_stargate_address = local_stargate_address
 
         ### Set up the needed classes and make them ready to use ###
@@ -71,24 +55,8 @@ class StargateSG1:
         # so you can keep your custom setup if you have one.
         self.chevrons = chevrons
 
-        ### Initiate the DHD object.
-        self.DHD_port = "/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00"
-        self.DHD_baud_rate = 115200
-        try:
-            self.dhd = DHDv2(self.DHD_port, self.DHD_baud_rate)
-            self.dhd.setBrightnessCenter(100)
-            self.dhd.setBrightnessSymbols(3)
-
-            # Blink the middle button to signal the DHD is ready
-            self.dhd.setPixel(0, 255, 255, 255)
-            self.dhd.latch()
-            self.sleep(0.5)
-            self.dhd.setAllPixelsToColor(0, 0, 0)
-            self.dhd.latch()
-        except:
-            print('No DHD found, switching to keyboard mode')
-            self.log('sg1.log', 'No DHD found, switching to keyboard mode')
-            self.dhd = DhdKeyboardMode()
+		# A "Dialer" is either a Keyboard or DHDv2
+		self.dialer = Dialer()
 
         ### Initiate the Wormhole object.
         self.wh = Wormhole(self)
