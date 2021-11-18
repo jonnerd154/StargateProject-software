@@ -5,3 +5,6 @@ Log into the machine and type `sudo /home/sg1/sg1_venv/bin/python /home/sg1/sg1/
 
 # Running the Hardware Test Routine
 Log into the machine and type `sudo /home/sg1/sg1_venv/bin/python /home/sg1/sg1/test.py`
+
+# Dial Aphopis's base with a keyboard
+ - `cFX1K98A`
