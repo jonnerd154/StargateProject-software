@@ -135,5 +135,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Apple metadata files
 .DS_Store
-chevrons.py
