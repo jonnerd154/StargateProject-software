@@ -155,21 +155,6 @@ class Subspace:
         except:
             return 'Unknown'
 
-
-    def keep_alive(self, IP_address, interval, stargate_object):
-        """
-        This functions simply sends a ping to the specified IP address every specified interval
-        :param stargate_object: The stargate object.
-        :param IP_address: the IP address as a string
-        :param interval: the interval for each ping as an int in second. (the sleep time)
-        :return: Nothing is returned
-        """
-        from icmplib import ping
-        from time import sleep
-        while stargate_object.running:
-            sleep(interval)
-            ping(IP_address, count=1, timeout=1)
-
     def is_it_a_known_fan_made_stargate(self, dialed_address, known_fan_made_stargates, stargate_object):
         """
         This helper function tries to check the first two symbols in the dialled address and compares it to

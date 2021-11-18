@@ -18,6 +18,7 @@ from hardcoded_addresses import known_planets
 from chevrons import ChevronManager
 from dialers import Dialer
 from network_tools import NetworkTools
+from keyboard_manager import KeyboardManager
 
 
 class StargateSG1:
@@ -29,7 +30,10 @@ class StargateSG1:
         self.app = app
         self.log = app.log
         self.cfg = app.cfg
-
+        self.audio = app.audio
+        
+        self.keyboard = KeyboardManager(self)
+        
         self.root_path = Path(__file__).parent.absolute()
 
         ### This is the states and features of the StargateSG1 object. ###
@@ -81,9 +85,9 @@ class StargateSG1:
         self.subspace = Subspace(self)
         if self.internet:
             self.fan_gates = self.subspace.get_fan_gates_from_db(self.fan_gates)
-
+        
         ## Create a background thread that runs in parallel and asks for user inputs from the DHD or keyboard.
-        self.ask_for_input_thread = Thread(target=self.ask_for_input, args=(self,))
+        self.ask_for_input_thread = Thread(target=self.keyboard.ask_for_input, args=(self,))
         self.ask_for_input_thread.start()  # start
 
         ### Run the stargate server ###
@@ -96,7 +100,7 @@ class StargateSG1:
         self.audio.set_volume(65)
 
         ### Notify that the Stargate is ready
-        self.play_random_audio_clip(str(self.root_path / "../soundfx/startup/"))
+        self.audio.play_random_audio_clip(str(self.root_path / "../soundfx/startup/"))
         self.log.log('The Stargate is started and ready!')
 
     ## Methods to manipulate the StargateSG1 object ###

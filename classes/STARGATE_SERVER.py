@@ -1,3 +1,6 @@
+from stargate_address_validator import StargateAddressValidator
+from database import Database
+
 class StargateServer:
     """
     This Class starts a stargate server to listen for incoming connections. The server runs on port 3838. It tries to setup the server on
@@ -9,15 +12,12 @@ class StargateServer:
         import socket
         from threading import Thread
         self.thread = Thread
-        from helper_functions import log, validate_string_as_stargate_address, keep_alive, get_fan_gates_from_db,\
-            get_stargate_address_from_IP, get_planet_name_from_IP
-        self.log = log
-        self.validate_string_as_stargate_address = validate_string_as_stargate_address
-        self.keep_alive = keep_alive
-        self.get_fan_gates_from_db = get_fan_gates_from_db
-        self.get_stargate_address_from_IP = get_stargate_address_from_IP
-        self.get_planet_name_from_IP = get_planet_name_from_IP
-
+       
+        self.log = stargate_object.log
+        self.cfg = stargate_object.cfg
+        
+        self.database = Database()
+        
         # Get server IP, preferable the IP of the stargate in subspace.
         self.server_ip = self.get_stargate_server_ip()
 
@@ -35,8 +35,22 @@ class StargateServer:
         thread_keep_alive.start()
 
         # Keep the known fan_gates here.
-        self.known_fan_gates = get_fan_gates_from_db({})
+        self.known_fan_gates = self.database.get_fan_gates()
 
+    def keep_alive(self, IP_address, interval, stargate_object):
+        """
+        This functions simply sends a ping to the specified IP address every specified interval
+        :param stargate_object: The stargate object.
+        :param IP_address: the IP address as a string
+        :param interval: the interval for each ping as an int in second. (the sleep time)
+        :return: Nothing is returned
+        """
+        from icmplib import ping
+        from time import sleep
+        while stargate_object.running:
+            sleep(interval)
+            ping(IP_address, count=1, timeout=1)
+            
     def get_stargate_server_ip(self):
         """
         This method tries to get the IP address of the subspace network interface. It also tries to start the subspace
@@ -51,11 +65,10 @@ class StargateServer:
         ## If the subspace interface is not active, try to activate it.
         if not 'subspace' in netifaces.interfaces():
             try:
-                self.log('sg1.log', 'Subspace was not found, attempting to enter subspace.')
+                self.log.log('Subspace was not found, attempting to enter subspace.')
                 os.popen('wg-quick up subspace').read()
             except Exception as ex:
-                print(ex)
-                self.log('sg1.log', f'subspace ERROR: {ex}')
+                self.log.log(f'subspace ERROR: {ex}')
 
         ## Try to get IP from subspace
         if 'subspace' in netifaces.interfaces():
@@ -65,8 +78,7 @@ class StargateServer:
                     ping('172.30.0.1', count=1, timeout=1) # ping the gateway creating some traffic signaling subspace that you are here.
                     return server_ip
             except Exception as ex:
-                print (ex)
-                self.log('sg1.log', f'ERROR getting subspace IP: {ex}')
+                self.log.log(f'ERROR getting subspace IP: {ex}')
 
         # Try to get the IP from wlan0
         if 'wlan0' in netifaces.interfaces():
@@ -75,8 +87,7 @@ class StargateServer:
                 if ip_address(server_ip):
                     return server_ip
             except Exception as ex:
-                print (ex)
-                self.log('sg1.log', f'ERROR getting wlan0 IP: {ex}')
+                self.log.log(f'ERROR getting wlan0 IP: {ex}')
 
         # Try to get the IP from eth0
         if 'eth0' in netifaces.interfaces():
@@ -85,8 +96,7 @@ class StargateServer:
                 if ip_address(server_ip):
                     return server_ip
             except Exception as ex:
-                print(ex)
-                self.log('sg1.log', f'ERROR getting eth0 IP: {ex}')
+                self.log.log(f'ERROR getting eth0 IP: {ex}')
         return server_ip # returns None if no ip was found
     def handle_incoming_wormhole(self, conn, addr):
         connected = True  # while there is a connection from another gate.
@@ -112,11 +122,11 @@ class StargateServer:
                             self.stargate_object.fan_gate_incoming_IP = addr[0] # Save the IO address when establishing a wormhole.
                             self.stargate_object.dhd.setPixel(0, 255, 0, 0)  # Activate the centre_button_outgoing light
                             self.stargate_object.dhd.latch()
-                    self.log('sg1.log', f'Received from {self.get_planet_name_from_IP(addr[0], self.known_fan_gates)} - {self.get_stargate_address_from_IP(addr[0], self.known_fan_gates)} -> {msg}')
+                    self.log.log(f'Received from {self.get_planet_name_from_IP(addr[0], self.known_fan_gates)} - {self.get_stargate_address_from_IP(addr[0], self.known_fan_gates)} -> {msg}')
 
                 # If we are asked about the status (wormhole already active from a different gate or actively dialing out)
                 elif msg == 'what_is_your_status':
-                    # self.log('sg1.log', f'Received from {addr} -> {msg}')
+                    # self.log.log(f'Received from {addr} -> {msg}')
                     # It the wormhole is already established, or if we are dialing out.
                     if self.stargate_object.wormhole or len(self.stargate_object.address_buffer_outgoing) > 0:
                         # If the established wormhole is from the remote gate
@@ -135,23 +145,20 @@ class StargateServer:
                     for symbol in address:
                         if not symbol in self.stargate_object.address_buffer_incoming:
                             self.stargate_object.address_buffer_incoming.append(symbol)
-                    self.log('sg1.log', f'Received from {self.get_planet_name_from_IP(addr[0], self.known_fan_gates)} - {self.get_stargate_address_from_IP(addr[0], self.known_fan_gates)} -> {msg}')
+                    self.log.log(f'Received from {self.get_planet_name_from_IP(addr[0], self.known_fan_gates)} - {self.get_stargate_address_from_IP(addr[0], self.known_fan_gates)} -> {msg}')
 
                 # For unknown messages
                 else:
-                    print('Unknown message! What are you doing?')
-                    self.log('sg1.log', f'Received from {addr[0]} - {self.get_stargate_address_from_IP(addr[0], self.known_fan_gates)} -> {msg} \t But I do not know what to do with that!')
+                    self.log.log(f'Received UNKNOWN MESSAGE from {addr[0]} - {self.get_stargate_address_from_IP(addr[0], self.known_fan_gates)} -> {msg} \t But I do not know what to do with that!')
         conn.close()  # close the connection.
     def start(self):
         if self.server_ip: # If we have found an IP to use for the server.
             self.server.listen()
-            print(f'Listening for incoming wormholes on {self.server_ip}:{self.port}')
-            self.log('sg1.log', f'Listening for incoming wormholes on {self.server_ip}:{self.port}')
+            self.log.log(f'Listening for incoming wormholes on {self.server_ip}:{self.port}')
 
             while True:
                 conn, addr = self.server.accept()
                 handle_incoming_wormhole_thread = self.thread(target=self.handle_incoming_wormhole, args=(conn, addr))
                 handle_incoming_wormhole_thread.start()
         else:
-            print('Unable to start the Stargate server, no IP address found')
-            self.log('sg1.log', 'Unable to start the Stargate server, no IP address found')
+            self.log.log('Unable to start the Stargate server, no IP address found')

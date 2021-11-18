@@ -1,4 +1,3 @@
-
 class StargateAddressValidator:
 
 	def __init__(self, input_address):
