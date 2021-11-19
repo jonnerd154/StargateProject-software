@@ -67,8 +67,7 @@ class KeyboardManager:
                 # If we are dialing
                 if len(stargate.address_buffer_outgoing) > 0 and not stargate.wormhole:
                     stargate.centre_button_outgoing = True
-                    stargate.dialer.hardware.setPixel(0, 255, 0, 0) # Activate the centre_button_outgoing light
-                    stargate.dialer.hardware.latch()
+                    stargate.dialer.hardware.set_center_on() # Activate the centre_button_outgoing light
                 # If an outgoing wormhole is established
                 if stargate.wormhole == 'outgoing':
                     if stargate.fan_gate_online_status: # If we are connected to a fan_gate

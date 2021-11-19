@@ -186,9 +186,13 @@ class DHDv2:
         return True
     
     def clear_lights(self):
-        self.setAllPixelsToColor(0, 0, 0)
+        self.setAllPixelsToColor(0, 0, 0) # All Off
         self.latch()
     
+    def set_center_on( self )
+        self.setPixel(0, 255, 0, 0) # LED 0, Pure red.
+        self.latch()
+                    
     def get_DHD_port():
         """
         This is a simple helper function to help locate the port for the DHD
