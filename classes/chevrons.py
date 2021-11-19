@@ -21,10 +21,10 @@ class ChevronManager:
         # Retrieve the Chevron config and initialize the Chevron objects
         self.chevrons = {}
         for key, value in self.cfg.get("chevronMapping").items():
-            self.chevrons[key] = Chevron(value['ledPin'], value['motorNumber'], mode)
+            self.chevrons[int(key)] = Chevron(value['ledPin'], value['motorNumber'], mode)
             
     def get( self, chevronNumber ):
-        return self.chevrons[chevronNumber]
+        return self.chevrons[int(chevronNumber)]
     
     def all_off(self, sound=None):
         """
@@ -75,7 +75,7 @@ class Chevron:
 
     def on(self):
         from adafruit_motorkit import MotorKit
-
+        
         ### determine the right motor for the chevron ###
         if ( self.motorHardwareMode == 1 ):
             if self.motor_number == 1:

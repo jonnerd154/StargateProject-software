@@ -21,10 +21,10 @@ class GateTestApp:
     def __init__(self):
     
         ### Load our config file
-        self.cfg = StargateConfig()
+        self.cfg = StargateConfig("config.json")
 
         ### Setup the logger
-        self.log = AncientsLogBook()
+        self.log = AncientsLogBook("test_procedure.log")
         self.log.log('Gate Hardware Test: Starting.')
         
         ### Check/set the correct USB audio adapter. This is necessary because different raspberries detects the USB audio adapter differently.

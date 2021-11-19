@@ -321,7 +321,7 @@ class Wormhole:
         possible_directions = ['cw', 'ccw']
 
         # Open The wormhole
-        self.log('Opening Wormhole!')
+        self.log.log('Opening Wormhole!')
         self.open_wormhole()
 
         # this will play the worm hole active audio. It lasts about 4min 22sec. It is deliberately not looping or restarting.
@@ -372,4 +372,4 @@ class Wormhole:
         if established_audio_play_object.is_playing():
             established_audio_play_object.stop()
         self.stargate_object.wormhole = False # The close_wormhole method also does this.. shouldn't be needed.
-        self.log(f'Disengaged Wormhole after {self.timedelta(seconds=int(self.time() - open_time))}')
+        self.log.log(f'Disengaged Wormhole after {self.timedelta(seconds=int(self.time() - open_time))}')
