@@ -1,4 +1,4 @@
-import simpleaudio as sound
+import simpleaudio as sa
 
 class StargateAudio:
 
@@ -9,15 +9,15 @@ class StargateAudio:
         
         self.soundFxRoot = "/home/sg1/sg1/soundfx" #No trailing slash ## TODO: Move to config or Parent(__file__)
 
-        
+        # Make ready the sound effects
         self.sounds = {}
-        self.sounds['rolling_ring'] = sound.WaveObject.from_wave_file(str(self.soundFxRoot + "/roll.wav"))
+        self.sounds['rolling_ring'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/roll.wav")) }
 
     def sound_start(self, clip_name):
-        self.sounds[clip_name].play()
+        self.sounds[clip_name]['obj'] = self.sounds[clip_name]['file'].play()
         
     def sound_stop(self, clip_name):
-        self.sounds[clip_name].stop()
+        self.sounds[clip_name]['obj'].stop()
 
     def play_random_audio_clip(self, path_to_folder):
         from os import listdir, path

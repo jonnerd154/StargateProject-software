@@ -1,5 +1,13 @@
+from time import sleep
+from pathlib import Path
+
+from adafruit_motorkit import MotorKit
+from adafruit_motor import stepper as stp
+
 from classes.HardwareDetector import HardwareDetector
 from homing import SymbolRingHomingManager
+
+
 
 class Dial:
     """
@@ -11,19 +19,19 @@ class Dial:
     """
 
     def __init__(self, stargate):
-        from adafruit_motorkit import MotorKit
-        from adafruit_motor import stepper as stp
-        from time import sleep
-        from pathlib import Path
+        
+        self.log = stargate.log
+        self.cfg = stargate.cfg
+        self.audio = stargate.audio
+        
         self.root_path = Path(__file__).parent.absolute()
         # self.total_steps = 1251
         self.total_steps = 1250
         self.micro_steps = 16
-        self.sleep = sleep
-        self.stp = stp
         self.saved_pos = self.ring_position('get')
         self.stepper_pos = 0
-
+        self.direction = stp.FORWARD
+        
         self.hwDetector = HardwareDetector()
         self.motorHardwareMode = self.hwDetector.getMotorHardwareMode()
 
@@ -36,7 +44,7 @@ class Dial:
         self.chevrons = {1: 139, 2: 278, 3: 417, 4: 834, 5: 973, 6: 1112, 7: 0, 8: 556, 9: 695}
 
         ## Initialize the Homing Manager
-        self.homingManager = SymbolRingHomingManager(stargate)
+        self.homingManager = SymbolRingHomingManager(stargate, self)
         
 
     @staticmethod
@@ -55,6 +63,9 @@ class Dial:
         else:
             return 0
 
+    def move_raw_one_step(self):
+        self.stepper.onestep(direction=self.direction, style=stp.DOUBLE)
+    
     def move(self, steps):
         """
         This method moves the stepper motor the desired number of steps in the desired direction and updates the
@@ -63,22 +74,10 @@ class Dial:
         :param steps: the number of steps to move as int. Negative is backward(ccw) and positive is forward (cw)
         :return: Nothing is returned
         """
-        # easier naming
-        if self.motorHardwareMode > 0:
-            stepper = self.stepper
-        else:
-            stepper = None
-        sleep = self.sleep
-        stp = self.stp
-
-        ### Make ready the sound effects ###
-        import simpleaudio as sound
-        roll = sound.WaveObject.from_wave_file(str(self.root_path / "../soundfx/roll.wav"))
-
         ## Set the direction ##
-        if steps >= 0:  # If steps is positive
+        if steps >= 0:  # If steps is positive move forward
             direct = stp.FORWARD
-        else:  # if steps is negative
+        else:  # if steps is negative move backward
             steps = abs(steps)
             direct = stp.BACKWARD
 
@@ -87,10 +86,28 @@ class Dial:
         current_speed = 0.01  # the initial speed
         acceleration_length = 40  # the number of steps used for acceleration
 
-        # Home the symbol ring
-        self.homingManager.find_home()
-        
-       
+        # Move the ring
+        self.audio.sound_start('rolling_ring')  # play the audio movement
+        stepper_micro_pos = 0
+        for i in range(steps):
+            self.move_raw_one_step()
+            stepper_micro_pos += 8 
+            self.stepper_pos = (stepper_micro_pos // self.micro_steps) % self.total_steps # Update the self.stepper_pos value as the ring moves. Will have a value from 0 till self.total_steps = 1250.
+
+            ## acceleration
+            if i < acceleration_length:
+                current_speed -= (slow_speed - normal_speed) / acceleration_length
+                sleep(current_speed)
+            ## de acceleration
+            elif i > (steps - acceleration_length):
+                current_speed += (slow_speed - normal_speed) / acceleration_length
+                sleep(current_speed)
+            ## slow without acceleration when short distance
+            elif steps < acceleration_length:
+                current_speed = normal_speed
+                sleep(current_speed)
+                
+        self.audio.sound_stop('rolling_ring')  # stop the audio
 
     def ring_position(self, action):
         """
@@ -103,7 +120,7 @@ class Dial:
             position = (ring_position.read())
             ring_position.close()
         elif action == 'set':
-            position = ((self.stepper_pos + self.saved_pos) % self.total_steps) + self.offset
+            position = ((self.stepper_pos + self.saved_pos) % self.total_steps) + self.homingManager.offset
             ring_position = open(str(self.root_path / '../ring_position/'), 'w')
             ring_position.write(str(position))
             ring_position.close()
@@ -111,14 +128,17 @@ class Dial:
             position = ''
             print('That is not the correct input for the ring_position function')
         return int(position)
+        
     def release(self):
+    
         """
         This method releases the stepper so that there are no power holding it in position. The stepper is free to roll.
         :return: Nothing is returned.
         """
-        self.sleep(0.4)
+        sleep(0.4)
         if (self.motorHardwareMode > 0):
             self.stepper.release()
+            
     def dial(self, symbol_number, chevron):
         """
         This function moves the symbol_number to the desired chevron. It also updates the ring position file.
@@ -131,7 +151,7 @@ class Dial:
             Helper function to determine the needed number of steps to move symbol_number, to chevron
             :return: The number of steps to move is returned as an int.
             """
-            # How many steps is needed:
+            # How many steps are needed:
             try:
                 steps = self.chevrons[chevron] - ((self.ring_position('get') + self.symbols[symbol_number]) % self.total_steps)
             except KeyError: # If we dial more chevrons than the stargate can handle. Don't return any steps.

@@ -2,12 +2,13 @@ import spidev
 
 class SymbolRingHomingManager:
 
-    def __init__(self, stargate):
+    def __init__(self, stargate, ring):
 
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.audio = stargate.audio
-        
+        self.ring = ring
+
         self.offset = 0
         self.homing_sensor_sensitivity = 0.15 #This is the voltage level for when the ring is in the home position.
         
@@ -17,16 +18,15 @@ class SymbolRingHomingManager:
         self.adc_resolution = 10 # The MCP3002 is a 10-bit ADC
         self.vref = 3.3
         
-        self.ring = None
 
     def set_ring(self, ring):
         self.ring = ring
         
     def find_home(self):
         self.audio.sound_start('rolling_ring')  # play the audio movement
-        for i in range(steps):
-            if (self.motorHardwareMode > 0):
-                stepper_micro_pos = stepper.onestep(direction=self.direction, style=stp.DOUBLE) + 8 # this line moves the motor.
+        for i in range(self.ring.steps):
+            if (self.ring.motorHardwareMode > 0):
+                stepper_micro_pos = self.ring.move_raw_one_step() + 8 # this line moves the motor.
             else:
                 try:
                     stepper_micro_pos = stepper_micro_pos + 8
