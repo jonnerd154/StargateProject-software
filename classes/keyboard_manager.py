@@ -8,9 +8,7 @@ class KeyboardManager:
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.audio = stargate.audio
-        
-        self.soundFxRoot = "/home/sg1/sg1/soundfx" #No trailing slash ## TODO: Move to config or Parent(__file__)
-        
+                
     def key_press(self):
         """
         This helper function stops the program (thread) and waits for a single keypress.
@@ -56,7 +54,7 @@ class KeyboardManager:
                 if key == 'A':
                     symbol_number = 'centre_button_outgoing'
 
-            self.audio.play_random_audio_clip(str(self.soundFxRoot + "/DHD/"))
+            self.audio.play_random_audio_clip(str(self.audio.soundFxRoot + "/DHD/"))
             self.log.log(f'key: {key} -> symbol: {symbol_number}')
 
             ## If the user inputs the - key to abort. Not possible from the DHD.
