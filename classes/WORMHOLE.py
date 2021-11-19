@@ -25,6 +25,9 @@ class Wormhole:
         self.wormhole_max_time = 38 * 60  # A wormhole can only be maintained for about 38 minutes without tremendous amounts of power. (Black hole)
         self.audio_clip_wait_time = 17  # The frequency of the random audio clips.
 
+		# Turn off all the LEDs
+        self.clear_wormhole()
+
     ## The wormhole helper functions
     def clear_wormhole(self):
         """

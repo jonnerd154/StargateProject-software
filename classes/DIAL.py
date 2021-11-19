@@ -46,6 +46,9 @@ class Dial:
         ## Initialize the Homing Manager
         self.homingManager = SymbolRingHomingManager(stargate, self)
         
+        # Release the ring for safety
+        self.release()
+        
 
     @staticmethod
     def find_offset(position, max_steps):

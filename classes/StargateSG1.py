@@ -46,7 +46,7 @@ class StargateSG1:
         self.locked_chevrons_incoming = 0 # The current number of locked outgoing chevrons
         self.wormhole = False # The state of the wormhole.
         self.black_hole = False # Did we dial the black hole?
-        self.fan_gate_online_status = None # To keep track of the dialled fan_gate status
+        self.fan_gate_online_status = None # To keep track of the dialed fan_gate status
         self.fan_gate_incoming_IP = None # To keep track of the IP address for the remote gate that establishes a wormhole
 
         ### Set the local stargate address so that it's ready to accept incoming connections from the internet, or other local stargates.
@@ -57,19 +57,9 @@ class StargateSG1:
         ### Set up the needed classes and make them ready to use ###
         ### Initiate the spinning ring dial object.
         self.ring = Dial(self)
-        self.ring.release()
-
-        ### initiate the Chevrons:
-        # The chevron config is moved to the chevrons.py file. The chevron.py file is not overwritten with the automatic update
-        # so you can keep your custom setup if you have one.
         self.chevrons = ChevronManager(self)
-
-        # A "Dialer" is either a Keyboard or DHDv2
-        self.dialer = Dialer(self)
-
-        ### Initiate the Wormhole object.
+        self.dialer = Dialer(self) # A "Dialer" is either a Keyboard or DHDv2
         self.wh = Wormhole(self)
-        self.wh.clear_wormhole() # Start with the wormhole off.
 
         ### Stargate fan-made gate addresses ###
         # The custom fan_gate addresses is set in a separate file; stargate_address.py. This way it won't get overwritten with an automatic update.
@@ -106,25 +96,25 @@ class StargateSG1:
     def update(self):
         """
         This is the main method to keep the stargate running and make decisions based on the manipulated objects variables.
-        There are basically two main phases, the dialling phase and the wormhole phase.
+        There are basically two main phases, the dialing phase and the wormhole phase.
         :return: Nothing is returned.
         """
         while self.running: # If we have not aborted
 
-            ### The Dialling phase###
+            ### The Dialing phase###
             if not self.wormhole and self.running: # If we are in the dialing phase
 
-                ## Outgoing Dialling ##
-                self.outgoing_dialling()
+                ## Outgoing dialing ##
+                self.outgoing_dialing()
 
-                ## Incoming Dialling ##
-                self.incoming_dialling()
+                ## Incoming dialing ##
+                self.incoming_dialing()
 
                 ## Establishing wormhole ##
                 self.establishing_wormhole()
 
                 ### Check for inactivity ###
-                # If there are something in the buffers and no activity for 1 minute while dialling.
+                # If there are something in the buffers and no activity for 1 minute while dialing.
                 if self.inactivity(60):
                     self.log.log('Inactivity detected, aborting.')
                     self.shutdown()
@@ -139,9 +129,9 @@ class StargateSG1:
         # When the stargate is no longer running.
         self.shutdown(cancel_sound=False)
 
-    def outgoing_dialling(self):
+    def outgoing_dialing(self):
         """
-        This method handles the outgoing dialling of the stargate. It's kept in it's own method so not to clutter up the update method too much.
+        This method handles the outgoing dialing of the stargate. It's kept in it's own method so not to clutter up the update method too much.
         :return: Nothing is returned
         """
         if len(self.address_buffer_outgoing) > self.locked_chevrons_outgoing:
@@ -149,7 +139,7 @@ class StargateSG1:
             self.locked_chevrons_outgoing += 1  # Increment the locked chevrons variable.
             try:
                 self.chevrons.get(self.locked_chevrons_outgoing).on()  # Do the chevron locking thing.
-            except KeyError:  # If we dialled more chevrons than the stargate can handle.
+            except KeyError:  # If we dialed more chevrons than the stargate can handle.
                 pass  # Just pass without activating a chevron.
             self.log.log(f'Chevron {self.locked_chevrons_outgoing} locked with symbol: {self.address_buffer_outgoing[self.locked_chevrons_outgoing - 1]}')
             self.last_activity_time = time()  # update the last_activity_time
@@ -164,12 +154,13 @@ class StargateSG1:
                         self.fan_gate_online_status = True  # set the online status to True
                     else:
                         self.fan_gate_online_status = False  # set the online status to False, to keep the dialing running more smoothly if the fan_gate is offline.
-    def incoming_dialling(self):
+    
+    def incoming_dialing(self):
         """
-        This method handles the incoming dialling of the stargate. It's kept in it's own method so not to clutter up the update method too much.
+        This method handles the incoming dialing of the stargate. It's kept in it's own method so not to clutter up the update method too much.
         :return: Nothing is returned
         """
-        # If there are dialled incoming symbols that are not yet locked and we are currently not dialing out.
+        # If there are dialed incoming symbols that are not yet locked and we are currently not dialing out.
         if len(self.address_buffer_incoming) > self.locked_chevrons_incoming and len(self.address_buffer_outgoing) == 0:
             # If there are more than one unlocked symbol, add a short delay to avoid locking both symbols at once.
             if len(self.address_buffer_incoming) > self.locked_chevrons_incoming + 1:
@@ -181,7 +172,7 @@ class StargateSG1:
                 self.locked_chevrons_incoming += 1  # Increment the locked chevrons variable.
                 try:
                     self.chevrons[self.locked_chevrons_incoming].incoming_on()  # Do the chevron locking thing.
-                except KeyError:  # If we dialled more chevrons than the stargate can handle.
+                except KeyError:  # If we dialed more chevrons than the stargate can handle.
                     pass  # Just pass without activating a chevron.
                 # Play the audio clip for incoming wormhole
                 if self.locked_chevrons_incoming == 1:
@@ -206,7 +197,7 @@ class StargateSG1:
         """
         ### Establishing wormhole ###
         ## Outgoing wormhole##
-        # If the centre_button_outgoing is active and all dialled symbols are locked.
+        # If the centre_button_outgoing is active and all dialed symbols are locked.
         if self.centre_button_outgoing and (0 < len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing):
             # If we did not dial a fan_gate, set the IP variable to True instead of an IP.
             if self.valid_planet(self.address_buffer_outgoing) != 'fan_gate':
@@ -224,7 +215,7 @@ class StargateSG1:
                 self.shutdown(cancel_sound=False, wormhole_fail_sound=True)
 
         ## Incoming wormhole ##
-        # If the centre_button_incoming is active and all dialled symbols are locked.
+        # If the centre_button_incoming is active and all dialed symbols are locked.
         elif self.centre_button_incoming and 0 < len(self.address_buffer_incoming) == self.locked_chevrons_incoming:
             # If the incoming wormhole matches the local address
             if self.address_buffer_incoming[0:-1] == self.local_stargate_address:
@@ -239,18 +230,18 @@ class StargateSG1:
         This is a method to help check if we are able to establish a wormhole or not.
         :return: Returns True if we can establish a wormhole, and False if not
         """
-        # If the dialled address is valid
+        # If the dialed address is valid
         if len(self.address_buffer_outgoing) > 0 and self.valid_planet(self.address_buffer_outgoing) or \
             len(self.address_buffer_incoming) > 0 and self.valid_planet(self.address_buffer_incoming):
             # If we dialed a fan_gate
             if self.valid_planet(self.address_buffer_outgoing) == 'fan_gate':
-                # If the dialled fan_gate is not online
+                # If the dialed fan_gate is not online
                 if not self.fan_gate_online_status:
-                    self.log.log('The dialled fan_gate is NOT online!')
+                    self.log.log('The dialed fan_gate is NOT online!')
                     return False
                 # If the dialed fan_gate is already busy, with an active wormhole or outgoing dialing is in progress.
                 elif self.get_status_of_remote_gate(self.get_ip_from_stargate_address(self.address_buffer_outgoing, self.fan_gates)):
-                    self.log.log('The dialled fan_gate is already busy!')
+                    self.log.log('The dialed fan_gate is already busy!')
                     return False
             return True  # returns true if we can establish a wormhole
         return False  # returns false if we cannot establish a wormhole.
@@ -292,8 +283,8 @@ class StargateSG1:
             A helper function to check if the dialed address is a valid planet address. This function excludes the
             last symbol in the address since the last symbol can be any point of origin.
             :param address: the destination as a list of symbol numbers
-            :return:    If the dialled address is a fan_gate, the string 'fan_gate' is returned.
-                        If the dialled address is a known_planet, the string 'known_planet' is returned.
+            :return:    If the dialed address is a fan_gate, the string 'fan_gate' is returned.
+                        If the dialed address is a known_planet, the string 'known_planet' is returned.
                         Else: False is returned if it is not a valid planet.
             """
 
@@ -308,7 +299,7 @@ class StargateSG1:
         if copy_of_address == self.local_stargate_address:
             return False
 
-        # Check if we dialled the black hole planet
+        # Check if we dialed the black hole planet
         if copy_of_address == known_planets["P3W-451"]:
             self.black_hole = True
             self.log.log("Oh no! It's the black hole planet!")
@@ -329,7 +320,7 @@ class StargateSG1:
         :param seconds: The number of seconds of allowed inactivity
         :return: True if inactivity is detected, False if not
         """
-        if not self.wormhole: #If we are in the dialling phase
+        if not self.wormhole: #If we are in the dialing phase
             if self.last_activity_time: #If the variable is not None
                 if (len(self.address_buffer_incoming) > 0) or (len(self.address_buffer_outgoing) > 0): # If there are something in the buffers
                     if (time() - self.last_activity_time) > seconds:
@@ -339,10 +330,10 @@ class StargateSG1:
     #TODO: move this to an "address management" class
     def is_it_a_known_fan_made_stargate(self, dialed_address, known_fan_made_stargates, stargate_object):
         """
-        This helper function tries to check the first two symbols in the dialled address and compares it to
-        the known_fan_made_stargates to check if the address dialled is a known fan made stargate. The first two symbols
+        This helper function tries to check the first two symbols in the dialed address and compares it to
+        the known_fan_made_stargates to check if the address dialed is a known fan made stargate. The first two symbols
         is enough to determine if it's a fan_gate. The fan gates, need only two unique symbols for identification.
-        :param stargate_object: The stargate object. This is used to rule out self dialling.
+        :param stargate_object: The stargate object. This is used to rule out self dialing.
         :param dialed_address: a stargate address. It does not need to be complete. eg: [10, 15, 8, 24]
         :param known_fan_made_stargates: This is a dictionary of known stargates. eg:
                 {'Kristian Tysse': [[7, 32, 27, 18, 12, 16], '192.168.10.129'],
