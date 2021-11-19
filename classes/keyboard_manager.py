@@ -64,7 +64,7 @@ class KeyboardManager:
 
             ## If the user hits the centre_button
             elif key == 'A':
-                # If we are dialling
+                # If we are dialing
                 if len(stargate.address_buffer_outgoing) > 0 and not stargate.wormhole:
                     stargate.centre_button_outgoing = True
                     stargate.dialer.hardware.setPixel(0, 255, 0, 0) # Activate the centre_button_outgoing light
