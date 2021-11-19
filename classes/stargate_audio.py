@@ -12,6 +12,9 @@ class StargateAudio:
         # Make ready the sound effects
         self.sounds = {}
         self.sounds['rolling_ring'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/roll.wav")) }
+        self.sounds['dialing_cancel'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/cancel.wav")) }
+        self.sounds['dialing_fail'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/dial_fail_sg1.wav")) }
+        
 
     def sound_start(self, clip_name):
         self.sounds[clip_name]['obj'] = self.sounds[clip_name]['file'].play()

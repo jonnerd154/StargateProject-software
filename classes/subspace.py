@@ -155,27 +155,3 @@ class Subspace:
         except:
             return 'Unknown'
 
-    def is_it_a_known_fan_made_stargate(self, dialed_address, known_fan_made_stargates, stargate_object):
-        """
-        This helper function tries to check the first two symbols in the dialled address and compares it to
-        the known_fan_made_stargates to check if the address dialled is a known fan made stargate. The first two symbols
-        is enough to determine if it's a fan_gate. The fan gates, need only two unique symbols for identification.
-        :param stargate_object: The stargate object. This is used to rule out self dialling.
-        :param dialed_address: a stargate address. It does not need to be complete. eg: [10, 15, 8, 24]
-        :param known_fan_made_stargates: This is a dictionary of known stargates. eg:
-                {'Kristian Tysse': [[7, 32, 27, 18, 12, 16], '192.168.10.129'],
-                'Someone else': [[7, 32, 27, 18, 12, 16], '1.2.3.4']
-                }
-        :return: True if we are dialing a fan made address, False if not.
-        """
-        for gate in known_fan_made_stargates:
-            try:
-                #If we dial our own local address:
-                if dialed_address[:2] == stargate_object.local_stargate_address[:2]:
-                    return False
-                # If we dial a known fan_gate
-                elif dialed_address[:2] == known_fan_made_stargates[gate][0][:2]:
-                    return True
-            except:
-                pass
-        return False

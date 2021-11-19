@@ -25,6 +25,20 @@ class ChevronManager:
             
     def get( self, chevronNumber ):
         return self.chevrons[chevronNumber]
+    
+    def all_off(self, sound=None):
+        """
+        A helper method to turn off all the chevrons
+        :param sound: Set sound to 'on' if sound is desired when turning off a chevron light.
+        :param chevrons: the dictionary of chevrons
+        :return: Nothing is returned
+        """
+        for number, chevron in self.chevrons.items():
+            if sound == 'on':
+                chevron.off(sound='on')
+            else:
+                chevron.off()
+
 
 class Chevron:
     """

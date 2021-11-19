@@ -153,7 +153,7 @@ class Dial:
             """
             # How many steps are needed:
             try:
-                steps = self.chevrons[chevron] - ((self.ring_position('get') + self.symbols[symbol_number]) % self.total_steps)
+                steps = self.chevrons.get(chevron) - ((self.ring_position('get') + self.symbols[symbol_number]) % self.total_steps)
             except KeyError: # If we dial more chevrons than the stargate can handle. Don't return any steps.
                 return None
             if abs(steps) > self.total_steps / 2: # Check if distance is more than half a revolution

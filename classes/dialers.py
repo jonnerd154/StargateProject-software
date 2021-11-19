@@ -184,6 +184,10 @@ class DHDv2:
     def latch(self):
         self.c.send("latch")
         return True
+    
+    def clear_lights(self):
+        self.setAllPixelsToColor(0, 0, 0)
+        self.latch()
 
 class KeyboardMode:
     """
@@ -235,4 +239,7 @@ class KeyboardMode:
         pass
 
     def latch(self):
+        pass
+    
+    def clear_lights(self):
         pass

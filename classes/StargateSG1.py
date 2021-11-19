@@ -149,11 +149,11 @@ class StargateSG1:
             self.ring.dial(self.address_buffer_outgoing[self.locked_chevrons_outgoing], self.locked_chevrons_outgoing + 1)  # Dial the symbol
             self.locked_chevrons_outgoing += 1  # Increment the locked chevrons variable.
             try:
-                self.chevrons[self.locked_chevrons_outgoing].on()  # Do the chevron locking thing.
+                self.chevrons.get(self.locked_chevrons_outgoing).on()  # Do the chevron locking thing.
             except KeyError:  # If we dialled more chevrons than the stargate can handle.
                 pass  # Just pass without activating a chevron.
             self.log.log(f'Chevron {self.locked_chevrons_outgoing} locked with symbol: {self.address_buffer_outgoing[self.locked_chevrons_outgoing - 1]}')
-            self.last_activity_time = self.time()  # update the last_activity_time
+            self.last_activity_time = time()  # update the last_activity_time
 
             ## Check if we are dialing a fan_gate and send the symbols to the remote gate.
             if self.is_it_a_known_fan_made_stargate(self.address_buffer_outgoing, self.fan_gates, self):
@@ -188,7 +188,7 @@ class StargateSG1:
                 if self.locked_chevrons_incoming == 1:
                     self.play_random_audio_clip(str(self.root_path / "../soundfx/IncomingWormhole/"))
                 self.sleep(delay)  # if there's a delay, used it.
-                self.last_activity_time = self.time()  # update the last_activity_time
+                self.last_activity_time = time()  # update the last_activity_time
                 # Do the logging
                 self.log.log(f'Incoming: Chevron {self.locked_chevrons_incoming} locked with symbol {self.address_buffer_incoming[self.locked_chevrons_incoming - 1]}')
     def try_sending_centre_button(self):
@@ -262,18 +262,20 @@ class StargateSG1:
         """
         # Play the cancel sound
         if cancel_sound:
-            self.sa.WaveObject.from_wave_file(str(self.root_path / "../soundfx/cancel.wav")).play()
+            self.audio.sound_start('dialing_cancel')
         # Play the wormhole fail sound
         if wormhole_fail_sound:
-            self.sa.WaveObject.from_wave_file(str(self.root_path / "../soundfx/dial_fail_sg1.wav")).play()
+            self.audio.sound_start('dialing_fail')
         # Turn off the chevrons
-        self.all_chevrons_off(self.chevrons)
+        self.chevrons.all_off()
+        
         # Turn off the DHD lights
-        self.dhd.setAllPixelsToColor(0, 0, 0)
-        self.dhd.latch()
+        self.dialer.hardware.clear_lights()
+        
         # Release the stepper motor.
         self.ring.release()
-        self.log.log('Shutting down..')
+        self.log.log('Shutting down the gate...')
+        
         # Reset som variables
         self.address_buffer_outgoing = []
         self.address_buffer_incoming = []
@@ -331,6 +333,32 @@ class StargateSG1:
         if not self.wormhole: #If we are in the dialling phase
             if self.last_activity_time: #If the variable is not None
                 if (len(self.address_buffer_incoming) > 0) or (len(self.address_buffer_outgoing) > 0): # If there are something in the buffers
-                    if (self.time() - self.last_activity_time) > seconds:
+                    if (time() - self.last_activity_time) > seconds:
                         return True
+        return False
+
+    #TODO: move this to an "address management" class
+    def is_it_a_known_fan_made_stargate(self, dialed_address, known_fan_made_stargates, stargate_object):
+        """
+        This helper function tries to check the first two symbols in the dialled address and compares it to
+        the known_fan_made_stargates to check if the address dialled is a known fan made stargate. The first two symbols
+        is enough to determine if it's a fan_gate. The fan gates, need only two unique symbols for identification.
+        :param stargate_object: The stargate object. This is used to rule out self dialling.
+        :param dialed_address: a stargate address. It does not need to be complete. eg: [10, 15, 8, 24]
+        :param known_fan_made_stargates: This is a dictionary of known stargates. eg:
+                {'Kristian Tysse': [[7, 32, 27, 18, 12, 16], '192.168.10.129'],
+                'Someone else': [[7, 32, 27, 18, 12, 16], '1.2.3.4']
+                }
+        :return: True if we are dialing a fan made address, False if not.
+        """
+        for gate in known_fan_made_stargates:
+            try:
+                #If we dial our own local address:
+                if dialed_address[:2] == stargate_object.local_stargate_address[:2]:
+                    return False
+                # If we dial a known fan_gate
+                elif dialed_address[:2] == known_fan_made_stargates[gate][0][:2]:
+                    return True
+            except:
+                pass
         return False
