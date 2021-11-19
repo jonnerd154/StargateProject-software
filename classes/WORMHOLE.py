@@ -29,11 +29,6 @@ class Wormhole:
         self.wormhole_max_time = 38 * 60  # A wormhole can only be maintained for about 38 minutes without tremendous amounts of power. (Black hole)
         self.audio_clip_wait_time = 17  # The frequency of the random audio clips.
 
-        # wormhole audio
-        self.open_audio = self.sa.WaveObject.from_wave_file(str(self.root_path / "../soundfx/eh_usual_open.wav"))
-        self.established_audio = self.sa.WaveObject.from_wave_file(str(self.root_path / "../soundfx/wormhole-loop.wav"))
-        self.close_audio = self.sa.WaveObject.from_wave_file(str(self.root_path / "../soundfx/eh_usual_close.wav"))
-
     ## The wormhole helper functions
     def clear_wormhole(self):
         """
@@ -159,7 +154,7 @@ class Wormhole:
             Method for opening the wormhole. For some reason i did not use the fade_transition function here..
             :return: Nothing is returned.
             """
-            self.open_audio.play()  # Open wormhole audio
+            self.audio.sound_start('wormhole_open')  # Open wormhole audio
             for i in range(20):
                 self.pixels.fill(((i // 2) * 2, i * 2, i * 2))
                 self.pixels.show()
@@ -187,7 +182,7 @@ class Wormhole:
 
         self.stargate_object.wormhole = True  # temporarily to be able to use the fade_transition function
         self.fade_transition(pattern_blue(self.tot_leds))
-        self.close_audio.play()  # Play the close wormhole audio
+        self.audio.sound_start('wormhole_close')  # Play the close wormhole audio
         self.fade_transition(no_pattern)
         self.stargate_object.wormhole_max_time = 38 * 60 # Reset the variable
         self.stargate_object.audio_clip_wait_time = 17 # Reset the variable
@@ -320,7 +315,7 @@ class Wormhole:
         self.open_wormhole()
 
         # this will play the worm hole active audio. It lasts about 4min 22sec. It is deliberately not looping or restarting.
-        established_audio_play_object = self.established_audio.play()
+        self.audio.sound_start('wormhole_established')
 
         open_time = time()
         random_audio_start_time = time()
@@ -364,7 +359,7 @@ class Wormhole:
             time_limit_audio.wait_done()
 
         self.close_wormhole()
-        if established_audio_play_object.is_playing():
-            established_audio_play_object.stop()
+        if self.audio.is_playing('wormhole_established'):
+            self.audio.sound_stop('wormhole_established')
         self.stargate_object.wormhole = False # The close_wormhole method also does this.. shouldn't be needed.
         self.log.log(f'Disengaged Wormhole after {timedelta(seconds=int(time() - open_time))}')
