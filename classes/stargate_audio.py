@@ -29,7 +29,7 @@ class StargateAudio:
     def is_playing(self, clip_name):
         return self.sounds[clip_name]['obj'].is_playing()
 
-    def play_random_audio_clip(self, path_to_folder):
+    def play_random_clip(self, directory):
         from os import listdir, path
         from random import choice
         import simpleaudio as sa
@@ -39,6 +39,7 @@ class StargateAudio:
         :return: the play object is returned.
         """
         
+        path_to_folder = self.soundFxRoot + "/" + directory
         rand_file = choice(listdir(path_to_folder))
         filepath =  path.join(path_to_folder, rand_file)
 

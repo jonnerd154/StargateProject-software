@@ -325,10 +325,10 @@ class Wormhole:
             possible_patterns = self.possible_wormholes(black_hole=True)
             self.wormhole_max_time = 5259488 * 60  # Make it 10 years...
             self.audio_clip_wait_time = 7
-            audio_path = "../soundfx/audio_clips/black_hole/"
+            audio_group = "audio_clips/black_hole"
         else:
             # If we did not dial the black hole planet
-            audio_path = "../soundfx/audio_clips/"
+            audio_group = "audio_clips"
             possible_patterns = self.possible_wormholes(black_hole=False)
 
         # Keep the wormhole open
@@ -345,16 +345,16 @@ class Wormhole:
             # Play random audio clips
             if (time() - random_audio_start_time) > self.audio_clip_wait_time:  # If there has been "silence" for more than audio_clip_wait_time
                 if not random_audio_clip:  # if the variable is False. Will only trigger for the first loop.
-                    random_audio_clip = self.audio.play_random_audio_clip(str(self.root_path / audio_path))
+                    random_audio_clip = self.audio.play_random_clip(audio_group)
                 elif hasattr(random_audio_clip, 'is_playing') and not random_audio_clip.is_playing():  # If it's not already playing
-                    random_audio_clip = self.audio.play_random_audio_clip(str(self.root_path / audio_path))
+                    random_audio_clip = self.audio.play_random_clip(audio_group)
                 random_audio_start_time = time()
 
         # when the loop exits, shut down the wormhole etc.
         if (time() - open_time) > self.wormhole_max_time:  # if the wormhole closes due to the 38min time limit.
             if hasattr(random_audio_clip, 'is_playing') and random_audio_clip.is_playing():  # If the random audio clip is still playing:
                 random_audio_clip.wait_done()  # wait until it's finished.
-            time_limit_audio = self.audio.play_random_audio_clip(str(self.root_path / "../soundfx/38min/"))  # The 38min ones.
+            time_limit_audio = self.audio.play_random_clip(str(self.root_path / "../soundfx/38min/"))  # The 38min ones.
             time_limit_audio.wait_done()
 
         self.close_wormhole()

@@ -89,7 +89,7 @@ class StargateSG1:
         self.audio.set_volume(65)
 
         ### Notify that the Stargate is ready
-        self.audio.play_random_audio_clip(str(self.root_path / "../soundfx/startup/"))
+        self.audio.play_random_clip("startup")
         self.log.log('The Stargate is started and ready!')
 
     ## Methods to manipulate the StargateSG1 object ###
@@ -176,7 +176,7 @@ class StargateSG1:
                     pass  # Just pass without activating a chevron.
                 # Play the audio clip for incoming wormhole
                 if self.locked_chevrons_incoming == 1:
-                    self.play_random_audio_clip(str(self.root_path / "../soundfx/IncomingWormhole/"))
+                    self.audio.play_random_clip("IncomingWormhole")
                 self.sleep(delay)  # if there's a delay, used it.
                 self.last_activity_time = time()  # update the last_activity_time
                 # Do the logging

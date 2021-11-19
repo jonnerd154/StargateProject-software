@@ -54,7 +54,7 @@ class KeyboardManager:
                 if key == 'A':
                     symbol_number = 'centre_button_outgoing'
 
-            self.audio.play_random_audio_clip(str(self.audio.soundFxRoot + "/DHD/"))
+            self.audio.play_random_clip("DHD")
             self.log.log(f'key: {key} -> symbol: {symbol_number}')
 
             ## If the user inputs the - key to abort. Not possible from the DHD.
