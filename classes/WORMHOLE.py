@@ -1,5 +1,4 @@
 from random import choice, randint
-import simpleaudio as sa
 import neopixel, board
 from time import sleep, time
 from datetime import timedelta
@@ -16,9 +15,6 @@ class Wormhole:
         self.log = stargate_object.log
         self.cfg = stargate_object.cfg
         self.audio = stargate_object.app.audio
-
-        # TODO: Remove these
-        self.sa = sa
         
         self.root_path = Path(__file__).parent.absolute()
         self.tot_leds = 122
