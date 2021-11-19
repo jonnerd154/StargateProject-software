@@ -5,7 +5,6 @@ from STARGATE_SERVER import StargateServer
 from threading import Thread
 from time import time, sleep
 from pathlib import Path
-import simpleaudio as sa
 from random import randrange
 
 from stargate_address import local_stargate_address
