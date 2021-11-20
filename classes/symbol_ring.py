@@ -34,6 +34,7 @@ class SymbolRing:
         self.slow_speed = 0.01
         self.initial_speed = 0.01  # the initial speed
         self.acceleration_length = 40  # the number of steps used for acceleration
+        self.ringDirectionModeLongest = True
         
         # The symbols position on the symbol ring
         self.symbols = {1: 0, 2: 32, 3: 64, 4: 96, 5: 128, 6: 160, 7: 192, 8: 224, 9: 256, 10: 288, 11: 320, 12: 352, 13: 384, 14: 416, 15: 448, 16: 480, 17: 512, 18: 544, 19: 576, 20: 608, 21: 640, 22: 672, 23: 704, 24: 736, 25: 768, 26: 800, 27: 832, 28: 864, 29: 896, 30: 928, 31: 960, 32: 992, 33: 1024, 34: 1056, 35: 1088, 36: 1120, 37: 1152, 38: 1184, 39: 1216}
@@ -155,18 +156,18 @@ class SymbolRing:
         
         calc_steps = self.calculate_steps(chevron, symbol_number) # calculate the steps
 
-        # TODO: Enable both options, move to cfg
-        
-        # Option one. This will move the symbol the shortest direction, cc or ccw.
-        # if calc_steps: # If not None
-        #     self.move(calc_steps) # move the ring the calc_steps steps.
-
-        ## Option two. This will move the symbol the longest direction, cc or ccw.
-        if calc_steps: # If not None
-            if calc_steps >= 0:
-                self.move((self.total_steps - calc_steps) * -1)  # move the ring, but the long way in the opposite direction.
-            else:
-                self.move((self.total_steps - abs(calc_steps)))  # move the ring, but the long way in the opposite direction.
+        # Choose which ring direction mode to use
+        if ( self.ringDirectionModeLongest is False )
+            ## Option one. This will move the symbol the shortest direction, cc or ccw.
+            if calc_steps: # If not None
+                self.move(calc_steps) # move the ring the calc_steps steps.
+        else:
+            ## Option two. This will move the symbol the longest direction, cc or ccw.
+            if calc_steps: # If not None
+                if calc_steps >= 0:
+                    self.move((self.total_steps - calc_steps) * -1)  # move the ring, but the long way in the opposite direction.
+                else:
+                    self.move((self.total_steps - abs(calc_steps)))  # move the ring, but the long way in the opposite direction.
 
         # Update and save the ring position.
         self.set_position() 
