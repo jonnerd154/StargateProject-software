@@ -1,8 +1,8 @@
 class AncientsLogBook:
 
-    def __init__(self, log_file):
+    def __init__(self, log_file, printToConsole = True):
 
-        self.printToConsole = True
+        self.printToConsole = printToConsole
 
         self.gateLog = log_file
 
@@ -11,7 +11,7 @@ class AncientsLogBook:
 
         pass
 
-    def log(self, str):
+    def log(self, str, printToConsoleOverride = False):
         """
         This functions logs the string_for_logging to the end of file.
         :param file: the file name as a string. It will be placed in the same folder as the file from where this function is run.
@@ -36,5 +36,5 @@ class AncientsLogBook:
         # if stat(Path.joinpath(root_path, file)).st_uid != uid: # If the user is wrong
         #     os.chown(str(root_path / file), uid, gid) # Change the owner and group of the file.
 
-        if (self.printToConsole):
+        if (self.printToConsole and not printToConsoleOverride):
             print(logLine)

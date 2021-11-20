@@ -12,7 +12,7 @@ class Database:
         self.cfg = StargateConfig("database.json")
 
         ### Setup the logger
-        self.log = AncientsLogBook("database.log")
+        self.log = AncientsLogBook("database.log", printToConsole=False)
 
     def connect(self):
         self.log.log("Connecting")
