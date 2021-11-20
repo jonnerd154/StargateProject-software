@@ -10,11 +10,15 @@ import os
 sys.path.append('classes')
 sys.path.append('config')
 
+from http.server import HTTPServer
+import threading
+
 from stargate_config import StargateConfig
 from ancients_log_book import AncientsLogBook
 from software_update import SoftwareUpdate
 from stargate_audio import StargateAudio
 from stargate_sg1 import StargateSG1
+from web_server import StargateWebServer
 
 class GateApplication:
 	
@@ -39,6 +43,15 @@ class GateApplication:
 		self.log.log('Booting up the Stargate! Version {}'.format(self.swUpdater.get_current_version()))
 		self.stargate = StargateSG1(self)
 
+		print('Running web server...')
+		StargateWebServer.stargate = self.stargate
+		httpd = HTTPServer(('', 80), StargateWebServer)
+
+		httpd_thread = threading.Thread(name="HTTP", target=httpd.serve_forever)
+		httpd_thread.daemon = True
+		httpd_thread.start()
+	
+	
 	def run(self):
 	
 		# Keep the script running and monitor for updates with the update() method.

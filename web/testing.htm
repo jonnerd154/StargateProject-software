@@ -1,0 +1,137 @@
+<html>
+    <head>
+        <meta charset="UTF-8"> 
+        <title>Stargate Command</title>
+        <link rel="stylesheet" href="main.css" />
+        <style>
+        .animation {margin:10px;}
+        </style>
+    </head>
+    <body>
+       
+        <div class="animations">
+        <h2>Motor control </h2>
+            <div class="animation" anim="4" action="spinBackward">
+                Spin backward
+            </div>
+            <div class="animation" anim="4" action="spinForward">
+                Spin forward
+            </div>
+             <div class="animation" anim="4" action="driveTest">
+                Drive test
+            </div>
+	        <div class="animation" anim="4" action="goHome">
+                Home Stargate
+            </div>
+             <div class="animation" anim="4" action="lockChevron" style="width:324px;">
+                Lock/unlock chevron
+            </div>
+            
+	    <hr />
+        <h2>Lighting control </h2>
+            <div class="animation" anim="4" action="allLightsOn">
+                All on
+            </div>
+            <div class="animation" anim="4" action="allLightsOff">
+                All off
+            </div>
+            
+            <div class="animation" anim="4" action="ringOn">
+                Ring on
+            </div>
+            <div class="animation" anim="4" action="ringOff">
+                Ring off
+            </div>
+            
+            <div class="animation" anim="4" action="rampOn">
+                Ramp on
+            </div>
+            <div class="animation" anim="4" action="rampOff">
+                Ramp off
+            </div>
+            
+            <div class="animation" anim="4" action="ledOn">
+                LED on
+            </div>
+            <div class="animation" anim="4" action="ledOff">
+                LED off 
+            </div>
+            
+            <div class="animation" anim="4" action="chevron0">
+                Chevron 0 on
+            </div>
+            <div class="animation" anim="4" action="chevron1">
+                Chevron 1 on
+            </div>
+            <div class="animation" anim="4" action="chevron2">
+                Chevron 2 on
+            </div>
+            <div class="animation" anim="4" action="chevron3">
+                Chevron 3 on
+            </div>
+            <div class="animation" anim="4" action="chevron4">
+                Chevron 4 on
+            </div>
+            <div class="animation" anim="4" action="chevron5">
+                Chevron 5 on
+            </div>
+            <div class="animation" anim="4" action="chevron6">
+                Chevron 6 on
+            </div>
+            <div class="animation" anim="4" action="chevron7">
+                Chevron 7 on
+            </div>
+            <div class="animation" anim="4" action="chevron8">
+                Chevron 8 on
+            </div>
+            
+        </div>
+
+		<hr />
+        <div class="controls">
+        	<div class="control" onclick="window.location = 'index.htm';">
+                Dialing page
+            </div>
+            <div class="control" onclick="reboot();">
+                Reboot
+            </div>
+            <div class="control" onclick="shutdown();">
+                Shutdown
+            </div>
+        </div>
+
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>-->
+        <!--<script type="text/javascript" src="jquery-3.3.1.min.js"></script>-->
+        <script type="text/javascript">
+        	
+            function reboot() {
+                $.post({
+                    url: '/reboot'
+                });
+            }
+            
+            function shutdown() {
+                $.post({
+                    url: '/shutdown'
+                });
+            }
+
+            $('div.animations div.animation').click(function() {
+                const anim = +$(this).attr('anim');
+                const action = $(this).attr('action');
+
+                $.post({
+                    url: '/update',
+                    data: JSON.stringify({
+                        anim: anim,
+                        action: action
+                    })
+                })
+                .fail(function() {
+                    alert('Could not connect with Stargate server');
+                });
+            });
+
+        </script>
+    </body>
+</html>
