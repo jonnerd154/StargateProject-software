@@ -32,21 +32,25 @@ class Dial:
         self.stepper_pos = 0
         self.direction = stp.FORWARD
         
-        self.enableStepper = False # TODO: Move to cfg
+        self.enableStepper = True # TODO: Move to cfg
         
         self.hwDetector = HardwareDetector()
         self.motorHardwareMode = self.hwDetector.getMotorHardwareMode()
 
-		# If we have a stepper, and it's enabled in config, initialize it.
+        # If we have a stepper, and it's enabled in config, initialize it.
         if self.enableStepper and self.motorHardwareMode > 0 :
+            print('here 1')
             if self.motorHardwareMode == 1:
-            	self.stepper = MotorKit().stepper1
-            
+                print('here 2')
+
+                self.stepper = MotorKit().stepper1
+            print('here 3')
             ### put other motor driver options here
             
         else:
-        	from hardware_simulation import StepperSim
-        	self.stepper = StepperSim()
+            print('simulating stepper')
+            from hardware_simulation import StepperSim
+            self.stepper = StepperSim()
 
         # The symbols position on the symbol ring
         self.symbols = {1: 0, 2: 32, 3: 64, 4: 96, 5: 128, 6: 160, 7: 192, 8: 224, 9: 256, 10: 288, 11: 320, 12: 352, 13: 384, 14: 416, 15: 448, 16: 480, 17: 512, 18: 544, 19: 576, 20: 608, 21: 640, 22: 672, 23: 704, 24: 736, 25: 768, 26: 800, 27: 832, 28: 864, 29: 896, 30: 928, 31: 960, 32: 992, 33: 1024, 34: 1056, 35: 1088, 36: 1120, 37: 1152, 38: 1184, 39: 1216}
@@ -77,7 +81,7 @@ class Dial:
             return 0
 
     def move_raw_one_step(self, direction, style):
-        self.stepper.onestep(direction, style)
+        self.stepper.onestep(direction=direction, style=style)
     
     def move(self, steps):
         """
