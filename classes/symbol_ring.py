@@ -26,10 +26,14 @@ class SymbolRing:
         self.root_path = Path(__file__).parent.absolute()
         
         # TODO: Move to cfg
+        self.enableStepper = False 
         self.total_steps = 1250 # Old value: 1251
         self.micro_steps = 16
         self.stepper_pos = 0
-        self.enableStepper = False 
+        self.normal_speed = 0.002
+        self.slow_speed = 0.01
+        self.initial_speed = 0.01  # the initial speed
+        self.acceleration_length = 40  # the number of steps used for acceleration
         
         # The symbols position on the symbol ring
         self.symbols = {1: 0, 2: 32, 3: 64, 4: 96, 5: 128, 6: 160, 7: 192, 8: 224, 9: 256, 10: 288, 11: 320, 12: 352, 13: 384, 14: 416, 15: 448, 16: 480, 17: 512, 18: 544, 19: 576, 20: 608, 21: 640, 22: 672, 23: 704, 24: 736, 25: 768, 26: 800, 27: 832, 28: 864, 29: 896, 30: 928, 31: 960, 32: 992, 33: 1024, 34: 1056, 35: 1088, 36: 1120, 37: 1152, 38: 1184, 39: 1216}
@@ -49,7 +53,6 @@ class SymbolRing:
             ### put other motor driver options here
             
         else:
-            print('simulating stepper')
             from hardware_simulation import StepperSim
             self.stepper = StepperSim()
         
@@ -98,10 +101,7 @@ class SymbolRing:
             steps = abs(steps)
             direction = stp.BACKWARD
 
-        normal_speed = 0.002
-        slow_speed = 0.01
-        current_speed = 0.01  # the initial speed
-        acceleration_length = 40  # the number of steps used for acceleration
+        current_speed = self.initial_speed
 
         # Move the ring
         self.audio.sound_start('rolling_ring')  # play the audio movement
@@ -112,16 +112,16 @@ class SymbolRing:
             self.stepper_pos = (stepper_micro_pos // self.micro_steps) % self.total_steps # Update the self.stepper_pos value as the ring moves. Will have a value from 0 till self.total_steps = 1250.
 
             ## acceleration
-            if i < acceleration_length:
-                current_speed -= (slow_speed - normal_speed) / acceleration_length
+            if i < self.acceleration_length:
+                current_speed -= (self.slow_speed - self.normal_speed) / self.acceleration_length
                 sleep(current_speed)
-            ## de acceleration
-            elif i > (steps - acceleration_length):
-                current_speed += (slow_speed - normal_speed) / acceleration_length
+            ## deceleration
+            elif i > (steps - self.acceleration_length):
+                current_speed += (self.slow_speed - self.normal_speed) / self.acceleration_length
                 sleep(current_speed)
             ## slow without acceleration when short distance
-            elif steps < acceleration_length:
-                current_speed = normal_speed
+            elif steps < self.acceleration_length:
+                current_speed = self.normal_speed
                 sleep(current_speed)
                 
         self.audio.sound_stop('rolling_ring')  # stop the audio
@@ -132,13 +132,11 @@ class SymbolRing:
         :return: The number of steps to move is returned as an int.
         """
         # How many steps are needed:
-        
-        from pprint import pprint
-        pprint(self.chevrons)
         try:
             steps = self.chevrons.get(chevron) - ((self.get_position() + self.symbols[symbol_number]) % self.total_steps)
         except KeyError: # If we dial more chevrons than the stargate can handle. Don't return any steps.
             return None
+            
         if abs(steps) > self.total_steps / 2: # Check if distance is more than half a revolution
             new_steps = (self.total_steps - abs(steps)) % self.total_steps # Reduce with half a revolution, and flips the direction
             if steps > 0: # if the direction was forward, flip the direction

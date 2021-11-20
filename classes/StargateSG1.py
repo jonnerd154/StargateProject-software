@@ -216,11 +216,9 @@ class StargateSG1:
             self.try_sending_centre_button()
             # Try to establish a wormhole
             if self.possible_to_establish_wormhole():
-                print('Valid address is locked')
                 self.log.log('Valid address is locked')
                 self.wormhole = 'outgoing'
             else:
-                print('Unable to establish a Wormhole!')
                 self.log.log('Unable to establish a Wormhole!')
                 self.shutdown(cancel_sound=False, wormhole_fail_sound=True)
 
@@ -232,8 +230,7 @@ class StargateSG1:
                 self.wormhole = 'incoming'  # Set the wormhole state to activate the wormhole.
                 self.log.log('Incoming address is a match!')
             else:
-                print('NOT my local address!')
-                self.log.log('Incoming address is NOT a match!')
+                self.log.log('Incoming address is NOT a match to Local Gate Address!')
                 self.shutdown(cancel_sound=False, wormhole_fail_sound=True)
       
     
