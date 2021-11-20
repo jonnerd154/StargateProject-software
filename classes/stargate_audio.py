@@ -93,7 +93,7 @@ class StargateAudio:
         try:
             # If the wrong card is set in the alsa.conf file
             if get_usb_audio_device_card_number() != get_active_audio_card_number():
-                self.log.log('sg1.log', f'Updating the alsa.conf file with card {get_usb_audio_device_card_number()}')
+                self.log.log(f'Updating the alsa.conf file with card {get_usb_audio_device_card_number()}')
 
                 ctl = 'defaults.ctl.card ' + str(get_usb_audio_device_card_number())
                 pcm = 'defaults.pcm.card ' + str(get_usb_audio_device_card_number())
