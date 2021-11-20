@@ -1,4 +1,7 @@
 import simpleaudio as sa
+from os import listdir, path
+from random import choice
+import subprocess
 
 class StargateAudio:
 
@@ -12,6 +15,7 @@ class StargateAudio:
         # Make ready the sound effects
         self.sounds = {}
         self.sounds['rolling_ring'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/roll.wav")) }
+        
         self.sounds['dialing_cancel'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/cancel.wav")) }
         self.sounds['dialing_fail'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/dial_fail_sg1.wav")) }
         
@@ -19,6 +23,14 @@ class StargateAudio:
         self.sounds['wormhole_established'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/wormhole-loop.wav")) }
         self.sounds['wormhole_close'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/eh_usual_close.wav")) }
         
+        self.sounds['chevron_1'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "chev_usual_1.wav")) }
+        self.sounds['chevron_2'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "chev_usual_2.wav")) }
+        self.sounds['chevron_3'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "chev_usual_3.wav")) }
+        self.sounds['chevron_4'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "chev_usual_4.wav")) }
+        self.sounds['chevron_5'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "chev_usual_5.wav")) }
+        self.sounds['chevron_6'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "chev_usual_6.wav")) }
+        self.sounds['chevron_7'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "chev_usual_7.wav")) }
+        self.incoming_chevron_sounds = [ self.sounds['chevron_4'],  self.sounds['chevron_5'],  self.sounds['chevron_6'],  self.sounds['chevron_7'] ]
         
     def sound_start(self, clip_name):
         self.sounds[clip_name]['obj'] = self.sounds[clip_name]['file'].play()
@@ -30,9 +42,7 @@ class StargateAudio:
         return self.sounds[clip_name]['obj'].is_playing()
 
     def play_random_clip(self, directory):
-        from os import listdir, path
-        from random import choice
-        import simpleaudio as sa
+
         """
         This function plays a random audio clip from the specified folder path. Must include trailing slash.
         :param path_to_folder: The path to the folder containing the audio clips as a string, including the trailing slash.
@@ -55,7 +65,6 @@ class StargateAudio:
         This function gets the card number for the USB audio adapter.
         :return: It will return a number (string) that should correspond to the card number for the USB adapter. If it can't find it, it returns 1
         """
-        import subprocess
         audio_devices = subprocess.run(['aplay', '-l'], capture_output=True, text=True).stdout.splitlines()
         for line in audio_devices:
             if 'USB' in line:
@@ -81,20 +90,18 @@ class StargateAudio:
         This functions checks if the USB audio adapter is correctly set in the alsa.conf file and fixes it if not.
         :return: Nothing is returned
         """
-        import subprocess
-    try:
-        # If the wrong card is set in the alsa.conf file
-        if get_usb_audio_device_card_number() != get_active_audio_card_number():
-            log('sg1.log', f'Updating the alsa.conf file with card {get_usb_audio_device_card_number()}')
-            print(f'Updating the alsa.conf file with card {get_usb_audio_device_card_number()}')
+        try:
+            # If the wrong card is set in the alsa.conf file
+            if get_usb_audio_device_card_number() != get_active_audio_card_number():
+                self.log.log('sg1.log', f'Updating the alsa.conf file with card {get_usb_audio_device_card_number()}')
 
-            ctl = 'defaults.ctl.card ' + str(get_usb_audio_device_card_number())
-            pcm = 'defaults.pcm.card ' + str(get_usb_audio_device_card_number())
-            # replace the lines in the alsa.conf file.
-            subprocess.run(['sudo', 'sed', '-i', f"/defaults.ctl.card /c\{ctl}", '/usr/share/alsa/alsa.conf'])
-            subprocess.run(['sudo', 'sed', '-i', f"/defaults.pcm.card /c\{pcm}", '/usr/share/alsa/alsa.conf'])
-    except:
-        pass
+                ctl = 'defaults.ctl.card ' + str(get_usb_audio_device_card_number())
+                pcm = 'defaults.pcm.card ' + str(get_usb_audio_device_card_number())
+                # replace the lines in the alsa.conf file.
+                subprocess.run(['sudo', 'sed', '-i', f"/defaults.ctl.card /c\{ctl}", '/usr/share/alsa/alsa.conf'])
+                subprocess.run(['sudo', 'sed', '-i', f"/defaults.pcm.card /c\{pcm}", '/usr/share/alsa/alsa.conf'])
+        except:
+            pass
 
     def set_volume(self, percent_value):
         """
@@ -102,7 +109,6 @@ class StargateAudio:
         :param percent_value: an integer between 0 and 100. 65 seems good.
         :return: Nothing is returned.
         """
-        import subprocess
         try:
             subprocess.run(['amixer', '-M', 'set', 'Headphone', f'{str(percent_value)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             subprocess.run(['amixer', '-M', 'set', 'PCM', f'{str(percent_value)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
