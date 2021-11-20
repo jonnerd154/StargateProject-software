@@ -25,3 +25,14 @@ class DCMotorSim:
     
     def release(self):
         pass
+        
+class GPIOSim:
+    
+    def __init__(self):
+        pass
+    
+    def on(self):
+        pass
+        
+    def off(self):
+        pass

@@ -1,5 +1,7 @@
 from HardwareDetector import HardwareDetector
 from random import choice
+import simpleaudio as sound
+from time import sleep
 
 # You can change or the values in this file to match your setup. This file should not be overwritten with an automatic update
 # The first number in the parenthesis is the gpio led number and the second value is the motor number.
@@ -10,7 +12,7 @@ class ChevronManager:
 
         self.log = app.log
         self.cfg = app.cfg
-        
+        self.audio = app.audio
        
         self.loadFromConfig()
         
@@ -22,7 +24,7 @@ class ChevronManager:
         # Retrieve the Chevron config and initialize the Chevron objects
         self.chevrons = {}
         for key, value in self.cfg.get("chevronMapping").items():
-            self.chevrons[int(key)] = Chevron(value['ledPin'], value['motorNumber'], self.motorHardwareMode)
+            self.chevrons[int(key)] = Chevron(value['ledPin'], value['motorNumber'], self.motorHardwareMode, self.audio)
             
     def get( self, chevronNumber ):
         return self.chevrons[int(chevronNumber)]
@@ -47,24 +49,27 @@ class Chevron:
     The led_gpio variable is the number for the gpio pin where the led-wire is connected as an int.
     The motor_number is the number for the motor as an int.
     """
-    from time import sleep
-    def __init__(self, led_gpio, motor_number, motorHardwareMode):
-        from pathlib import Path
-        from gpiozero import LED
-        import simpleaudio as sound
-        # If we provide a LED gpio number
-        if led_gpio is not None:
-            self.led = LED(led_gpio)
-        else:
-            self.led = None
-            
-        self.motor_number = motor_number
-        self.root_path = Path(__file__).parent.absolute()
-
+    
+    def __init__(self, led_gpio, motor_number, motorHardwareMode, audio):
+    
+        self.audio = audio
+        
         self.enableMotors = False # TODO: Move to cfg
+        self.enableLights = False # TODO: Move to cfg
+        
+        self.chevronDownAudioHeadStart = 0.2
+        self.chevronDownThrottle = -0.65 # negative
+        self.chevronDownTime = 0.1
+        self.chevronDownWaitTime = 0.35
+        
+        self.chevronUpThrottle = -0.65 # positive
+        self.chevronUpTime = 0.2
+        
+        self.motor_number = motor_number
         self.motorHardwareMode = motorHardwareMode
         self.motor = self.get_motor_controller()
-
+        self.led = self.get_led_driver()
+        
     def get_adafruit_chevron_config(self):
         # TODO: Move this out to a module that represents all of the hardware, so it can be switched out.
         from adafruit_motorkit import MotorKit
@@ -127,9 +132,26 @@ class Chevron:
             ### put other motor driver options here
                         
         else:
-        	from hardware_simulation import DCMotorSim
-        	return DCMotorSim()
-        	
+            from hardware_simulation import DCMotorSim
+            return DCMotorSim()
+     
+    def get_led_driver(self):
+        if self.enableLights: # TODO: Add hardware detection
+            #if self.motorHardwareMode == 1:
+                from gpiozero import LED
+
+                if led_gpio is not None:
+                    return LED(led_gpio)
+                else:
+                    from hardware_simulation import GPIOSim # TODO: when hardware detection is added this can be removed
+                    return GPIOSim()
+            
+            ### put other LED driver options here
+                        
+        else:
+            from hardware_simulation import GPIOSim
+            return GPIOSim()
+            
     def cycle_outgoing(self):
        self.down() # Motor down, light on
        self.up() # Motor up, light unchanged
@@ -137,25 +159,25 @@ class Chevron:
     def down(self):
         ### Chevron Down ###
         self.audio.sound_start('chevron_1') # chev down audio
-        self.sleep(0.2)
-
-        self.motor.throttle = -0.65
-        self.sleep(0.1) # Motor movement time
-        self.motor.throttle = None
+        sleep(self.chevronDownAudioHeadStart)
+        
+        self.motor.throttle = self.chevronDownThrottle # Start the motor
+        sleep(self.chevronDownTime) # Motor movement time
+        self.motor.throttle = None # Stop the motor
 
         ### Turn on the LED ###
-        self.sleep(0.35) # wait time without motion
+        sleep(self.chevronDownWaitTime) # wait time without motion
         self.audio.sound_start('chevron_3') # led on audio
         if self.led:
             self.led.on()
-        self.sleep(0.35) # wait time without motion
+        sleep(self.chevronDownWaitTime) # wait time without motion
         
     def up(self):
         ### Chevron Down ###
         self.audio.sound_start('chevron_2') # chev up audio
-        self.motor.throttle = 0.65
-        self.sleep(0.2) # motor movement time
-        self.motor.throttle = None
+        self.motor.throttle = self.chevronUpThrottle # Start the motor
+        sleep(self.chevronUpTime) # motor movement time      
+        self.motor.throttle = None # Stop the motor
     
     def incoming_on(self):
         if self.led:

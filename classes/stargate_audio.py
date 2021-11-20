@@ -16,20 +16,20 @@ class StargateAudio:
         self.sounds = {}
         self.sounds['rolling_ring'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/roll.wav")) }
         
-        self.sounds['dialing_cancel'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/cancel.wav")) }
-        self.sounds['dialing_fail'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/dial_fail_sg1.wav")) }
+        self.sounds['dialing_cancel'] = { 'file': self.init_wav_file( "/cancel.wav" ) }
+        self.sounds['dialing_fail'] =   { 'file': self.init_wav_file( "/dial_fail_sg1.wav" ) }
         
-        self.sounds['wormhole_open'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/eh_usual_open.wav")) }
-        self.sounds['wormhole_established'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/wormhole-loop.wav")) }
-        self.sounds['wormhole_close'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/eh_usual_close.wav")) }
+        self.sounds['wormhole_open'] =        { 'file': self.init_wav_file( "/eh_usual_open.wav" ) }
+        self.sounds['wormhole_established'] = { 'file': self.init_wav_file( "/wormhole-loop.wav" ) }
+        self.sounds['wormhole_close'] =       { 'file': self.init_wav_file( "/eh_usual_close.wav" ) }
         
-        self.sounds['chevron_1'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "chev_usual_1.wav")) }
-        self.sounds['chevron_2'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "chev_usual_2.wav")) }
-        self.sounds['chevron_3'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "chev_usual_3.wav")) }
-        self.sounds['chevron_4'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "chev_usual_4.wav")) }
-        self.sounds['chevron_5'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "chev_usual_5.wav")) }
-        self.sounds['chevron_6'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "chev_usual_6.wav")) }
-        self.sounds['chevron_7'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "chev_usual_7.wav")) }
+        self.sounds['chevron_1'] = { 'file': self.init_wav_file( "/chev_usual_1.wav" ) }
+        self.sounds['chevron_2'] = { 'file': self.init_wav_file( "/chev_usual_2.wav" ) }
+        self.sounds['chevron_3'] = { 'file': self.init_wav_file( "/chev_usual_3.wav" ) }
+        self.sounds['chevron_4'] = { 'file': self.init_wav_file( "/chev_usual_4.wav" ) }
+        self.sounds['chevron_5'] = { 'file': self.init_wav_file( "/chev_usual_5.wav" ) }
+        self.sounds['chevron_6'] = { 'file': self.init_wav_file( "/chev_usual_6.wav" ) }
+        self.sounds['chevron_7'] = { 'file': self.init_wav_file( "/chev_usual_7.wav" ) }
         self.incoming_chevron_sounds = [ self.sounds['chevron_4'],  self.sounds['chevron_5'],  self.sounds['chevron_6'],  self.sounds['chevron_7'] ]
         
     def sound_start(self, clip_name):
@@ -41,6 +41,9 @@ class StargateAudio:
     def is_playing(self, clip_name):
         return self.sounds[clip_name]['obj'].is_playing()
 
+    def init_wav_file(self, file_path):
+        return sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/" + file_path))
+        
     def play_random_clip(self, directory):
 
         """
