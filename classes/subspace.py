@@ -1,3 +1,5 @@
+import socket
+
 from database import Database
 
 class Subspace:
@@ -9,12 +11,18 @@ class Subspace:
         
         self.database = Database()
         
+        # TODO: Move to config
+        self.port = 3838 # just for fun because the Stargate can stay open for 38 minutes. :)
+        self.header_bytes = 8
+        self.encoding_format = 'utf-8'
+        self.disconnect_message = '!DISCONNECT'
+        self.timeout = 10 # the timeout value when connecting to a remote stargate (seconds)
         
     def send_raw(self, msg):
-        message = msg.encode(encoding_format)
+        message = msg.encode(self.encoding_format)
         msg_length = len(message)
-        send_length = str(msg_length).encode(encoding_format)
-        send_length += b' ' * (header - len(send_length))
+        send_length = str(msg_length).encode(self.encoding_format)
+        send_length += b' ' * (self.header_bytes - len(send_length))
         client.send(send_length)
         client.send(message)
 
@@ -29,26 +37,18 @@ class Subspace:
         :return: The function returns a tuple where the first value is True if we have a connection to the server, and False if not.
         The second value in the tuple is either None, or it contains the status of the remote gate, if we asked for it.
         """
-        import socket
-        header = 8
-        port = 3838 # just for fun because the Stargate can stay open for 38 minutes. :)
-        encoding_format = 'utf-8'
-        disconnect_message = '!DISCONNECT'
-        server_ip = server_ip
-        server_address = (server_ip, port)
-        timeout = 10 # the timeout value when connecting to a remote stargate (seconds)
+        
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.settimeout(timeout) # set the timeout
+        client.settimeout(self.timeout) # set the timeout
         connection_to_server = False
         remote_gate_status = None
 
         ## Try to establish a connection to the server.
         try:
-            client.connect(server_address)
+            client.connect( (server_ip, self.port) )
             connection_to_server = True
         except Exception as ex:
-            print (ex)
-            log('sg1.log', f'Error sending to remote server -> {ex}')
+            self.log.log(f'Error sending to remote server -> {ex}')
             return connection_to_server, remote_gate_status # return false if we do not have a connection.
 
         if connection_to_server:
@@ -58,7 +58,7 @@ class Subspace:
             if message_string == 'what_is_your_status':
                 remote_gate_status = (client.recv(8).decode(encoding_format))
 
-            self.send(disconnect_message) # always disconnect.
+            self.send(self.disconnect_message) # always disconnect.
             return True, remote_gate_status
 
     def get_ip_from_stargate_address(self, stargate_address, known_fan_made_stargates):

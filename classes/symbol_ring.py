@@ -49,7 +49,7 @@ class SymbolRing:
             if self.motorHardwareMode == 1:
                 self.stepper = MotorKit().stepper1
                 
-            ### put other motor driver options here
+            ### put other stepper motor driver options here
             
         else:
             from hardware_simulation import StepperSim

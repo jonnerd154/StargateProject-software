@@ -26,14 +26,14 @@ class GateApplication:
 		### Setup the logger
 		self.log = AncientsLogBook("sg1.log")
 
+		### Check/set the correct USB audio adapter. This is necessary because different raspberries detects the USB audio adapter differently.
+		self.audio = StargateAudio(self)
+		self.audio.set_correct_audio_output_device()
+		
 		### Check for new software updates ###
 		self.swUpdater = SoftwareUpdate(self)
 		if self.cfg.get("enableUpdates"):
 			self.swUpdater.check_and_install()
-
-		### Check/set the correct USB audio adapter. This is necessary because different raspberries detects the USB audio adapter differently.
-		self.audio = StargateAudio(self)
-		self.audio.set_correct_audio_output_device()
 
 		### Create the Stargate object
 		self.log.log('Booting up the Stargate! Version {}'.format(self.swUpdater.get_current_version()))

@@ -15,9 +15,15 @@ class SoftwareUpdate:
         self.current_version = current_version
         self.log = app.log
         self.cfg = app.cfg
+        self.audio = app.audio
         
         self.database = Database()
-
+        
+        #TODO: move to config
+        self.base_url = 'https://thestargateproject.com/stargate_software_updates/' 
+        self.fileDownloadUsername = 'Samantha'
+        self.fileDownloadPassword = 'CarterSG1!'
+        
     def get_current_version(self):
         return self.current_version
 
@@ -40,7 +46,7 @@ class SoftwareUpdate:
 
             ## Some needed variables
             update_found = False
-            base_url = 'https://thestargateproject.com/stargate_software_updates/' #TODO: move to config
+            
             root_path = Path(__file__).parent.absolute()
             # get the user ID and group ID of the owner of this file (__file__). (In most instances this would result in the UID 1001 for the sg1 user.
             uid = pwd.getpwnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).pw_uid
@@ -54,14 +60,14 @@ class SoftwareUpdate:
 
                 ## if there is a newer version:
                 if entry[1] > self.current_version:
-                    update_audio = play_random_audio_clip(str(root_path / "soundfx/update/"))
+                    update_audio = self.audio.play_random_audio_clip("update"))
                     update_found = True
                     self.log.log(f'Newer version {entry[1]} detected!')
 
                     new_files = literal_eval(entry[2]) # make a list of the new files
                     # Get the new files
                     for file in new_files:
-                        r = requests.get(base_url + str(entry[1]) + '/' + file, auth=('Samantha', 'CarterSG1!')) # get the file
+                        r = requests.get(self.base_url + str(entry[1]) + '/' + file, auth=( self.fileDownloadUsername, self.fileDownloadPassword )) # get the file
                         filepath = Path.joinpath(root_path, file) # the path of the new file
                         try:
                             makedirs(path.dirname(filepath)) # create directories if they do not exist:

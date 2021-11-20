@@ -1,10 +1,8 @@
-from WORMHOLE import Wormhole
 from STARGATE_SERVER import StargateServer
 
 from threading import Thread
 from time import time, sleep
 from random import randrange
-
 
 # New
 from chevrons import ChevronManager
@@ -14,6 +12,7 @@ from keyboard_manager import KeyboardManager
 from symbol_ring import SymbolRing
 from stargate_address_manager import StargateAddressManager
 from subspace import Subspace
+from wormhole import Wormhole
 
 class StargateSG1:
     """
