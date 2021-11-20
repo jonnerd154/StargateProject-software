@@ -1,7 +1,8 @@
-from HardwareDetector import HardwareDetector
 from random import choice
 import simpleaudio as sound
 from time import sleep
+
+from HardwareDetector import HardwareDetector
 
 # You can change or the values in this file to match your setup. This file should not be overwritten with an automatic update
 # The first number in the parenthesis is the gpio led number and the second value is the motor number.

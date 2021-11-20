@@ -1,5 +1,4 @@
 import sys, tty, termios
-from pathlib import Path
 
 class KeyboardManager:
 
