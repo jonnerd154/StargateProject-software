@@ -3,7 +3,6 @@ from STARGATE_SERVER import StargateServer
 
 from threading import Thread
 from time import time, sleep
-from pathlib import Path
 from random import randrange
 
 from stargate_address import local_stargate_address
@@ -31,10 +30,11 @@ class StargateSG1:
         self.cfg = app.cfg
         self.audio = app.audio
         
+        # TODO: Move to cfg
+        self.inactivityTimeout = 60
+        
         self.keyboard = KeyboardManager(self)
         
-        self.root_path = Path(__file__).parent.absolute()
-
         ### This is the states and features of the StargateSG1 object. ###
         self.running = True
         self.initialize_gate_state_vars()
@@ -87,7 +87,7 @@ class StargateSG1:
         This method resets the state variables to "gate idle"
         :return:
         """
-        # Reset som variables
+        # Reset some variables
         self.address_buffer_outgoing = [] #Storage buffer for dialed outgoing address
         self.address_buffer_incoming = [] #Storage buffer for dialed incoming address
         self.last_activity_time = None # A variable to store the last user input time
@@ -123,7 +123,7 @@ class StargateSG1:
 
                 ### Check for inactivity ###
                 # If there are something in the buffers and no activity for 1 minute while dialing.
-                if self.inactivity(60):
+                if self.inactivity( self.inactivityTimeout ):
                     self.log.log('Inactivity detected, aborting.')
                     self.shutdown()
 
