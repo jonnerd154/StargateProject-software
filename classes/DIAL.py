@@ -76,8 +76,8 @@ class Dial:
         else:
             return 0
 
-    def move_raw_one_step(self):
-        self.stepper.onestep(direction=self.direction, style=stp.DOUBLE)
+    def move_raw_one_step(self, direction, style):
+        self.stepper.onestep(direction, style)
     
     def move(self, steps):
         """
@@ -89,10 +89,10 @@ class Dial:
         """
         ## Set the direction ##
         if steps >= 0:  # If steps is positive move forward
-            direct = stp.FORWARD
+            direction = stp.FORWARD
         else:  # if steps is negative move backward
             steps = abs(steps)
-            direct = stp.BACKWARD
+            direction = stp.BACKWARD
 
         normal_speed = 0.002
         slow_speed = 0.01
@@ -103,7 +103,7 @@ class Dial:
         self.audio.sound_start('rolling_ring')  # play the audio movement
         stepper_micro_pos = 0
         for i in range(steps):
-            self.move_raw_one_step()
+            self.move_raw_one_step(direction, style=stp.DOUBLE)
             stepper_micro_pos += 8 
             self.stepper_pos = (stepper_micro_pos // self.micro_steps) % self.total_steps # Update the self.stepper_pos value as the ring moves. Will have a value from 0 till self.total_steps = 1250.
 
