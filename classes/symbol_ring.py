@@ -1,5 +1,4 @@
 from time import sleep
-from pathlib import Path
 
 from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper as stp
@@ -22,9 +21,7 @@ class SymbolRing:
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.audio = stargate.audio
-        
-        self.root_path = Path(__file__).parent.absolute()
-        
+                
         # TODO: Move to cfg
         self.enableStepper = False 
         self.total_steps = 1250 # Old value: 1251
