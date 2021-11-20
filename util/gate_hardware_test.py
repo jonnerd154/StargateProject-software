@@ -88,7 +88,7 @@ class GateTestApp:
         self.log.log( "Testing Chevron lights and motors. Motor should move inward, the light should turn on, then the motor should move outward. ")
         for i in range(1,8):
             self.log.log("Testing Chevron {}.".format(i))
-            chevrons.get(i).on()
+            chevrons.get(i).cycle_outgoing()
             sleep(1)
 
 app = GateTestApp()
