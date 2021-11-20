@@ -4,7 +4,7 @@ from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper as stp
 
 from stargate_config import StargateConfig
-from classes.HardwareDetector import HardwareDetector
+from hardware_detection import HardwareDetector
 from homing import SymbolRingHomingManager
 
 class SymbolRing:

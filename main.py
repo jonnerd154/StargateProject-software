@@ -14,7 +14,7 @@ from stargate_config import StargateConfig
 from ancients_log_book import AncientsLogBook
 from software_update import SoftwareUpdate
 from stargate_audio import StargateAudio
-from StargateSG1 import StargateSG1
+from stargate_sg1 import StargateSG1
 
 class GateApplication:
 	

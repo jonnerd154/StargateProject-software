@@ -10,6 +10,7 @@ class AncientsLogBook:
         self.printToConsole = printToConsole
 
         self.gateLog = log_file
+        self.logDir = "/home/sg1/sg1/logs" #No trailing slash ## TODO: Move to config or Parent(__file__)
 
         # TODO: Open the log file here, and do any creation/permission repairs.
         #    log() should only be appending to the file.
@@ -23,9 +24,8 @@ class AncientsLogBook:
         :param string_for_logging: the entry for the log, as a string. The timestamp will be prepended automatically.
         :return: Nothing is returned.
         """
-        
-        root_path = Path(__file__).parent.absolute()
-        with open(Path.joinpath(root_path, self.gateLog), 'a') as logFile:
+
+        with open(self.logDir +"/"+ self.gateLog, 'a') as logFile:
             logLine = '\n' + f'[{datetime.now().replace(microsecond=0)}] \t {str}'
             logFile.write(logLine)
 

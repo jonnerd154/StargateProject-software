@@ -1,10 +1,7 @@
-from STARGATE_SERVER import StargateServer
-
 from threading import Thread
 from time import time, sleep
 from random import randrange
 
-# New
 from chevrons import ChevronManager
 from dialers import Dialer
 from network_tools import NetworkTools
@@ -13,6 +10,7 @@ from symbol_ring import SymbolRing
 from stargate_address_manager import StargateAddressManager
 from subspace import Subspace
 from wormhole import Wormhole
+from stargate_server import StargateServer
 
 class StargateSG1:
     """
