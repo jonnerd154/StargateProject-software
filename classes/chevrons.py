@@ -125,9 +125,6 @@ class Chevron:
             
             ### put other motor driver options here
                         
-            else:
-                from hardware_simulation import DCMotorSim
-                return DCMotorSim()
         else:
         	from hardware_simulation import DCMotorSim
         	return DCMotorSim()
