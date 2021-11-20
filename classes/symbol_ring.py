@@ -4,12 +4,11 @@ from pathlib import Path
 from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper as stp
 
+from stargate_config import StargateConfig
 from classes.HardwareDetector import HardwareDetector
 from homing import SymbolRingHomingManager
 
-
-
-class Dial:
+class SymbolRing:
     """
     The dialing sequence.
     One iteration is 16 micro steps (as printed from the onestep function when stepper.DOUBLE. But for unknown reasons
@@ -25,37 +24,37 @@ class Dial:
         self.audio = stargate.audio
         
         self.root_path = Path(__file__).parent.absolute()
-        # self.total_steps = 1251
-        self.total_steps = 1250
-        self.micro_steps = 16
-        self.saved_pos = self.ring_position('get')
-        self.stepper_pos = 0
-        self.direction = stp.FORWARD
         
-        self.enableStepper = True # TODO: Move to cfg
+        # TODO: Move to cfg
+        self.total_steps = 1250 # Old value: 1251
+        self.micro_steps = 16
+        self.stepper_pos = 0
+        self.enableStepper = False 
+        
+        # The symbols position on the symbol ring
+        self.symbols = {1: 0, 2: 32, 3: 64, 4: 96, 5: 128, 6: 160, 7: 192, 8: 224, 9: 256, 10: 288, 11: 320, 12: 352, 13: 384, 14: 416, 15: 448, 16: 480, 17: 512, 18: 544, 19: 576, 20: 608, 21: 640, 22: 672, 23: 704, 24: 736, 25: 768, 26: 800, 27: 832, 28: 864, 29: 896, 30: 928, 31: 960, 32: 992, 33: 1024, 34: 1056, 35: 1088, 36: 1120, 37: 1152, 38: 1184, 39: 1216}
+        # The chevrons position on the stargate.
+        self.chevrons = {1: 139, 2: 278, 3: 417, 4: 834, 5: 973, 6: 1112, 7: 0, 8: 556, 9: 695}
+        
+        ## --------------------------
         
         self.hwDetector = HardwareDetector()
         self.motorHardwareMode = self.hwDetector.getMotorHardwareMode()
 
         # If we have a stepper, and it's enabled in config, initialize it.
         if self.enableStepper and self.motorHardwareMode > 0 :
-            print('here 1')
             if self.motorHardwareMode == 1:
-                print('here 2')
-
                 self.stepper = MotorKit().stepper1
-            print('here 3')
+                
             ### put other motor driver options here
             
         else:
             print('simulating stepper')
             from hardware_simulation import StepperSim
             self.stepper = StepperSim()
-
-        # The symbols position on the symbol ring
-        self.symbols = {1: 0, 2: 32, 3: 64, 4: 96, 5: 128, 6: 160, 7: 192, 8: 224, 9: 256, 10: 288, 11: 320, 12: 352, 13: 384, 14: 416, 15: 448, 16: 480, 17: 512, 18: 544, 19: 576, 20: 608, 21: 640, 22: 672, 23: 704, 24: 736, 25: 768, 26: 800, 27: 832, 28: 864, 29: 896, 30: 928, 31: 960, 32: 992, 33: 1024, 34: 1056, 35: 1088, 36: 1120, 37: 1152, 38: 1184, 39: 1216}
-        # The chevrons position on the stargate.
-        self.chevrons = {1: 139, 2: 278, 3: 417, 4: 834, 5: 973, 6: 1112, 7: 0, 8: 556, 9: 695}
+        
+        # Load the last known ring position
+        self.position_store = StargateConfig("ring_position.json")
 
         ## Initialize the Homing Manager
         self.homingManager = SymbolRingHomingManager(stargate, self)
@@ -80,6 +79,7 @@ class Dial:
         else:
             return 0
 
+	# TODO: Move to a stepper/hardware manager
     def move_raw_one_step(self, direction, style):
         self.stepper.onestep(direction=direction, style=style)
     
@@ -87,7 +87,7 @@ class Dial:
         """
         This method moves the stepper motor the desired number of steps in the desired direction and updates the
         self.stepper_pos with the new value. This method does NOT release the stepper. Do this with the release method.
-        Nor does this method update the ring_position file. Do this with the ring_position method.
+        Nor does this method update the "ring_position". Do this with the ring_position method.
         :param steps: the number of steps to move as int. Negative is backward(ccw) and positive is forward (cw)
         :return: Nothing is returned
         """
@@ -126,61 +126,39 @@ class Dial:
                 
         self.audio.sound_stop('rolling_ring')  # stop the audio
 
-    def ring_position(self, action):
+    def calculate_steps(self, chevron, symbol_number):
         """
-        This method gets or sets the current stepper position in micro steps.
-        :param action: can be either get or set
-        :return: the stepper position as an int.
+        Helper function to determine the needed number of steps to move symbol_number, to chevron
+        :return: The number of steps to move is returned as an int.
         """
-        if action == 'get':
-            ring_position = open(str(self.root_path / '../ring_position/'), 'r')
-            position = (ring_position.read())
-            ring_position.close()
-        elif action == 'set':
-            position = ((self.stepper_pos + self.saved_pos) % self.total_steps) + self.homingManager.offset
-            ring_position = open(str(self.root_path / '../ring_position/'), 'w')
-            ring_position.write(str(position))
-            ring_position.close()
-        else:
-            position = ''
-            print('That is not the correct input for the ring_position function')
-        return int(position)
+        # How many steps are needed:
         
-    def release(self):
-    
-        """
-        This method releases the stepper so that there are no power holding it in position. The stepper is free to roll.
-        :return: Nothing is returned.
-        """
-        sleep(0.4)
-        self.stepper.release()
-            
-    def dial(self, symbol_number, chevron):
+        from pprint import pprint
+        pprint(self.chevrons)
+        try:
+            steps = self.chevrons.get(chevron) - ((self.get_position() + self.symbols[symbol_number]) % self.total_steps)
+        except KeyError: # If we dial more chevrons than the stargate can handle. Don't return any steps.
+            return None
+        if abs(steps) > self.total_steps / 2: # Check if distance is more than half a revolution
+            new_steps = (self.total_steps - abs(steps)) % self.total_steps # Reduce with half a revolution, and flips the direction
+            if steps > 0: # if the direction was forward, flip the direction
+                new_steps = new_steps * -1
+            return new_steps
+        return steps
+     
+    def move_symbol_to_chevron(self, chevron, symbol_number):
+        
         """
         This function moves the symbol_number to the desired chevron. It also updates the ring position file.
         :param symbol_number: the number of the symbol
         :param chevron: the number of the chevron
         :return: nothing is returned
         """
-        def calculate_steps():
-            """
-            Helper function to determine the needed number of steps to move symbol_number, to chevron
-            :return: The number of steps to move is returned as an int.
-            """
-            # How many steps are needed:
-            try:
-                steps = self.chevrons.get(chevron) - ((self.ring_position('get') + self.symbols[symbol_number]) % self.total_steps)
-            except KeyError: # If we dial more chevrons than the stargate can handle. Don't return any steps.
-                return None
-            if abs(steps) > self.total_steps / 2: # Check if distance is more than half a revolution
-                new_steps = (self.total_steps - abs(steps)) % self.total_steps # Reduce with half a revolution, and flips the direction
-                if steps > 0: # if the direction was forward, flip the direction
-                    new_steps = new_steps * -1
-                return new_steps
-            return steps
+        
+        calc_steps = self.calculate_steps(chevron, symbol_number) # calculate the steps
 
-        calc_steps = calculate_steps() # calculate the steps
-
+        # TODO: Enable both options, move to cfg
+        
         # Option one. This will move the symbol the shortest direction, cc or ccw.
         # if calc_steps: # If not None
         #     self.move(calc_steps) # move the ring the calc_steps steps.
@@ -192,5 +170,27 @@ class Dial:
             else:
                 self.move((self.total_steps - abs(calc_steps)))  # move the ring, but the long way in the opposite direction.
 
-        self.ring_position('set') # Update the ring position.
-
+        # Update and save the ring position.
+        self.set_position() 
+        self.save_position()
+        
+    def get_position(self):
+        return self.position_store.get('ring_position')
+    
+    def set_position(self):
+        calculatedPosition = ( (self.stepper_pos + self.get_position() ) % self.total_steps) + self.homingManager.offset
+        self.position_store.set_non_persistent('ring_position', calculatedPosition)
+    
+    def save_position(self):
+        self.position_store.save()
+      
+    def release(self):
+    
+        """
+        This method releases the stepper so that there are no power holding it in position. The stepper is free to roll.
+        :return: Nothing is returned.
+        """
+        sleep(0.4)
+        self.stepper.release()
+            
+    

@@ -68,6 +68,8 @@ class Chevron:
         self.motor_number = motor_number
         self.motorHardwareMode = motorHardwareMode
         self.motor = self.get_motor_controller()
+        
+        self.led_gpio = led_gpio
         self.led = self.get_led_driver()
         
     def get_adafruit_chevron_config(self):
@@ -140,8 +142,8 @@ class Chevron:
             #if self.motorHardwareMode == 1:
                 from gpiozero import LED
 
-                if led_gpio is not None:
-                    return LED(led_gpio)
+                if self.led_gpio is not None:
+                    return LED(self.led_gpio)
                 else:
                     from hardware_simulation import GPIOSim # TODO: when hardware detection is added this can be removed
                     return GPIOSim()

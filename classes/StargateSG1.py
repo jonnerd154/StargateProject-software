@@ -1,4 +1,3 @@
-from DIAL import Dial
 from WORMHOLE import Wormhole
 from STARGATE_SERVER import StargateServer
 
@@ -18,6 +17,7 @@ from chevrons import ChevronManager
 from dialers import Dialer
 from network_tools import NetworkTools
 from keyboard_manager import KeyboardManager
+from symbol_ring import SymbolRing
 
 
 class StargateSG1:
@@ -37,18 +37,8 @@ class StargateSG1:
 
         ### This is the states and features of the StargateSG1 object. ###
         self.running = True
-        self.last_activity_time = None # A variable to store the last user input time
-        self.address_buffer_outgoing = [] #Storage buffer for dialed outgoing address
-        self.address_buffer_incoming = [] #Storage buffer for dialed incoming address
-        self.centre_button_outgoing = False #A variable for the state of the centre button, outgoing.
-        self.centre_button_incoming = False #A variable for the state of the centre button, incoming.
-        self.locked_chevrons_outgoing = 0 # The current number of locked outgoing chevrons
-        self.locked_chevrons_incoming = 0 # The current number of locked outgoing chevrons
-        self.wormhole = False # The state of the wormhole.
-        self.black_hole = False # Did we dial the black hole?
-        self.fan_gate_online_status = None # To keep track of the dialed fan_gate status
-        self.fan_gate_incoming_IP = None # To keep track of the IP address for the remote gate that establishes a wormhole
-
+        self.initialize_gate_state_vars()
+        
         ### Set the local stargate address so that it's ready to accept incoming connections from the internet, or other local stargates.
         # The local stargate address is set in a separate file; stargate_address.py. This way it won't get overwritten with an automatic update.
 
@@ -56,7 +46,7 @@ class StargateSG1:
 
         ### Set up the needed classes and make them ready to use ###
         ### Initiate the spinning ring dial object.
-        self.ring = Dial(self)
+        self.ring = SymbolRing(self)
         self.chevrons = ChevronManager(self)
         self.dialer = Dialer(self) # A "Dialer" is either a Keyboard or DHDv2
         self.wh = Wormhole(self)
@@ -92,6 +82,24 @@ class StargateSG1:
         self.audio.play_random_clip("startup")
         self.log.log('The Stargate is started and ready!')
 
+    def initialize_gate_state_vars(self):
+        """
+        This method resets the state variables to "gate idle"
+        :return:
+        """
+        # Reset som variables
+        self.address_buffer_outgoing = [] #Storage buffer for dialed outgoing address
+        self.address_buffer_incoming = [] #Storage buffer for dialed incoming address
+        self.last_activity_time = None # A variable to store the last user input time
+        self.centre_button_outgoing = False #A variable for the state of the centre button, outgoing.
+        self.centre_button_incoming = False #A variable for the state of the centre button, incoming.
+        self.locked_chevrons_outgoing = 0 # The current number of locked outgoing chevrons
+        self.locked_chevrons_incoming = 0 # The current number of locked outgoing chevrons
+        self.wormhole = False # The state of the wormhole.
+        self.black_hole = False # Did we dial the black hole?
+        self.fan_gate_online_status = None # To keep track of the dialed fan_gate status
+        self.fan_gate_incoming_IP = None # To keep track of the IP address for the remote gate that establishes a wormhole
+      
     ## Methods to manipulate the StargateSG1 object ###
     def update(self):
         """
@@ -135,7 +143,7 @@ class StargateSG1:
         :return: Nothing is returned
         """
         if len(self.address_buffer_outgoing) > self.locked_chevrons_outgoing:
-            self.ring.dial(self.address_buffer_outgoing[self.locked_chevrons_outgoing], self.locked_chevrons_outgoing + 1)  # Dial the symbol
+            self.ring.move_symbol_to_chevron(self.address_buffer_outgoing[self.locked_chevrons_outgoing], self.locked_chevrons_outgoing + 1)  # Dial the symbol
             self.locked_chevrons_outgoing += 1  # Increment the locked chevrons variable.
             try:
                 self.chevrons.get(self.locked_chevrons_outgoing).cycle_outgoing()  # Do the chevron locking thing.
@@ -181,6 +189,7 @@ class StargateSG1:
                 self.last_activity_time = time()  # update the last_activity_time
                 # Do the logging
                 self.log.log(f'Incoming: Chevron {self.locked_chevrons_incoming} locked with symbol {self.address_buffer_incoming[self.locked_chevrons_incoming - 1]}')
+
     def try_sending_centre_button(self):
         """
         This functions simply checks if it is possible to send the centre_button to the remote gate and sends it.
@@ -190,6 +199,7 @@ class StargateSG1:
         if self.fan_gate_online_status and self.centre_button_outgoing and len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing:
             self.send_to_remote_stargate(self.get_ip_from_stargate_address(self.address_buffer_outgoing, self.fan_gates), 'centre_button_incoming')
             self.log.log(f'Sent to fan_gate: centre_button_incoming')
+            
     def establishing_wormhole(self):
         """
         This is the method that decides if we are to establish a wormhole or not
@@ -225,6 +235,50 @@ class StargateSG1:
                 print('NOT my local address!')
                 self.log.log('Incoming address is NOT a match!')
                 self.shutdown(cancel_sound=False, wormhole_fail_sound=True)
+      
+    
+    def shutdown(self, cancel_sound=True, wormhole_fail_sound=False):
+        """
+        This method shuts down and resets the Stargate.
+        :return:
+        """
+        
+        self.log.log('Shutting down the gate...')
+
+        # Play the cancel sound
+        if cancel_sound:
+            self.audio.sound_start('dialing_cancel')
+        
+        # Play the wormhole fail sound
+        if wormhole_fail_sound:
+            self.audio.sound_start('dialing_fail')
+        
+        # Turn off the chevrons
+        self.chevrons.all_off()
+        
+        # Turn off the DHD lights
+        self.dialer.hardware.clear_lights()
+        
+        # Release the stepper motor.
+        self.ring.release()
+        
+        # Put the gate back in to an idle state
+        self.initialize_gate_state_vars()
+        
+    def inactivity(self, seconds):
+        """
+        This functions checks if there has been more than the variable seconds of inactivity:
+        :param seconds: The number of seconds of allowed inactivity
+        :return: True if inactivity is detected, False if not
+        """
+        if not self.wormhole: #If we are in the dialing phase
+            if self.last_activity_time: #If the variable is not None
+                if (len(self.address_buffer_incoming) > 0) or (len(self.address_buffer_outgoing) > 0): # If there are something in the buffers
+                    if (time() - self.last_activity_time) > seconds:
+                        return True
+        return False
+
+    # TODO: Move to subspace
     def possible_to_establish_wormhole(self):
         """
         This is a method to help check if we are able to establish a wormhole or not.
@@ -245,39 +299,10 @@ class StargateSG1:
                     return False
             return True  # returns true if we can establish a wormhole
         return False  # returns false if we cannot establish a wormhole.
-    def shutdown(self, cancel_sound=True, wormhole_fail_sound=False):
-        """
-        This method shuts down or resets the stargate object.
-        :return:
-        """
-        # Play the cancel sound
-        if cancel_sound:
-            self.audio.sound_start('dialing_cancel')
-        # Play the wormhole fail sound
-        if wormhole_fail_sound:
-            self.audio.sound_start('dialing_fail')
-        # Turn off the chevrons
-        self.chevrons.all_off()
         
-        # Turn off the DHD lights
-        self.dialer.hardware.clear_lights()
         
-        # Release the stepper motor.
-        self.ring.release()
-        self.log.log('Shutting down the gate...')
-        
-        # Reset som variables
-        self.address_buffer_outgoing = []
-        self.address_buffer_incoming = []
-        self.last_activity_time = None
-        self.centre_button_outgoing = False
-        self.centre_button_incoming = False
-        self.locked_chevrons_outgoing = 0
-        self.locked_chevrons_incoming = 0
-        self.wormhole = False
-        self.black_hole = False
-        self.fan_gate_online_status = None
-        self.fan_gate_incoming_IP = None
+    #TODO: move the BELOW FUNCTIONS to an "address management" class
+    
     def valid_planet(self, address):
         """
             A helper function to check if the dialed address is a valid planet address. This function excludes the
@@ -314,20 +339,7 @@ class StargateSG1:
             if self.fan_gates[gate][0] == copy_of_address:
                 return 'fan_gate'
         return False  # Return False if it's not a valid destination
-    def inactivity(self, seconds):
-        """
-        This functions checks if there has been more than the variable seconds of inactivity:
-        :param seconds: The number of seconds of allowed inactivity
-        :return: True if inactivity is detected, False if not
-        """
-        if not self.wormhole: #If we are in the dialing phase
-            if self.last_activity_time: #If the variable is not None
-                if (len(self.address_buffer_incoming) > 0) or (len(self.address_buffer_outgoing) > 0): # If there are something in the buffers
-                    if (time() - self.last_activity_time) > seconds:
-                        return True
-        return False
-
-    #TODO: move this to an "address management" class
+    
     def is_it_a_known_fan_made_stargate(self, dialed_address, known_fan_made_stargates, stargate_object):
         """
         This helper function tries to check the first two symbols in the dialed address and compares it to

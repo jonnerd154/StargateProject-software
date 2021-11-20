@@ -30,8 +30,11 @@ class StargateConfig:
             raise
 
     def set(self, key, value):
-        self.config[key] = value
+        self.set_non_persistent(key, value)
         self.save()
+    
+    def set_non_persistent(self, key, value):
+        self.config[key] = value
 
     def save(self):
         with open(self.file_name, 'w') as f:
