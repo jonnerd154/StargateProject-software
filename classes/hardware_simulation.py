@@ -13,3 +13,15 @@ class StepperSim:
     
     def release(self):
         pass
+        
+class DCMotorSim:
+
+    def __init__(self):
+        self.throttle = 0
+        pass
+        
+    def onestep(self, direction, style):
+        pass
+    
+    def release(self):
+        pass

@@ -38,8 +38,12 @@ class Dial:
         self.motorHardwareMode = self.hwDetector.getMotorHardwareMode()
 
 		# If we have a stepper, and it's enabled in config, initialize it.
-        if self.motorHardwareMode > 0 and self.enableStepper:
-            self.stepper = MotorKit().stepper1
+        if self.enableStepper and self.motorHardwareMode > 0 :
+            if self.motorHardwareMode == 1:
+            	self.stepper = MotorKit().stepper1
+            
+            ### put other motor driver options here
+            
         else:
         	from hardware_simulation import StepperSim
         	self.stepper = StepperSim()
