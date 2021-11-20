@@ -79,8 +79,8 @@ class KeyboardManager:
             elif symbol_number != 'unknown' and symbol_number not in stargate.address_buffer_outgoing:
                 # If we have not yet activated the centre_button
                 if not (stargate.centre_button_outgoing or stargate.centre_button_incoming):
-                    ### DHD lights ###
-                    stargate.dialer.hardware.setPixel(symbol_number, 250, 117, 0)
-                    stargate.dialer.hardware.latch()
+                    stargate.dialer.hardware.set_symbol_on( symbol_number ) # Light this symbol on the DHD
+                    
+                    # Append the symbol to the outgoing address buffer
                     stargate.address_buffer_outgoing.append(symbol_number)
                     self.log.log(f'address_buffer_outgoing: {stargate.address_buffer_outgoing}') # Log the address_buffer

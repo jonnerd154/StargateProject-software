@@ -189,10 +189,14 @@ class DHDv2:
         self.setAllPixelsToColor(0, 0, 0) # All Off
         self.latch()
     
-    def set_center_on( self )
+    def set_center_on( self ):
         self.setPixel(0, 255, 0, 0) # LED 0, Pure red.
         self.latch()
-                    
+             
+    def set_symbol_on( self, symbol_number ):
+        self.setPixel(symbol_number, 250, 117, 0)
+        self.latch()
+           
     def get_DHD_port():
         """
         This is a simple helper function to help locate the port for the DHD
@@ -264,4 +268,10 @@ class KeyboardMode:
         pass
     
     def clear_lights(self):
+        pass
+    
+    def set_center_on( self ):
+        pass
+
+    def set_symbol_on( self, symbol_number ):
         pass
