@@ -60,7 +60,7 @@ class SoftwareUpdate:
 
                 ## if there is a newer version:
                 if entry[1] > self.current_version:
-                    update_audio = self.audio.play_random_audio_clip("update"))
+                    update_audio = self.audio.play_random_audio_clip("update")
                     update_found = True
                     self.log.log(f'Newer version {entry[1]} detected!')
 
