@@ -22,11 +22,14 @@ class StargateAddressManager:
         self.fan_gates = fan_gates_cfg ### Stargate fan-made gate addresses
           
         ### Retrieve and merge all fan gates, local and in-DB
-        self.fan_gates = self.get_fan_gates_from_db(self.fan_gates)
+        self.fan_gates = self.update_fan_gates_from_db()
         
         pass
-        
-    def get_fan_gates_from_db(self, fan_gates):
+       
+    def get_fan_gates(self):
+        return self.fan_gates
+         
+    def update_fan_gates_from_db(self):
         """
         This function gets the fan_gates from the database and merges it with the hard_coded fan_gates dictionary
         :param hard_coded_fan_gates_dictionary: The dictionary containing any hard coded fan_gates not in the database, or a local gate perhaps
@@ -34,8 +37,8 @@ class StargateAddressManager:
         """
         if self.stargate.netTools.has_internet_access():
             for gate in self.database.get_fan_gates():
-                fan_gates[gate[0]] = [ast.literal_eval(gate[1]), self.netTools.get_ip(gate[2])]
-            return fan_gates
+                self.fan_gates[gate[0]] = [ast.literal_eval(gate[1]), self.netTools.get_ip(gate[2])]
+            return self.fan_gates
         
     def valid_planet(self, address):
         """

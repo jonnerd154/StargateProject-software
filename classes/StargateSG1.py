@@ -240,6 +240,8 @@ class StargateSG1:
         # Put the gate back in to an idle state
         self.initialize_gate_state_vars()
         
+        self.log.log("Gate is idle.")
+        
     def inactivity(self, seconds):
         """
         This functions checks if there has been more than the variable seconds of inactivity:

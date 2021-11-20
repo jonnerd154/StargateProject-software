@@ -155,8 +155,8 @@ class Chevron:
             return GPIOSim()
             
     def cycle_outgoing(self):
-       self.down() # Motor down, light on
-       self.up() # Motor up, light unchanged
+        self.down() # Motor down, light on
+        self.up() # Motor up, light unchanged
       
     def down(self):
         ### Chevron Down ###
