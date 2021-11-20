@@ -125,6 +125,7 @@ class Wormhole:
                             pattern3(self.tot_leds, (255, 0, 85), 9),
                             pattern3(self.tot_leds, (74, 0, 15), 12)]
         return pos_patterns
+        
     @staticmethod
     def pattern_off(number_of_leds):
         """
@@ -136,6 +137,7 @@ class Wormhole:
         for i in range(number_of_leds):
             off_pattern.append((0, 0, 0))
         return off_pattern
+        
     @staticmethod
     def set_wormhole_pattern(pixels, pattern):
         """
@@ -148,6 +150,7 @@ class Wormhole:
             p[led] = pattern[led]
         p.show()
         return pattern
+        
     def open_wormhole(self):
             """
             Method for opening the wormhole. For some reason i did not use the fade_transition function here..
@@ -165,6 +168,7 @@ class Wormhole:
                 self.pixels.fill((i // 2, i, i))
                 self.pixels.show()
             sleep(0.3)
+            
     def close_wormhole(self):
         """
         Method to disengage the wormhole
@@ -186,6 +190,7 @@ class Wormhole:
         self.stargate_object.wormhole_max_time = 38 * 60 # Reset the variable
         self.stargate_object.audio_clip_wait_time = 17 # Reset the variable
         self.stargate_object.wormhole = False  # Put it back the way it should be.
+        
     def rotate_pattern(self, pattern=None, direction='ccw', speed=0, revolutions=1):
             """
             This functions spins a led pattern along the led strip.
@@ -220,6 +225,7 @@ class Wormhole:
                                        for i, x in enumerate(current_pattern)]
                     self.set_wormhole_pattern(self.pixels, current_pattern)
                     sleep(speed / 100)
+                    
     def fade_transition(self, new_pattern):
             """
             This functions tries to fade the existing pattern over to the new_pattern. The new patterns are lists of tuples for each led.
@@ -276,6 +282,7 @@ class Wormhole:
                 tween_pattern = create_tween_pattern(current_pattern, new_pattern)
                 current_pattern = tween_pattern
                 self.set_wormhole_pattern(self.pixels, tween_pattern)
+                
     def sweep_transition(self, new_pattern):
         """
         This functions transitions one pattern to another with a sweeping motion.

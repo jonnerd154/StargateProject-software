@@ -5,11 +5,6 @@ from threading import Thread
 from time import time, sleep
 from random import randrange
 
-from stargate_address import local_stargate_address
-
-
-from stargate_address import fan_gates
-from hardcoded_addresses import known_planets
 
 # New
 from chevrons import ChevronManager
@@ -17,7 +12,8 @@ from dialers import Dialer
 from network_tools import NetworkTools
 from keyboard_manager import KeyboardManager
 from symbol_ring import SymbolRing
-
+from stargate_address_manager import StargateAddressManager
+from subspace import Subspace
 
 class StargateSG1:
     """
@@ -33,45 +29,28 @@ class StargateSG1:
         # TODO: Move to cfg
         self.inactivityTimeout = 60
         
-        self.keyboard = KeyboardManager(self)
-        
         ### This is the states and features of the StargateSG1 object. ###
         self.running = True
         self.initialize_gate_state_vars()
         
-        ### Set the local stargate address so that it's ready to accept incoming connections from the internet, or other local stargates.
-        # The local stargate address is set in a separate file; stargate_address.py. This way it won't get overwritten with an automatic update.
-
-        self.local_stargate_address = local_stargate_address
-
         ### Set up the needed classes and make them ready to use ###
         ### Initiate the spinning ring dial object.
-        self.ring = SymbolRing(self)
+        self.netTools = NetworkTools(self.log)
+        self.subspace = Subspace(self)
+        self.keyboard = KeyboardManager(self)
+        self.addrManager = StargateAddressManager(self)
         self.chevrons = ChevronManager(self)
+        self.ring = SymbolRing(self)
         self.dialer = Dialer(self) # A "Dialer" is either a Keyboard or DHDv2
         self.wh = Wormhole(self)
 
-        ### Stargate fan-made gate addresses ###
-        # The custom fan_gate addresses is set in a separate file; stargate_address.py. This way it won't get overwritten with an automatic update.
-        self.fan_gates = fan_gates
-
-        ### Check if we have an internet connection.
-        netTools = NetworkTools(self.log)
-        self.internet = netTools.has_internet_access()
-
-        ### Other known remote fan_gates will be added automatically to this dictionary
-        from subspace import Subspace
-        self.subspace = Subspace(self)
-        if self.internet:
-            self.fan_gates = self.subspace.get_fan_gates_from_db(self.fan_gates)
-        
         ## Create a background thread that runs in parallel and asks for user inputs from the DHD or keyboard.
         self.ask_for_input_thread = Thread(target=self.keyboard.ask_for_input, args=(self,))
         self.ask_for_input_thread.start()  # start
 
-        ### Run the stargate server ###
+        ### Run the stargate server if we have an internet connection ###
         # The stargate_server runs in it's own thread listening for incoming wormholes
-        if self.internet:
+        if self.netTools.has_internet_access():
             self.stargate_server_thread = Thread(target=StargateServer(self).start, daemon=True, args=())
             self.stargate_server_thread.start()
 
@@ -153,7 +132,7 @@ class StargateSG1:
             self.last_activity_time = time()  # update the last_activity_time
 
             ## Check if we are dialing a fan_gate and send the symbols to the remote gate.
-            if self.is_it_a_known_fan_made_stargate(self.address_buffer_outgoing, self.fan_gates, self):
+            if self.addrManager.is_fan_made_stargate(self.address_buffer_outgoing):
                 # If we don't know the online status of the fan_gate or it is online.
                 if self.fan_gate_online_status is None or self.fan_gate_online_status:
                     # send the locked symbols to the remote gate.
@@ -210,7 +189,7 @@ class StargateSG1:
         # If the centre_button_outgoing is active and all dialed symbols are locked.
         if self.centre_button_outgoing and (0 < len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing):
             # If we did not dial a fan_gate, set the IP variable to True instead of an IP.
-            if self.valid_planet(self.address_buffer_outgoing) != 'fan_gate':
+            if self.addrManager.valid_planet(self.address_buffer_outgoing) != 'fan_gate':
                 self.fan_gate_incoming_IP = True
             # Try to send the centre button to the fan_gate:
             self.try_sending_centre_button()
@@ -282,10 +261,10 @@ class StargateSG1:
         :return: Returns True if we can establish a wormhole, and False if not
         """
         # If the dialed address is valid
-        if len(self.address_buffer_outgoing) > 0 and self.valid_planet(self.address_buffer_outgoing) or \
-            len(self.address_buffer_incoming) > 0 and self.valid_planet(self.address_buffer_incoming):
+        if len(self.address_buffer_outgoing) > 0 and self.addrManager.valid_planet(self.address_buffer_outgoing) or \
+            len(self.address_buffer_incoming) > 0 and self.addrManager.valid_planet(self.address_buffer_incoming):
             # If we dialed a fan_gate
-            if self.valid_planet(self.address_buffer_outgoing) == 'fan_gate':
+            if self.addrManager.valid_planet(self.address_buffer_outgoing) == 'fan_gate':
                 # If the dialed fan_gate is not online
                 if not self.fan_gate_online_status:
                     self.log.log('The dialed fan_gate is NOT online!')
@@ -297,67 +276,3 @@ class StargateSG1:
             return True  # returns true if we can establish a wormhole
         return False  # returns false if we cannot establish a wormhole.
         
-        
-    #TODO: move the BELOW FUNCTIONS to an "address management" class
-    
-    def valid_planet(self, address):
-        """
-            A helper function to check if the dialed address is a valid planet address. This function excludes the
-            last symbol in the address since the last symbol can be any point of origin.
-            :param address: the destination as a list of symbol numbers
-            :return:    If the dialed address is a fan_gate, the string 'fan_gate' is returned.
-                        If the dialed address is a known_planet, the string 'known_planet' is returned.
-                        Else: False is returned if it is not a valid planet.
-            """
-
-        # make a copy of the address, so not to manipulate the input variable directly
-        copy_of_address = address[:]
-
-        # remove the point of origin from address
-        if len(copy_of_address) != 0:
-            del copy_of_address[-1]
-
-        # Eliminate the local(self) address:
-        if copy_of_address == self.local_stargate_address:
-            return False
-
-        # Check if we dialed the black hole planet
-        if copy_of_address == known_planets["P3W-451"]:
-            self.black_hole = True
-            self.log.log("Oh no! It's the black hole planet!")
-
-        # Check the known_planets dictionary for a match
-        for planet in known_planets:
-            if known_planets[planet] == copy_of_address:
-                return 'known_planet'
-
-        # Check the fan_gates dictionary for a match
-        for gate in self.fan_gates:
-            if self.fan_gates[gate][0] == copy_of_address:
-                return 'fan_gate'
-        return False  # Return False if it's not a valid destination
-    
-    def is_it_a_known_fan_made_stargate(self, dialed_address, known_fan_made_stargates, stargate_object):
-        """
-        This helper function tries to check the first two symbols in the dialed address and compares it to
-        the known_fan_made_stargates to check if the address dialed is a known fan made stargate. The first two symbols
-        is enough to determine if it's a fan_gate. The fan gates, need only two unique symbols for identification.
-        :param stargate_object: The stargate object. This is used to rule out self dialing.
-        :param dialed_address: a stargate address. It does not need to be complete. eg: [10, 15, 8, 24]
-        :param known_fan_made_stargates: This is a dictionary of known stargates. eg:
-                {'Kristian Tysse': [[7, 32, 27, 18, 12, 16], '192.168.10.129'],
-                'Someone else': [[7, 32, 27, 18, 12, 16], '1.2.3.4']
-                }
-        :return: True if we are dialing a fan made address, False if not.
-        """
-        for gate in known_fan_made_stargates:
-            try:
-                #If we dial our own local address:
-                if dialed_address[:2] == stargate_object.local_stargate_address[:2]:
-                    return False
-                # If we dial a known fan_gate
-                elif dialed_address[:2] == known_fan_made_stargates[gate][0][:2]:
-                    return True
-            except:
-                pass
-        return False

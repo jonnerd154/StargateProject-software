@@ -25,7 +25,7 @@ class ChevronManager:
         # Retrieve the Chevron config and initialize the Chevron objects
         self.chevrons = {}
         for key, value in self.cfg.get("chevronMapping").items():
-            self.chevrons[int(key)] = Chevron(value['ledPin'], value['motorNumber'], self.motorHardwareMode, self.audio)
+            self.chevrons[int(key)] = Chevron( value['ledPin'], value['motorNumber'], self.motorHardwareMode, self.audio )
             
     def get( self, chevronNumber ):
         return self.chevrons[int(chevronNumber)]
@@ -54,7 +54,6 @@ class Chevron:
     def __init__(self, led_gpio, motor_number, motorHardwareMode, audio):
     
         self.audio = audio
-        
         self.enableMotors = False # TODO: Move to cfg
         self.enableLights = False # TODO: Move to cfg
         
@@ -72,7 +71,7 @@ class Chevron:
         
         self.led_gpio = led_gpio
         self.led = self.get_led_driver()
-        
+                
     def get_adafruit_chevron_config(self):
         # TODO: Move this out to a module that represents all of the hardware, so it can be switched out.
         from adafruit_motorkit import MotorKit

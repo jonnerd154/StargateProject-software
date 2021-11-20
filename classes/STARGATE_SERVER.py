@@ -1,4 +1,4 @@
-from stargate_address_validator import StargateAddressValidator
+from stargate_address_manager import StargateAddressValidator
 from database import Database
 
 class StargateServer:

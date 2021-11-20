@@ -1,5 +1,3 @@
-import ast
-
 from database import Database
 
 class Subspace:
@@ -63,7 +61,6 @@ class Subspace:
             self.send(disconnect_message) # always disconnect.
             return True, remote_gate_status
 
-
     def get_ip_from_stargate_address(self, stargate_address, known_fan_made_stargates):
         """
         This functions gets the IP address from the first two symbols in the gate_address. The first two symbols of the
@@ -78,7 +75,6 @@ class Subspace:
         else:
             print( 'Unable to get IP for', stargate_address)
 
-
     def get_stargate_address_from_IP(self, ip, fan_gates_dictionary):
         """
         This function simply gets the stargate address that matches the IP address
@@ -91,44 +87,6 @@ class Subspace:
             if fan_gates_dictionary[stargate][1] == ip:
                 return fan_gates_dictionary[stargate][0]
         return str(stargate_ip) # If the gate address of the IP was not found
-
-
-    def get_ip(self, fqdn_or_ip):
-        """
-        This function takes a string as input and validates if the string is a valid IP address. If it is not a valid IP
-        the function assumes it is a FQDN and tries to resolve the IP from the domain name. If this fails, it returns None
-        :param fqdn_or_ip: A string of an IP or a FQDN
-        :return: The IP address is returned as a string, or None is returned if it fails.
-        """
-        from ipaddress import ip_address
-        from socket import gethostbyname
-        ip = None
-        try:
-            ip = ip_address(fqdn_or_ip)
-            # print('yay, it is an IP')
-        except ValueError:
-            try:
-                # print('NOPE, not an IP, getting IP from FQDN')
-                ip = gethostbyname(fqdn_or_ip)
-                # print('I found the IP:', ip)
-            except:
-                pass
-        except:
-            print('total failure..')
-            ip = None
-        return str(ip)
-
-
-    def get_fan_gates_from_db(self, hard_coded_fan_gates_dictionary):
-        """
-        This function gets the fan_gates from the database and merges it with the hard_coded fan_gates dictionary
-        :param hard_coded_fan_gates_dictionary: The dictionary containing any hard coded fan_gates not in the database, or a local gate perhaps
-        :return: The updated fan_gate dictionary is returned.
-        """
-        for gate in self.database.get_fan_gates():
-            hard_coded_fan_gates_dictionary[gate[0]] = [ast.literal_eval(gate[1]), self.get_ip(gate[2])]
-        return hard_coded_fan_gates_dictionary
-    
     
     def get_status_of_remote_gate(self, remote_ip):
         """
@@ -141,7 +99,6 @@ class Subspace:
             return False
         else:
             return True
-
 
     def get_planet_name_from_IP(self, IP, fan_gates):
         """

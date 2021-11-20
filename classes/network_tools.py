@@ -1,4 +1,6 @@
 import subprocess
+from ipaddress import ip_address
+from socket import gethostbyname
 
 class NetworkTools:
 
@@ -33,3 +35,26 @@ class NetworkTools:
         :return: returns the output as seen if run in a shell.
         """
         return subprocess.run(['nc', host, '53', '-w', '3', '-zv'], capture_output=True, text=True).stderr
+
+    def get_ip(self, fqdn_or_ip):
+        """
+        This function takes a string as input and validates if the string is a valid IP address. If it is not a valid IP
+        the function assumes it is a FQDN and tries to resolve the IP from the domain name. If this fails, it returns None
+        :param fqdn_or_ip: A string of an IP or a FQDN
+        :return: The IP address is returned as a string, or None is returned if it fails.
+        """
+        ip = None
+        try:
+            ip = ip_address(fqdn_or_ip)
+            # print('yay, it is an IP')
+        except ValueError:
+            try:
+                # print('NOPE, not an IP, getting IP from FQDN')
+                ip = gethostbyname(fqdn_or_ip)
+                # print('I found the IP:', ip)
+            except:
+                pass
+        except:
+            self.log.log("Unable to determine IP address '{}'".format(fqdn_or_ip))
+            ip = None
+        return str(ip)

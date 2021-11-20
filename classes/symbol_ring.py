@@ -21,6 +21,7 @@ class SymbolRing:
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.audio = stargate.audio
+        self.chevrons = stargate.chevrons
                 
         # TODO: Move to cfg
         self.enableStepper = False 
@@ -34,9 +35,9 @@ class SymbolRing:
         self.ringDirectionModeLongest = True
         
         # The symbols position on the symbol ring
-        self.symbols = {1: 0, 2: 32, 3: 64, 4: 96, 5: 128, 6: 160, 7: 192, 8: 224, 9: 256, 10: 288, 11: 320, 12: 352, 13: 384, 14: 416, 15: 448, 16: 480, 17: 512, 18: 544, 19: 576, 20: 608, 21: 640, 22: 672, 23: 704, 24: 736, 25: 768, 26: 800, 27: 832, 28: 864, 29: 896, 30: 928, 31: 960, 32: 992, 33: 1024, 34: 1056, 35: 1088, 36: 1120, 37: 1152, 38: 1184, 39: 1216}
+        self.symbol_step_positions = {1: 0, 2: 32, 3: 64, 4: 96, 5: 128, 6: 160, 7: 192, 8: 224, 9: 256, 10: 288, 11: 320, 12: 352, 13: 384, 14: 416, 15: 448, 16: 480, 17: 512, 18: 544, 19: 576, 20: 608, 21: 640, 22: 672, 23: 704, 24: 736, 25: 768, 26: 800, 27: 832, 28: 864, 29: 896, 30: 928, 31: 960, 32: 992, 33: 1024, 34: 1056, 35: 1088, 36: 1120, 37: 1152, 38: 1184, 39: 1216}
         # The chevrons position on the stargate.
-        self.chevrons = {1: 139, 2: 278, 3: 417, 4: 834, 5: 973, 6: 1112, 7: 0, 8: 556, 9: 695}
+        self.chevron_step_positions = {1: 139, 2: 278, 3: 417, 4: 834, 5: 973, 6: 1112, 7: 0, 8: 556, 9: 695}
         
         ## --------------------------
         
@@ -124,14 +125,14 @@ class SymbolRing:
                 
         self.audio.sound_stop('rolling_ring')  # stop the audio
 
-    def calculate_steps(self, chevron, symbol_number):
+    def calculate_steps(self, chevron_number, symbol_number):
         """
         Helper function to determine the needed number of steps to move symbol_number, to chevron
         :return: The number of steps to move is returned as an int.
         """
         # How many steps are needed:
         try:
-            steps = self.chevrons.get(chevron) - ((self.get_position() + self.symbols[symbol_number]) % self.total_steps)
+            steps = self.chevron_step_positions[chevron_number] - ((self.get_position() + self.symbol_step_positions[symbol_number]) % self.total_steps)
         except KeyError: # If we dial more chevrons than the stargate can handle. Don't return any steps.
             return None
             
@@ -142,7 +143,7 @@ class SymbolRing:
             return new_steps
         return steps
      
-    def move_symbol_to_chevron(self, chevron, symbol_number):
+    def move_symbol_to_chevron(self, symbol_number, chevron_number ):
         
         """
         This function moves the symbol_number to the desired chevron. It also updates the ring position file.
@@ -151,10 +152,10 @@ class SymbolRing:
         :return: nothing is returned
         """
         
-        calc_steps = self.calculate_steps(chevron, symbol_number) # calculate the steps
+        calc_steps = self.calculate_steps(chevron_number, symbol_number) # calculate the steps
 
         # Choose which ring direction mode to use
-        if ( self.ringDirectionModeLongest is False )
+        if ( self.ringDirectionModeLongest is False ):
             ## Option one. This will move the symbol the shortest direction, cc or ccw.
             if calc_steps: # If not None
                 self.move(calc_steps) # move the ring the calc_steps steps.
