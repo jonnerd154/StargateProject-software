@@ -1,4 +1,5 @@
 from HardwareDetector import HardwareDetector
+from random import choice
 
 # You can change or the values in this file to match your setup. This file should not be overwritten with an automatic update
 # The first number in the parenthesis is the gpio led number and the second value is the motor number.
@@ -59,18 +60,6 @@ class Chevron:
             
         self.motor_number = motor_number
         self.root_path = Path(__file__).parent.absolute()
-
-        ### Make ready the sound effects ###
-        self.chev1 = sound.WaveObject.from_wave_file(str(self.root_path / "../soundfx/chev_usual_1.wav"))
-        self.chev2 = sound.WaveObject.from_wave_file(str(self.root_path / "../soundfx/chev_usual_2.wav"))
-        self.chev3 = sound.WaveObject.from_wave_file(str(self.root_path / "../soundfx/chev_usual_3.wav"))
-
-        ### Make ready the sound effects for incoming wormhole ###
-        self.chev4 = sound.WaveObject.from_wave_file(str(self.root_path / "../soundfx/chev_usual_4.wav"))
-        self.chev5 = sound.WaveObject.from_wave_file(str(self.root_path / "../soundfx/chev_usual_5.wav"))
-        self.chev6 = sound.WaveObject.from_wave_file(str(self.root_path / "../soundfx/chev_usual_6.wav"))
-        self.chev7 = sound.WaveObject.from_wave_file(str(self.root_path / "../soundfx/chev_usual_7.wav"))
-        self.possible_incoming_sounds = [self.chev4, self.chev5, self.chev6, self.chev7]
 
         self.enableMotors = False # TODO: Move to cfg
         self.motorHardwareMode = motorHardwareMode
@@ -147,7 +136,7 @@ class Chevron:
         from adafruit_motorkit import MotorKit
         
         ### Chevron Down ###
-        self.chev1.play() # chev down audio
+        self.audio.sound_start('chevron_1') # chev down audio
         self.sleep(0.2)
 
         self.motor.throttle = -0.65
@@ -156,26 +145,24 @@ class Chevron:
 
         ### Turn on the LED ###
         self.sleep(0.35) # wait time without motion
-        self.chev3.play() # led on audio
+        self.audio.sound_start('chevron_3') # led on audio
         if self.led:
             self.led.on()
         self.sleep(0.35) # wait time without motion
 
         ### Chevron Up ###
-        self.chev2.play() # chev up audio
+        self.audio.sound_start('chevron_2') # chev up audio
         self.motor.throttle = 0.65
         self.sleep(0.2) # motor movement time
         self.motor.throttle = None
 
     def incoming_on(self):
-        from random import choice
         if self.led:
             self.led.on()
-        choice(self.possible_incoming_sounds).play().wait_done()  # random led on audio
+        choice(self.audio.incoming_chevron_sounds).play().wait_done()  # random led on audio
 
     def off(self, sound=None):
-        from random import choice
         if sound == 'on':
-            choice(self.possible_incoming_sounds).play()  # random led on audio
+            choice(self.audio.incoming_chevron_sounds).play()  # random led on audio
         if self.led:
             self.led.off()
