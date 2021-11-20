@@ -121,6 +121,7 @@ class Chevron:
         # If we have motor drivers, and they are enabled in config, initialize it.
         if self.enableMotors and self.motorHardwareMode > 0:
             if self.motorHardwareMode == 1:
+                from adafruit_motorkit import MotorKit
                 return self.get_adafruit_motor(self.motor_number)
             
             ### put other motor driver options here
@@ -129,9 +130,11 @@ class Chevron:
         	from hardware_simulation import DCMotorSim
         	return DCMotorSim()
         	
-    def on(self):
-        from adafruit_motorkit import MotorKit
-        
+    def cycle_outgoing(self):
+       self.down() # Motor down, light on
+       self.up() # Motor up, light unchanged
+      
+    def down(self):
         ### Chevron Down ###
         self.audio.sound_start('chevron_1') # chev down audio
         self.sleep(0.2)
@@ -146,13 +149,14 @@ class Chevron:
         if self.led:
             self.led.on()
         self.sleep(0.35) # wait time without motion
-
-        ### Chevron Up ###
+        
+    def up(self):
+        ### Chevron Down ###
         self.audio.sound_start('chevron_2') # chev up audio
         self.motor.throttle = 0.65
         self.sleep(0.2) # motor movement time
         self.motor.throttle = None
-
+    
     def incoming_on(self):
         if self.led:
             self.led.on()
