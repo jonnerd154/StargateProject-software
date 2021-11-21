@@ -14,6 +14,9 @@ class ElectronicsOriginal:
         self.neopixelPin = board.D12
         self.neopixelLEDCount = 122
 
+        self.adc_resolution = 10 # The MCP3002 is a 10-bit ADC
+        self.adc_vref = 3.3
+
     # ------------------------------------------
 
         self.shieldConfig = None
@@ -101,11 +104,23 @@ class ElectronicsOriginal:
 
         return adc_value
 
+    def adc_to_voltage( self, adc_value ):
+        # Convert ADC value to voltage
+        return (self.adc_vref * adc_value) / (2^self.adc_resolution) #TODO: This should be minus one
+
+    def homing_enabled(self):
+        if 0.000 < self.adc_to_voltage( self.get_adc_by_channel(1) ) < 1:
+            return True
+        return False
+
+    def get_homing_sensor_voltage(self):
+        return self.adc_to_voltage( self.get_adc_by_channel(0) )
+
     def init_neopixels(self):
         self.neopixels = neopixel.NeoPixel(self.neopixelPin, self.neopixelLEDCount, auto_write=False, brightness=0.61)
 
     def get_wormhole_pixels(self):
         return self.neopixels
-        
+
     def get_wormhole_pixel_count(self):
         return self.neopixelLEDCount

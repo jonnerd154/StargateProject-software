@@ -11,17 +11,10 @@ class SymbolRingHomingManager:
 
         self.offset = 0
         self.homing_sensor_home_threshold = 0.15 #This is the voltage level for when the ring is in the home position.
-        
-        # Variables to configure the SPI and ADC peripheral hardware
-        self.spi = None
-        self.spi_ch = 0
-        self.adc_resolution = 10 # The MCP3002 is a 10-bit ADC
-        self.vref = 3.3
-        
 
     def set_ring(self, ring):
         self.ring = ring
-        
+
     def find_home(self):
         self.audio.sound_start('rolling_ring')  # play the audio movement
         for i in range(self.ring.steps):
@@ -36,10 +29,9 @@ class SymbolRingHomingManager:
 
             ## homing sensor ##
             try:
-                homingEnabledAdc = self.electronics.get_adc_by_channel(1)
-                if 0.000 < self.adc_to_voltage( homingEnabledAdc ) < 1: # If the jumper for the sensor is present
-                    adc = self.electronics.get_adc_by_channel(0)
-                    if self.adc_to_voltage( adc ) < self.homing_sensor_home_threshold:  # if the ring is in the "home position"
+                if self.electronics.homing_enabled(): # If the jumper for the sensor is present
+                    sensorVoltage = self.electronics.get_homing_sensor_voltage()
+                    if sensorVoltage < self.homing_sensor_home_threshold:  # if the ring is in the "home position"
                         # print('HOME detected!')
                         actual_position = (self.stepper_pos + self.saved_pos) % self.total_steps
                         self.offset = (self.find_offset(actual_position, self.total_steps))
@@ -59,7 +51,3 @@ class SymbolRingHomingManager:
                 current_speed = normal_speed
                 sleep(current_speed)
         self.audio.sound_stop('rolling_ring')  # stop the audio
-
-    def adc_to_voltage( self, adc_value):
-        # Convert ADC value to voltage
-        return (self.vref * adc_value) / (2^adc_resolution) #TODO: This should be minus one
