@@ -19,7 +19,7 @@ class GateTestApp:
     def __init__(self):
 
         dirname, filename = os.path.split(os.path.abspath(__file__))
-        self.base_path = "/Users/jmoyes/Documents/GitHub/StargateProject2021/"
+        self.base_path = "/Users/jmoyes/Documents/GitHub/StargateProject2021/" #TODO: dynamic
 
         ### Load our config file
         self.cfg = StargateConfig(self.base_path, "config.json")
