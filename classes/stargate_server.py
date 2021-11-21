@@ -1,7 +1,7 @@
 import socket
 import os, netifaces
 from threading import Thread
-from time import sleep    
+from time import sleep
 from ipaddress import ip_address
 from icmplib import ping
 
@@ -16,9 +16,9 @@ class StargateServer:
     :return: Nothing is returned.
     """
     def __init__(self, stargate):
-        
+
         self.thread = Thread
-       
+
         self.stargate = stargate
         self.log = stargate.log
         self.cfg = stargate.cfg
@@ -38,7 +38,7 @@ class StargateServer:
         self.keep_alive_address = '172.30.0.1'
         self.keep_alive_interval = 24
         self.keep_alive_running_check_interval = 0.5
-        
+
         # Configure the socket, open/bind
         self.open_socket()
 
@@ -53,7 +53,7 @@ class StargateServer:
     def open_socket(self):
             self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server.bind(self.server_address)
-            
+
     def keep_alive(self, IP_address, interval, stargate):
         """
         This functions simply sends a ping to the specified IP address every specified interval
@@ -62,19 +62,19 @@ class StargateServer:
         :param interval: the interval for each ping as an int in second. (the sleep time)
         :return: Nothing is returned
         """
-        
+
         time_since_last_ping = 0
         while stargate.running:
-            
+
             sleep(self.keep_alive_running_check_interval)
-            
-            if (time_since_last_ping >= self.keep_alive_interval): 
+
+            if (time_since_last_ping >= self.keep_alive_interval):
                 self.log.log("Sending keep alive ping")
                 ping(IP_address, count=1, timeout=1)
                 time_since_last_ping = 0
             else:
                 time_since_last_ping+=self.keep_alive_running_check_interval
-            
+
     def get_stargate_server_ip(self):
         """
         This method tries to get the IP address of the subspace network interface. It also tries to start the subspace
@@ -97,7 +97,7 @@ class StargateServer:
             try:
                 server_ip = netifaces.ifaddresses('subspace')[2][0]['addr']
                 if ip_address(server_ip):
-                    ping('172.30.0.1', count=1, timeout=1) # ping the gateway creating some traffic signaling subspace that you are here.
+                    ping(self.keep_alive_address, count=1, timeout=1) # ping the gateway creating some traffic signaling subspace that you are here.
                     return server_ip
             except Exception as ex:
                 self.log.log('ERROR getting subspace IP: {}'.format(ex))
@@ -120,7 +120,7 @@ class StargateServer:
             except Exception as ex:
                 self.log.log('ERROR getting eth0 IP: {}'.format(ex))
         return server_ip # returns None if no ip was found
-        
+
     def handle_incoming_wormhole(self, conn, addr):
         connected = True  # while there is a connection from another gate.
         while connected:
@@ -144,7 +144,7 @@ class StargateServer:
                         if not self.stargate.fan_gate_incoming_IP:
                             self.stargate.fan_gate_incoming_IP = addr[0] # Save the IO address when establishing a wormhole.
                             self.stargate.dialer.hardware.set_center_on()# Activate the centre_button_outgoing light
-                            
+
                     planet_name = self.get_planet_name_from_IP(addr[0], self.known_fan_gates)
                     stargate_address = self.get_stargate_address_from_IP(addr[0], self.known_fan_gates)
                     self.log.log('Received from {} - {} -> {}'.format(planet_name, stargate_address, msg))
@@ -170,7 +170,7 @@ class StargateServer:
                     for symbol in address:
                         if not symbol in self.stargate.address_buffer_incoming:
                             self.stargate.address_buffer_incoming.append(symbol)
-                            
+
                     planet_name = self.get_planet_name_from_IP(addr[0], self.known_fan_gates)
                     stargate_address = self.get_stargate_address_from_IP(addr[0], self.known_fan_gates)
                     self.log.log('Received from {} - {} -> {msg}'.format(planet_name, stargate_address))
