@@ -26,12 +26,9 @@ class StargateServer:
 
         self.database = Database(self.base_path)
 
-        
-
         #TODO: move some of this to config.json
         self.header = 8
         self.port = 3838  # I chose 3838 because the Stargate can stay open for 38 minutes. :)
-        self.server_address = (self.server_ip, self.port)
         self.encoding_format = 'utf-8'
         self.disconnect_message = '!DISCONNECT'
         self.keep_alive_address = '172.30.0.1'
@@ -40,6 +37,7 @@ class StargateServer:
 
         # Get server IP, preferable the IP of the stargate in subspace.
         self.server_ip = self.get_stargate_server_ip()
+        self.server_address = (self.server_ip, self.port)
         
         # Configure the socket, open/bind
         self.open_socket()
