@@ -18,7 +18,7 @@ class Wormhole:
 
         self.pixels = self.electronics.get_wormhole_pixels()
         self.tot_leds = self.electronics.get_wormhole_pixel_count()
-        
+
         self.root_path = Path(__file__).parent.absolute()
 
         # Wormhole variables
@@ -145,10 +145,9 @@ class Wormhole:
         pixels: The pixel object where to set the pattern. eg self.pixels
         :return: The pattern is returned as a string. (Am i sure it's not a list? Is this a typo?)
         """
-        p = pixels
         for led in range(len(pattern)):
-            p[led] = pattern[led]
-        p.show()
+            pixels[led] = pattern[led]
+        pixels.show()
         return pattern
 
     def open_wormhole(self):
