@@ -87,7 +87,7 @@ class StargateServer:
         ## If the subspace interface is not active, try to activate it.
         if not 'subspace' in netifaces.interfaces():
             try:
-                self.log.log('Subspace was not found, attempting to enter subspace.')
+                self.log.log('Subspace network interface was not found, attempting to bring up the interface.')
                 os.popen('wg-quick up subspace').read()
             except Exception as ex:
                 self.log.log(f'subspace ERROR: {ex}')
