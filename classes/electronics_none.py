@@ -1,3 +1,5 @@
+from hardware_simulation import DCMotorSim, StepperSim, NeopixelSim
+
 class ElectronicsNone:
 
     def __init__(self, app):
