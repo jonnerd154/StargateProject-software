@@ -14,18 +14,19 @@ class ChevronManager:
         self.log = app.log
         self.cfg = app.cfg
         self.audio = app.audio
+        self.electronics = app.electronics
 
         self.loadFromConfig(app)
 
     def loadFromConfig(self, app):
         # Detect the connected Motor Hardware
         hwDetector = HardwareDetector()
-        self.motorHardwareMode = hwDetector.getMotorHardwareMode()
+        self.motorHardwareMode = hwDetector.getMotorHardwareMode() # TODO: This shouldn't be needed here
 
         # Retrieve the Chevron config and initialize the Chevron objects
         self.chevrons = {}
         for key, value in self.cfg.get("chevronMapping").items():
-            self.chevrons[int(key)] = Chevron( app.electronics, value['ledPin'], value['motorNumber'], self.motorHardwareMode, self.audio )
+            self.chevrons[int(key)] = Chevron( self.electronics, value['ledPin'], value['motorNumber'], self.motorHardwareMode, self.audio )
 
     def get( self, chevronNumber ):
         return self.chevrons[int(chevronNumber)]
@@ -54,6 +55,8 @@ class Chevron:
     def __init__(self, electronics, led_gpio, motor_number, motorHardwareMode, audio):
 
         self.audio = audio
+        self.electronics = electronics
+
         self.enableMotors = True # TODO: Move to cfg
         self.enableLights = True # TODO: Move to cfg
 
@@ -67,27 +70,10 @@ class Chevron:
 
         self.motor_number = motor_number
         self.motorHardwareMode = motorHardwareMode
-        self.motor = electronics.get_chevron_motor(self.motor_number)
+        self.motor = self.electronics.get_chevron_motor(self.motor_number)
 
         self.led_gpio = led_gpio
-        self.led = self.get_led_driver()
-
-    def get_led_driver(self):
-        if self.enableLights: # TODO: Add hardware detection
-            #if self.motorHardwareMode == 1:
-                from gpiozero import LED
-
-                if self.led_gpio is not None:
-                    return LED(self.led_gpio)
-                else:
-                    from hardware_simulation import GPIOSim # TODO: when hardware detection is added this can be removed
-                    return GPIOSim()
-
-            ### put other LED driver options here
-
-        else:
-            from hardware_simulation import GPIOSim
-            return GPIOSim()
+        self.led = self.electronics.get_led(self.led_gpio)
 
     def cycle_outgoing(self):
         self.down() # Motor down, light on

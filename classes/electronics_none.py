@@ -1,4 +1,4 @@
-from hardware_simulation import DCMotorSim, StepperSim, NeopixelSim
+from hardware_simulation import DCMotorSim, StepperSim, NeopixelSim, LEDSim
 
 class ElectronicsNone:
 
@@ -74,3 +74,6 @@ class ElectronicsNone:
 
     def get_wormhole_pixel_count(self):
         return self.neopixelLEDCount
+
+    def get_led(self, gpio_number):
+        return LEDSim()

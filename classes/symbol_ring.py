@@ -19,7 +19,8 @@ class SymbolRing:
         self.cfg = stargate.cfg
         self.audio = stargate.audio
         self.chevrons = stargate.chevrons
-        
+        self.base_path = stargate.base_path
+
         # TODO: Move to cfg
         self.enableStepper = False
         self.stepper_drive_mode = "double"
@@ -43,9 +44,9 @@ class SymbolRing:
         self.forwardDirection = stargate.electronics.get_stepper_forward()
         self.backwardDirection = stargate.electronics.get_stepper_backward()
         self.stepperDriveMode = stargate.electronics.get_stepper_drive_mode(self.stepper_drive_mode)
-        
+
         # Load the last known ring position
-        self.position_store = StargateConfig("ring_position.json")
+        self.position_store = StargateConfig(self.base_path, "ring_position.json")
 
         ## Initialize the Homing Manager
         self.homingManager = SymbolRingHomingManager(stargate, self)

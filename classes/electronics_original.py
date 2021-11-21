@@ -124,3 +124,6 @@ class ElectronicsOriginal:
 
     def get_wormhole_pixel_count(self):
         return self.neopixelLEDCount
+
+	def get_led(self, gpio_number):
+		return LED(gpio_number)

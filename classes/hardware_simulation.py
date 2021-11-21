@@ -26,8 +26,8 @@ class DCMotorSim:
     def release(self):
         pass
         
-class GPIOSim:
     
+class LEDSim:
     def __init__(self):
         pass
     
@@ -41,3 +41,7 @@ class NeopixelSim:
 
 	def __init__(self):
 		pass
+
+	def show(self):
+		pass
+	
