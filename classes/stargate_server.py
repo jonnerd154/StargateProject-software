@@ -37,6 +37,7 @@ class StargateServer:
         self.disconnect_message = '!DISCONNECT'
         self.keep_alive_address = '172.30.0.1'
         self.keep_alive_interval = 24
+        self.keep_alive_running_check_interval = 0.5
         
         # Configure the socket, open/bind
         self.open_socket()
@@ -62,9 +63,14 @@ class StargateServer:
         :return: Nothing is returned
         """
         
+        time_since_last_ping = 0
         while stargate.running:
-            sleep(interval)
-            ping(IP_address, count=1, timeout=1)
+            
+            sleep(self.keep_alive_running_check_interval)
+            
+            if (time_since_last_ping < self.keep_alive_interval):
+                ping(IP_address, count=1, timeout=1)
+                time_since_last_ping = 0
             
     def get_stargate_server_ip(self):
         """
