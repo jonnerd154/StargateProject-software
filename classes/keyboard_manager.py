@@ -7,13 +7,13 @@ class KeyboardManager:
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.audio = stargate.audio
-                
+
     def key_press(self):
         """
         This helper function stops the program (thread) and waits for a single keypress.
         :return: The pressed key is returned.
         """
-        
+
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
         try:
@@ -23,7 +23,7 @@ class KeyboardManager:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
 
-    
+
     def ask_for_input(self, stargate):
         """
         This function takes the stargate as input and listens for user input (from the DHD or keyboard). The pressed key
@@ -79,7 +79,7 @@ class KeyboardManager:
                 # If we have not yet activated the centre_button
                 if not (stargate.centre_button_outgoing or stargate.centre_button_incoming):
                     stargate.dialer.hardware.set_symbol_on( symbol_number ) # Light this symbol on the DHD
-                    
+
                     # Append the symbol to the outgoing address buffer
                     stargate.address_buffer_outgoing.append(symbol_number)
                     self.log.log(f'address_buffer_outgoing: {stargate.address_buffer_outgoing}') # Log the address_buffer
