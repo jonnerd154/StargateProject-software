@@ -25,13 +25,12 @@ class StargateSG1:
         
         # TODO: Move to cfg
         self.inactivityTimeout = 60
+        self.defaultAudioVolume = 65
         
-        ### This is the states and features of the StargateSG1 object. ###
         self.running = True
         self.initialize_gate_state_vars()
         
         ### Set up the needed classes and make them ready to use ###
-        ### Initiate the spinning ring dial object.
         self.netTools = NetworkTools(self.log)
         self.subspace = Subspace(self)
         self.keyboard = KeyboardManager(self)
@@ -52,7 +51,7 @@ class StargateSG1:
             self.stargate_server_thread.start()
 
         ### Set volume ###
-        self.audio.set_volume(65)
+        self.audio.set_volume( self.defaultAudioVolume )
 
         ### Notify that the Stargate is ready
         self.audio.play_random_clip("startup")
@@ -63,7 +62,7 @@ class StargateSG1:
         This method resets the state variables to "gate idle"
         :return:
         """
-        # Reset some variables
+        # Reset/initialize the state variables and address buffers
         self.address_buffer_outgoing = [] #Storage buffer for dialed outgoing address
         self.address_buffer_incoming = [] #Storage buffer for dialed incoming address
         self.last_activity_time = None # A variable to store the last user input time
