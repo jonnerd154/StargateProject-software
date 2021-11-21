@@ -19,8 +19,7 @@ from software_update import SoftwareUpdate
 from stargate_audio import StargateAudio
 from stargate_sg1 import StargateSG1
 from web_server import StargateWebServer
-#from electronics_none import ElectronicsNone
-from electronics_original import ElectronicsOriginal
+from electronics import Electronics
 
 class GateApplication:
 
@@ -37,7 +36,7 @@ class GateApplication:
 
 		### Detect our electronics and initialize the hardware
 		#self.electronics = ElectronicsNone(self)
-		self.electronics = ElectronicsOriginal(self)
+		self.electronics = Electronics(self).hardware
 
 		### Check/set the correct USB audio adapter. This is necessary because different raspberries detects the USB audio adapter differently.
 		self.audio = StargateAudio(self, self.base_path)

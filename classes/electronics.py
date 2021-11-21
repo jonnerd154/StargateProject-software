@@ -1,31 +1,17 @@
-from electronics_definitions import ElectronicsOriginal
+from hardware_detection import HardwareDetector
 
 class Electronics:
 
-	def __init__(self, app):
+    def __init__(self, app):
+        detector = HardwareDetector()
 
-		#self.log = app.log
-		# self.cfg = app.cfg
-		#
-		# # Detect Hardware, initialize the correct subclass
-		# # If we have motor drivers, and they are enabled in config, initialize it.
-        # if self.enableMotors and self.motorHardwareMode > 0:
-        #     if self.motorHardwareMode == 1:
-		#
-		# else:
-        #     from hardware_simulation import DCMotorSim
-        #     return DCMotorSim()
+        self.motorHardwareMode = detector.getMotorHardwareMode()
 
-		# Return the initialized subclass
-
-		pass
-
-	def get_chevron_motor(self):
-		pass
-
-	def get_stepper(self):
-		return self.stepper
-		pass
-
-	def get_gpio(self):
-		pass
+        # Detect Hardware, initialize the correct subclass
+        if self.motorHardwareMode > 0:
+            if self.motorHardwareMode == 1:
+                from electronics_original import ElectronicsOriginal
+                self.hardware = ElectronicsOriginal(app)
+        else:
+            from electronics_none import ElectronicsNone
+            self.hardware = ElectronicsNone(app)
