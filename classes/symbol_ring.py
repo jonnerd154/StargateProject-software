@@ -19,10 +19,10 @@ class SymbolRing:
         self.cfg = stargate.cfg
         self.audio = stargate.audio
         self.chevrons = stargate.chevrons
-		self.stepper = stargate.electronics.get_stepper()
-
+        
         # TODO: Move to cfg
         self.enableStepper = False
+        self.stepper_drive_mode = "double"
         self.total_steps = 1250 # Old value: 1251
         self.micro_steps = 16
         self.stepper_pos = 0
@@ -39,6 +39,11 @@ class SymbolRing:
 
         ## --------------------------
 
+        self.stepper = stargate.electronics.get_stepper()
+        self.forwardDirection = stargate.electronics.get_stepper_forward()
+        self.backwardDirection = stargate.electronics.get_stepper_backward()
+        self.stepperDriveMode = stargate.electronics.get_stepper_drive_mode(self.stepper_drive_mode)
+        
         # Load the last known ring position
         self.position_store = StargateConfig("ring_position.json")
 
@@ -65,7 +70,7 @@ class SymbolRing:
         else:
             return 0
 
-	# TODO: Move to a stepper/hardware manager
+    # TODO: Move to a stepper/hardware manager
     def move_raw_one_step(self, direction, style):
         self.stepper.onestep(direction=direction, style=style)
 
@@ -79,10 +84,10 @@ class SymbolRing:
         """
         ## Set the direction ##
         if steps >= 0:  # If steps is positive move forward
-            direction = stp.FORWARD
+            direction = self.forwardDirection
         else:  # if steps is negative move backward
             steps = abs(steps)
-            direction = stp.BACKWARD
+            direction = self.backwardDirection
 
         current_speed = self.initial_speed
 
@@ -90,7 +95,7 @@ class SymbolRing:
         self.audio.sound_start('rolling_ring')  # play the audio movement
         stepper_micro_pos = 0
         for i in range(steps):
-            self.move_raw_one_step(direction, style=stp.DOUBLE)
+            self.move_raw_one_step(direction, style=self.stepperDriveMode)
             stepper_micro_pos += 8
             self.stepper_pos = (stepper_micro_pos // self.micro_steps) % self.total_steps # Update the self.stepper_pos value as the ring moves. Will have a value from 0 till self.total_steps = 1250.
 

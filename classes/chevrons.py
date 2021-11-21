@@ -15,7 +15,7 @@ class ChevronManager:
         self.cfg = app.cfg
         self.audio = app.audio
 
-        self.loadFromConfig()
+        self.loadFromConfig(app)
 
     def loadFromConfig(self, app):
         # Detect the connected Motor Hardware
