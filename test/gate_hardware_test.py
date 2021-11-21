@@ -9,44 +9,46 @@ from ancients_log_book import AncientsLogBook
 from stargate_audio import StargateAudio
 
 from time import sleep
-from HardwareDetector import HardwareDetector
+from hardware_detection import HardwareDetector
 from chevrons import ChevronManager
 
-from adafruit_motorkit import MotorKit
-from adafruit_motor import stepper as stp
-import neopixel, board
+from electronics_none import ElectronicsNone
 
 class GateTestApp:
 
     def __init__(self):
-    
+
+        dirname, filename = os.path.split(os.path.abspath(__file__))
+        self.base_path = "/Users/jmoyes/Documents/GitHub/StargateProject2021/"
+
         ### Load our config file
-        self.cfg = StargateConfig("config.json")
+        self.cfg = StargateConfig(self.base_path, "config.json")
 
         ### Setup the logger
-        self.log = AncientsLogBook("test_procedure.log")
+        self.log = AncientsLogBook(self.base_path, "test_procedure.log")
         self.log.log('Gate Hardware Test: Starting.')
-        
+
+        self.electronics = ElectronicsNone(self)
+
         ### Check/set the correct USB audio adapter. This is necessary because different raspberries detects the USB audio adapter differently.
-        self.audio = StargateAudio(self)
+        self.audio = StargateAudio(self, self.base_path )
         self.audio.set_correct_audio_output_device()
-        
+
     def run(self):
         self.testNeoPixels()
         self.detectMotorHardware()
         self.testChevrons()
-        
+
         self.cleanup()
-        
+
     def cleanup(self):
-        self.log.log('Gate Hardware Test: Done.')   
+        self.log.log('Gate Hardware Test: Done.')
         quit()
-        
+
     def testNeoPixels(self):
-    
-        neoPin = board.D12  # The standard data pin is board.D18
-        tot_leds = 122
-        pixels = neopixel.NeoPixel(neoPin, tot_leds, auto_write=False, brightness=0.61)
+
+        pixels = self.electronics.get_wormhole_pixels()
+        tot_leds = self.electronics.get_wormhole_pixel_count()
 
         self.log.log("Testing wormhole neopixels. Press ctrl+c to continue to next test.")
         while(True):
@@ -68,9 +70,9 @@ class GateTestApp:
                     pixels.fill((0,0,0))
                     pixels.show()
                 break
-                
+
     def detectMotorHardware(self):
-    
+
         hwDetector = HardwareDetector()
         self.motorHardwareMode = hwDetector.getMotorHardwareMode()
         modeName = hwDetector.getMotorHardwareModeName()
@@ -78,11 +80,11 @@ class GateTestApp:
             self.log.log("Warning: No supported motor hardware controllers detected")
         else:
             self.log.log("Motor Hardware FOUND: {}".format(modeName))
-            
+
         return self.motorHardwareMode
 
     def testChevrons(self):
-    
+
         # Load the chevron configuration and initialize their objects
         chevrons = ChevronManager(self)
         self.log.log( "Testing Chevron lights and motors. Motor should move inward, the light should turn on, then the motor should move outward. ")
@@ -189,4 +191,3 @@ app.run()
 
 
 # Exit
-    
