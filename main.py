@@ -12,6 +12,7 @@ sys.path.append('config')
 
 from http.server import HTTPServer
 import threading
+import atexit
 
 from stargate_config import StargateConfig
 from ancients_log_book import AncientsLogBook
@@ -54,24 +55,27 @@ class GateApplication:
 		### Start the web server
 		self.log.log('Starting web server...')
 		StargateWebServer.stargate = self.stargate
-		httpd = HTTPServer(('', 80), StargateWebServer)
-		httpd_thread = threading.Thread(name="stargate-http", target=httpd.serve_forever)
-		httpd_thread.daemon = True
-		httpd_thread.start()
+		self.httpd_server = HTTPServer(('', 80), StargateWebServer)
+		self.httpd_thread = threading.Thread(name="stargate-http", target=self.httpd_server.serve_forever)
+		self.httpd_thread.daemon = True
+		self.httpd_thread.start()
 
+		### Register atexit handler
+		atexit.register(self.cleanup) # Ensure we handle cleanup before quitting, even on exception
 
 	def run(self):
-
-		# Keep the script running and monitor for updates with the update() method.
 		self.stargate.update() #This will keep running as long as `stargate.running` is True.
-		self.cleanup()
 
 	def cleanup(self):
 
 		# Release the ring when exiting. Just in case.
 		self.stargate.ring.release()
+
+		self.httpd_server.shutdown()
+		self.stargate.cleanup()
+
 		self.log.log('The Stargate program is no longer running')
-		quit()
+		sys.exit(0)
 
 # Run the stargate application
 app = GateApplication()
