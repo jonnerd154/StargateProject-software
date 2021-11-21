@@ -8,7 +8,6 @@ class StargateWebServer(SimpleHTTPRequestHandler):
  
     def translate_path(self, path):
         fullpath = "/home/sg1/sg1/web" + path
-        print(fullpath)
         return fullpath
 
 #   def translate_path(self, path):
@@ -33,11 +32,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             except:
                 pass
                 
-#         if self.path == '/':
-#             self.path = '/.html'
-#         return SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
-        
-        # self.send_response(200)
+#         self.send_response(200)
 #         self.send_header("Content-type", "text/html")
 #         self.end_headers()
 #         self.wfile.write(bytes("<html><head><title>https://pythonbasics.org</title></head>", "utf-8"))
