@@ -49,8 +49,11 @@ class StargateSG1:
         ### Run the stargate server if we have an internet connection ###
         # The stargate_server runs in it's own thread listening for incoming wormholes
         if self.netTools.has_internet_access():
-            self.stargate_server_thread = Thread(target=StargateServer(self).start, daemon=True, args=())
-            self.stargate_server_thread.start()
+            try:
+                self.stargate_server_thread = Thread(target=StargateServer(self).start, daemon=True, args=())
+                self.stargate_server_thread.start()
+            except:
+                self.log.log("Failed to start StargateServer thread")
 
         ### Set volume ###
         self.audio.set_volume( self.defaultAudioVolume )
