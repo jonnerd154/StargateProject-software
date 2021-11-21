@@ -7,17 +7,18 @@ class Wormhole:
     """
     This class handles all things wormhole. It takes the stargate object as input.
     """
-    def __init__(self, stargate_object):
+    def __init__(self, stargate):
 
         # For convenience
-        self.stargate_object = stargate_object
-        self.log = stargate_object.log
-        self.cfg = stargate_object.cfg
-        self.audio = stargate_object.app.audio
-
+        self.stargate = stargate
+        self.log = stargate.log
+        self.cfg = stargate.cfg
+        self.audio = stargate.app.audio
+        self.electronics = stargate.electronics
 
         self.pixels = self.electronics.get_wormhole_pixels()
-
+        self.tot_leds = self.electronics.get_wormhole_pixel_count()
+        
         self.root_path = Path(__file__).parent.absolute()
 
         # Wormhole variables
@@ -182,13 +183,13 @@ class Wormhole:
 
         no_pattern = self.pattern_off(self.tot_leds)
 
-        self.stargate_object.wormhole = True  # temporarily to be able to use the fade_transition function
+        self.stargate.wormhole = True  # temporarily to be able to use the fade_transition function
         self.fade_transition(pattern_blue(self.tot_leds))
         self.audio.sound_start('wormhole_close')  # Play the close wormhole audio
         self.fade_transition(no_pattern)
-        self.stargate_object.wormhole_max_time = 38 * 60 # Reset the variable
-        self.stargate_object.audio_clip_wait_time = 17 # Reset the variable
-        self.stargate_object.wormhole = False  # Put it back the way it should be.
+        self.stargate.wormhole_max_time = 38 * 60 # Reset the variable
+        self.stargate.audio_clip_wait_time = 17 # Reset the variable
+        self.stargate.wormhole = False  # Put it back the way it should be.
 
     def rotate_pattern(self, pattern=None, direction='ccw', speed=0, revolutions=1):
             """
@@ -218,7 +219,7 @@ class Wormhole:
             ### Rotate the pattern ###
             for revolution in range(revolutions):
                 for rotate in range(len(current_pattern)):
-                    if not self.stargate_object.wormhole:  # if the wormhole is cancelled
+                    if not self.stargate.wormhole:  # if the wormhole is cancelled
                         return  # this exits the whole for loop, even if nested.
                     current_pattern = [current_pattern[(i + rot_direction) % len(current_pattern)]
                                        for i, x in enumerate(current_pattern)]
@@ -277,7 +278,7 @@ class Wormhole:
             ## These are the two lists we are working with.
             # print(current_pattern)
             # print(new_pattern)
-            while current_pattern != new_pattern and self.stargate_object.wormhole:
+            while current_pattern != new_pattern and self.stargate.wormhole:
                 tween_pattern = create_tween_pattern(current_pattern, new_pattern)
                 current_pattern = tween_pattern
                 self.set_wormhole_pattern(self.pixels, tween_pattern)
@@ -327,7 +328,7 @@ class Wormhole:
         random_audio_clip = False  # Initiate the variable
 
         # If we dialled the black hole planet, change som variables
-        if self.stargate_object.black_hole:  # If we dialed the black hole.
+        if self.stargate.black_hole:  # If we dialed the black hole.
             possible_patterns = self.possible_wormholes(black_hole=True)
             self.wormhole_max_time = 5259488 * 60  # Make it 10 years...
             self.audio_clip_wait_time = 7
@@ -338,7 +339,7 @@ class Wormhole:
             possible_patterns = self.possible_wormholes(black_hole=False)
 
         # Keep the wormhole open
-        while self.stargate_object.wormhole and (time() - open_time) < self.wormhole_max_time:  # as long as stargate_object.wormhole, but for less time than the wormhole_max_time.
+        while self.stargate.wormhole and (time() - open_time) < self.wormhole_max_time:  # as long as stargate.wormhole, but for less time than the wormhole_max_time.
 
             # random transition functions
             transition = choice(possible_transitions)
@@ -366,5 +367,5 @@ class Wormhole:
         self.close_wormhole()
         if self.audio.is_playing('wormhole_established'):
             self.audio.sound_stop('wormhole_established')
-        self.stargate_object.wormhole = False # The close_wormhole method also does this.. shouldn't be needed.
+        self.stargate.wormhole = False # The close_wormhole method also does this.. shouldn't be needed.
         self.log.log(f'Disengaged Wormhole after {timedelta(seconds=int(time() - open_time))}')

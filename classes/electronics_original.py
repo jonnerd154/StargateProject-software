@@ -28,7 +28,7 @@ class ElectronicsOriginal:
         }
 
         self.neopixels = None
-        init_neopixels(self)
+        self.init_neopixels()
 
     def init_motor_shields(self):
         # Initialize all of the shields as DC motors
@@ -106,3 +106,6 @@ class ElectronicsOriginal:
 
     def get_wormhole_pixels(self):
         return self.neopixels
+        
+    def get_wormhole_pixel_count(self):
+        return self.neopixelLEDCount
