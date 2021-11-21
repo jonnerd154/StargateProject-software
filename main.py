@@ -26,18 +26,21 @@ class GateApplication:
 
 	def __init__(self):
 
+		dirname, filename = os.path.split(os.path.abspath(__file__))
+		self.base_path = dirname
+
 		### Load our config file
-		self.cfg = StargateConfig("config.json")
+		self.cfg = StargateConfig(self.base_path, "config.json")
 
 		### Setup the logger
-		self.log = AncientsLogBook("sg1.log")
+		self.log = AncientsLogBook(self.base_path, "sg1.log")
 
 		### Detect our electronics and initialize the hardware
 		self.electronics = ElectronicsNone(self)
 		#self.electronics = ElectronicsOriginal(self)
 
 		### Check/set the correct USB audio adapter. This is necessary because different raspberries detects the USB audio adapter differently.
-		self.audio = StargateAudio(self)
+		self.audio = StargateAudio(self, self.base_path)
 		self.audio.set_correct_audio_output_device()
 
 		### Check for new software updates ###

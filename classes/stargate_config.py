@@ -4,10 +4,10 @@ import json
 
 class StargateConfig:
 
-    def __init__(self, file_name, defaults=None):
+    def __init__(self, base_path, file_name, defaults=None):
 
         self.file_name = file_name
-        self.confDir = "/home/sg1/sg1/config" #No trailing slash ## TODO: Move to config or Parent(__file__)
+        self.confDir = base_path + "/config" #No trailing slash
 
         # Open the json file and load it into a python object
         try:
@@ -25,7 +25,7 @@ class StargateConfig:
 
     def get_full_file_path(self):
         return self.confDir+"/"+self.file_name
-        
+
     def get(self, key):
         try:
             return self.config.get(key)
@@ -36,7 +36,7 @@ class StargateConfig:
     def set(self, key, value):
         self.set_non_persistent(key, value)
         self.save()
-    
+
     def set_non_persistent(self, key, value):
         self.config[key] = value
 

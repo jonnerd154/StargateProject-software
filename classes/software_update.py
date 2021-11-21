@@ -16,14 +16,14 @@ class SoftwareUpdate:
         self.log = app.log
         self.cfg = app.cfg
         self.audio = app.audio
-        
-        self.database = Database()
-        
+
+        self.database = Database(app.base_path)
+
         #TODO: move to config
-        self.base_url = 'https://thestargateproject.com/stargate_software_updates/' 
+        self.base_url = 'https://thestargateproject.com/stargate_software_updates/'
         self.fileDownloadUsername = 'Samantha'
         self.fileDownloadPassword = 'CarterSG1!'
-        
+
     def get_current_version(self):
         return self.current_version
 
@@ -46,12 +46,12 @@ class SoftwareUpdate:
 
             ## Some needed variables
             update_found = False
-            
+
             root_path = Path(__file__).parent.absolute()
             # get the user ID and group ID of the owner of this file (__file__). (In most instances this would result in the UID 1001 for the sg1 user.
             uid = pwd.getpwnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).pw_uid
             gid = grp.getgrnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).gr_gid
-            
+
             ### Get the information from the DB ###
             sw_update = self.database.get_software_updates()
 
