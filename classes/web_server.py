@@ -5,11 +5,27 @@ import threading
 from http.server import SimpleHTTPRequestHandler
 
 class StargateWebServer(SimpleHTTPRequestHandler):
+
     def translate_path(self, path):
+        
+        
         fullpath = "/home/sg1/sg1/web" + path
         print(fullpath)
         return fullpath
 
+  #   def translate_path(self, path):
+#         path = SimpleHTTPRequestHandler.translate_path(self, path)
+#         relpath = os.path.relpath(path, os.getcwd())
+#         fullpath = os.path.join('web', relpath)
+#         return fullpath
+
+    def translate_path(self, path):
+        path = SimpleHTTPRequestHandler.translate_path(self, path)
+        relpath = os.path.relpath(path, os.getcwd())
+        fullpath = os.path.join('web', relpath)
+        return fullpath
+        
+        
     def do_GET(self):
         fullPath = self.translate_path(self.path)
         if fullPath:
@@ -39,6 +55,16 @@ class StargateWebServer(SimpleHTTPRequestHandler):
     def do_POST(self):
         # For debugging:
         print('POST PATH: {}'.format(self.path))
+        if self.path == '/shutdown':
+            os.system('systemctl poweroff')
+            self.send_response(200, 'OK')
+            return
+
+        if self.path == '/reboot':
+            os.system('systemctl reboot')
+            self.send_response(200, 'OK')
+            return
+            
         if self.path == '/chevron1Cycle':
             self.stargate.chevrons.get(1).cycle_outgoing()
             self.send_response(200, 'OK')
@@ -55,8 +81,9 @@ class StargateWebServer(SimpleHTTPRequestHandler):
         print('POST DATA: {}'.format(data))
 
         if self.path == '/update':
-            if data['action'] == "chevron0":
-                self.stargate.chevrons.get(1).cycle_outgoing()
+            if data['action'] == "chevron_cycle":
+                print("In chevron_cycle")
+                self.stargate.chevrons.get(int(data['chevron_number'])).cycle_outgoing()
 
         # For debugging
         # print('POST data: {}'.format(data))

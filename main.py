@@ -43,10 +43,11 @@ class GateApplication:
 		self.log.log('Booting up the Stargate! Version {}'.format(self.swUpdater.get_current_version()))
 		self.stargate = StargateSG1(self)
 
-		print('Running web server...')
-		StargateWebServer.stargate = self.stargate
+		### Start the web server
+		print('Starting web server...')
+		StargateWebServer.stargate = self.stargate	
+	
 		httpd = HTTPServer(('', 80), StargateWebServer)
-
 		httpd_thread = threading.Thread(name="HTTP", target=httpd.serve_forever)
 		httpd_thread.daemon = True
 		httpd_thread.start()

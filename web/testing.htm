@@ -5,88 +5,77 @@
         <link rel="stylesheet" href="main.css" />
         <style>
         .animation {margin:10px;}
+        .cycleChevronButton { margin: 10px; }
         </style>
     </head>
     <body>
        
-        <div class="animations">
-        <h2>Motor control </h2>
-            <div class="animation" anim="4" action="spinBackward">
-                Spin backward
+        <div class="button_container">
+        <!--<h2>Symbol Ring</h2>
+            <div class="buttonClass" action="spinForward">
+                Forward
             </div>
-            <div class="animation" anim="4" action="spinForward">
-                Spin forward
+              <div class="buttonClass" action="spinBackward">
+                Backward
             </div>
-             <div class="animation" anim="4" action="driveTest">
-                Drive test
-            </div>
-	        <div class="animation" anim="4" action="goHome">
+	        <!--<div class="animation" action="goHome">
                 Home Stargate
-            </div>
-             <div class="animation" anim="4" action="lockChevron" style="width:324px;">
-                Lock/unlock chevron
-            </div>
+            </div>- ->
             
 	    <hr />
         <h2>Lighting control </h2>
-            <div class="animation" anim="4" action="allLightsOn">
+            <div class="buttonClass" action="allLightsOn">
                 All on
             </div>
-            <div class="animation" anim="4" action="allLightsOff">
+            <div class="buttonClass" action="allLightsOff">
                 All off
             </div>
-            
-            <div class="animation" anim="4" action="ringOn">
-                Ring on
-            </div>
-            <div class="animation" anim="4" action="ringOff">
-                Ring off
+            <div class="buttonClass" action="wormhole_on">
+                Wormhole
             </div>
             
-            <div class="animation" anim="4" action="rampOn">
-                Ramp on
+            <div class="buttonClass" action="homingToggle">
+                Homing LED
             </div>
-            <div class="animation" anim="4" action="rampOff">
-                Ramp off
+        <hr /> -->
+        <h2>Cycle Chevrons (Motors, Lights, Sound)</h2>   
+            <div class="cycleChevronButton" chevron_number='1'>
+                Chevron 1
             </div>
-            
-            <div class="animation" anim="4" action="ledOn">
-                LED on
+            <div class="cycleChevronButton" chevron_number='2'>
+                Chevron 2
             </div>
-            <div class="animation" anim="4" action="ledOff">
-                LED off 
+            <div class="cycleChevronButton" chevron_number='3'>
+                Chevron 3
             </div>
-            
-            <div class="animation" anim="4" action="chevron0">
-                Chevron 0 on
+            <div class="cycleChevronButton" chevron_number='4'>
+                Chevron 4
             </div>
-            <div class="animation" anim="4" action="chevron1">
-                Chevron 1 on
+            <div class="cycleChevronButton" chevron_number='5'>
+                Chevron 5
             </div>
-            <div class="animation" anim="4" action="chevron2">
-                Chevron 2 on
+            <div class="cycleChevronButton" chevron_number='6'>
+                Chevron 6
             </div>
-            <div class="animation" anim="4" action="chevron3">
-                Chevron 3 on
+            <div class="cycleChevronButton" chevron_number='7'>
+                Chevron 7
             </div>
-            <div class="animation" anim="4" action="chevron4">
-                Chevron 4 on
+            <div class="cycleChevronButton" chevron_number='8'>
+                Chevron 8
             </div>
-            <div class="animation" anim="4" action="chevron5">
-                Chevron 5 on
-            </div>
-            <div class="animation" anim="4" action="chevron6">
-                Chevron 6 on
-            </div>
-            <div class="animation" anim="4" action="chevron7">
-                Chevron 7 on
-            </div>
-            <div class="animation" anim="4" action="chevron8">
-                Chevron 8 on
+            <div class="cycleChevronButton" chevron_number='9'>
+                Chevron 9
             </div>
             
         </div>
-
+        <!--
+        <hr />
+        <h2>Iris Control (Iris is OPEN)</h2>   
+            <div class="cycleChevronButton" chevron_number='1'>
+            Close Iris
+            </div>           
+        </div>
+        -->
 		<hr />
         <div class="controls">
         	<div class="control" onclick="window.location = 'index.htm';">
@@ -100,8 +89,8 @@
             </div>
         </div>
 
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>-->
-        <!--<script type="text/javascript" src="jquery-3.3.1.min.js"></script>-->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <!-- <script type="text/javascript" src="jquery-3.3.1.min.js"></script> -->
         <script type="text/javascript">
         	
             function reboot() {
@@ -115,16 +104,15 @@
                     url: '/shutdown'
                 });
             }
-
-            $('div.animations div.animation').click(function() {
-                const anim = +$(this).attr('anim');
-                const action = $(this).attr('action');
+            
+            $('div.button_container div.cycleChevronButton').click(function() {
+                const chevron_number = $(this).attr('chevron_number');
 
                 $.post({
                     url: '/update',
                     data: JSON.stringify({
-                        anim: anim,
-                        action: action
+                        action: 'chevron_cycle',
+                        chevron_number: chevron_number
                     })
                 })
                 .fail(function() {

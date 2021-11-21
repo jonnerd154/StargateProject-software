@@ -110,16 +110,16 @@ html {
     margin: 0 auto;
 }
 
-    .animation {
-        display: inline-block;
-        border: 1px solid #00563f;
-        padding: 10px;
-        font-size: 22pt;
-        width: 200px;
-        margin: 0 10px 50px 0;
-        text-align: center;
-        cursor: pointer;
-    }
+.button_container div {
+    display: inline-block;
+    border: 1px solid #00563f;
+    padding: 10px;
+    font-size: 22pt;
+    width: 200px;
+    margin: 0 10px 50px 0;
+    text-align: center;
+    cursor: pointer;
+}
 
 .controls {
     clear: both;
@@ -128,16 +128,16 @@ html {
     margin: 0 auto;
 }
 
-    .control {
-        display: inline-block;
-        border: 1px solid red;
-        padding: 10px;
-        font-size: 22pt;
-        width: 200px;
-        margin: 50px 10px 0 0;
-        text-align: center;
-        cursor: pointer;
-    }
+.control {
+    display: inline-block;
+    border: 1px solid red;
+    padding: 10px;
+    font-size: 22pt;
+    width: 200px;
+    margin: 50px 10px 0 0;
+    text-align: center;
+    cursor: pointer;
+}
 
 
 .presetAddress {

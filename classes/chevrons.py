@@ -54,15 +54,15 @@ class Chevron:
     def __init__(self, led_gpio, motor_number, motorHardwareMode, audio):
     
         self.audio = audio
-        self.enableMotors = False # TODO: Move to cfg
-        self.enableLights = False # TODO: Move to cfg
+        self.enableMotors = True # TODO: Move to cfg
+        self.enableLights = True # TODO: Move to cfg
         
         self.chevronDownAudioHeadStart = 0.2
         self.chevronDownThrottle = -0.65 # negative
         self.chevronDownTime = 0.1
         self.chevronDownWaitTime = 0.35
         
-        self.chevronUpThrottle = -0.65 # positive
+        self.chevronUpThrottle = 0.65 # positive
         self.chevronUpTime = 0.2
         
         self.motor_number = motor_number
