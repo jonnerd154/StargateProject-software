@@ -44,4 +44,9 @@ class NeopixelSim:
 
 	def show(self):
 		pass
-	
+
+	def fill(self, color_tuple):
+		pass
+
+	def _getitem(self, index):
+		return None
