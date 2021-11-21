@@ -143,8 +143,7 @@ class StargateServer:
                         # If there are not already a saved IP, or if we dialed an none fan_gate
                         if not self.stargate.fan_gate_incoming_IP:
                             self.stargate.fan_gate_incoming_IP = addr[0] # Save the IO address when establishing a wormhole.
-                            self.stargate.dhd.setPixel(0, 255, 0, 0)  # Activate the centre_button_outgoing light
-                            self.stargate.dhd.latch()
+                            self.stargate.dialer.hardware.set_center_on()# Activate the centre_button_outgoing light
                             
                     planet_name = self.get_planet_name_from_IP(addr[0], self.known_fan_gates)
                     stargate_address = self.get_stargate_address_from_IP(addr[0], self.known_fan_gates)
