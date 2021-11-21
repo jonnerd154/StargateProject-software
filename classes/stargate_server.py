@@ -68,9 +68,12 @@ class StargateServer:
             
             sleep(self.keep_alive_running_check_interval)
             
-            if (time_since_last_ping < self.keep_alive_interval):
+            if (time_since_last_ping >= self.keep_alive_interval): 
+                self.log.log("Sending keep alive ping")
                 ping(IP_address, count=1, timeout=1)
                 time_since_last_ping = 0
+            else:
+                time_since_last_ping+=self.keep_alive_running_check_interval
             
     def get_stargate_server_ip(self):
         """
