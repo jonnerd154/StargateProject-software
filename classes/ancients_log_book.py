@@ -25,7 +25,7 @@ class AncientsLogBook:
         :return: Nothing is returned.
         """
 
-        with open(self.logDir +"/"+ self.gateLog, 'a') as logFile:
+        with open(self.logDir +"/"+ self.gateLog, 'a+') as logFile:
             logLine = '\n' + f'[{datetime.now().replace(microsecond=0)}] \t {str}'
             logFile.write(logLine)
 
