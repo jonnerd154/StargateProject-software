@@ -21,7 +21,6 @@ class HardwareDetector:
             print("Failed to import smbus. Assuming no I2C devices.")
             return
 
-
     def getI2CDevices(self):
         devices = []
         # If we don't have smbus, we have no i2c devices, return an empty array

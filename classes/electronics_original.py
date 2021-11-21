@@ -1,5 +1,7 @@
 from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper as stp
+import spidev
+
 
 class ElectronicsOriginal:
 
@@ -19,6 +21,9 @@ class ElectronicsOriginal:
             "interleave": stp.INTERLEAVE,
             "microstep": stp.MICROSTEP
         }
+        
+        self.spidev = None
+        self.import_spidev()
         
     def init_motor_shields(self):
         # Initialize all of the shields as DC motors
@@ -58,3 +63,36 @@ class ElectronicsOriginal:
         except KeyError:
             self.log.log("Unsupported Stepper Drive Mode: {}. Using 'double'".format(driveMode))
             return self.driveModes['double']
+    
+     def init_spi_for_adc():  
+        # Initialize the SPI hardware to talk to the external ADC
+    
+        # Make sure you've enabled the Raspi's SPI peripheral: `sudo raspi-config`
+        self.spi = spidev.SpiDev(0, self.spi_ch)
+        self.spi.max_speed_hz = 1200000
+    
+    def get_adc_by_channel(adc_ch):
+        # CREDIT: https://learn.sparkfun.com/tutorials/python-programming-tutorial-getting-started-with-the-raspberry-pi/experiment-3-spi-and-analog-input
+
+        self.init_spi_for_adc()
+    
+        # Make sure ADC channel is 0 or 1
+        if adc_ch not in [0,1]:
+            raise ValueError
+
+        # Construct SPI message
+        msg = 0b11 # Start bit
+        msg = ((msg << 1) + adc_ch) << 5 # Select channel, read in non-differential mode
+        msg = [msg, 0b00000000] # clock the response back from ADC, 12 bits
+        reply = spi.xfer2(msg) # read the response and store it in a variable
+
+        # Construct single integer out of the reply (2 bytes)
+        adc_value = 0
+        for byte in reply:
+            adc_value = (adc_value << 8) + byte
+
+        # Last bit (0) is not part of ADC value, shift to remove it
+        adc_value = adc_value >> 1
+    
+        return adc_value
+        

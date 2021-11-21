@@ -1,4 +1,3 @@
-import spidev
 
 class SymbolRingHomingManager:
 
@@ -8,9 +7,10 @@ class SymbolRingHomingManager:
         self.cfg = stargate.cfg
         self.audio = stargate.audio
         self.ring = ring
+        self.electronics = stargate.electronics
 
         self.offset = 0
-        self.homing_sensor_sensitivity = 0.15 #This is the voltage level for when the ring is in the home position.
+        self.homing_sensor_home_threshold = 0.15 #This is the voltage level for when the ring is in the home position.
         
         # Variables to configure the SPI and ADC peripheral hardware
         self.spi = None
@@ -36,8 +36,10 @@ class SymbolRingHomingManager:
 
             ## homing sensor ##
             try:
-                if 0.000 < self.get_adc_voltage_by_channel(1) < 1: # If the jumper for the sensor is present
-                    if self.get_adc_voltage_by_channel(0) < self.homing_sensor_sensitivity:  # if the ring is in the "home position"
+                homingEnabledAdc = self.electronics.get_adc_by_channel(1)
+                if 0.000 < self.adc_to_voltage( homingEnabledAdc ) < 1: # If the jumper for the sensor is present
+                    adc = self.electronics.get_adc_by_channel(0)
+                    if self.adc_to_voltage( adc ) < self.homing_sensor_home_threshold:  # if the ring is in the "home position"
                         # print('HOME detected!')
                         actual_position = (self.stepper_pos + self.saved_pos) % self.total_steps
                         self.offset = (self.find_offset(actual_position, self.total_steps))
@@ -57,38 +59,6 @@ class SymbolRingHomingManager:
                 current_speed = normal_speed
                 sleep(current_speed)
         self.audio.sound_stop('rolling_ring')  # stop the audio
-      
-    def init_spi_for_adc():  
-        # Initialize the SPI hardware to talk to the external ADC
-    
-        # Make sure you've enabled the Raspi's SPI peripheral: `sudo raspi-config`
-        self.spi = spidev.SpiDev(0, self.spi_ch)
-        self.spi.max_speed_hz = 1200000
-    
-    def get_adc_voltage_by_channel(adc_ch):
-        # CREDIT: https://learn.sparkfun.com/tutorials/python-programming-tutorial-getting-started-with-the-raspberry-pi/experiment-3-spi-and-analog-input
-
-        self.init_spi_for_adc()
-        
-        # Make sure ADC channel is 0 or 1
-        if adc_ch not in [0,1]:
-            raise ValueError
-
-        # Construct SPI message
-        msg = 0b11 # Start bit
-        msg = ((msg << 1) + adc_ch) << 5 # Select channel, read in non-differential mode
-        msg = [msg, 0b00000000] # clock the response back from ADC, 12 bits
-        reply = spi.xfer2(msg) # read the response and store it in a variable
-
-        # Construct single integer out of the reply (2 bytes)
-        adc_value = 0
-        for byte in reply:
-            adc_value = (adc_value << 8) + byte
-
-        # Last bit (0) is not part of ADC value, shift to remove it
-        adc_value = adc_value >> 1
-        
-        return self.adc_to_voltage(adc_value)
 
     def adc_to_voltage( self, adc_value):
         # Convert ADC value to voltage
