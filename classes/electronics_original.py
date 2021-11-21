@@ -2,6 +2,7 @@ from adafruit_motorkit import MotorKit
 from adafruit_motor import stepper as stp
 import spidev
 import neopixel, board
+from gpiozero import LED
 
 class ElectronicsOriginal:
 
@@ -125,5 +126,8 @@ class ElectronicsOriginal:
     def get_wormhole_pixel_count(self):
         return self.neopixelLEDCount
 
-	def get_led(self, gpio_number):
-		return LED(gpio_number)
+    def get_led(self, gpio_number):
+        if gpio_number:
+            return LED(gpio_number)
+        else:
+            return None

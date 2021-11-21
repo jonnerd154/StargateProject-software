@@ -74,7 +74,7 @@ class Chevron:
 
         self.led_gpio = led_gpio
         self.led = self.electronics.get_led(self.led_gpio)
-
+            
     def cycle_outgoing(self):
         self.down() # Motor down, light on
         self.up() # Motor up, light unchanged
