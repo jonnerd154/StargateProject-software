@@ -5,7 +5,7 @@ class ElectronicsNone:
     def __init__(self, app):
 
         self.neopixelPin = None
-        self.neopixelLEDCount = 0
+        self.neopixelLEDCount = 122 # must be non-zero
 
         self.adc_resolution = None
         self.adc_vref = None
