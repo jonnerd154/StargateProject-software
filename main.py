@@ -52,7 +52,7 @@ class GateApplication:
 	def cleanup(self):
 
 		# Release the ring when exiting. Just in case.
-		stargate.ring.release()
+		self.stargate.ring.release()
 		self.log.log('The Stargate program is no longer running')
 		quit()
 
