@@ -26,8 +26,7 @@ class StargateServer:
 
         self.database = Database(self.base_path)
 
-        # Get server IP, preferable the IP of the stargate in subspace.
-        self.server_ip = self.get_stargate_server_ip()
+        
 
         #TODO: move some of this to config.json
         self.header = 8
@@ -39,6 +38,9 @@ class StargateServer:
         self.keep_alive_interval = 24
         self.keep_alive_running_check_interval = 0.5
 
+        # Get server IP, preferable the IP of the stargate in subspace.
+        self.server_ip = self.get_stargate_server_ip()
+        
         # Configure the socket, open/bind
         self.open_socket()
 
