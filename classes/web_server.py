@@ -5,15 +5,13 @@ import threading
 from http.server import SimpleHTTPRequestHandler
 
 class StargateWebServer(SimpleHTTPRequestHandler):
-
+ 
     def translate_path(self, path):
-        
-        
         fullpath = "/home/sg1/sg1/web" + path
         print(fullpath)
         return fullpath
 
-  #   def translate_path(self, path):
+#   def translate_path(self, path):
 #         path = SimpleHTTPRequestHandler.translate_path(self, path)
 #         relpath = os.path.relpath(path, os.getcwd())
 #         fullpath = os.path.join('web', relpath)

@@ -184,10 +184,10 @@ class Chevron:
     def incoming_on(self):
         if self.led:
             self.led.on()
-        choice(self.audio.incoming_chevron_sounds).play().wait_done()  # random led on audio
+        choice(self.audio.incoming_chevron_sounds).play().wait_done()
 
     def off(self, sound=None):
         if sound == 'on':
-            choice(self.audio.incoming_chevron_sounds).play()  # random led on audio
+            choice(self.audio.incoming_chevron_sounds).play()
         if self.led:
             self.led.off()

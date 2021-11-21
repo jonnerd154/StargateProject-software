@@ -44,11 +44,10 @@ class GateApplication:
 		self.stargate = StargateSG1(self)
 
 		### Start the web server
-		print('Starting web server...')
+		self.log.log('Starting web server...')
 		StargateWebServer.stargate = self.stargate	
-	
 		httpd = HTTPServer(('', 80), StargateWebServer)
-		httpd_thread = threading.Thread(name="HTTP", target=httpd.serve_forever)
+		httpd_thread = threading.Thread(name="stargate-http", target=httpd.serve_forever)
 		httpd_thread.daemon = True
 		httpd_thread.start()
 	
