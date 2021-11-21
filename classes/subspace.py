@@ -5,19 +5,19 @@ from database import Database
 class Subspace:
 
     def __init__(self, stargate):
-        
+
         self.log = stargate.log
         self.cfg = stargate.cfg
-        
-        self.database = Database()
-        
+
+        self.database = Database(stargate.base_path)
+
         # TODO: Move to config
         self.port = 3838 # just for fun because the Stargate can stay open for 38 minutes. :)
         self.header_bytes = 8
         self.encoding_format = 'utf-8'
         self.disconnect_message = '!DISCONNECT'
         self.timeout = 10 # the timeout value when connecting to a remote stargate (seconds)
-        
+
     def send_raw(self, msg):
         message = msg.encode(self.encoding_format)
         msg_length = len(message)
@@ -37,7 +37,7 @@ class Subspace:
         :return: The function returns a tuple where the first value is True if we have a connection to the server, and False if not.
         The second value in the tuple is either None, or it contains the status of the remote gate, if we asked for it.
         """
-        
+
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.settimeout(self.timeout) # set the timeout
         connection_to_server = False
@@ -87,7 +87,7 @@ class Subspace:
             if fan_gates_dictionary[stargate][1] == ip:
                 return fan_gates_dictionary[stargate][0]
         return str(stargate_ip) # If the gate address of the IP was not found
-    
+
     def get_status_of_remote_gate(self, remote_ip):
         """
         This helper functions tries to determine if the wormhole of the remote gate is already active, or if we are currently dialing out.
@@ -111,4 +111,3 @@ class Subspace:
             return [k for k, v in fan_gates.items() if v[1] == IP][0]
         except:
             return 'Unknown'
-

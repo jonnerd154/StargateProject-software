@@ -8,27 +8,27 @@ from database import Database
 class StargateAddressManager:
 
     def __init__(self, stargate):
-        
+
         self.stargate = stargate
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.netTools = stargate.netTools
 
-        self.database = Database()
-        
+        self.database = Database(stargate.base_path)
+
         # TODO: Move to json cfg
         self.black_hole_planets = [ known_planets["P3W-451"] ]
         self.local_stargate_address = local_stargate_address # Set the local stargate address
         self.fan_gates = fan_gates_cfg ### Stargate fan-made gate addresses
-          
+
         ### Retrieve and merge all fan gates, local and in-DB
         self.fan_gates = self.update_fan_gates_from_db()
-        
+
         pass
-       
+
     def get_fan_gates(self):
         return self.fan_gates
-         
+
     def update_fan_gates_from_db(self):
         """
         This function gets the fan_gates from the database and merges it with the hard_coded fan_gates dictionary
@@ -39,7 +39,7 @@ class StargateAddressManager:
             for gate in self.database.get_fan_gates():
                 self.fan_gates[gate[0]] = [ast.literal_eval(gate[1]), self.netTools.get_ip(gate[2])]
             return self.fan_gates
-        
+
     def valid_planet(self, address):
         """
             A helper function to check if the dialed address is a valid planet address. This function excludes the
@@ -76,12 +76,12 @@ class StargateAddressManager:
             if self.fan_gates[gate][0] == copy_of_address:
                 return 'fan_gate'
         return False  # Return False if it's not a valid destination
-    
+
     def is_black_hole(self, address):
         if address in self.black_hole_planets:
             return True
         return False
-    
+
     def is_fan_made_stargate(self, dialed_address):
         """
         This helper function tries to check the first two symbols in the dialed address and compares it to
@@ -106,7 +106,7 @@ class StargateAddressManager:
             except:
                 pass
         return False
-        
+
 class StargateAddressValidator:
 
 	def __init__(self, input_address):

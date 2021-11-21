@@ -23,6 +23,7 @@ class StargateSG1:
         self.cfg = app.cfg
         self.audio = app.audio
         self.electronics = app.electronics
+        self.base_path = app.base_path
 
         # TODO: Move to cfg
         self.inactivityTimeout = 60
