@@ -22,9 +22,10 @@ class StargateServer:
         self.stargate = stargate
         self.log = stargate.log
         self.cfg = stargate.cfg
-        
-        self.database = Database()
-        
+        self.base_path = stargate.base_path
+
+        self.database = Database(self.base_path)
+
         # Get server IP, preferable the IP of the stargate in subspace.
         self.server_ip = self.get_stargate_server_ip()
 
