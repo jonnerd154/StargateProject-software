@@ -35,4 +35,9 @@ class GPIOSim:
         pass
         
     def off(self):
-        pass
+        pass		
+		
+class NeopixelSim:
+
+	def __init__(self):
+		pass
