@@ -50,3 +50,6 @@ class NeopixelSim:
 
 	def __setitem__(self, index, val):
 		return None
+
+	def __getitem__(self, index):
+		return [ [], [], [] ]
