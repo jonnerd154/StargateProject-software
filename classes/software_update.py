@@ -62,7 +62,7 @@ class SoftwareUpdate:
                 if entry[1] > self.current_version:
                     update_audio = self.audio.play_random_audio_clip("update")
                     update_found = True
-                    self.log.log(f'Newer version {entry[1]} detected!')
+                    self.log.log("Newer version {} detected!".format(entry[1]))
 
                     new_files = literal_eval(entry[2]) # make a list of the new files
                     # Get the new files
@@ -75,7 +75,7 @@ class SoftwareUpdate:
                             pass
                         open(filepath, 'wb').write(r.content) # save the file
                         os.chown(str(root_path / file), uid, gid) # Set correct owner and group for the file
-                        self.log.log(f'{file} is updated!')
+                        self.log.log("{} is updated!".format(file))
 
                         #If requirements.txt is new, run install of requirements.
                         if file == 'requirements.txt':
@@ -92,4 +92,4 @@ class SoftwareUpdate:
                 self.log.log("The Stargate is up-to-date.")
 
         except Exception as ex:
-            self.log.log(f'Software update failed with error: {ex}')
+            self.log.log("Software update failed with error: {}".format(ex))

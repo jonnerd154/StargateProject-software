@@ -1,6 +1,5 @@
 import pwd, grp
 from os import stat
-from pathlib import Path
 from datetime import datetime
 
 class AncientsLogBook:
@@ -26,7 +25,8 @@ class AncientsLogBook:
         """
 
         with open(self.logDir +"/"+ self.gateLog, 'a+') as logFile:
-            logLine = '\n' + f'[{datetime.now().replace(microsecond=0)}] \t {str}'
+            timestamp = datetime.now().replace(microsecond=0)
+            logLine = '\n[{}]\t{}'.format(timestamp, str)
             logFile.write(logLine)
 
         if (self.printToConsole and not printToConsoleOverride):
