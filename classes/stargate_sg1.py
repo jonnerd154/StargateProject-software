@@ -22,14 +22,15 @@ class StargateSG1:
         self.log = app.log
         self.cfg = app.cfg
         self.audio = app.audio
-        
+        self.electronics = app.electronics
+
         # TODO: Move to cfg
         self.inactivityTimeout = 60
         self.defaultAudioVolume = 65
-        
+
         self.running = True
         self.initialize_gate_state_vars()
-        
+
         ### Set up the needed classes and make them ready to use ###
         self.netTools = NetworkTools(self.log)
         self.subspace = Subspace(self)
@@ -74,7 +75,7 @@ class StargateSG1:
         self.black_hole = False # Did we dial the black hole?
         self.fan_gate_online_status = None # To keep track of the dialed fan_gate status
         self.fan_gate_incoming_IP = None # To keep track of the IP address for the remote gate that establishes a wormhole
-      
+
     ## Methods to manipulate the StargateSG1 object ###
     def update(self):
         """
@@ -137,7 +138,7 @@ class StargateSG1:
                         self.fan_gate_online_status = True  # set the online status to True
                     else:
                         self.fan_gate_online_status = False  # set the online status to False, to keep the dialing running more smoothly if the fan_gate is offline.
-    
+
     def incoming_dialing(self):
         """
         This method handles the incoming dialing of the stargate. It's kept in it's own method so not to clutter up the update method too much.
@@ -174,7 +175,7 @@ class StargateSG1:
         if self.fan_gate_online_status and self.centre_button_outgoing and len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing:
             self.send_to_remote_stargate(self.get_ip_from_stargate_address(self.address_buffer_outgoing, self.fan_gates), 'centre_button_incoming')
             self.log.log(f'Sent to fan_gate: centre_button_incoming')
-            
+
     def establishing_wormhole(self):
         """
         This is the method that decides if we are to establish a wormhole or not
@@ -207,38 +208,38 @@ class StargateSG1:
             else:
                 self.log.log('Incoming address is NOT a match to Local Gate Address!')
                 self.shutdown(cancel_sound=False, wormhole_fail_sound=True)
-      
-    
+
+
     def shutdown(self, cancel_sound=True, wormhole_fail_sound=False):
         """
         This method shuts down and resets the Stargate.
         :return:
         """
-        
+
         self.log.log('Shutting down the gate...')
 
         # Play the cancel sound
         if cancel_sound:
             self.audio.sound_start('dialing_cancel')
-        
+
         # Play the wormhole fail sound
         if wormhole_fail_sound:
             self.audio.sound_start('dialing_fail')
-        
+
         # Turn off the chevrons
         self.chevrons.all_off()
-        
+
         # Turn off the DHD lights
         self.dialer.hardware.clear_lights()
-        
+
         # Release the stepper motor.
         self.ring.release()
-        
+
         # Put the gate back in to an idle state
         self.initialize_gate_state_vars()
-        
+
         self.log.log("Gate is idle.")
-        
+
     def inactivity(self, seconds):
         """
         This functions checks if there has been more than the variable seconds of inactivity:
@@ -273,4 +274,3 @@ class StargateSG1:
                     return False
             return True  # returns true if we can establish a wormhole
         return False  # returns false if we cannot establish a wormhole.
-        
