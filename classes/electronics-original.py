@@ -17,7 +17,7 @@ class ElectronicsOriginal:
 		# Initialize all of the shields as DC motors
         self.shieldConfig =  {
             #1: MotorKit(address=self.motorShield1Address).motor1, # Used for Stepper
-            #2: MotorKit(address=self.motorShield1Address).motor2, # Used for Stepper
+            #2: MotorKit(address=self.motorShield1Address).motor2, # Used for Stepper 
             3: MotorKit(address=self.motorShield1Address).motor3,
             4: MotorKit(address=self.motorShield1Address).motor4,
             5: MotorKit(address=self.motorShield2Address).motor1,
