@@ -5,7 +5,6 @@ import atexit
 
 from chevrons import ChevronManager
 from dialers import Dialer
-from network_tools import NetworkTools
 from keyboard_manager import KeyboardManager
 from symbol_ring import SymbolRing
 from stargate_address_manager import StargateAddressManager
