@@ -24,8 +24,9 @@ class Wormhole:
         # Wormhole variables
         self.wormhole_max_time = 38 * 60  # A wormhole can only be maintained for about 38 minutes without tremendous amounts of power. (Black hole)
         self.audio_clip_wait_time = 17  # The frequency of the random audio clips.
-
-    # Turn off all the LEDs
+        self.wormhole_close_audio_headstart = 1
+        
+        # Turn off all the LEDs
         self.clear_wormhole()
 
     ## The wormhole helper functions
@@ -36,6 +37,7 @@ class Wormhole:
         """
         pattern = self.pattern_off(self.tot_leds)
         self.set_wormhole_pattern(self.pixels, pattern)
+        
     def possible_wormholes(self, black_hole=False):
         def pattern1(number_of_leds, color1, color2):
             """
@@ -52,6 +54,7 @@ class Wormhole:
                 pattern[led] = color2
                 pattern[led - 1] = color2
             return pattern
+            
         def pattern2(number_of_leds, base_color, size):
             """
             This method creates the wormhole pattern2
@@ -72,6 +75,7 @@ class Wormhole:
                 pattern[(led + 2) % number_of_leds] = third_color
                 pattern[(led - 2) % number_of_leds] = third_color
             return pattern
+            
         def pattern3(number_of_leds, base_color, size):
             """
             This method creates the wormhole pattern3
@@ -185,6 +189,7 @@ class Wormhole:
         self.stargate.wormhole = True  # temporarily to be able to use the fade_transition function
         self.fade_transition(pattern_blue(self.tot_leds))
         self.audio.sound_start('wormhole_close')  # Play the close wormhole audio
+        sleep(self.wormhole_close_audio_headstart)
         self.fade_transition(no_pattern)
         self.stargate.wormhole_max_time = 38 * 60 # Reset the variable
         self.stargate.audio_clip_wait_time = 17 # Reset the variable

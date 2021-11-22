@@ -21,7 +21,10 @@ class StargateWebServer(SimpleHTTPRequestHandler):
         relpath = os.path.relpath(path, os.getcwd())
         fullpath = os.path.join('web', relpath)
         return fullpath
-        
+    
+    # Overload log_message to suppress logs from printing to console
+    def log_message(self, format, *args):
+        pass
         
     def do_GET(self):
         fullPath = self.translate_path(self.path)
@@ -47,7 +50,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
         
     def do_POST(self):
         # For debugging:
-        print('POST PATH: {}'.format(self.path))
+        #print('POST PATH: {}'.format(self.path))
         if self.path == '/shutdown':
             self.stargate.wormhole = False
             sleep(5)
@@ -65,7 +68,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
         content_len = int(self.headers.get('content-length', 0))
         body = self.rfile.read(content_len)
         data = json.loads(body)
-        print('POST DATA: {}'.format(data))
+        #print('POST DATA: {}'.format(data))
 
         if self.path == '/update':
             if data['action'] == "chevron_cycle":

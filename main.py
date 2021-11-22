@@ -68,7 +68,6 @@ class GateApplication:
 
 	def cleanup(self):
 		self.stargate.ring.release()      # Release the ring when exiting. Just in case.
-		
 		self.httpd_server.shutdown()
 		self.stargate.cleanup()
 

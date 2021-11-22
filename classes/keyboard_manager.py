@@ -40,7 +40,7 @@ class KeyboardManager:
                           'T': 36, 'Y': 37, '1': 38, 'I': 39
                           }
 
-        self.log.log("Listening for input from the DHD. You can abort with the '-' key.")
+        self.log.log("Listening for input from the Dialer. You can abort with the '-' key.")
         while True: # Keep running and ask for user input
             key = self.key_press() #Save the input key as a variable
             ## Convert the key to the correct symbol_number. ##
@@ -50,15 +50,18 @@ class KeyboardManager:
                 symbol_number = 'unknown'
                 if key == '-':
                     symbol_number = 'abort'
-                if key == 'A':
+                elif key == 'A':
                     symbol_number = 'centre_button_outgoing'
+                    self.log.log(f'key: {key} -> symbol: {symbol_number}')
 
             self.audio.play_random_clip("DHD")
-            self.log.log(f'key: {key} -> symbol: {symbol_number}')
 
             ## If the user inputs the - key to abort. Not possible from the DHD.
             if key == '-':
-                stargate.running = False # Stop the stargate object from running.
+                self.log.log("Abort Requested: Shutting down any active wormholes, stopping the gate.")
+                stargate.wormhole = False # Shutdown any open wormholes (particularly if turned on via web interface)
+                stargate.running = False  # Stop the stargate object from running.
+
                 break # This will break us out of the while loop and end the function.
 
             ## If the user hits the centre_button
