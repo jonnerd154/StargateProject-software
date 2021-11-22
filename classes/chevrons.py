@@ -19,14 +19,10 @@ class ChevronManager:
         self.loadFromConfig(app)
 
     def loadFromConfig(self, app):
-        # Detect the connected Motor Hardware
-        hwDetector = HardwareDetector()
-        self.motorHardwareMode = hwDetector.getMotorHardwareMode() # TODO: This shouldn't be needed here
-
         # Retrieve the Chevron config and initialize the Chevron objects
         self.chevrons = {}
         for key, value in self.cfg.get("chevronMapping").items():
-            self.chevrons[int(key)] = Chevron( self.electronics, value['ledPin'], value['motorNumber'], self.motorHardwareMode, self.audio )
+            self.chevrons[int(key)] = Chevron( self.electronics, value['ledPin'], value['motorNumber'], self.audio )
 
     def get( self, chevronNumber ):
         return self.chevrons[int(chevronNumber)]
@@ -56,7 +52,7 @@ class Chevron:
     The motor_number is the number for the motor as an int.
     """
 
-    def __init__(self, electronics, led_gpio, motor_number, motorHardwareMode, audio):
+    def __init__(self, electronics, led_gpio, motor_number, audio):
 
         self.audio = audio
         self.electronics = electronics
@@ -73,7 +69,6 @@ class Chevron:
         self.chevronUpTime = 0.2
 
         self.motor_number = motor_number
-        self.motorHardwareMode = motorHardwareMode
         self.motor = self.electronics.get_chevron_motor(self.motor_number)
 
         self.led_gpio = led_gpio
