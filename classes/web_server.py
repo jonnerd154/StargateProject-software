@@ -1,7 +1,7 @@
 import os
 import json
 import threading
-
+from time import sleep
 from http.server import SimpleHTTPRequestHandler
 
 class StargateWebServer(SimpleHTTPRequestHandler):
@@ -49,13 +49,17 @@ class StargateWebServer(SimpleHTTPRequestHandler):
         # For debugging:
         print('POST PATH: {}'.format(self.path))
         if self.path == '/shutdown':
-            os.system('systemctl poweroff')
+            self.stargate.wormhole = False
+            sleep(5)
             self.send_response(200, 'OK')
+            os.system('systemctl poweroff')
             return
 
         if self.path == '/reboot':
-            os.system('systemctl reboot')
+            self.stargate.wormhole = False
+            sleep(5)
             self.send_response(200, 'OK')
+            os.system('systemctl reboot')
             return
 
         content_len = int(self.headers.get('content-length', 0))
@@ -87,8 +91,6 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             elif data['action'] == "symbol_backward":
                 self.stargate.ring.move( 32, self.stargate.ring.backwardDirection )
                 self.stargate.ring.release()
-
-        
 
 
         # For debugging

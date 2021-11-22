@@ -67,10 +67,9 @@ class GateApplication:
 		self.stargate.update() #This will keep running as long as `stargate.running` is True.
 
 	def cleanup(self):
-
-		# Release the ring when exiting. Just in case.
-		self.stargate.ring.release()
-
+		self.stargate.ring.release()      # Release the ring when exiting. Just in case.
+		self.stargate.wh.clear_wormhole() # Clear the wormdhole LEDs
+		
 		self.httpd_server.shutdown()
 		self.stargate.cleanup()
 
