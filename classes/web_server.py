@@ -67,6 +67,21 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             if data['action'] == "chevron_cycle":
                 self.stargate.chevrons.get(int(data['chevron_number'])).cycle_outgoing()
         
+            elif data['action'] == "all_leds_off":
+                self.stargate.chevrons.all_off()
+                self.stargate.wormhole = False
+                
+            elif data['action'] == "chevron_led_on":
+                self.stargate.chevrons.all_lights_on()
+            
+            elif data['action'] == "wormhole_on":
+                self.stargate.wormhole = True
+                  
+            elif data['action'] == "wormhole_off":
+                self.stargate.wormhole = False
+
+        
+
 
         # For debugging
         # print('POST data: {}'.format(data))

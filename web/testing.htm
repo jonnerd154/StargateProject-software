@@ -4,8 +4,7 @@
         <title>Stargate Command</title>
         <link rel="stylesheet" href="main.css" />
         <style>
-        .animation {margin:10px;}
-        .cycleChevronButton { margin: 10px; }
+        .button, .cycleChevronButton {margin:10px;}
         </style>
     </head>
     <body>
@@ -20,24 +19,28 @@
             </div>
 	        <!--<div class="animation" action="goHome">
                 Home Stargate
-            </div>- ->
+            </div>-->
             
 	    <hr />
         <h2>Lighting control </h2>
-            <div class="buttonClass" action="allLightsOn">
-                All on
+            <div class="button" action="chevron_led_on">
+                Chevrons On
             </div>
-            <div class="buttonClass" action="allLightsOff">
-                All off
+            <div class="button" action="all_leds_off">
+                All Off
             </div>
-            <div class="buttonClass" action="wormhole_on">
-                Wormhole
+            <div class="button" action="wormhole_on">
+                Wormhole On
             </div>
-            
+            <div class="button" action="wormhole_off">
+                Wormhole Off
+            </div>
+        <!--
             <div class="buttonClass" action="homingToggle">
                 Homing LED
             </div>
-        <hr /> -->
+         -->
+        <hr />
         <h2>Cycle Chevrons (Motors, Lights, Sound)</h2>   
             <div class="cycleChevronButton" chevron_number='1'>
                 Chevron 1
@@ -113,6 +116,20 @@
                     data: JSON.stringify({
                         action: 'chevron_cycle',
                         chevron_number: chevron_number
+                    })
+                })
+                .fail(function() {
+                    alert('Could not connect with Stargate server');
+                });
+            });
+            
+             $('div.button_container div.button').click(function() {
+                const action = $(this).attr('action');
+
+                $.post({
+                    url: '/update',
+                    data: JSON.stringify({
+                        action: action,
                     })
                 })
                 .fail(function() {

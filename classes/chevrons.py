@@ -43,6 +43,10 @@ class ChevronManager:
                 chevron.off(sound='on')
             else:
                 chevron.off()
+                
+    def all_lights_on(self):
+        for number, chevron in self.chevrons.items():
+            chevron.light_on()
 
 
 class Chevron:
@@ -91,8 +95,7 @@ class Chevron:
         ### Turn on the LED ###
         sleep(self.chevronDownWaitTime) # wait time without motion
         self.audio.sound_start('chevron_3') # led on audio
-        if self.led:
-            self.led.on()
+        self.light_on()
         sleep(self.chevronDownWaitTime) # wait time without motion
 
     def up(self):
@@ -102,6 +105,10 @@ class Chevron:
         sleep(self.chevronUpTime) # motor movement time
         self.motor.throttle = None # Stop the motor
 
+    def light_on(self):
+        if self.led:
+            self.led.on()
+    
     def incoming_on(self):
         if self.led:
             self.led.on()
