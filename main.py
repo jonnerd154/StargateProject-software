@@ -42,7 +42,6 @@ class GateApplication:
         self.cfg.load()
         
         ### Detect our electronics and initialize the hardware
-        #self.electronics = ElectronicsNone(self)
         self.electronics = Electronics(self).hardware
 
         ### Check/set the correct USB audio adapter. This is necessary because different raspberries detects the USB audio adapter differently.
