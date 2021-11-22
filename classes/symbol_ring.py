@@ -75,7 +75,7 @@ class SymbolRing:
     def move_raw_one_step(self, direction, style):
         self.stepper.onestep(direction=direction, style=style)
 
-    def move(self, steps):
+    def move(self, steps, direction=False):
         """
         This method moves the stepper motor the desired number of steps in the desired direction and updates the
         self.stepper_pos with the new value. This method does NOT release the stepper. Do this with the release method.
@@ -84,11 +84,12 @@ class SymbolRing:
         :return: Nothing is returned
         """
         ## Set the direction ##
-        if steps >= 0:  # If steps is positive move forward
-            direction = self.forwardDirection
-        else:  # if steps is negative move backward
-            steps = abs(steps)
-            direction = self.backwardDirection
+        if not direction:
+            if steps >= 0:  # If steps is positive move forward
+                direction = self.forwardDirection
+            else:  # if steps is negative move backward
+                steps = abs(steps)
+                direction = self.backwardDirection
 
         current_speed = self.initial_speed
 

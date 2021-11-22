@@ -79,6 +79,14 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                   
             elif data['action'] == "wormhole_off":
                 self.stargate.wormhole = False
+            
+            elif data['action'] == "symbol_forward":
+                self.stargate.ring.move( 32, self.stargate.ring.forwardDirection )
+                self.stargate.ring.release()
+            
+            elif data['action'] == "symbol_backward":
+                self.stargate.ring.move( 32, self.stargate.ring.backwardDirection )
+                self.stargate.ring.release()
 
         
 
