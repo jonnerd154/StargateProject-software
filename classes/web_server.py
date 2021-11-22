@@ -57,16 +57,6 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             os.system('systemctl reboot')
             self.send_response(200, 'OK')
             return
-            
-        if self.path == '/chevron1Cycle':
-            self.stargate.chevrons.get(1).cycle_outgoing()
-            self.send_response(200, 'OK')
-            return
-
-        if self.path == '/reboot':
-            os.system('systemctl reboot')
-            self.send_response(200, 'OK')
-            return
 
         content_len = int(self.headers.get('content-length', 0))
         body = self.rfile.read(content_len)
@@ -75,8 +65,8 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
         if self.path == '/update':
             if data['action'] == "chevron_cycle":
-                print("In chevron_cycle")
                 self.stargate.chevrons.get(int(data['chevron_number'])).cycle_outgoing()
+        
 
         # For debugging
         # print('POST data: {}'.format(data))
