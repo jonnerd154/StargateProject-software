@@ -82,7 +82,7 @@ class GateApplication:
         self.httpd_server.shutdown()
         self.stargate.cleanup()
 
-        self.log.log('The Stargate program is no longer running')
+        self.log.log('The Stargate program is no longer running\r\n\r\n')
         sys.exit(0)
 
 # Run the stargate application
