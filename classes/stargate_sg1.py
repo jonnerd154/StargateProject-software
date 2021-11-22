@@ -1,7 +1,6 @@
 from threading import Thread
 from time import time, sleep
 from random import randrange
-import atexit
 
 from chevrons import ChevronManager
 from dialers import Dialer
@@ -46,9 +45,6 @@ class StargateSG1:
         self.ask_for_input_thread = Thread(target=self.keyboard.ask_for_input, args=(self,))
         self.ask_for_input_thread.start()  # start
 
-        ### Register atexit handler
-        atexit.register(self.cleanup) # Ensure we handle cleanup before quitting, even on exception
-
         ### Run the stargate server if we have an internet connection ###
         # The stargate_server runs in it's own thread listening for incoming wormholes
         if self.netTools.has_internet_access():
@@ -64,10 +60,6 @@ class StargateSG1:
         ### Notify that the Stargate is ready
         self.audio.play_random_clip("startup")
         self.log.log('The Stargate is started and ready!')
-
-    def cleanup(self):
-        #TODO: Stop the threads
-        pass
 
     def initialize_gate_state_vars(self):
         """
