@@ -13,7 +13,9 @@ class Database:
 
         ### Setup the logger
         self.log = AncientsLogBook(base_path, "database.log", printToConsole=False)
-
+        self.cfg.set_log(self.log)
+        self.cfg.load()
+        
     def connect(self):
         self.log.log("Connecting")
         self.db = pymysql.connect(  host=self.cfg.get('db_host'),

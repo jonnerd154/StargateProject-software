@@ -38,7 +38,9 @@ class GateApplication:
         
         ### Setup the logger
         self.log = AncientsLogBook(self.base_path, "sg1.log")
-
+        self.cfg.set_log(self.log)
+        self.cfg.load()
+        
         ### Detect our electronics and initialize the hardware
         #self.electronics = ElectronicsNone(self)
         self.electronics = Electronics(self).hardware

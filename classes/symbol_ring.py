@@ -45,7 +45,9 @@ class SymbolRing:
         self.stepperDriveMode = stargate.electronics.get_stepper_drive_mode(self.stepper_drive_mode)
 
         # Load the last known ring position
-        self.position_store = StargateConfig(self.base_path, "ring_position.json")
+        self.position_store = StargateConfig(self.base_path, "ring_position.json", { "ring_position": 0 })
+        self.position_store.set_log(self.log)
+        self.position_store.load()
 
         ## Initialize the Homing Manager
         self.homingManager = SymbolRingHomingManager(stargate, self)
