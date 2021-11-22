@@ -34,22 +34,8 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     self.wfile.write(file.read()) # Read the file and send the contents     
             except:
                 pass
-                
-#         self.send_response(200)
-#         self.send_header("Content-type", "text/html")
-#         self.end_headers()
-#         self.wfile.write(bytes("<html><head><title>https://pythonbasics.org</title></head>", "utf-8"))
-#         self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
-#         self.wfile.write(bytes("<p>Thread: %s</p>" % threading.currentThread().getName(), "utf-8"))
-#         self.wfile.write(bytes("<p>Thread Count: %s</p>" % threading.active_count(), "utf-8"))
-#         self.wfile.write(bytes("<body>", "utf-8"))
-#         self.wfile.write(bytes("<p>This is an example web server.</p>", "utf-8"))
-#         self.wfile.write(bytes("</body></html>", "utf-8"))
-#         
-        
         
     def do_POST(self):
-        # For debugging:
         #print('POST PATH: {}'.format(self.path))
         if self.path == '/shutdown':
             self.stargate.wormhole = False
@@ -88,16 +74,12 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 self.stargate.wormhole = False
             
             elif data['action'] == "symbol_forward":
-                self.stargate.ring.move( 32, self.stargate.ring.forwardDirection )
+                self.stargate.ring.move( 32, self.stargate.ring.forwardDirection ) # Steps, Direction
                 self.stargate.ring.release()
             
             elif data['action'] == "symbol_backward":
-                self.stargate.ring.move( 32, self.stargate.ring.backwardDirection )
+                self.stargate.ring.move( 32, self.stargate.ring.backwardDirection ) # Steps, Direction
                 self.stargate.ring.release()
 
-
-        # For debugging
-        # print('POST data: {}'.format(data))
-#         StargateWebServer.logic.execute_command(data)
         self.send_response(200, 'OK')
         self.end_headers()

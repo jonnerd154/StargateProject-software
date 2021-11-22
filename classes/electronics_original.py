@@ -4,9 +4,14 @@ import spidev
 import neopixel, board
 from gpiozero import LED
 
+from hardware_simulation import DCMotorSim, StepperSim
+
 class ElectronicsOriginal:
 
     def __init__(self, app):
+        
+        self.enableStepperMotor = False
+        self.enableChevronMotors = False
 
         self.motorShield1Address = 0x60
         self.motorShield2Address = 0x61
@@ -36,7 +41,9 @@ class ElectronicsOriginal:
 
     def init_motor_shields(self):
         # Initialize all of the shields as DC motors
-        self.shieldConfig =  {
+        
+        if self.enableChevronMotors:
+            self.shieldConfig =  {
             #1: MotorKit(address=self.motorShield1Address).motor1, # Used for Stepper
             #2: MotorKit(address=self.motorShield1Address).motor2, # Used for Stepper
             3: MotorKit(address=self.motorShield1Address).motor3,
@@ -50,9 +57,26 @@ class ElectronicsOriginal:
             11: MotorKit(address=self.motorShield3Address).motor3,
             12: MotorKit(address=self.motorShield3Address).motor4
         }
-
+        else:
+            self.shieldConfig =  {
+            3: DCMotorSim(),
+            4: DCMotorSim(),
+            5: DCMotorSim(),
+            6: DCMotorSim(),
+            7: DCMotorSim(),
+            8: DCMotorSim(),
+            9: DCMotorSim(),
+            10: DCMotorSim(),
+            11: DCMotorSim(),
+            12: DCMotorSim(),
+        }
         # Initialize the Stepper
-        self.stepper = MotorKit(address=self.motorShield1Address).stepper1
+        if self.enableStepperMotor:
+            self.stepper = MotorKit(address=self.motorShield1Address).stepper1
+        else:
+            self.stepper = StepperSim()
+            
+        
 
     def get_chevron_motor(self, chevron_number):
         return self.shieldConfig[chevron_number]

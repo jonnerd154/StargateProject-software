@@ -22,7 +22,6 @@ class SymbolRing:
         self.base_path = stargate.base_path
 
         # TODO: Move to cfg
-        self.enableStepper = False
         self.stepper_drive_mode = "double"
         self.total_steps = 1250 # Old value: 1251
         self.micro_steps = 16

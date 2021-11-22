@@ -52,7 +52,9 @@ class KeyboardManager:
                     symbol_number = 'abort'
                 elif key == 'A':
                     symbol_number = 'centre_button_outgoing'
-                    self.log.log(f'key: {key} -> symbol: {symbol_number}')
+                    self.log.log(f'key: {key} -> symbol: {symbol_number} CENTER')
+                else:
+                    self.log.log(f'key: {key} -> symbol: {symbol_number} SYMBOL')
 
             self.audio.play_random_clip("DHD")
 
