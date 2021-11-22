@@ -1,6 +1,7 @@
-import pwd, grp
+import pwd, grp, sys
 from os import stat
 from datetime import datetime
+import threading
 
 class AncientsLogBook:
 
@@ -30,4 +31,8 @@ class AncientsLogBook:
             logFile.write(logLine)
 
         if (self.printToConsole and not printToConsoleOverride):
-            print(logLine)
+            # Some magic to prevent threads from messing up newlines on the console print
+            printLock = threading.Lock()
+            with printLock:
+                print(logLine, end='\r')
+                sys.stdout.flush()
