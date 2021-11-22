@@ -25,7 +25,8 @@ class StargateSG1:
         self.audio = app.audio
         self.electronics = app.electronics
         self.base_path = app.base_path
-
+        self.netTools = app.netTools
+        
         # TODO: Move to cfg
         self.inactivityTimeout = 60
         self.defaultAudioVolume = 65
@@ -34,7 +35,6 @@ class StargateSG1:
         self.initialize_gate_state_vars()
 
         ### Set up the needed classes and make them ready to use ###
-        self.netTools = NetworkTools(self.log)
         self.subspace = Subspace(self)
         self.keyboard = KeyboardManager(self)
         self.addrManager = StargateAddressManager(self)

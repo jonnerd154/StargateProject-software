@@ -1,6 +1,6 @@
 import subprocess
 from ipaddress import ip_address
-from socket import gethostbyname
+import socket
 
 class NetworkTools:
 
@@ -50,7 +50,7 @@ class NetworkTools:
         except ValueError:
             try:
                 # print('NOPE, not an IP, getting IP from FQDN')
-                ip = gethostbyname(fqdn_or_ip)
+                ip = socket.gethostbyname(fqdn_or_ip)
                 # print('I found the IP:', ip)
             except:
                 pass
@@ -58,3 +58,15 @@ class NetworkTools:
             self.log.log("Unable to determine IP address '{}'".format(fqdn_or_ip))
             ip = None
         return str(ip)
+    
+    def get_local_ip(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            # doesn't even have to be reachable
+            s.connect((self.google, 1))
+            IP = s.getsockname()[0]
+        except Exception:
+            IP = '127.0.0.1'
+        finally:
+            s.close()
+        return IP
