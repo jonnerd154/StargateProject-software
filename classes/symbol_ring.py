@@ -92,7 +92,7 @@ class SymbolRing:
         self.audio.sound_start('rolling_ring')  # play the audio movement
         stepper_micro_pos = 0
         for i in range(steps):
-            self.stepper.onestep(direction, style=self.stepperDriveMode)
+            self.stepper.onestep(direction=direction, style=self.stepperDriveMode)
             stepper_micro_pos += 8
             self.stepper_pos = (stepper_micro_pos // self.micro_steps) % self.total_steps # Update the self.stepper_pos value as the ring moves. Will have a value from 0 till self.total_steps = 1250.
 
