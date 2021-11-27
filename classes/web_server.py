@@ -80,6 +80,13 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             elif data['action'] == "symbol_backward":
                 self.stargate.ring.move( 33, self.stargate.ring.backwardDirection ) # Steps, Direction
                 self.stargate.ring.release()
-
+                
+            elif data['action'] == "volume_down":
+                self.stargate.audio.volume_down()
+                
+            elif data['action'] == "volume_up":
+                self.stargate.audio.volume_up()
+                
+                
         self.send_response(200, 'OK')
         self.end_headers()

@@ -53,38 +53,12 @@
             <div class="chevronReset" onclick="reset();">Reset</div>
         </div>
         
-        <div class="animations">
-            <br /><br />
-            <h2>Animations</h2>
-            <div class="animation" anim="0">
-                Chase
-            </div>
-            <div class="animation" anim="1">
-                Ring
-            </div>
-            <div class="animation" anim="3">
-                Clock
-            </div>
-            <div class="animation" anim="5">
-                Off
-            </div>
-        </div>
-        
         <hr />
         
         <div class="controls">
-            <div class="control" onclick="volumedown();">Volume down</div>
-            <div class="control" onclick="volumeup();">Volume up</div>
-            
             <br />
             <div class="control" onclick="window.location = 'testing.htm';">
                 Testing / Debug
-            </div>
-            <div class="control" onclick="reboot();">
-                Reboot
-            </div>
-            <div class="control" onclick="shutdown();">
-                Shutdown
             </div>
         </div>
 
@@ -126,31 +100,6 @@
                 .fail(function() {
                     alert('Could not send dialling sequence!');
                     reset();
-                });
-            }
-
-            function reset() {
-                dialSeq = [];
-                enableDialing = true;
-                $('.chevron').removeClass("unavailable");
-                $('#chevron1').addClass("unavailable");
-                $('.dial-sequence').html('').removeClass('dialing');
-            }
-            
-            function shutdown() {
-                $.post({
-                    url: '/shutdown'
-                });
-            }
-            
-            function volumeup() {
-                $.post({
-                    url: '/volumeup'
-                });
-            }
-            function volumedown() {
-                $.post({
-                    url: '/volumedown'
                 });
             }
 

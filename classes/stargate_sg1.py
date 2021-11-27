@@ -27,7 +27,8 @@ class StargateSG1:
         
         # TODO: Move to cfg
         self.inactivityTimeout = 60
-        self.defaultAudioVolume = 65
+        
+        self.audio_volume = self.cfg.get("volume_as_percent")
 
         self.running = True
         self.initialize_gate_state_vars()
@@ -55,7 +56,7 @@ class StargateSG1:
                 self.log.log("Failed to start StargateServer thread")
 
         ### Set volume ###
-        self.audio.set_volume( self.defaultAudioVolume )
+        self.audio.set_volume( self.audio_volume )
 
         ### Notify that the Stargate is ready
         self.audio.play_random_clip("startup")

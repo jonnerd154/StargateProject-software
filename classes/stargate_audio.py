@@ -10,7 +10,7 @@ class StargateAudio:
         self.log = app.log
         self.cfg = app.cfg
 
-        self.soundFxRoot = base_path + "/soundfx" #No trailing slash ## TODO: Move to config or Parent(__file__)
+        self.soundFxRoot = base_path + "/soundfx" # No trailing slash
 
         # Make ready the sound effects
         self.sounds = {}
@@ -31,6 +31,10 @@ class StargateAudio:
         self.sounds['chevron_6'] = { 'file': self.init_wav_file( "/chev_usual_6.wav" ) }
         self.sounds['chevron_7'] = { 'file': self.init_wav_file( "/chev_usual_7.wav" ) }
         self.incoming_chevron_sounds = [ self.sounds['chevron_4'],  self.sounds['chevron_5'],  self.sounds['chevron_6'],  self.sounds['chevron_7'] ]
+        
+        self.volume = self.cfg.get('volume_as_percent')
+        self.set_volume(self.volume)
+        
 
     def sound_start(self, clip_name):
         self.sounds[clip_name]['obj'] = self.sounds[clip_name]['file'].play()
@@ -112,10 +116,39 @@ class StargateAudio:
         :param percent_value: an integer between 0 and 100. 65 seems good.
         :return: Nothing is returned.
         """
+        
+        # Update the config
+        self.volume = percent_value
+        self.cfg.set("volume_as_percent", self.volume)
+        
         try:
-            subprocess.run(['amixer', '-M', 'set', 'Headphone', f'{str(percent_value)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            subprocess.run(['amixer', '-M', 'set', 'PCM', f'{str(percent_value)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            subprocess.run(['amixer', '-M', 'set', 'Speaker', f'{str(percent_value)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            self.log.log(f'Audio set to {percent_value}%')
+            subprocess.run(['amixer', '-M', 'set', 'Headphone', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(['amixer', '-M', 'set', 'PCM', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(['amixer', '-M', 'set', 'Speaker', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            self.log.log(f'Audio set to {self.volume}%')
         except:
             self.log.log('Unable to set the volume. You can set the volume level manually by running the alsamixer command.')
+
+    def volume_up(self, step=5):
+        # Get current volume
+        new_volume = self.volume
+        
+        # Increase, to a max of 100
+        new_volume+=step
+        if (new_volume>100):
+            new_volume = 100
+        
+        # Set the volume, which also updates the config file
+        self.set_volume(new_volume)
+    
+    def volume_down(self, step=5):
+        # Get current volume
+        new_volume = self.volume
+        
+        # Increase, to a max of 100
+        new_volume-=step
+        if (new_volume<0):
+            new_volume = 0
+        
+        # Set the volume, which also updates the config file
+        self.set_volume(new_volume)
