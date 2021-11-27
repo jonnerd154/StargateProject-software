@@ -1,7 +1,6 @@
 import sys
 sys.path.append('config')
 import json
-import pprint
 
 class StargateConfig:
 
@@ -23,7 +22,6 @@ class StargateConfig:
             self.config = json.load(f)
             f.close()
             
-            self.save()
         except FileNotFoundError:
             # If the file wasn't found, and we were given defaults, initialize the file.
             print("\r\n\r\n*** Configuration File '{}' not found.".format(self.file_name))
@@ -57,9 +55,6 @@ class StargateConfig:
     def set_non_persistent(self, key, value):
         self.config[key] = value
 
-    def save(self):
-    
-        pretty = pprint.pformat(self.config).replace("'", '"')
-        
+    def save(self):   
         with open(self.get_full_file_path(), 'w+') as f:
-            f.write(pretty)
+            json.dump(self.config, f, indent=2)
