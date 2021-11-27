@@ -1,0 +1,155 @@
+<html>
+    <head>
+        <meta charset="UTF-8"> 
+        <title>Stargate Command</title>
+        <link rel="stylesheet" href="main.css" />
+        <style>
+        .button, .cycleChevronButton {margin:10px;}
+        </style>
+    </head>
+    <body>
+       
+        <div class="button_container">
+        <h2>Symbol Ring</h2>
+            <div class="button" action="symbol_forward">
+                Forward
+            </div>
+              <div class="button" action="symbol_backward">
+                Backward
+            </div>
+	        <!--<div class="animation" action="goHome">
+                Home Stargate
+            </div>
+            -->
+	    <hr />
+        <h2>Lighting control </h2>
+            <div class="button" action="chevron_led_on">
+                Chevrons On
+            </div>
+            <div class="button" action="all_leds_off">
+                All Off
+            </div>
+            <div class="button" action="wormhole_on">
+                Wormhole On
+            </div>
+            <div class="button" action="wormhole_off">
+                Wormhole Off
+            </div>
+        <!--
+            <div class="buttonClass" action="homingToggle">
+                Homing LED
+            </div>
+         -->
+        <hr />
+        <h2>Cycle Chevrons (Motors, Lights, Sound)</h2>   
+            <div class="cycleChevronButton" chevron_number='1'>
+                Chevron 1
+            </div>
+            <div class="cycleChevronButton" chevron_number='2'>
+                Chevron 2
+            </div>
+            <div class="cycleChevronButton" chevron_number='3'>
+                Chevron 3
+            </div>
+            <div class="cycleChevronButton" chevron_number='4'>
+                Chevron 4
+            </div>
+            <div class="cycleChevronButton" chevron_number='5'>
+                Chevron 5
+            </div>
+            <div class="cycleChevronButton" chevron_number='6'>
+                Chevron 6
+            </div>
+            <div class="cycleChevronButton" chevron_number='7'>
+                Chevron 7
+            </div>
+            <div class="cycleChevronButton" chevron_number='8'>
+                Chevron 8
+            </div>
+            <div class="cycleChevronButton" chevron_number='9'>
+                Chevron 9
+            </div>
+            
+        <hr />
+        <h2>Sound</h2>     
+            <div class="button" action="volume_down">
+                Volume Down
+            </div>
+        	<div class="button" action="volume_up">
+                Volume Up
+            </div>
+            
+            
+        </div>
+        <!--
+        <hr />
+        <h2>Iris Control (Iris is OPEN)</h2>   
+            <div class="cycleChevronButton" chevron_number='1'>
+            Close Iris
+            </div>           
+        </div>
+        -->
+
+        	<hr />
+        <div class="controls">
+        	<div class="control" onclick="window.location = 'index.htm';">
+                Dialing page
+            </div>
+            <div class="control" onclick="reboot();">
+                Reboot
+            </div>
+            <div class="control" onclick="shutdown();">
+                Shutdown
+            </div>
+        </div>
+        
+
+
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <!-- <script type="text/javascript" src="jquery-3.3.1.min.js"></script> -->
+        <script type="text/javascript">
+        	
+            function reboot() {
+                $.post({
+                    url: '/reboot'
+                });
+            }
+            
+            function shutdown() {
+                $.post({
+                    url: '/shutdown'
+                });
+            }
+            
+            $('div.button_container div.cycleChevronButton').click(function() {
+                const chevron_number = $(this).attr('chevron_number');
+
+                $.post({
+                    url: '/update',
+                    data: JSON.stringify({
+                        action: 'chevron_cycle',
+                        chevron_number: chevron_number
+                    })
+                })
+                .fail(function() {
+                    alert('Could not connect with Stargate server');
+                });
+            });
+            
+             $('div.button_container div.button').click(function() {
+                const action = $(this).attr('action');
+
+                $.post({
+                    url: '/update',
+                    data: JSON.stringify({
+                        action: action,
+                    })
+                })
+                .fail(function() {
+                    alert('Could not connect with Stargate server');
+                });
+            });
+
+        </script>
+    </body>
+</html>
