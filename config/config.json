@@ -62,5 +62,8 @@
   ],
   "DHD_enable": true,
   "enable_stepper_motor": true,
-  "enable_chevron_motors": true
+  "enable_chevron_motors": true,
+  "software_updates_url": "https://thestargateproject.com/stargate_software_updates/",
+  "software_updates_username": "Samantha",
+  "software_updates_password": "CarterSG1!"
 }
