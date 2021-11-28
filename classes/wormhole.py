@@ -21,11 +21,17 @@ class Wormhole:
 
         self.root_path = Path(__file__).parent.absolute()
 
-        # Wormhole variables
-        self.wormhole_max_time = 38 * 60  # A wormhole can only be maintained for about 38 minutes without tremendous amounts of power. (Black hole)
-        self.audio_clip_wait_time = 17  # The frequency of the random audio clips.
-        self.wormhole_close_audio_headstart = 1
-        
+        # Retrieve the configurations
+        self.wormhole_max_time_default = self.cfg.get("wormhole_max_time_minutes") * 60  # A wormhole can only be maintained for about 38 minutes without tremendous amounts of power. (Black hole)
+        self.wormhole_max_time_blackhole = self.cfg.get("wormhole_max_time_blackhole") * 60   # Make it 10 years...
+        self.audio_clip_wait_time_default = self.cfg.get("wormhole_open_random_sound_interval_seconds")  # The frequency of the random audio clips.
+        self.audio_clip_wait_time_blackhole = self.cfg.get("audio_clip_wait_time_blackhole")
+        self.wormhole_close_audio_headstart = self.cfg.get("wormhole_close_audio_headstart") # How early should we start playing the "wormhole close" sound clip before running the hardware close procedure
+         
+        # Load some state variables
+        self.audio_clip_wait_time = self.audio_clip_wait_time_default
+        self.wormhole_max_time = self.wormhole_max_time_default
+
         # Turn off all the LEDs
         self.clear_wormhole()
 
@@ -191,8 +197,8 @@ class Wormhole:
         self.audio.sound_start('wormhole_close')  # Play the close wormhole audio
         sleep(self.wormhole_close_audio_headstart)
         self.fade_transition(no_pattern)
-        self.stargate.wormhole_max_time = 38 * 60 # Reset the variable
-        self.stargate.audio_clip_wait_time = 17 # Reset the variable
+        self.stargate.wormhole_max_time = self.wormhole_max_time_default # Reset the variable
+        self.stargate.audio_clip_wait_time = self.audio_clip_wait_time_default # Reset the variable
         self.stargate.wormhole = False  # Put it back the way it should be.
 
     def rotate_pattern(self, pattern=None, direction='ccw', speed=0, revolutions=1):
@@ -334,8 +340,8 @@ class Wormhole:
         # If we dialled the black hole planet, change som variables
         if self.stargate.black_hole:  # If we dialed the black hole.
             possible_patterns = self.possible_wormholes(black_hole=True)
-            self.wormhole_max_time = 5259488 * 60  # Make it 10 years...
-            self.audio_clip_wait_time = 7
+            self.wormhole_max_time = self.wormhole_max_time_blackhole * 60  # Make it 10 years...
+            self.audio_clip_wait_time = self.audio_clip_wait_time_blackhole
             audio_group = "audio_clips/black_hole"
         else:
             # If we did not dial the black hole planet

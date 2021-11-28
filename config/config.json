@@ -78,5 +78,10 @@
   "stepper_slow_speed": 0.01,
   "stepper_initial_speed": 0.01,
   "stepper_acceleration_length": 40,
-  "stepper_ring_direction_mode_longest": true
+  "stepper_ring_direction_mode_longest": true,
+  "wormhole_max_time_minutes": 38,
+  "wormhole_open_random_sound_interval_seconds": 17,
+  "wormhole_close_audio_headstart": 1,
+  "wormhole_max_time_blackhole": 5259488,
+  "audio_clip_wait_time_blackhole": 7
 }
