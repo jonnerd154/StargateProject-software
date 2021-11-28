@@ -33,9 +33,6 @@ class GateApplication:
         ### Load our config file
         self.cfg = StargateConfig(self.base_path, "config.json")
         
-        #TODO: Move to cfg
-        self.httpServerPort = 8080
-        
         ### Setup the logger
         self.log = AncientsLogBook(self.base_path, "sg1.log")
         self.cfg.set_log(self.log)
@@ -58,18 +55,18 @@ class GateApplication:
         ### Create the Stargate object
         self.log.log('Booting up the Stargate! Version {}'.format(self.swUpdater.get_current_version()))
         self.stargate = StargateSG1(self)
-
+        
         ### Start the web server
         try:
             StargateWebServer.stargate = self.stargate
-            self.httpd_server = HTTPServer(('', self.httpServerPort), StargateWebServer)
+            self.httpd_server = HTTPServer(('', self.cfg.get("httpServerPort")), StargateWebServer)
             self.httpd_thread = threading.Thread(name="stargate-http", target=self.httpd_server.serve_forever)
             self.httpd_thread.daemon = True
             self.httpd_thread.start()
-            self.log.log('Web Services API running on: {}:{}'.format( self.netTools.get_local_ip(), self.httpServerPort ))
+            self.log.log('Web Services API running on: {}:{}'.format( self.netTools.get_local_ip(), self.cfg.get("httpServerPort") ))
             
         except:
-            self.log.log("Failed to start webserver. Is the port in use?")
+            raise #self.log.log("Failed to start webserver. Is the port in use?")
 
         ### Register atexit handler
         atexit.register(self.cleanup) # Ensure we handle cleanup before quitting, even on exception
