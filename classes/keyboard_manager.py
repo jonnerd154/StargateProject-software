@@ -92,10 +92,12 @@ class KeyboardManager:
             self.stargate.dialer.hardware.set_center_on() # Activate the centre_button_outgoing light
         # If an outgoing wormhole is established
         if self.stargate.wormhole == 'outgoing':
+            # TODO: We shouldn't be doing subspace-y stuff in the keyboard manager
             if self.stargate.fan_gate_online_status: # If we are connected to a fan_gate
-                self.stargate.subspace.send_to_remote_stargate(get_ip_from_stargate_address(self.stargate.address_buffer_outgoing, self.stargate.fan_gates), 'centre_button_incoming')
+                self.stargate.subspace.send_to_remote_stargate(self.stargate.subspace.get_ip_from_stargate_address(self.stargate.address_buffer_outgoing, self.stargate.fan_gates), 'centre_button_incoming')
             if not self.stargate.black_hole: # If we did not dial the black hole.
-                self.stargate.wormhole = False # cancel outgoing wormhole            if stargate.fan_gate_online_status: # If we are connected to a fan_gate
-                self.stargate.subspace.send_to_remote_stargate(get_ip_from_stargate_address(self.stargate.address_buffer_outgoing, self.stargate.fan_gates), 'centre_button_incoming')
+                self.stargate.wormhole = False # cancel outgoing wormhole            
+            if self.stargate.fan_gate_online_status: # If we are connected to a fan_gate
+                self.stargate.subspace.send_to_remote_stargate(self.stargate.subspace.get_ip_from_stargate_address(self.stargate.address_buffer_outgoing, self.stargate.fan_gates), 'centre_button_incoming')
             if not self.stargate.black_hole: # If we did not dial the black hole.
                 self.stargate.wormhole = False # cancel outgoing wormhole
