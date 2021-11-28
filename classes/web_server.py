@@ -5,22 +5,6 @@ from time import sleep
 from http.server import SimpleHTTPRequestHandler
 
 class StargateWebServer(SimpleHTTPRequestHandler):
- 
-    def translate_path(self, path):
-        fullpath = "/home/sg1/sg1/web" + path
-        return fullpath
-
-#   def translate_path(self, path):
-#         path = SimpleHTTPRequestHandler.translate_path(self, path)
-#         relpath = os.path.relpath(path, os.getcwd())
-#         fullpath = os.path.join('web', relpath)
-#         return fullpath
-
-    def translate_path(self, path):
-        path = SimpleHTTPRequestHandler.translate_path(self, path)
-        relpath = os.path.relpath(path, os.getcwd())
-        fullpath = os.path.join('web', relpath)
-        return fullpath
     
     # Overload log_message to suppress logs from printing to console
     def log_message(self, format, *args):
