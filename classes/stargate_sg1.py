@@ -192,6 +192,8 @@ class StargateSG1:
             # Try to establish a wormhole
             if self.possible_to_establish_wormhole():
                 self.log.log('Valid address is locked')
+                self.log.log('OUTGOING Wormhole to {} established'.format(self.addrManager.get_planet_name_by_address(self.address_buffer_outgoing) ))
+                
                 self.wormhole = 'outgoing'
             else:
                 self.log.log('Unable to establish a Wormhole!')

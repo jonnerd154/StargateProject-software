@@ -26,6 +26,18 @@ class StargateAddressManager:
 
         pass
 
+    def get_planet_name_by_address(self, address):
+        # Get only the first 6 symbols
+        address_compare = address[0:6]
+
+        for key, value in known_planets.items():
+            if (len(value) == len(address_compare)):
+                if (value == address_compare):
+                    return key
+            
+        # TODO: Compare to Fan Gates and Local Gates, too!
+        return "Unknown Address"
+        
     def get_fan_gates(self):
         return self.fan_gates
 
