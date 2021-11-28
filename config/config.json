@@ -60,5 +60,7 @@
     117,
     0
   ],
-  "DHD_enable": true
+  "DHD_enable": true,
+  "enable_stepper_motor": true,
+  "enable_chevron_motors": true
 }
