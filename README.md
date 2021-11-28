@@ -25,3 +25,38 @@ sudo reboot
 ```
 When the Pi comes back up, you should be able to access the web console by navigating to:
 `http://stargate.local/testing.htm`
+
+# Install Apache Web Server
+```
+sudo apt-get update
+sudo apt-get upgrade
+sudo apt-get install apache2 -y
+```
+- Add Directory block and ModProxy config to /etc/apache2/apache2.conf:
+```
+<Directory /home/sg1/sg1/web>
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+</Directory>
+ProxyPass     /stargate/     http://localhost:8080/
+```
+- Set the user/group for Apache to `sg1` (edit `/etc/apache2/envvars`)
+```
+export APACHE_RUN_USER=sg1
+export APACHE_RUN_GROUP=sg1
+```
+- Configure the virtualhost DocumentRoot (edit `/etc/apache2/sites-available/000-default.conf`)
+```
+DocumentRoot /home/sg1/sg1/web
+```
+- Enable ModProxy and ModProxyHTTP
+```
+sudo ln -s ../mods-available/proxy.conf proxy.conf
+sudo ln -s ../mods-available/proxy.load proxy.load
+sudo ln -s ../mods-available/proxy_http.load proxy_http.load
+```
+- Restart apache to load the new configs
+```
+sudo service apache2 restart
+```
