@@ -32,6 +32,9 @@ class StargateAudio:
         self.sounds['chevron_7'] = { 'file': self.init_wav_file( "/chev_usual_7.wav" ) }
         self.incoming_chevron_sounds = [ self.sounds['chevron_4'],  self.sounds['chevron_5'],  self.sounds['chevron_6'],  self.sounds['chevron_7'] ]
         
+        # Check/set the correct USB audio adapter. This is necessary because different raspberries detects the USB audio adapter differently.
+        self.set_correct_audio_output_device()
+        
         self.volume = self.cfg.get('volume_as_percent')
         self.set_volume(self.volume)
         

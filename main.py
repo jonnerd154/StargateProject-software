@@ -44,9 +44,8 @@ class GateApplication:
         ### Detect our electronics and initialize the hardware
         self.electronics = Electronics(self).hardware
 
-        ### Check/set the correct USB audio adapter. This is necessary because different raspberries detects the USB audio adapter differently.
+        ### Initialize the Audio class and do some setup
         self.audio = StargateAudio(self, self.base_path)
-        self.audio.set_correct_audio_output_device()
 
         ### We'll use NetworkTools throughout the app, initialize it here.
         self.netTools = NetworkTools(self.log)
