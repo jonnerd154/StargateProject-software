@@ -45,5 +45,19 @@
   "chevronDownTime": 0.1,
   "chevronDownWaitTime": 0.35,
   "chevronUpThrottle": 0.65,
-  "chevronUpTime": 0.2
+  "chevronUpTime": 0.2,
+  "DHD_serial_port": "/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00",
+  "DHD_baud_rate": 115200,
+  "DHD_brightness_center": 100,
+  "DHD_brightness_symbols": 3,
+  "DHD_color_center": [
+    255,
+    0,
+    0
+  ],
+  "DHD_color_symbols": [
+    250,
+    117,
+    0
+  ]
 }

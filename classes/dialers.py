@@ -6,10 +6,14 @@ class Dialer:
 
         self.log = stargate.log
         self.cfg = stargate.cfg
-        
-        # TODO: Move to config
-        self.DHD_port = "/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00"
-        self.DHD_baud_rate = 115200
+                
+        # Retrieve the configurations
+        self.DHD_port = self.cfg.get("DHD_serial_port")
+        self.DHD_baud_rate = self.cfg.get("DHD_baud_rate")
+        self.DHD_brightness_center = self.cfg.get("DHD_brightness_center")
+        self.DHD_brightness_symbols = self.cfg.get("DHD_brightness_symbols")
+        self.DHD_color_center = self.cfg.get("DHD_color_center")
+        self.DHD_color_symbols = self.cfg.get("DHD_color_symbols")
 
         self.hardware = None
         
@@ -27,10 +31,13 @@ class Dialer:
         ### Connect to the DHD object. Will throw exception if not present
         dhd = DHDv2(self.DHD_port, self.DHD_baud_rate)
         self.log.log('DHDv2 Found. Connected.')
-
-        dhd.setBrightnessCenter(100)
-        dhd.setBrightnessSymbols(3)
-
+    
+        # Configure the DHD
+        dhd.setBrightnessCenter(self.DHD_brightness_center)
+        dhd.setBrightnessSymbols(self.DHD_brightness_symbols)
+        dhd.setColorCenter(self.DHD_color_center)
+        dhd.setColorSymbols(self.DHD_color_symbols)
+        
         # Blink the middle button to signal the DHD is ready
         dhd.setPixel(0, 255, 255, 255)
         dhd.latch()
@@ -123,6 +130,9 @@ class DHDv2:
             ["latch", ""],  # Transmits the current pixel configuration in the RAM buffer out to the pixels
         ]
 
+        self.color_symbols = None
+        self.color_center = None
+
         # Initialize the messenger
         self.c = PyCmdMessenger.CmdMessenger(self.board, self.commands)
 
@@ -190,13 +200,19 @@ class DHDv2:
         self.latch()
     
     def set_center_on( self ):
-        self.setPixel(0, 255, 0, 0) # LED 0, Pure red.
+        self.setPixel(0, self.color_center[0], self.color_center[1], self.color_center[2]) # LED 0, Pure red.
         self.latch()
-             
+
     def set_symbol_on( self, symbol_number ):
-        self.setPixel(symbol_number, 250, 117, 0)
+        self.setPixel(symbol_number, self.color_symbols[0], self.color_symbols[1], self.color_symbols[2])
         self.latch()
-           
+          
+    def setColorCenter(self, colorTuple):
+        self.color_center = colorTuple
+        
+    def setColorSymbols(self, colorTuple):
+        self.color_symbols = colorTuple
+        
     def get_DHD_port():
         """
         This is a simple helper function to help locate the port for the DHD
@@ -274,4 +290,10 @@ class KeyboardMode:
         pass
 
     def set_symbol_on( self, symbol_number ):
+        pass
+    
+    def setColorCenter(self, colorTuple):
+        pass
+                
+    def setColorSymbols(self, colorTuple):
         pass
