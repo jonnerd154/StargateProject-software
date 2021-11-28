@@ -70,5 +70,13 @@
   "subspace_keep_alive_interval": 24,
   "subspace_keep_alive_address": "172.30.0.1",
   "subspace_timeout": 10,
-  "dialing_timeout": 60
+  "dialing_timeout": 60,
+  "stepper_drive_mode": "double",
+  "stepper_one_revolution_steps": 1250,
+  "stepper_micro_steps": 16,
+  "stepper_normal_speed": 0.002,
+  "stepper_slow_speed": 0.01,
+  "stepper_initial_speed": 0.01,
+  "stepper_acceleration_length": 40,
+  "stepper_ring_direction_mode_longest": true
 }
