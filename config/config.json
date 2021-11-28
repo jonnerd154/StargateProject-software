@@ -65,5 +65,8 @@
   "enable_chevron_motors": true,
   "software_updates_url": "https://thestargateproject.com/stargate_software_updates/",
   "software_updates_username": "Samantha",
-  "software_updates_password": "CarterSG1!"
+  "software_updates_password": "CarterSG1!",
+  "subspace_port": 3838,
+  "subspace_keep_alive_interval": 24,
+  "subspace_keep_alive_address": "172.30.0.1"
 }

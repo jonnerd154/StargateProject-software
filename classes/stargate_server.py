@@ -25,14 +25,16 @@ class StargateServer:
         self.base_path = stargate.base_path
 
         self.database = Database(self.base_path)
+        
+        # Retrieve the configurations
+        self.port = self.cfg.get("subspace_port") # I chose 3838 because the Stargate can stay open for 38 minutes. :)  
+        self.keep_alive_interval = self.cfg.get("subspace_keep_alive_interval")
+        self.keep_alive_address = self.cfg.get("subspace_keep_alive_address")
 
-        #TODO: move some of this to config.json
+        # Some other configurations that are relatively static will stay here
         self.header = 8
-        self.port = 3838  # I chose 3838 because the Stargate can stay open for 38 minutes. :)
         self.encoding_format = 'utf-8'
         self.disconnect_message = '!DISCONNECT'
-        self.keep_alive_address = '172.30.0.1'
-        self.keep_alive_interval = 24
         self.keep_alive_running_check_interval = 0.5
 
         # Get server IP, preferable the IP of the stargate in subspace.
