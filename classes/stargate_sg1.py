@@ -25,8 +25,8 @@ class StargateSG1:
         self.base_path = app.base_path
         self.netTools = app.netTools
         
-        # TODO: Move to cfg
-        self.inactivityTimeout = 60
+        # Retrieve the configurations
+        self.inactivityTimeout = self.cfg.get("dialing_timeout")
 
         self.running = True
         self.initialize_gate_state_vars()

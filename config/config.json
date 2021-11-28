@@ -69,5 +69,6 @@
   "subspace_port": 3838,
   "subspace_keep_alive_interval": 24,
   "subspace_keep_alive_address": "172.30.0.1",
-  "subspace_timeout": 10
+  "subspace_timeout": 10,
+  "dialing_timeout": 60
 }
