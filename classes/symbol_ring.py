@@ -111,7 +111,8 @@ class SymbolRing:
             elif steps < self.acceleration_length:
                 current_speed = self.normal_speed
                 sleep(current_speed)
-
+        
+        self.release() # Release the stepper to prevent overheating
         self.audio.sound_stop('rolling_ring')  # stop the audio
 
     def calculate_steps(self, chevron_number, symbol_number):
