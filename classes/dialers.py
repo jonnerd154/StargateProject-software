@@ -1,5 +1,7 @@
 from time import sleep
 
+import PyCmdMessenger
+
 class Dialer:
 
     def __init__(self, stargate):
@@ -14,6 +16,7 @@ class Dialer:
         self.DHD_brightness_symbols = self.cfg.get("DHD_brightness_symbols")
         self.DHD_color_center = self.cfg.get("DHD_color_center")
         self.DHD_color_symbols = self.cfg.get("DHD_color_symbols")
+        self.DHD_enable = self.cfg.get("DHD_enable")
 
         self.hardware = None
         
@@ -22,9 +25,12 @@ class Dialer:
     def _connect_dialer(self):
         # Detect if we have a DHD connected, else use the keyboard
         try:
+            # If The DHD is disabled, raise an exception to use KeyboardMode
+            if not self.DHD_enable:
+                raise
             self.hardware = self._connect_dhd()
         except:
-            self.log.log('No DHD found, switching to keyboard mode')
+            self.log.log('No DHD found or DHD is disabled. Switching to keyboard mode')
             self.hardware = KeyboardMode()
 
     def _connect_dhd(self):
@@ -49,7 +55,6 @@ class Dialer:
 
 
 class DHDv2:
-    import PyCmdMessenger
 
     def __init__(self, port, baud_rate):
         # Initialize an ArduinoBoard instance.
