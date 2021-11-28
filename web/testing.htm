@@ -111,13 +111,13 @@
         	
             function reboot() {
                 $.post({
-                    url: '/reboot'
+                    url: 'stargate/reboot'
                 });
             }
             
             function shutdown() {
                 $.post({
-                    url: '/shutdown'
+                    url: 'stargate/shutdown'
                 });
             }
             
@@ -125,7 +125,7 @@
                 const chevron_number = $(this).attr('chevron_number');
 
                 $.post({
-                    url: '/update',
+                    url: 'stargate/update',
                     data: JSON.stringify({
                         action: 'chevron_cycle',
                         chevron_number: chevron_number
@@ -140,7 +140,7 @@
                 const action = $(this).attr('action');
 
                 $.post({
-                    url: '/update',
+                    url: 'stargate/update',
                     data: JSON.stringify({
                         action: action,
                     })
