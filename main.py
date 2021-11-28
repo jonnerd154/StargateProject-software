@@ -66,7 +66,7 @@ class GateApplication:
             self.httpd_thread = threading.Thread(name="stargate-http", target=self.httpd_server.serve_forever)
             self.httpd_thread.daemon = True
             self.httpd_thread.start()
-            self.log.log('Web server is running on: {}:{}'.format( self.netTools.get_local_ip(), self.httpServerPort ))
+            self.log.log('Web Services API running on: {}:{}'.format( self.netTools.get_local_ip(), self.httpServerPort ))
             
         except:
             self.log.log("Failed to start webserver. Is the port in use?")
