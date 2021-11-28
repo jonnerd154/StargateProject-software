@@ -39,5 +39,11 @@
     }
   },
   "volume_as_percent": 10,
-  "httpServerPort": 8080
+  "httpServerPort": 8080,
+  "chevronDownAudioHeadStart": 0.2,
+  "chevronDownThrottle": -0.65,
+  "chevronDownTime": 0.1,
+  "chevronDownWaitTime": 0.35,
+  "chevronUpThrottle": 0.65,
+  "chevronUpTime": 0.2
 }
