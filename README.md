@@ -52,6 +52,7 @@ DocumentRoot /home/sg1/sg1/web
 ```
 - Enable ModProxy and ModProxyHTTP
 ```
+cd /etc/apache2
 sudo ln -s ../mods-available/proxy.conf proxy.conf
 sudo ln -s ../mods-available/proxy.load proxy.load
 sudo ln -s ../mods-available/proxy_http.load proxy_http.load
