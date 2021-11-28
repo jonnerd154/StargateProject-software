@@ -48,10 +48,8 @@ class Dialer:
         return dhd
 
 
-import PyCmdMessenger
-from pprint import pprint
-
 class DHDv2:
+    import PyCmdMessenger
 
     def __init__(self, port, baud_rate):
         # Initialize an ArduinoBoard instance.
@@ -119,7 +117,6 @@ class DHDv2:
 
     def getPixelColorTuple(self, pixelIndex):
         self.c.send("get_pixel_color", pixelIndex)
-        pprint(self.c.receive())
         return self.c.receive()[1]
 
     def getPixelCount(self):
