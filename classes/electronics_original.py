@@ -11,7 +11,7 @@ class ElectronicsOriginal:
     def __init__(self, app):
         
         self.enableStepperMotor = True
-        self.enableChevronMotors = False
+        self.enableChevronMotors = True
 
         self.motorShield1Address = 0x60
         self.motorShield2Address = 0x61
