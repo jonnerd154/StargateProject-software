@@ -34,7 +34,7 @@ class GateApplication:
         self.cfg = StargateConfig(self.base_path, "config.json")
         
         #TODO: Move to cfg
-        self.httpServerPort = 80
+        self.httpServerPort = 8080
         
         ### Setup the logger
         self.log = AncientsLogBook(self.base_path, "sg1.log")
