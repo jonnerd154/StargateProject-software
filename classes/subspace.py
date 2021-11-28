@@ -10,13 +10,15 @@ class Subspace:
         self.cfg = stargate.cfg
 
         self.database = Database(stargate.base_path)
+        
+        # Retrieve the configurations
+        self.port = self.cfg.get("subspace_port") # just for fun because the Stargate can stay open for 38 minutes. :)
+        self.timeout = self.cfg.get("subspace_timeout") # the timeout value when connecting to a remote stargate (seconds)
 
-        # TODO: Move to config
-        self.port = 3838 # just for fun because the Stargate can stay open for 38 minutes. :)
+        # Some other configurations that are relatively static will stay here
         self.header_bytes = 8
         self.encoding_format = 'utf-8'
         self.disconnect_message = '!DISCONNECT'
-        self.timeout = 10 # the timeout value when connecting to a remote stargate (seconds)
 
     def send_raw(self, msg):
         message = msg.encode(self.encoding_format)
