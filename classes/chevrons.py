@@ -56,15 +56,12 @@ class Chevron:
 
         self.audio = audio
         self.electronics = electronics
-
-        self.enableMotors = True # TODO: Move to cfg
-        self.enableLights = True # TODO: Move to cfg
-
+ 
+        # TODO: Move to cfg
         self.chevronDownAudioHeadStart = 0.2
         self.chevronDownThrottle = -0.65 # negative
         self.chevronDownTime = 0.1
         self.chevronDownWaitTime = 0.35
-
         self.chevronUpThrottle = 0.65 # positive
         self.chevronUpTime = 0.2
 
