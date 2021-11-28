@@ -87,6 +87,13 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             elif data['action'] == "volume_up":
                 self.stargate.audio.volume_up()
                 
+        elif self.path == '/dhd_press':
+            symbol_number = int(data['symbol'])
+            
+            if symbol_number > 0:
+                self.stargate.keyboard.queue_symbol(symbol_number)
+            elif symbol_number == 0:
+                self.stargate.keyboard.queue_center_button()
                 
         self.send_response(200, 'OK')
         self.end_headers()
