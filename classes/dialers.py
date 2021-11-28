@@ -18,7 +18,7 @@ class Dialer:
     def _connect_dialer(self):
         # Detect if we have a DHD connected, else use the keyboard
         try:
-            self.hardware = self.connect_dhd()
+            self.hardware = self._connect_dhd()
         except:
             self.log.log('No DHD found, switching to keyboard mode')
             self.hardware = KeyboardMode()
