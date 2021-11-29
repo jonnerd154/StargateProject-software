@@ -20,7 +20,7 @@ class StargateAddressBookMigration():
         self.cfg.set_log(self.log)
         self.cfg.load()
         
-        ### Initialize the Config file
+        ### Initialize the Address Book
         self.addressBook = StargateAddressBook(self)
         
         ### Run the migration
@@ -28,9 +28,11 @@ class StargateAddressBookMigration():
 
     def migrate(self):
         # Clear out the existing config
+        print("(Re)initializing Stargate AddressBook datastore")
         self.addressBook.initialize_storage()
         
         # Get the local stargate address, set it in the cfg
+        print("Migrating Local Address: {}".format(local_stargate_address) )
         self.addressBook.set_local_address(local_stargate_address)
 
         # Loop over the fan_gates_cfg dictionary, insert into cfg
@@ -44,3 +46,4 @@ class StargateAddressBookMigration():
         for name, address in known_planets.items():
             print("Migrating Known Planet Gate: {}".format(name) )
             self.addressBook.set_standard_gate(name, address)
+        print("Done.")
