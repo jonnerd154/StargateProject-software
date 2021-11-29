@@ -17,7 +17,7 @@ class StargateConfig:
     def load(self):
         # Open the json file and load it into a python object
         try:
-            #print("Loading {}".format(self.file_name))
+            print("Loading {}".format(self.file_name))
             f = open(self.get_full_file_path())
             self.config = json.load(f)
             f.close()
@@ -58,3 +58,7 @@ class StargateConfig:
     def save(self):   
         with open(self.get_full_file_path(), 'w+') as f:
             json.dump(self.config, f, indent=2)
+
+    def remove_all(self):
+        self.config = {}
+        self.save()

@@ -1,9 +1,7 @@
 import ast
 
-from stargate_address import local_stargate_address
-from stargate_address import fan_gates_cfg
-from hardcoded_addresses import known_planets
 from database import Database
+from stargate_address_book import StargateAddressBook
 
 class StargateAddressManager:
 
@@ -15,12 +13,15 @@ class StargateAddressManager:
         self.netTools = stargate.netTools
 
         self.database = Database(stargate.base_path)
+        self.addressBook = StargateAddressBook(self)
 
-        # TODO: Move to json cfg
+        # TODO: Refactor code to use the address book, rather than these variables
         self.black_hole_planets = [ known_planets["P3W-451"] ]
-        self.local_stargate_address = local_stargate_address # Set the local stargate address
-        self.fan_gates = fan_gates_cfg ### Stargate fan-made gate addresses
-
+        
+        self.local_stargate_address = self.addressBook.get_local_address() # Set the local stargate address
+        self.fan_gates = self.addressBook.get_fan_gates() ### Stargate fan-made gate addresses
+        self.known_planets = self.addressBook.get_standard_gates()
+        
         ### Retrieve and merge all fan gates, local and in-DB
         self.fan_gates = self.update_fan_gates_from_db()
 
