@@ -195,6 +195,11 @@ class StargateSG1:
                 self.log.log('OUTGOING Wormhole to {} established'.format(self.addrManager.get_planet_name_by_address(self.address_buffer_outgoing) ))
                 
                 self.wormhole = 'outgoing'
+                
+                # Check if we dialed a black hole planet
+                if self.addrManager.getBook().get_entry_by_address(self.address_buffer_outgoing[0:-1])['is_black_hole']:
+                    self.log.log("Oh no! It's the black hole planet!")
+                    self.black_hole = True
             else:
                 self.log.log('Unable to establish a Wormhole!')
                 self.shutdown(cancel_sound=False, wormhole_fail_sound=True)
