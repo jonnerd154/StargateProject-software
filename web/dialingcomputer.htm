@@ -3,6 +3,7 @@
         <!-- Chevrons from Manz: https://codepen.io/manz/pen/zoREJL -->
         <meta charset="UTF-8"> 
         <title>Stargate Command</title>
+        <link rel="stylesheet" href="lib/jquery-ui-1.13.0.custom/jquery-ui.css">
         <link rel="stylesheet" href="main.css" />
         <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
     </head>
@@ -18,6 +19,9 @@
         </div>
 
         <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
+          
+
         <script type="text/javascript">
             
         $.ajax({
@@ -30,7 +34,12 @@
                 console.log( "JSON Data: " + json );
                 addresses = json
                 load_address_book()
-            }
+            },
+            error: function (xhr, textStatus, errorThrown){
+                console.log("Failed to load Address Book from Stargate")
+                $("<div>Failed to load Address Book from Stargate</div>").dialog();
+            } 
+
         });
         
         function load_address_book(){
