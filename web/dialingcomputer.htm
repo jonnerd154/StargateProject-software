@@ -24,7 +24,7 @@
             dataType: "json",
             url: "/stargate/get",
             data: {
-                entity: "standard_gates"
+                entity: "all_gates"
             },
             success: function( json ) {
                 console.log( "JSON Data: " + json );
@@ -43,7 +43,11 @@
                 });
                 address = address_raw.join("");
 
-                $("#presets").append('<div class="presetAddress" onclick="window.location = \'index.htm?address=' + address_string + '\';"><div class="name">' + value.name + '</div><div class="glyphs">' + address +  '</div></div>' );
+                fan_gate_string = ""
+                if (value.ip_address){
+                    fan_gate_string = "(FAN)"
+                }
+                $("#presets").append('<div class="presetAddress" onclick="window.location = \'index.htm?address=' + address_string + '\';"><div class="name">' + value.name + ' ' + fan_gate_string + '</div><div class="glyphs">' + address +  '</div></div>' );
             });
         }
         </script>

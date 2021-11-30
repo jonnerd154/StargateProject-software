@@ -3,13 +3,14 @@ import json
 import threading
 from time import sleep
 import urllib.parse
+import collections
 from http.server import SimpleHTTPRequestHandler
 
 class StargateWebServer(SimpleHTTPRequestHandler):
     
     #Overload SimpleHTTPRequestHandler.log_message() to suppress logs from printing to console
-    def log_message(self, format, *args):
-        pass
+   #  def log_message(self, format, *args):
+#         pass
        
     def parse_GET_vars(self):
         qs = {}
@@ -31,6 +32,11 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             
                 elif( entity == "fan_gates" ):
                     content = json.dumps( self.stargate.addrManager.getBook().get_fan_gates() )
+                
+                elif( entity == "all_gates" ):
+                    all_addr = self.stargate.addrManager.getBook().get_all_nonlocal_addresses()
+                    ordered_dict = collections.OrderedDict(sorted(all_addr.items()))
+                    content = json.dumps( ordered_dict )
             
                 elif( entity == "local_address" ):
                     content = json.dumps( self.stargate.addrManager.getBook().get_local_address() )
@@ -47,7 +53,8 @@ class StargateWebServer(SimpleHTTPRequestHandler):
         
             return
         except:
-            pass
+            raise
+            # pass
                 
     def do_POST(self):
         #print('POST PATH: {}'.format(self.path))

@@ -29,6 +29,7 @@ class StargateAddressBook:
                 
     def set_local_address(self, address):
         # TODO: Validate address
+        # TODO: Ensure unique address
         self.datastore.set("local_stargate_address", address)
     
     # ----
@@ -42,8 +43,14 @@ class StargateAddressBook:
         if found_fan_gate:
             return found_standard_gate
         
-        return False  
+        return False 
     
+    def get_all_nonlocal_addresses(self):
+        fan_gates = self.get_fan_gates()
+        standard_gates = self.get_standard_gates()
+        all_gates = {**fan_gates, **standard_gates}
+        return all_gates 
+         
     # ----
         
     def get_fan_gates(self):
@@ -57,6 +64,7 @@ class StargateAddressBook:
           
     def set_fan_gate(self, name, gate_address, ip_address, is_black_hole=False):
         # TODO: Validate gate_address, ip_address
+        # TODO: Ensure unique address
         fan_gates = self.get_fan_gates()
         fan_gates[name] = { "name": name, "gate_address": gate_address, "ip_address": ip_address, "is_black_hole": is_black_hole }
         self.datastore.set("fan_gates", fan_gates)
@@ -73,7 +81,8 @@ class StargateAddressBook:
         return False
         
     def set_standard_gate(self, name, gate_address, is_black_hole=False):
-        # TODO: Validate gate_address, ip_address
+        # TODO: Validate gate_address
+        # TODO: Ensure unique address
         standard_gates = self.get_standard_gates()
         standard_gates[name] = { "name": name, "gate_address": gate_address, "is_black_hole": is_black_hole }
         self.datastore.set("standard_gates", standard_gates)    
