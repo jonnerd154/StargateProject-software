@@ -53,7 +53,9 @@ class StargateWebServer(SimpleHTTPRequestHandler):
         
             return
         except:
-            pass
+            # Encountered an exception: send a 500
+            self.send_response(500)
+            self.end_headers()
                 
     def do_POST(self):
         #print('POST PATH: {}'.format(self.path))
