@@ -7,7 +7,256 @@
     32,
     21
   ],
-  "fan_gates": {},
+  "fan_gates": {
+    "Kristian Tysse": {
+      "name": "Kristian Tysse",
+      "gate_address": [
+        7,
+        5,
+        20,
+        27,
+        32,
+        21
+      ],
+      "ip_address": "172.30.0.2",
+      "is_black_hole": false
+    },
+    "Tesseract": {
+      "name": "Tesseract",
+      "gate_address": [
+        21,
+        12,
+        19,
+        3,
+        23,
+        33
+      ],
+      "ip_address": "172.30.0.11",
+      "is_black_hole": false
+    },
+    "Tython": {
+      "name": "Tython",
+      "gate_address": [
+        7,
+        39,
+        16,
+        20,
+        32,
+        26
+      ],
+      "ip_address": "172.30.0.3",
+      "is_black_hole": false
+    },
+    "Jon Moyes": {
+      "name": "Jon Moyes",
+      "gate_address": [
+        12,
+        18,
+        26,
+        7,
+        34,
+        11
+      ],
+      "ip_address": "172.30.0.5",
+      "is_black_hole": false
+    },
+    "Estros": {
+      "name": "Estros",
+      "gate_address": [
+        7,
+        8,
+        20,
+        33,
+        38,
+        21,
+        2
+      ],
+      "ip_address": "172.30.0.6",
+      "is_black_hole": false
+    },
+    "eXos": {
+      "name": "eXos",
+      "gate_address": [
+        30,
+        33,
+        27,
+        11,
+        12,
+        38
+      ],
+      "ip_address": "172.30.0.7",
+      "is_black_hole": false
+    },
+    "Sepa\u2019s Sanctum": {
+      "name": "Sepa\u2019s Sanctum",
+      "gate_address": [
+        12,
+        5,
+        9,
+        23,
+        8,
+        39
+      ],
+      "ip_address": "172.30.0.8",
+      "is_black_hole": false
+    },
+    "PX1-482 JonathanS Gate": {
+      "name": "PX1-482 JonathanS Gate",
+      "gate_address": [
+        36,
+        12,
+        33,
+        3,
+        2,
+        25
+      ],
+      "ip_address": "172.30.0.9",
+      "is_black_hole": false
+    },
+    "Proxima Centauri B": {
+      "name": "Proxima Centauri B",
+      "gate_address": [
+        2,
+        17,
+        22,
+        27,
+        30,
+        39
+      ],
+      "ip_address": "172.30.0.13",
+      "is_black_hole": false
+    },
+    "Fras Alpha Gate": {
+      "name": "Fras Alpha Gate",
+      "gate_address": [
+        9,
+        22,
+        3,
+        14,
+        37,
+        6
+      ],
+      "ip_address": "172.30.0.12",
+      "is_black_hole": false
+    },
+    "Serenity": {
+      "name": "Serenity",
+      "gate_address": [
+        12,
+        3,
+        20,
+        10,
+        19,
+        22
+      ],
+      "ip_address": "172.30.0.14",
+      "is_black_hole": false
+    },
+    "Cyathea": {
+      "name": "Cyathea",
+      "gate_address": [
+        32,
+        9,
+        21,
+        30,
+        18,
+        29
+      ],
+      "ip_address": "172.30.0.15",
+      "is_black_hole": false
+    },
+    "Cassidy": {
+      "name": "Cassidy",
+      "gate_address": [
+        3,
+        30,
+        12,
+        31,
+        28,
+        18
+      ],
+      "ip_address": "172.30.0.16",
+      "is_black_hole": false
+    },
+    "Vasut\u2019s gate": {
+      "name": "Vasut\u2019s gate",
+      "gate_address": [
+        31,
+        23,
+        2,
+        30,
+        7,
+        16
+      ],
+      "ip_address": "172.30.0.17",
+      "is_black_hole": false
+    },
+    "New Horizon": {
+      "name": "New Horizon",
+      "gate_address": [
+        9,
+        6,
+        16,
+        12,
+        3,
+        8
+      ],
+      "ip_address": "172.30.0.18",
+      "is_black_hole": false
+    },
+    "Vasut\u2019s second gate ": {
+      "name": "Vasut\u2019s second gate ",
+      "gate_address": [
+        32,
+        12,
+        6,
+        3,
+        18,
+        2
+      ],
+      "ip_address": "172.30.0.19",
+      "is_black_hole": false
+    },
+    "Abythres": {
+      "name": "Abythres",
+      "gate_address": [
+        7,
+        6,
+        9,
+        10,
+        11,
+        12
+      ],
+      "ip_address": "172.30.0.20",
+      "is_black_hole": false
+    },
+    "The.Continuum": {
+      "name": "The.Continuum",
+      "gate_address": [
+        39,
+        19,
+        17,
+        5,
+        29,
+        21
+      ],
+      "ip_address": "172.30.0.21",
+      "is_black_hole": false
+    },
+    "Centauri Prime": {
+      "name": "Centauri Prime",
+      "gate_address": [
+        12,
+        19,
+        4,
+        14,
+        25,
+        27
+      ],
+      "ip_address": "172.30.0.22",
+      "is_black_hole": false
+    }
+  },
   "standard_gates": {
     "ABYDOS": {
       "name": "ABYDOS",
@@ -18,7 +267,8 @@
         32,
         12,
         30
-      ]
+      ],
+      "is_black_hole": false
     },
     "APOPHIS'S BASE": {
       "name": "APOPHIS'S BASE",
@@ -29,7 +279,8 @@
         38,
         10,
         32
-      ]
+      ],
+      "is_black_hole": false
     },
     "CASTIANA or SAHAL": {
       "name": "CASTIANA or SAHAL",
@@ -40,7 +291,8 @@
         9,
         12,
         16
-      ]
+      ],
+      "is_black_hole": false
     },
     "SAHAL or CASTIANA": {
       "name": "SAHAL or CASTIANA",
@@ -51,7 +303,8 @@
         20,
         21,
         22
-      ]
+      ],
+      "is_black_hole": false
     },
     "CHULAK": {
       "name": "CHULAK",
@@ -62,7 +315,8 @@
         15,
         37,
         20
-      ]
+      ],
+      "is_black_hole": false
     },
     "CLAVA THESSARA INFINITAS": {
       "name": "CLAVA THESSARA INFINITAS",
@@ -73,7 +327,8 @@
         11,
         30,
         7
-      ]
+      ],
+      "is_black_hole": false
     },
     "CLAVA THESSARA INFINITAS2": {
       "name": "CLAVA THESSARA INFINITAS2",
@@ -84,7 +339,8 @@
         32,
         23,
         4
-      ]
+      ],
+      "is_black_hole": false
     },
     "DESTROYERS": {
       "name": "DESTROYERS",
@@ -95,7 +351,8 @@
         8,
         10,
         12
-      ]
+      ],
+      "is_black_hole": false
     },
     "EARTH": {
       "name": "EARTH",
@@ -106,7 +363,8 @@
         36,
         11,
         29
-      ]
+      ],
+      "is_black_hole": false
     },
     "EDORA": {
       "name": "EDORA",
@@ -117,7 +375,8 @@
         9,
         15,
         3
-      ]
+      ],
+      "is_black_hole": false
     },
     "EURONDA": {
       "name": "EURONDA",
@@ -128,7 +387,8 @@
         7,
         18,
         16
-      ]
+      ],
+      "is_black_hole": false
     },
     "JUNA": {
       "name": "JUNA",
@@ -139,7 +399,8 @@
         22,
         4,
         25
-      ]
+      ],
+      "is_black_hole": false
     },
     "KALLANA": {
       "name": "KALLANA",
@@ -150,7 +411,8 @@
         3,
         26,
         25
-      ]
+      ],
+      "is_black_hole": false
     },
     "KHEB": {
       "name": "KHEB",
@@ -161,7 +423,8 @@
         8,
         23,
         14
-      ]
+      ],
+      "is_black_hole": false
     },
     "K'TAU": {
       "name": "K'TAU",
@@ -172,7 +435,8 @@
         12,
         26,
         33
-      ]
+      ],
+      "is_black_hole": false
     },
     "MARTIN LLOYD'S HOMEWORLD": {
       "name": "MARTIN LLOYD'S HOMEWORLD",
@@ -183,7 +447,8 @@
         7,
         11,
         34
-      ]
+      ],
+      "is_black_hole": false
     },
     "NID OFF-WORLD BASE": {
       "name": "NID OFF-WORLD BASE",
@@ -194,7 +459,8 @@
         35,
         3,
         19
-      ]
+      ],
+      "is_black_hole": false
     },
     "OTHALA": {
       "name": "OTHALA",
@@ -206,7 +472,8 @@
         33,
         3,
         9
-      ]
+      ],
+      "is_black_hole": false
     },
     "P2X-555": {
       "name": "P2X-555",
@@ -217,7 +484,8 @@
         33,
         13,
         31
-      ]
+      ],
+      "is_black_hole": false
     },
     "P34-353J": {
       "name": "P34-353J",
@@ -228,7 +496,8 @@
         15,
         35,
         3
-      ]
+      ],
+      "is_black_hole": false
     },
     "P3W-451": {
       "name": "P3W-451",
@@ -239,7 +508,8 @@
         37,
         26,
         16
-      ]
+      ],
+      "is_black_hole": true
     },
     "P3X-118": {
       "name": "P3X-118",
@@ -250,7 +520,8 @@
         37,
         17,
         21
-      ]
+      ],
+      "is_black_hole": false
     },
     "P3X-562": {
       "name": "P3X-562",
@@ -261,7 +532,8 @@
         35,
         24,
         15
-      ]
+      ],
+      "is_black_hole": false
     },
     "P9C-372": {
       "name": "P9C-372",
@@ -272,7 +544,8 @@
         34,
         4,
         22
-      ]
+      ],
+      "is_black_hole": false
     },
     "PB5-926": {
       "name": "PB5-926",
@@ -283,7 +556,8 @@
         18,
         7,
         27
-      ]
+      ],
+      "is_black_hole": false
     },
     "PX1 - 767": {
       "name": "PX1 - 767",
@@ -294,7 +568,8 @@
         8,
         26,
         15
-      ]
+      ],
+      "is_black_hole": false
     },
     "PRACLARUSH TAONAS": {
       "name": "PRACLARUSH TAONAS",
@@ -305,7 +580,8 @@
         29,
         5,
         17
-      ]
+      ],
+      "is_black_hole": false
     },
     "SANGREAL PLANET": {
       "name": "SANGREAL PLANET",
@@ -316,7 +592,8 @@
         9,
         33,
         18
-      ]
+      ],
+      "is_black_hole": false
     },
     "TARTARUS": {
       "name": "TARTARUS",
@@ -327,7 +604,8 @@
         26,
         16,
         31
-      ]
+      ],
+      "is_black_hole": false
     },
     "TOLLAN": {
       "name": "TOLLAN",
@@ -338,7 +616,8 @@
         37,
         11,
         18
-      ]
+      ],
+      "is_black_hole": false
     },
     "TOLLANA": {
       "name": "TOLLANA",
@@ -349,7 +628,8 @@
         22,
         18,
         25
-      ]
+      ],
+      "is_black_hole": false
     },
     "VAGON BREI": {
       "name": "VAGON BREI",
@@ -360,7 +640,8 @@
         12,
         19,
         30
-      ]
+      ],
+      "is_black_hole": false
     },
     "FINAL DESTINATION": {
       "name": "FINAL DESTINATION",
@@ -371,7 +652,8 @@
         15,
         21,
         36
-      ]
+      ],
+      "is_black_hole": false
     },
     "LANTIA": {
       "name": "LANTIA",
@@ -383,7 +665,8 @@
         15,
         8,
         20
-      ]
+      ],
+      "is_black_hole": false
     },
     "DESTINY": {
       "name": "DESTINY",
@@ -396,7 +679,8 @@
         24,
         5,
         14
-      ]
+      ],
+      "is_black_hole": false
     }
   }
 }

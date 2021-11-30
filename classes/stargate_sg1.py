@@ -33,8 +33,8 @@ class StargateSG1:
 
         ### Set up the needed classes and make them ready to use ###
         self.subspace = Subspace(self)
-        self.keyboard = KeyboardManager(self)
         self.addrManager = StargateAddressManager(self)
+        self.keyboard = KeyboardManager(self)
         self.chevrons = ChevronManager(self)
         self.ring = SymbolRing(self)
         self.dialer = Dialer(self) # A "Dialer" is either a Keyboard or DHDv2
@@ -151,7 +151,7 @@ class StargateSG1:
             else:
                 delay = 0
             # If we are still receiving the correct address to match the local stargate:
-            if self.address_buffer_incoming[0:min(len(self.address_buffer_incoming), 6)] == self.local_stargate_address[0:min(len(self.address_buffer_incoming), 6)]:
+            if self.address_buffer_incoming[0:min(len(self.address_buffer_incoming), 6)] == self.addrManager.addressBook.get_local_address()[0:min(len(self.address_buffer_incoming), 6)]:
                 self.locked_chevrons_incoming += 1  # Increment the locked chevrons variable.
                 try:
                     self.chevrons[self.locked_chevrons_incoming].incoming_on()  # Do the chevron locking thing.
@@ -184,8 +184,8 @@ class StargateSG1:
         ## Outgoing wormhole##
         # If the centre_button_outgoing is active and all dialed symbols are locked.
         if self.centre_button_outgoing and (0 < len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing):
-            # If we did not dial a fan_gate, set the IP variable to True instead of an IP.
-            if self.addrManager.valid_planet(self.address_buffer_outgoing) != 'fan_gate':
+            # If we dialed a non-networked Gate, set the IP to True. #TODO this should be removed
+            if self.addrManager.getBook().get_fan_gate_by_address(self.address_buffer_outgoing):
                 self.fan_gate_incoming_IP = True
             # Try to send the centre button to the fan_gate:
             self.try_sending_centre_button()
@@ -203,7 +203,7 @@ class StargateSG1:
         # If the centre_button_incoming is active and all dialed symbols are locked.
         elif self.centre_button_incoming and 0 < len(self.address_buffer_incoming) == self.locked_chevrons_incoming:
             # If the incoming wormhole matches the local address
-            if self.address_buffer_incoming[0:-1] == self.local_stargate_address:
+            if self.address_buffer_incoming[0:-1] == self.addrManager.addressBook.get_local_address():
                 self.wormhole = 'incoming'  # Set the wormhole state to activate the wormhole.
                 self.log.log('Incoming address is a match!')
             else:

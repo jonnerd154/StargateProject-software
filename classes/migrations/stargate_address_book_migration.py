@@ -40,10 +40,16 @@ class StargateAddressBookMigration():
             print("Migrating Fan Gate: {}".format(name) )
             address = value[0]
             ip = value[1]
-            self.addressBook.set_fan_gate(name, address, ip)
+            is_black_hole = False
+            self.addressBook.set_fan_gate(name, address, ip, is_black_hole)
         
         # Loop over the fan_gates_cfg dictionary, insert into cfg
-        for name, address in known_planets.items():
+        for name, gate_address in known_planets.items():
             print("Migrating Known Planet Gate: {}".format(name) )
-            self.addressBook.set_standard_gate(name, address)
+            is_bh = False
+            if name == "P3W-451":
+                is_bh = True
+            
+            ip = None
+            self.addressBook.set_standard_gate(name, gate_address, is_black_hole=is_bh )
         print("Done.")

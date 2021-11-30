@@ -11,36 +11,36 @@ class StargateAddressManager:
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.netTools = stargate.netTools
+        self.base_path = stargate.base_path
 
         self.database = Database(stargate.base_path)
         self.addressBook = StargateAddressBook(self)
 
-        # TODO: Refactor code to use the address book, rather than these variables
-        self.black_hole_planets = [ known_planets["P3W-451"] ]
-        
-        self.local_stargate_address = self.addressBook.get_local_address() # Set the local stargate address
-        self.fan_gates = self.addressBook.get_fan_gates() ### Stargate fan-made gate addresses
+        # TODO: Refactor code to use the address book, rather than these variables   
         self.known_planets = self.addressBook.get_standard_gates()
         
         ### Retrieve and merge all fan gates, local and in-DB
-        self.fan_gates = self.update_fan_gates_from_db()
+        self.fan_gates = self.addressBook.get_fan_gates() ### Stargate fan-made gate addresses
 
         pass
 
+    def getBook(self):
+        return self.addressBook
+        
     def get_planet_name_by_address(self, address):
         # Get only the first 6 symbols
         address_compare = address[0:6]
-
-        for key, value in known_planets.items():
-            if (len(value) == len(address_compare)):
-                if (value == address_compare):
-                    return key
+        
+        entry = self.addressBook.get_entry_by_address(address_compare)
+        if (entry):
+            return entry['name']
             
         # TODO: Compare to Fan Gates and Local Gates, too!
         return "Unknown Address"
         
     def get_fan_gates(self):
-        return self.fan_gates
+        #TODO: Remove
+        return self.addressBook.get_fan_gates()
 
     def update_fan_gates_from_db(self):
         """
@@ -50,7 +50,14 @@ class StargateAddressManager:
         """
         if self.stargate.netTools.has_internet_access():
             for gate in self.database.get_fan_gates():
-                self.fan_gates[gate[0]] = [ast.literal_eval(gate[1]), self.netTools.get_ip(gate[2])]
+                # Setup the variables
+                name = gate[0]
+                gate_address = ast.literal_eval(gate[1])
+                ip_address = self.netTools.get_ip(gate[2])
+                
+                # Add it to the datastore
+                self.addressBook.set_fan_gate(name, gate_address, ip_address)
+                
             return self.fan_gates
 
     def valid_planet(self, address):
@@ -70,28 +77,13 @@ class StargateAddressManager:
         if len(copy_of_address) != 0:
             del copy_of_address[-1]
 
-        # You can't dial yourself
-        if copy_of_address == self.local_stargate_address:
-            return False
-
-        # Check if we dialed the black hole planet
-        if self.is_black_hole(copy_of_address):
-            self.black_hole = True
-            self.log.log("Oh no! It's the black hole planet!")
-
-        # Check the known_planets dictionary for a match
-        for planet in known_planets:
-            if known_planets[planet] == copy_of_address:
-                return 'known_planet'
-
-        # Check the fan_gates dictionary for a match
-        for gate in self.fan_gates:
-            if self.fan_gates[gate][0] == copy_of_address:
-                return 'fan_gate'
-        return False  # Return False if it's not a valid destination
-
+        # Look through the address book for matching addresses. Returns full book entry, or False
+        return self.addressBook.get_entry_by_address(copy_of_address)
+     
     def is_black_hole(self, address):
-        if address in self.black_hole_planets:
+        # Helper function for abstraction
+        if ( self.addressBook.is_black_hole_by_address(address)):
+            self.log.log("Oh no! It's the black hole planet!")
             return True
         return False
 
@@ -108,10 +100,11 @@ class StargateAddressManager:
                 }
         :return: True if we are dialing a fan made address, False if not.
         """
-        for gate in self.fan_gates:
+        local_address = self.addressBook.get_local_address()
+        for gate in self.get_fan_gates():
             try:
                 #If we dial our own local address:
-                if dialed_address[:2] == self.local_stargate_address[:2]: # TODO: This should be handled by self.valid_planet(), remove.
+                if dialed_address[:2] == local_address[:2]: # TODO: This should be handled by self.valid_planet(), remove.
                     return False
                 # If we dial a known fan_gate
                 elif dialed_address[:2] == self.fan_gates[gate][0][:2]:
