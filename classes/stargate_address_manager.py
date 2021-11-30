@@ -107,7 +107,8 @@ class StargateAddressManager:
                 if dialed_address[:2] == local_address[:2]: # TODO: This should be handled by self.valid_planet(), remove.
                     return False
                 # If we dial a known fan_gate
-                elif dialed_address[:2] == self.fan_gates[gate][0][:2]:
+                #TODO: Use addressBook
+                elif dialed_address[:2] == self.fan_gates[gate]['gate_address'][:2]:
                     return True
             except:
                 pass
