@@ -2,23 +2,54 @@ import os
 import json
 import threading
 from time import sleep
+import urllib.parse
 from http.server import SimpleHTTPRequestHandler
 
 class StargateWebServer(SimpleHTTPRequestHandler):
     
-    # Overload log_message to suppress logs from printing to console
+    #Overload SimpleHTTPRequestHandler.log_message() to suppress logs from printing to console
     def log_message(self, format, *args):
         pass
-        
+       
+    def parse_GET_vars(self):
+        qs = {}
+        path = self.path
+        if '?' in path:
+            path, tmp = path.split('?', 1)
+            qs = urllib.parse.parse_qs(tmp)
+        return path, qs
+     
     def do_GET(self):
-        fullPath = self.translate_path(self.path)
-        if fullPath:
-            try:
-                with open(fullPath, 'rb') as file: 
-                    self.wfile.write(file.read()) # Read the file and send the contents     
-            except:
-                pass
+        try:
+            request_path, get_vars = self.parse_GET_vars()
         
+            if request_path == '/get':
+            
+                data_name = get_vars.get('data_name')[0]
+
+                if ( data_name == "standard_gates"):
+                    content = json.dumps( self.stargate.addrManager.getBook().get_standard_gates() )
+            
+                elif( data_name == "fan_gates" ):
+                    content = json.dumps( self.stargate.addrManager.getBook().get_fan_gates() )
+            
+                elif( data_name == "local_address" ):
+                    content = json.dumps( self.stargate.addrManager.getBook().get_local_address() )
+                
+                self.send_response(200)
+                self.send_header("Content-type", "text/json")
+                self.end_headers()
+                self.wfile.write(content.encode())
+               
+            else:
+                # Unhandled request: send a 404
+                self.send_response(404)
+                self.end_headers()
+        
+            return
+        except:
+            pass
+                
     def do_POST(self):
         #print('POST PATH: {}'.format(self.path))
         if self.path == '/shutdown':
@@ -79,6 +110,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             elif symbol_number == 0:
                 self.stargate.fan_gate_online_status = False #TODO: This isn't necessarily true.
                 self.stargate.keyboard.queue_center_button()
+        
                 
         self.send_response(200, 'OK')
         self.end_headers()
