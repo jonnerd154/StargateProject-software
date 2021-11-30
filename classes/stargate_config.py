@@ -17,7 +17,7 @@ class StargateConfig:
     def load(self):
         # Open the json file and load it into a python object
         try:
-            print("Loading {}".format(self.file_name))
+            #print("Loading {}".format(self.file_name))
             f = open(self.get_full_file_path())
             self.config = json.load(f)
             f.close()

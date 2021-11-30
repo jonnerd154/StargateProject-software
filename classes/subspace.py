@@ -50,7 +50,7 @@ class Subspace:
 
         ## Try to establish a connection to the server.
         try:
-            print("Subspace send to {}:{} ::: {}".format(server_ip, self.port, message_string))
+            #print("Subspace send to {}:{} ::: {}".format(server_ip, self.port, message_string))
             self.client.connect( (server_ip, self.port) )
             connection_to_server = True # TODO: Move the if block below into the try block, get rid of this var
         except Exception as ex:
