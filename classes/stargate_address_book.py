@@ -21,7 +21,9 @@ class StargateAddressBook:
         self.datastore.set("local_stargate_address", None)
         self.datastore.set("fan_gates", {})
         self.datastore.set("standard_gates", {})
-        
+       
+    # ----
+     
     def get_local_address(self):
         return self.datastore.get("local_stargate_address")
                 
@@ -29,6 +31,8 @@ class StargateAddressBook:
         # TODO: Validate address
         self.datastore.set("local_stargate_address", address)
     
+    # ----
+
     def get_entry_by_address(self, address):
         found_standard_gate = self.get_standard_gate_by_address(address)
         if found_standard_gate:
@@ -40,6 +44,8 @@ class StargateAddressBook:
         
         return False  
     
+    # ----
+        
     def get_fan_gates(self):
         return self.datastore.get("fan_gates")   
     
@@ -55,6 +61,8 @@ class StargateAddressBook:
         fan_gates[name] = { "name": name, "gate_address": gate_address, "ip_address": ip_address, "is_black_hole": is_black_hole }
         self.datastore.set("fan_gates", fan_gates)
       
+    # ----
+
     def get_standard_gates(self):
         return self.datastore.get("standard_gates") 
     
@@ -70,6 +78,8 @@ class StargateAddressBook:
         standard_gates[name] = { "name": name, "gate_address": gate_address, "is_black_hole": is_black_hole }
         self.datastore.set("standard_gates", standard_gates)    
         
+    # ----
+
     def is_black_hole_by_address(self, address):
         return self.get_entry_by_address( address )['is_black_hole']
             
