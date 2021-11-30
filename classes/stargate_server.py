@@ -17,8 +17,6 @@ class StargateServer:
     """
     def __init__(self, stargate):
 
-        self.thread = Thread
-
         self.stargate = stargate
         self.log = stargate.log
         self.cfg = stargate.cfg
@@ -48,7 +46,7 @@ class StargateServer:
         self.open_socket()
 
         # Start a thread to keep the subspace connection alive. It's most likely not needed, but might help connections to establish faster.
-        thread_keep_alive = self.thread(target=self.keep_alive, args=(self.keep_alive_address, self.keep_alive_interval, self.stargate ))
+        thread_keep_alive = Thread(target=self.keep_alive, args=(self.keep_alive_address, self.keep_alive_interval, self.stargate ))
         thread_keep_alive.start()
 
         # Update fan_gates from the subspace server
@@ -192,7 +190,7 @@ class StargateServer:
 
             while True:
                 conn, addr = self.server.accept()
-                handle_incoming_wormhole_thread = self.thread(target=self.handle_incoming_wormhole, args=(conn, addr))
+                handle_incoming_wormhole_thread = Thread(target=self.handle_incoming_wormhole, args=(conn, addr))
                 handle_incoming_wormhole_thread.start()
         else:
             self.log.log('Unable to start the Stargate server, no IP address found')
