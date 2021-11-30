@@ -9,8 +9,8 @@ from http.server import SimpleHTTPRequestHandler
 class StargateWebServer(SimpleHTTPRequestHandler):
     
     #Overload SimpleHTTPRequestHandler.log_message() to suppress logs from printing to console
-   #  def log_message(self, format, *args):
-#         pass
+    def log_message(self, format, *args):
+        pass
        
     def parse_GET_vars(self):
         qs = {}
@@ -53,8 +53,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
         
             return
         except:
-            raise
-            # pass
+            pass
                 
     def do_POST(self):
         #print('POST PATH: {}'.format(self.path))
