@@ -22,18 +22,17 @@ class StargateWebServer(SimpleHTTPRequestHandler):
     def do_GET(self):
         try:
             request_path, get_vars = self.parse_GET_vars()
-        
-            if request_path == '/get':
             
-                data_name = get_vars.get('data_name')[0]
+            if request_path == '/get':
+                entity = get_vars.get('entity')[0]
 
-                if ( data_name == "standard_gates"):
+                if ( entity == "standard_gates"):
                     content = json.dumps( self.stargate.addrManager.getBook().get_standard_gates() )
             
-                elif( data_name == "fan_gates" ):
+                elif( entity == "fan_gates" ):
                     content = json.dumps( self.stargate.addrManager.getBook().get_fan_gates() )
             
-                elif( data_name == "local_address" ):
+                elif( entity == "local_address" ):
                     content = json.dumps( self.stargate.addrManager.getBook().get_local_address() )
                 
                 self.send_response(200)
