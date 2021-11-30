@@ -132,7 +132,7 @@ class StargateSG1:
                 # If we don't know the online status of the fan_gate or it is online.
                 if self.fan_gate_online_status is None or self.fan_gate_online_status:
                     # send the locked symbols to the remote gate.
-                    if self.send_to_remote_stargate(self.get_ip_from_stargate_address(self.address_buffer_outgoing, self.fan_gates), str(self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]))[0]:
+                    if self.subspace.send_to_remote_stargate(self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addrManager.get_fan_gates() ), str(self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]))[0]:
                         self.log.log(f'Sent to fan_gate: {self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]}')
                         self.fan_gate_online_status = True  # set the online status to True
                     else:
@@ -172,7 +172,7 @@ class StargateSG1:
         :return: Nothing is returned.
         """
         if self.fan_gate_online_status and self.centre_button_outgoing and len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing:
-            self.send_to_remote_stargate(self.get_ip_from_stargate_address(self.address_buffer_outgoing, self.fan_gates), 'centre_button_incoming')
+            self.subspace.send_to_remote_stargate(self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addrManager.get_fan_gates() ), 'centre_button_incoming')
             self.log.log(f'Sent to fan_gate: centre_button_incoming')
 
     def establishing_wormhole(self):
@@ -270,7 +270,7 @@ class StargateSG1:
                     self.log.log('The dialed fan_gate is NOT online!')
                     return False
                 # If the dialed fan_gate is already busy, with an active wormhole or outgoing dialing is in progress.
-                elif self.get_status_of_remote_gate(self.get_ip_from_stargate_address(self.address_buffer_outgoing, self.fan_gates)):
+                elif self.get_status_of_remote_gate(self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addrManager.get_fan_gates() )):
                     self.log.log('The dialed fan_gate is already busy!')
                     return False
             return True  # returns true if we can establish a wormhole

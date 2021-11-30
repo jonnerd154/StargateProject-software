@@ -23,6 +23,8 @@ class StargateServer:
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.base_path = stargate.base_path
+        self.subspace = stargate.subspace
+        self.addrManager = stargate.addrManager
         self.addressBook = stargate.addrManager.getBook()
 
         self.database = Database(self.base_path)
@@ -148,9 +150,9 @@ class StargateServer:
                             self.stargate.fan_gate_incoming_IP = addr[0] # Save the IO address when establishing a wormhole.
                             self.stargate.dialer.hardware.set_center_on()# Activate the centre_button_outgoing light
 
-                    planet_name = self.get_planet_name_from_IP(addr[0], self.addressBook.get_fan_gates())
-                    stargate_address = self.get_stargate_address_from_IP(addr[0], self.addressBook.get_fan_gates())
-                    self.log.log('Received from {} - {} -> {}'.format(planet_name, stargate_address, msg))
+                    planet_name = self.subspace.get_planet_name_from_IP(addr[0], self.addressBook.get_fan_gates())
+                    stargate_address = self.subspace.get_stargate_address_from_IP(addr[0], self.addressBook.get_fan_gates())
+                    self.log.log('1 Received from {} - {} -> {}'.format(planet_name, stargate_address, msg))
 
                 # If we are asked about the status (wormhole already active from a different gate or actively dialing out)
                 elif msg == 'what_is_your_status':
@@ -168,20 +170,20 @@ class StargateServer:
                     conn.send(str(status).encode(self.encoding_format))
 
                 # If we are receiving a stargate address, add it to the incoming buffer.
-                elif self.validate_string_as_stargate_address(msg):
-                    address = self.validate_string_as_stargate_address(msg)
+                elif self.addrManager.is_valid(msg):
+                    address = self.addrManager.is_valid(msg)
                     for symbol in address:
                         if not symbol in self.stargate.address_buffer_incoming:
                             self.stargate.address_buffer_incoming.append(symbol)
 
-                    planet_name = self.get_planet_name_from_IP(addr[0], self.addressBook.get_fan_gates())
-                    stargate_address = self.get_stargate_address_from_IP(addr[0], self.addressBook.get_fan_gates())
-                    self.log.log('Received from {} - {} -> {msg}'.format(planet_name, stargate_address))
+                    planet_name = self.subspace.get_planet_name_from_IP(addr[0], self.addressBook.get_fan_gates())
+                    stargate_address = self.subspace.get_stargate_address_from_IP(addr[0], self.addressBook.get_fan_gates())
+                    self.log.log('2 Received from {} - {} -> {}'.format(planet_name, stargate_address, msg))
 
                 # For unknown messages
                 else:
-                    stargate_address = self.get_stargate_address_from_IP(addr[0], self.addressBook.get_fan_gates())
-                    self.log.log('Received UNKNOWN MESSAGE from {} - {} -> {} \t But I do not know what to do with that!'.format(addr[0], stargate_address, msg))
+                    stargate_address = self.subspace.get_stargate_address_from_IP(addr[0], self.addressBook.get_fan_gates())
+                    self.log.log('Received UNKNOWN MESSAGE from {} - {} -> {}     But I do not know what to do with that!'.format(addr[0], stargate_address, msg))
         conn.close()  # close the connection.
     def start(self):
         if self.server_ip: # If we have found an IP to use for the server.
