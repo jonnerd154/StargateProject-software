@@ -10,12 +10,11 @@ class StargateAddressBook:
         self.log = manager.log
         
         # Initialize the Config
-        self.datastore = StargateConfig(self.base_path, "addresses.json", defaults={ "fan_gates":{} })
+        self.datastore = StargateConfig(self.base_path, "addresses.json")
         self.datastore.set_log(self.log)
         self.datastore.load()
         
-        pass
-       
+
     def initialize_storage(self):
         self.datastore.remove_all()
         self.datastore.set("local_stargate_address", None)

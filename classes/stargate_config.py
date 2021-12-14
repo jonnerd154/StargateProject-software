@@ -1,6 +1,8 @@
 import sys
 sys.path.append('config')
 import json
+import shutil
+import sys
 
 class StargateConfig:
 
@@ -24,11 +26,30 @@ class StargateConfig:
             
         except FileNotFoundError:
             # If the file wasn't found, and we were given defaults, initialize the file.
-            print("\r\n\r\n*** Configuration File '{}' not found.".format(self.file_name))
             if self.defaults is not None:
-                print("*** Initializing {}".format(self.file_name))
+                print("*** Initializing configuration with provided defaults {}".format(self.file_name))
                 self.set_defaults()
+            else:
+                # The Config file doesn't exist, and were weren't passed defaults.
+                # Check if there's a default config available to load
+                self.copy_default_config_file()
                 
+                
+    def copy_default_config_file(self):
+        # If the file exists, copy the file into the config directory
+        try:
+            defaults_file_path = self.confDir + "/defaults/" + self.file_name + ".dist"
+            shutil.copyfile( defaults_file_path, self.get_full_file_path())
+            
+        except FileNotFoundError:
+            print("Default Configuration file not found for {}. Quitting.".format(self.file_name))
+            sys.exit(1)
+            return
+        
+        print("Loaded default configuration file for {}.".format(self.file_name))
+        
+        # Call load() so we can use the newly loaded config
+        self.load()
     
     def set_log(self, log):
         self.log = log
