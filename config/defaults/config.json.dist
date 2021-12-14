@@ -31,11 +31,11 @@
     },
     "8": {
       "ledPin": null,
-      "motorNumber": null
+      "motorNumber": 10
     },
     "9": {
       "ledPin": null,
-      "motorNumber": null
+      "motorNumber": 11
     }
   },
   "volume_as_percent": 10,
