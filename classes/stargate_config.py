@@ -3,6 +3,7 @@ sys.path.append('config')
 import json
 import shutil
 import sys
+import os
 
 class StargateConfig:
 
@@ -40,7 +41,7 @@ class StargateConfig:
         try:
             defaults_file_path = self.confDir + "/defaults/" + self.file_name + ".dist"
             shutil.copyfile( defaults_file_path, self.get_full_file_path())
-            
+            os.chmod(self.get_full_file_path(), 0o777)
         except FileNotFoundError:
             print("Default Configuration file not found for {}. Quitting.".format(self.file_name))
             sys.exit(1)
