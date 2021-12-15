@@ -16,10 +16,17 @@
             doPoll();
         });
         
-        function doPoll(){
-            $.get('stargate/get?entity=status', function(data) {
-                console.log(data);
+        // Configuration
+        var poll_delay_default = 5000
+        var poll_delay_dialing = 500
+        var poll_delay_established = 1000
+        
+        // State variables
+        var poll_delay = poll_delay_default
 
+
+        function doPoll( singleShot = false ){
+            $.get('stargate/get?entity=status', function(data) {
                 // Update the Wormhole status
                 updateWormholeStatus(data)
     
@@ -30,7 +37,9 @@
                 updateConnectedPlanetStatus(data)
         
                 // Schedule the next polling
-                setTimeout(doPoll,1000);
+                if ( !singleShot ){
+                    setTimeout(function(){doPoll( false ); }, poll_delay);
+                }
             });
         }
         
@@ -71,8 +80,21 @@
                 // Make all symbols available again
                 $(".chevrons .chevron").removeClass("unavailable");
                 
+                // Slow the polling to default
+                poll_delay = poll_delay_default
+                
             }
-            
+            else{
+                // There are symbols in the buffer, we're either established or dialing
+                
+                // Adjust the polling rate
+                if ( data.wormhole_active ){
+                    poll_delay = poll_delay_established
+                }
+                else{
+                    poll_delay = poll_delay_dialing
+                }
+            }
             for (i=0;i<data.address_buffer_outgoing.length;i++){
                 
                 // Get the symbol_number
@@ -210,7 +232,10 @@
                     console.log("Failed to communicate with Stargate")
                     $("<div>Failed to communicate with Stargate</div>").dialog();
                 })
-                .done(function() {});
+                .done(function() {
+                    // Call the doPoll() function with single-shot mode so we can update ASAP
+                    doPoll( true )
+                });
             });
 
             // Check for preset address in $_GET (via javascript instead of server-side)
