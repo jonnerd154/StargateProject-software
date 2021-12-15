@@ -49,7 +49,7 @@ html {
         }
         
         .dial-sequence .chevron img{
-            filter: invert(1);
+            /*filter: invert(1);*/
         }
 
 
@@ -164,3 +164,13 @@ html {
         width: 75px;
         height: 75px;
     }
+    
+    
+.filter-green{
+    filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);
+}
+
+.filter-yellow{
+    /* #F5D76E */
+    filter: invert(20%) sepia(63%) saturate(6877%) hue-rotate(150deg) brightness(115%) contrast(92%)
+}

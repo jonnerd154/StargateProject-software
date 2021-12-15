@@ -62,8 +62,10 @@
             }
             
             for (i=0;i<data.address_buffer_outgoing.length;i++){
-                symbol_number = data.address_buffer_outgoing[i]                  
                 
+                // Get the symbol_number
+                symbol_number = data.address_buffer_outgoing[i]                  
+                     
                 // If this symbol isn't in the display, show it.
                 if ( $("#dialed-chevron"+symbol_number).length == 0 ){
                 
@@ -71,8 +73,9 @@
                     const thisChevronDivHtml = $("#chevron"+symbol_number).clone().wrap('<div/>').parent().html();
                     const newChevron = $(thisChevronDivHtml);
                     newChevron.attr('id', "dialed-chevron"+symbol_number);
-                    newChevron.attr('style', 'transform: rotate(0);');
+                    newChevron.css('transform', 'rotate(0)');
                     newChevron.removeClass('unavailable');
+                    newChevron.addClass('filter-yellow')
                     $('.dial-sequence').append(newChevron);
                     setTimeout(function() { newChevron.addClass('show'); }, 10);
                 
@@ -80,8 +83,15 @@
                     $("#chevron"+symbol_number).addClass('unavailable')
                     
                 }
+                
+                // Is this chevron locked? If so, mark it as such
+                chevronLocked = i >= data.locked_chevrons_outgoing ? false : true
+                if (chevronLocked){
+                    $("#dialed-chevron"+symbol_number).removeClass('filter-yellow')
+                    $("#dialed-chevron"+symbol_number).addClass('filter-green')
+                } 
             }
-            
+        
             // Resize display as required
             if (data.address_buffer_outgoing.length > 7) {
                 $('.dial-sequence .chevron').addClass('smaller');
@@ -145,9 +155,7 @@
             <div class="chevron" num="0" id="chevron0">Center Button</div>
             
         </div>
-        
-        <hr />
-        
+                
         <div class="controls">
             <br />
             <div class="control" onclick="window.location = 'testing.htm';">
