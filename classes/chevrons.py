@@ -105,7 +105,8 @@ class Chevron:
     def incoming_on(self):
         if self.led:
             self.led.on()
-        choice(self.audio.incoming_chevron_sounds).play().wait_done()
+        
+        self.audio.play_random_clip_from_group("incoming_chevron_sounds", True)
 
     def off(self, sound=None):
         if sound == 'on':

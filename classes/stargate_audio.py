@@ -51,6 +51,9 @@ class StargateAudio:
     def init_wav_file(self, file_path):
         return sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/" + file_path))
 
+    def play_random_clip_from_group(self, group_name, wait_done):
+        handle = choice(self.incoming_chevron_sounds)['file'].play()
+        
     def play_random_clip(self, directory):
 
         """

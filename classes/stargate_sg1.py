@@ -11,6 +11,8 @@ from subspace import Subspace
 from wormhole import Wormhole
 from stargate_server import StargateServer
 
+from pprint import pprint #TODO: Debug only
+
 class StargateSG1:
     """
     This is the class to create the stargate object itself.
@@ -146,25 +148,37 @@ class StargateSG1:
         """
         # If there are dialed incoming symbols that are not yet locked and we are currently not dialing out.
         if len(self.address_buffer_incoming) > self.locked_chevrons_incoming and len(self.address_buffer_outgoing) == 0:
+
             # If there are more than one unlocked symbol, add a short delay to avoid locking both symbols at once.
             if len(self.address_buffer_incoming) > self.locked_chevrons_incoming + 1:
-                delay = self.randrange(1, 800) / 100  # Add a delay with some randomness
+                delay = randrange(1, 800) / 100  # Add a delay with some randomness
             else:
                 delay = 0
+            
             # If we are still receiving the correct address to match the local stargate:
-            if self.address_buffer_incoming[0:min(len(self.address_buffer_incoming), 6)] == self.addrManager.addressBook.get_local_address()[0:min(len(self.address_buffer_incoming), 6)]:
+            buffer_first_6 = self.address_buffer_incoming[0:min(len(self.address_buffer_incoming), 6)] # get up to 6 symbols off incoming buffer
+            local_first_6 = self.addrManager.addressBook.get_local_address()[0:min(len(self.address_buffer_incoming), 6)] # get up to 6 symbols off the local address_buffer_incoming
+            loopback_first_6 = self.addrManager.addressBook.get_local_loopback_address()[0:min(len(self.address_buffer_incoming), 6)] # get up to 6 symbols off the loopback local address
+            
+            # If the incoming address buffer matches our routable or unroutable local address, lock it.
+            if buffer_first_6 == local_first_6 or buffer_first_6 == loopback_first_6:
                 self.locked_chevrons_incoming += 1  # Increment the locked chevrons variable.
                 try:
-                    self.chevrons[self.locked_chevrons_incoming].incoming_on()  # Do the chevron locking thing.
+                    self.chevrons.get(self.locked_chevrons_incoming).incoming_on()  # Do the chevron locking thing.
                 except KeyError:  # If we dialed more chevrons than the stargate can handle.
+                    raise 
                     pass  # Just pass without activating a chevron.
                 # Play the audio clip for incoming wormhole
                 if self.locked_chevrons_incoming == 1:
                     self.audio.play_random_clip("IncomingWormhole")
-                self.sleep(delay)  # if there's a delay, used it.
+                
                 self.last_activity_time = time()  # update the last_activity_time
+                
                 # Do the logging
                 self.log.log(f'Incoming: Chevron {self.locked_chevrons_incoming} locked with symbol {self.address_buffer_incoming[self.locked_chevrons_incoming - 1]}')
+                
+                sleep(delay)  # if there's a delay, use it.
+                
 
     def try_sending_centre_button(self):
         """
@@ -222,7 +236,8 @@ class StargateSG1:
         # If the centre_button_incoming is active and all dialed symbols are locked.
         elif self.centre_button_incoming and 0 < len(self.address_buffer_incoming) == self.locked_chevrons_incoming:
             # If the incoming wormhole matches the local address
-            if self.address_buffer_incoming[0:-1] == self.addrManager.addressBook.get_local_address():
+            if self.address_buffer_incoming[0:-1] == self.addrManager.addressBook.get_local_address() or \
+                self.address_buffer_incoming[0:-1] == self.addrManager.addressBook.get_local_loopback_address():
                 # Update some state variables
                 self.wormhole = 'incoming'  # Set the wormhole state to activate the wormhole.
                 self.connected_planet_name = self.get_connected_planet_name()

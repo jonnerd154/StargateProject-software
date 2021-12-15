@@ -31,6 +31,9 @@ class StargateAddressBook:
         # TODO: Ensure unique address
         self.datastore.set("local_stargate_address", address)
     
+    def get_local_loopback_address(self):
+        return self.datastore.get("local_stargate_address_loopback") # Equivalent to 127.0.0.1
+        
     # ----
 
     def get_entry_by_address(self, address):

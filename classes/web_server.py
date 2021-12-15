@@ -124,6 +124,16 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             elif data['action'] == "volume_up":
                 self.stargate.audio.volume_up()
                 
+            elif data['action'] == "sim_incoming":
+                if ( not self.stargate.wormhole ): # If we don't already have an established wormhole
+                    # Get the loopback address and dial it
+                    for symbol_number in self.stargate.addrManager.addressBook.get_local_loopback_address():
+                        self.stargate.address_buffer_incoming.append(symbol_number)
+                
+                    self.stargate.address_buffer_incoming.append(7) # Point of origin
+                    self.stargate.centre_button_incoming = True
+                
+                
         elif self.path == '/dhd_press':
             symbol_number = int(data['symbol'])
             
@@ -132,6 +142,14 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             elif symbol_number == 0:
                 self.stargate.fan_gate_online_status = False #TODO: This isn't necessarily true.
                 self.stargate.keyboard.queue_center_button()
+        
+        elif self.path == '/incoming_press':
+            symbol_number = int(data['symbol'])
+            
+            if symbol_number > 0:
+                self.stargate.address_buffer_incoming.append(symbol_number)
+            elif symbol_number == 0:
+                self.stargate.centre_button_incoming = True
         
                 
         self.send_response(200, 'OK')
