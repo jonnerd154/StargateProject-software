@@ -175,6 +175,16 @@ class StargateSG1:
             self.subspace.send_to_remote_stargate(self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addrManager.get_fan_gates() ), 'centre_button_incoming')
             self.log.log(f'Sent to fan_gate: centre_button_incoming')
 
+    def get_connected_planet_name(self):
+    
+        if (self.wormhole == 'outgoing'):
+            return self.addrManager.get_planet_name_by_address(self.address_buffer_outgoing) 
+        elif (self.wormhole == 'incoming'):
+            return self.addrManager.get_planet_name_by_address(self.address_buffer_incoming) 
+        else:
+            # Not connected
+            return False
+            
     def establishing_wormhole(self):
         """
         This is the method that decides if we are to establish a wormhole or not

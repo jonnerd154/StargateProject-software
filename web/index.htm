@@ -27,11 +27,20 @@
                 updateAddressBuffer(data)
                 
                 // Update the Connected Planet status
-        
+                updateConnectedPlanetStatus(data)
         
                 // Schedule the next polling
                 setTimeout(doPoll,1000);
             });
+        }
+        
+        function updateConnectedPlanetStatus(data){
+            if (data.connected_planet){
+                $('#connected-planet').html("<p>Connected to " + data.connected_planet +"</p>") 
+            }
+            else{
+                $('#connected-planet').html("&nbsp;")
+            }
         }
         
         function updateWormholeStatus(data){
@@ -105,7 +114,7 @@
         </script>
         <div class="gate-status">
             <span id='wormhole-status'></span>
-            <span id='connected-planet'></span>
+            <span id='connected-planet'>&nbsp;</span>
         </div>
         
         <div class="dial-sequence">
