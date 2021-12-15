@@ -26,4 +26,4 @@ RPi.GPIO==0.7.0
 simpleaudio==1.0.4
 spidev==3.4
 sysv-ipc==1.0.1
-urllib3==1.26.4
+urllib3==1.26.5
