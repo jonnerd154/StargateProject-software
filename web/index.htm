@@ -176,27 +176,6 @@
                     }
                 });
             }
-
-         //    function dial() {
-//                 enableDialing = false;
-// 
-//                 $('.dial-sequence').addClass('dialing');
-// 
-//                 $.post({
-//                     url: '/update',
-//                     data: JSON.stringify({
-//                         anim: 2,
-//                         sequence: dialSeq
-//                     })
-//                 })
-//                 .done(function() {
-//                     checkDialingInt = setInterval(checkDialing, 2000);
-//                 })
-//                 .fail(function() {
-//                     alert('Could not send dialling sequence!');
-//                     reset();
-//                 });
-//             }
             
             $('div.chevrons div.chevron').click(function() {
                 const symbol_number = $(this).attr('num');
@@ -214,74 +193,6 @@
                 .done(function() {});
             });
 
-            
-            // 
-//             $('div.chevrons div.chevron').click(function() {
-//                 if (!enableDialing)
-//                     return;
-// 
-//                 const num = +$(this).attr('num');
-//                 const html = $(this).clone().wrap('<div/>').parent().html();
-// 
-//                 const existing = dialSeq.findIndex(function(s){ return s === num; });
-//                 if (existing >= 0)
-//                     return;
-//                 
-//                 // Don't allow earth symbol until last chevron
-//                 if (dialSeq.length < 6) {
-//                     if (num === 0)
-//                         return;
-//                 }
-//                 
-//                 // gray out the chevron
-//                 $('#chevron'+(num+1)).addClass("unavailable");
-//                 
-//                 dialSeq.push(num);
-//                 const newChevron = $(html);
-//                 newChevron.attr('style', 'transform: rotate(0);');
-//                 $('.dial-sequence').append(newChevron);
-//                 
-//                 // Resize if more than 7 chevrons
-//                 if (dialSeq.length > 8) {
-//                     $('.dial-sequence .chevron').addClass('smaller');
-//                 } else if (dialSeq.length > 7) {
-//                     $('.dial-sequence .chevron').addClass('small').removeClass('smaller');
-//                 }
-//                 setTimeout(function() { newChevron.addClass('show'); }, 10);
-//                 
-//                 
-//                 // Disable all other chevrons if there are already 8 symbols
-//                 if (dialSeq.length === 8) {
-//                     $('.chevrons .chevron').addClass("unavailable");
-//                 }
-//                 
-//                 // Enable point of origin chevron if there are at least 6 symbols
-//                 if (dialSeq.length > 5 && num != 0) {
-//                     $('#chevron1').removeClass("unavailable");
-//                 }
-// 
-//                 if (dialSeq.length > 6 && num === 0) {
-//                     $('.chevrons .chevron').addClass("unavailable");
-//                     enableDialing = false;
-//                     setTimeout(function() { dial(); }, 1200);
-//                 }
-//             });
-// 
-//             $('div.animations div.animation').click(function() {
-//                 const anim = +$(this).attr('anim');
-// 
-//                 $.post({
-//                     url: '/update',
-//                     data: JSON.stringify({
-//                         anim: anim
-//                     })
-//                 })
-//                 .fail(function() {
-//                     alert('Could not connect with Stargate server');
-//                 });
-//             });
-
-        
             // Check for preset address in $_GET (via javascript instead of server-side)
             // https://stackoverflow.com/questions/1586330/access-get-directly-from-javascript
             var parts = window.location.search.substr(1).split("&");
