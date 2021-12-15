@@ -40,6 +40,17 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             
                 elif( entity == "local_address" ):
                     content = json.dumps( self.stargate.addrManager.getBook().get_local_address() )
+                elif( entity == "status" ):
+                	data = {
+                		"address_buffer_outgoing":  self.stargate.address_buffer_outgoing,
+                		"locked_chevrons_outgoing": self.stargate.locked_chevrons_outgoing,
+                		"address_buffer_incoming":  self.stargate.address_buffer_incoming,
+                		"locked_chevrons_incoming": self.stargate.locked_chevrons_incoming,
+                		"wormhole_active":          self.stargate.wormhole,
+                		"black_hole_connected":     self.stargate.black_hole,
+                	}
+                	content = json.dumps( data )
+
                 
                 self.send_response(200)
                 self.send_header("Content-type", "text/json")

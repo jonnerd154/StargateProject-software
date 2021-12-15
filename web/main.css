@@ -47,6 +47,10 @@ html {
         .dial-sequence .chevron.smaller{
             width: 9%;
         }
+        
+        .dial-sequence .chevron img{
+            filter: invert(1);
+        }
 
 
 

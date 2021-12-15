@@ -10,12 +10,100 @@
         <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
 
+        <script type="text/javascript">
+            
+        $(function() {
+            doPoll();
+        });
+        
+        function doPoll(){
+            $.get('stargate/get?entity=status', function(data) {
+                console.log(data);
+
+                // Update the Wormhole status
+                updateWormholeStatus(data)
+    
+                // Update the Address buffer and locked chevrons
+                updateAddressBuffer(data)
+                
+                // Update the Connected Planet status
+        
+        
+                // Schedule the next polling
+                setTimeout(doPoll,1000);
+            });
+        }
+        
+        function updateWormholeStatus(data){
+            switch ( data.wormhole_active ){
+                case "outgoing":
+                    $('#wormhole-status').html("<p>Active Wormhole (OUTGOING)</p>")
+                    break 
+            
+                case "incoming":
+                    $('#wormhole-status').html("<p>Active Wormhole (INCOMING)</p>")
+                    break
+                
+                default:
+                    $('#wormhole-status').html("<p>No Active Wormhole");
+            }
+        }
+        
+        function updateAddressBuffer(data){
+            // If the address buffer is empty, clean things up
+            if ( data.address_buffer_outgoing.length == 0 ){
+                
+                // Clear the dial-sequence display
+                $('.dial-sequence').empty()
+                
+                // Make all symbols available again
+                $(".chevrons .chevron").removeClass("unavailable");
+                
+            }
+            
+            for (i=0;i<data.address_buffer_outgoing.length;i++){
+                symbol_number = data.address_buffer_outgoing[i]                  
+                
+                // If this symbol isn't in the display, show it.
+                if ( $("#dialed-chevron"+symbol_number).length == 0 ){
+                
+                    // Copy the div from the control panel, wrap it, modify it, and add it to the dial-sequence display
+                    const thisChevronDivHtml = $("#chevron"+symbol_number).clone().wrap('<div/>').parent().html();
+                    const newChevron = $(thisChevronDivHtml);
+                    newChevron.attr('id', "dialed-chevron"+symbol_number);
+                    newChevron.attr('style', 'transform: rotate(0);');
+                    newChevron.removeClass('unavailable');
+                    $('.dial-sequence').append(newChevron);
+                    setTimeout(function() { newChevron.addClass('show'); }, 10);
+                
+                    // Grey out this symbol in the control panel
+                    $("#chevron"+symbol_number).addClass('unavailable')
+                    
+                }
+            }
+            
+            // Resize display as required
+            if (data.address_buffer_outgoing.length > 7) {
+                $('.dial-sequence .chevron').addClass('smaller');
+            } 
+            else {
+                $('.dial-sequence .chevron').addClass('small').removeClass('smaller');
+            }
+        }
+        
+        
+        </script>
+        <div class="gate-status">
+            <span id='wormhole-status'></span>
+            <span id='connected-planet'></span>
+        </div>
+        
         <div class="dial-sequence">
         </div>
-
+        
         <div class="chevrons">
             <!-- Chevrons from Manz: https://codepen.io/manz/pen/zoREJL -->
-            <div class="chevron unavailable" num="1" id="chevron1"><img src="chevrons/001.svg" /></div>
+            <div class="chevron" num="1" id="chevron1"><img src="chevrons/001.svg" /></div>
             <div class="chevron" num="2" id="chevron2"><img src="chevrons/002.svg" /></div>
             <div class="chevron" num="3" id="chevron3"><img src="chevrons/003.svg" /></div>
             <div class="chevron" num="4" id="chevron4"><img src="chevrons/004.svg" /></div>
@@ -122,7 +210,8 @@
                 .fail(function() {
                     console.log("Failed to communicate with Stargate")
                     $("<div>Failed to communicate with Stargate</div>").dialog();
-                });
+                })
+                .done(function() {});
             });
 
             
