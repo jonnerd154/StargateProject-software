@@ -23,47 +23,111 @@
         
         // State variables
         var poll_delay = poll_delay_default
-
+        
+        var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
+        offline_modal.dialog({
+            autoOpen: false,
+            modal: true,
+            dialogClass: "no-close", 
+        });
 
         function doPoll( singleShot = false ){
-            $.get('stargate/get?entity=status', function(data) {
-                // Update the Wormhole status
-                updateWormholeStatus(data)
+            $.get('stargate/get?entity=status')
+                .done(function(data) {
+                    
+                    // Hide the offline modal
+                    hideOfflineModal()
+                    
+                    // Update the Wormhole status
+                    updateWormholeStatus(data)
+
+                    // Update the Address buffer and locked chevrons
+                    updateAddressBuffer(data)
+            
+                    // Update the Connected Planet status
+                    updateConnectedPlanetStatus(data)
     
-                // Update the Address buffer and locked chevrons
-                updateAddressBuffer(data)
-                
-                // Update the Connected Planet status
-                updateConnectedPlanetStatus(data)
-        
-                // Schedule the next polling
-                if ( !singleShot ){
-                    setTimeout(function(){doPoll( false ); }, poll_delay);
+                    // Schedule the next polling
+                    if ( !singleShot ){
+                        setTimeout(function(){doPoll( false ); }, poll_delay);
+                    }
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    // Show the "we're offline modal"
+                    showOfflineModal()
+                    
+                    // Slow the polling rate to default
+                    poll_delay = poll_delay_default
+                    
+                    // Schedule the next polling
+                    if ( !singleShot ){
+                        setTimeout(function(){doPoll( false ); }, poll_delay);
+                    }
                 }
-            });
+                
+            );
+     
+        }
+        
+        function showOfflineModal(){
+            offline_modal.dialog("open");
+        }
+        
+        function hideOfflineModal(){
+            offline_modal.dialog("close");
         }
         
         function updateConnectedPlanetStatus(data){
-            if (data.connected_planet){
-                $('#connected-planet').html("<p>Connected to " + data.connected_planet +"</p>") 
-            }
-            else{
-                $('#connected-planet').html("&nbsp;")
+            if (data.wormhole_active && data.connected_planet){
+                
+                var content = "<p>Connected to " + data.connected_planet
+                // If we're connected to a black hole, make some changes
+                if (data.black_hole_connected){
+                    $('body').css('background-color', '#721121')
+                }
+                else{
+                    $('body').css('background-color', 'black')
+                }
+                content += "</p>"
+                $('#connected-planet').html(content) 
+                
             }
         }
         
         function updateWormholeStatus(data){
-            switch ( data.wormhole_active ){
-                case "outgoing":
-                    $('#wormhole-status').html("<p>Active Wormhole (OUTGOING)</p>")
-                    break 
-            
-                case "incoming":
-                    $('#wormhole-status').html("<p>Active Wormhole (INCOMING)</p>")
-                    break
+            shutdownString = ""
+            if ( data.wormhole_open_time > 0 ){
+                if ( data.black_hole_connected ){
+                    timeString = "UNKNOWN: Time Dilation Detected!"
+                    shutdownString = "&nbsp;&nbsp;&nbsp;&nbsp;Shutdown in " + timeString;
+
+                }
+                else{
+                    timeString = new Date(data.wormhole_time_till_close * 1000).toISOString().substr(14, 5)
+                    shutdownString = "&nbsp;&nbsp;&nbsp;&nbsp;Shutdown in " + timeString;
+                }
                 
-                default:
+                switch ( data.wormhole_active ){
+                    case "outgoing":
+                        $('#wormhole-status').html("<p>Active Wormhole (OUTGOING)" + shutdownString + "</p>")
+                        break 
+            
+                    case "incoming":
+                        $('#wormhole-status').html("<p>Active Wormhole (INCOMING)</p>")
+                        break
+                }
+            }
+            else{            
+                // No wormhole established, reset the UI, and handle "establishing" state
+                if(data.wormhole_active && !data.wormhole_open_time){
+                    $('#wormhole-status').html("<p>Establishing Wormhole");
+                }
+                else{
                     $('#wormhole-status').html("<p>No Active Wormhole");
+                }
+                
+                $('#connected-planet').html("&nbsp;")
+                $('body').css('background-color', 'black')
             }
         }
         
@@ -144,7 +208,7 @@
         
         <div class="dial-sequence">
         </div>
-        
+                
         <div class="chevrons">
             <!-- Chevrons from Manz: https://codepen.io/manz/pen/zoREJL -->
             <div class="chevron" num="1" id="chevron1"><img src="chevrons/001.svg" /></div>

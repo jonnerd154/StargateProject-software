@@ -174,3 +174,5 @@ html {
     /* #F5D76E */
     filter: invert(20%) sepia(63%) saturate(6877%) hue-rotate(150deg) brightness(115%) contrast(92%)
 }
+
+.no-close .ui-dialog-titlebar-close {  display: none; }
