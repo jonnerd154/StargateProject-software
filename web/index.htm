@@ -59,8 +59,11 @@
         }
         
         function updateAddressBuffer(data){
+        
             // If the address buffer is empty, clean things up
-            if ( data.address_buffer_outgoing.length == 0 ){
+            if ( data.address_buffer_outgoing.length == 0 || // Empty
+                 data.address_buffer_outgoing.length < $(".dial-sequence div").length || // Not in sync with the Stargate
+                 $(".dial-sequence div").length > 9 ){ // Too many symbols / not in sync with the Stargate
                 
                 // Clear the dial-sequence display
                 $('.dial-sequence').empty()
