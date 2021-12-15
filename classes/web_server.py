@@ -49,7 +49,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 		"locked_chevrons_incoming": self.stargate.locked_chevrons_incoming,
                 		"wormhole_active":          self.stargate.wormhole,
                 		"black_hole_connected":     self.stargate.black_hole,
-                		"connected_planet":         self.stargate.get_connected_planet_name()
+                		"connected_planet":         self.stargate.connected_planet_name
                 	}
                 	content = json.dumps( data )
 

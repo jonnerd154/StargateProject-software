@@ -34,7 +34,7 @@ class StargateAddressBook:
     # ----
 
     def get_entry_by_address(self, address):
-        print("Searching Address Book for {}".format(address))
+        #print("Searching Address Book for {}".format(address))
         found_standard_gate = self.get_standard_gate_by_address(address)
         if found_standard_gate:
             return found_standard_gate

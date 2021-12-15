@@ -74,6 +74,7 @@ class StargateSG1:
         self.black_hole = False # Did we dial the black hole?
         self.fan_gate_online_status = None # To keep track of the dialed fan_gate status
         self.fan_gate_incoming_IP = None # To keep track of the IP address for the remote gate that establishes a wormhole
+        self.connected_planet_name = None
 
     ## Methods to manipulate the StargateSG1 object ###
     def update(self):
@@ -201,10 +202,13 @@ class StargateSG1:
             self.try_sending_centre_button()
             # Try to establish a wormhole
             if self.possible_to_establish_wormhole():
-                self.log.log('Valid address is locked')
-                self.log.log('OUTGOING Wormhole to {} established'.format(self.addrManager.get_planet_name_by_address(self.address_buffer_outgoing) ))
-                
+                # Update the state variables
                 self.wormhole = 'outgoing'
+                self.connected_planet_name = self.get_connected_planet_name()
+                
+                # Log some stuff
+                self.log.log('Valid address is locked')
+                self.log.log('OUTGOING Wormhole to {} established'.format(self.connected_planet_name))
                 
                 # Check if we dialed a black hole planet
                 if self.addrManager.getBook().get_entry_by_address(self.address_buffer_outgoing[0:-1])['is_black_hole']:
@@ -219,8 +223,12 @@ class StargateSG1:
         elif self.centre_button_incoming and 0 < len(self.address_buffer_incoming) == self.locked_chevrons_incoming:
             # If the incoming wormhole matches the local address
             if self.address_buffer_incoming[0:-1] == self.addrManager.addressBook.get_local_address():
+                # Update some state variables
                 self.wormhole = 'incoming'  # Set the wormhole state to activate the wormhole.
+                self.connected_planet_name = self.get_connected_planet_name()
+                
                 self.log.log('Incoming address is a match!')
+                self.log.log('INCOMING Wormhole from {} established'.format(self.connected_planet_name))
             else:
                 self.log.log('Incoming address is NOT a match to Local Gate Address!')
                 self.shutdown(cancel_sound=False, wormhole_fail_sound=True)
