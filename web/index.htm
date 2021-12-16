@@ -134,7 +134,8 @@
         function updateAddressBuffer(data){
         
             // If the address buffer is empty, clean things up
-            if ( data.address_buffer_outgoing.length == 0 || // Empty
+            if ( ( data.address_buffer_outgoing.length == 0 &&
+                 data.address_buffer_incoming.length == 0 ) || // Empty incoming and outgoing buffers
                  data.address_buffer_outgoing.length < $(".dial-sequence div").length || // Not in sync with the Stargate
                  $(".dial-sequence div").length > 9 ){ // Too many symbols / not in sync with the Stargate
                 
