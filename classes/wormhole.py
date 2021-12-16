@@ -383,7 +383,7 @@ class Wormhole:
         if (time() - self.open_time) > self.wormhole_max_time:  # if the wormhole closes due to the 38min time limit.
             if hasattr(random_audio_clip, 'is_playing') and random_audio_clip.is_playing():  # If the random audio clip is still playing:
                 random_audio_clip.wait_done()  # wait until it's finished.
-            time_limit_audio = self.audio.play_random_clip(str(self.root_path / "../soundfx/38min/"))  # The 38min ones.
+            time_limit_audio = self.audio.play_random_clip("38min")  # The 38min ones.
             time_limit_audio.wait_done()
 
         self.close_wormhole()
