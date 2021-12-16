@@ -1,6 +1,13 @@
 {
   "local_stargate_address": [],
-  "local_stargate_address_loopback": [ 1, 2, 3, 4, 5, 6 ],
+  "local_stargate_address_loopback": [
+    27,
+    7,
+    15,
+    1,
+    2,
+    3
+  ],
   "fan_gates": {},
   "standard_gates": {
     "ABYDOS": {
