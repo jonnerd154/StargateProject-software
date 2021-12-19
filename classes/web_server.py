@@ -157,6 +157,12 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     
             elif data['action'] == "set_local_stargate_address":
                 print("Setting Local Stargate Address")
+                data = {
+                    "success": False,
+                    "error": "BIG PROBLEM!",
+                }
+                self.send_json_response(data)
+                return
             
             elif data['action'] == "set_subspace_ip":
                 print("Setting Subspace IP Address")
@@ -187,3 +193,11 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
         self.send_response(200, 'OK')
         self.end_headers()
+
+    def send_json_response(self, data):
+        content = json.dumps( data )
+        self.send_response(200)
+        self.send_header("Content-type", "text/json")
+        self.end_headers()
+        self.wfile.write(content.encode())
+        return
