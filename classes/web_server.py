@@ -56,14 +56,17 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 		"wormhole_time_till_close": self.stargate.wh.get_time_remaining()
                 	}
                 	content = json.dumps( data )
-            
-                elif( entity == "subspace" ):
+
+                elif( entity == "info" ):
                 	data = {
                 		"local_stargate_address":         self.stargate.addrManager.getBook().get_local_address(),
                 		"local_stargate_address_string":  self.stargate.addrManager.getBook().get_local_address_string(),
                 		"subspace_public_key":            self.stargate.subspace.get_public_key(),
-                		"subspace_ip_address":            self.stargate.subspace.get_stargate_server_ip(),
-                		"lan_ip_address":                 self.stargate.subspace.get_lan_ip()
+                		"subspace_ip_address":            self.stargate.subspace.get_subspace_ip(),
+                		"lan_ip_address":                 self.stargate.subspace.get_lan_ip(),
+                		"software_version":               self.stargate.swUpdater.get_current_version(),
+						"internet_available":			  self.stargate.netTools.has_internet_access(),
+						"subspace_available":			  self.stargate.subspace.is_online()
                 	}
                 	content = json.dumps( data )
                 	

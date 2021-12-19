@@ -26,7 +26,8 @@ class StargateSG1:
         self.electronics = app.electronics
         self.base_path = app.base_path
         self.netTools = app.netTools
-        
+        self.swUpdater = self.app.swUpdater
+
         # Retrieve the configurations
         self.inactivityTimeout = self.cfg.get("dialing_timeout")
 

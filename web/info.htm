@@ -1,6 +1,6 @@
 <html>
     <head>
-        <meta charset="UTF-8"> 
+        <meta charset="UTF-8">
         <title>Stargate Command</title>
         <link rel="stylesheet" href="lib/jquery-ui-1.13.0.custom/jquery-ui.css">
         <link rel="stylesheet" href="main.css" />
@@ -18,82 +18,82 @@
             $(function() {
                 updateInfo();
             });
-            
+
             const poll_delay = 500
-            
+
             var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
             offline_modal.dialog({
                 autoOpen: false,
                 modal: true,
-                dialogClass: "no-close", 
+                dialogClass: "no-close",
             });
-    
+
             function updateInfo(){
-                $.get('stargate/get?entity=subspace')
+                $.get('stargate/get?entity=info')
                     .done(function(data) {
-                    
+
                         // Hide the offline modal
                         hideOfflineModal()
-                    
+
                         // Update the UI
                         if (data.local_stargate_address_string){
-                            $('#localStargateAddress').html(data.local_stargate_address_string) 
+                            $('#localStargateAddress').html(data.local_stargate_address_string)
                         }
                         else{
-                            $('#localStargateAddress').html("Not Configured!") 
+                            $('#localStargateAddress').html("Not Configured!")
                         }
-                        
-                        $('#publicKey').html(data.subspace_public_key) 
-                        $('#lanIPAddress').html(data.lan_ip_address) 
-                        
-                        // If we don't have a Subspace IP, 
-                        if (!data.subspace_ip_address){ 
-                        
+
+                        $('#publicKey').html(data.subspace_public_key)
+                        $('#lanIPAddress').html(data.lan_ip_address)
+
+                        // If we don't have a Subspace IP,
+                        if (!data.subspace_ip_address){
+
                             // ...and we DO have a local_address configured, offer a link to email Kristian
                             if (data.local_stargate_address_string){
                                 emailTo = "kristian@thestargateproject.com"
                                 subject = "New Stargate"
-                                body = "Hi Kristian,%0d%0a%0d%0aI'd like to get a Subspace IP address for my new Stargate. Can you set that up?%0d%0a%0d%0a" + 
-                                       "Name/planet: %3CThe name you want in the %22address book%22%3E%0d%0a" + 
+                                body = "Hi Kristian,%0d%0a%0d%0aI'd like to get a Subspace IP address for my new Stargate. Can you set that up?%0d%0a%0d%0a" +
+                                       "Name/planet: %3CThe name you want in the %22address book%22%3E%0d%0a" +
                                        "Email address: %3CYour email address%3E%0d%0a%0d%0a" +
-                                       "Stargate address: " + data.local_stargate_address_string + "%0d%0a" + 
-                                       "Public key: " + data.subspace_public_key + "%0d%0a" + 
+                                       "Stargate address: " + data.local_stargate_address_string + "%0d%0a" +
+                                       "Public key: " + data.subspace_public_key + "%0d%0a" +
                                        "%0d%0aThanks,"
 
 
-                            
+
                                 mailLinkContent = "<a href=\"mailto:" + emailTo + "?subject=" + subject + "&body=" + body + "\">Request Access to the Subspace Network</a>"
                                 $('#subspaceIPAddress').html(mailLinkContent)
                             }
                             else{
-                               $('#subspaceIPAddress').html("Unavailable: Configure a Local Address First") 
+                               $('#subspaceIPAddress').html("Unavailable: Configure a Local Address First")
                             }
                         }
                         else{
-                            $('#subspaceIPAddress').html(data.subspace_ip_address) 
+                            $('#subspaceIPAddress').html(data.subspace_ip_address)
 
                         }
-                
+
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
                         // Show the "we're offline modal"
                         showOfflineModal()
-                        
+
                         setTimeout(function(){updateInfo( false ); }, poll_delay);
-                    
+
                     })
                 }
-                
+
             function showOfflineModal(){
                 offline_modal.dialog("open");
             }
-        
+
             function hideOfflineModal(){
                 offline_modal.dialog("close");
             }
-        
+
         </script>
-        
+
         <div class='div-table'>
             <div class="div-table-row"><span class="div-table-col-names">Local Stargate Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="localStargateAddress">Loading...</span></div>
             <div class="div-table-row"><span class="div-table-col-names">Subspace Public Key:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="publicKey">Loading...</span></div>
@@ -101,14 +101,14 @@
             <div class="div-table-row"><span class="div-table-col-names">LAN IP Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="lanIPAddress">Loading...</span></div>
 
         </div>
-         
+
         <hr />
-        	
+
         <div class="controls">
         	<div class="control" onclick="window.location = 'index.htm';">
                 Dialing page
             </div>
         </div>
-        
+
     </body>
 </html>

@@ -165,7 +165,20 @@ class Subspace:
     def get_lan_ip(self):
         # Try to get the IP from wlan0
         wlan0 = self.get_ip_address_by_interface('wlan0')
-        if wlan0 : return wlan0 
+        if wlan0 : return wlan0
+
+        # Try to get the IP from eth0
+        eth0 = self.get_ip_address_by_interface('eth0')
+        if eth0 : return eth0
+
+        # Try to get the IP from eth0
+        eth0 = self.get_ip_address_by_interface('en0')
+        if eth0 : return eth0
+
+    def get_subspace_ip(self):
+        # Try to get the IP from wlan0
+        subspace = self.get_ip_address_by_interface('subspace')
+        if subspace : return subspace
 
         # Try to get the IP from eth0
         eth0 = self.get_ip_address_by_interface('eth0')
@@ -176,11 +189,17 @@ class Subspace:
             server_ip = netifaces.ifaddresses(interface_name)[2][0]['addr']
             if ip_address(server_ip):
                 if (ping):
-                    ping(self.keep_alive_address, count=1, timeout=1)
-                    
+                    self.ping()
+
                 return server_ip
         except Exception as ex:
-            self.log.log('ERROR getting {} IP: {}'.format(interface_name, ex))
+            self.log.log('ERROR getting {} IP: {}'.format(interface_name, ex), True)
             return False
-    
- 
+
+    def is_online(self):
+        return self.ping()
+
+    def ping(self):
+        if ping(self.keep_alive_address, count=1, timeout=1).is_alive:
+            return True
+        return False
