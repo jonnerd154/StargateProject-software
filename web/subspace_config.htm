@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <meta charset="UTF-8"> 
+        <title>Stargate Command</title>
+        <link rel="stylesheet" href="lib/jquery-ui-1.13.0.custom/jquery-ui.css">
+        <link rel="stylesheet" href="main.css" />
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+
+        <style>
+        .button, .cycleChevronButton {margin:10px;}
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
+
+        <script type="text/javascript" >
+            $(function() {
+                updateInfo();
+            });
+            
+            const poll_delay = 500
+            
+            var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
+            offline_modal.dialog({
+                autoOpen: false,
+                modal: true,
+                dialogClass: "no-close", 
+            });
+    
+            function updateInfo(){
+                $.get('stargate/get?entity=subspace')
+                    .done(function(data) {
+                    
+                        // Hide the offline modal
+                        hideOfflineModal()
+                    
+                        // Update the UI
+                        if (data.local_stargate_address_string){
+                            $('#localStargateAddress').html(data.local_stargate_address_string) 
+                        }
+                        else{
+                            $('#localStargateAddress').html("Not Configured!") 
+                        }
+                        
+                        $('#publicKey').html(data.subspace_public_key) 
+                
+                    })
+                    .fail(function(jqXHR, textStatus, errorThrown) {
+                        // Show the "we're offline modal"
+                        showOfflineModal()
+                        
+                        setTimeout(function(){updateInfo( false ); }, poll_delay);
+                    
+                    })
+                }
+                
+            function showOfflineModal(){
+                offline_modal.dialog("open");
+            }
+        
+            function hideOfflineModal(){
+                offline_modal.dialog("close");
+            }
+        
+        </script>
+        
+        <div>
+            <div><span>Local Stargate Address:&nbsp;&nbsp;&nbsp;</span><span id="localStargateAddress">Loading...</span></div>
+            <div><span>Subspace Private Key:&nbsp;&nbsp;&nbsp;</span><span id="publicKey">Loading...</span></div>
+            <!-- 
+<div><span>Subspace IP Address:&nbsp;&nbsp;&nbsp;</span><span id="subspace_ip_address">Loading...</span></div>
+            <div><span>LAN IP Address:&nbsp;&nbsp;&nbsp;</span><span id="lan_ip_address">Loading...</span></div>
+ -->
+        </div>
+         
+        <hr />
+        	
+        <div class="controls">
+        	<div class="control" onclick="window.location = 'index.htm';">
+                Dialing page
+            </div>
+        </div>
+        
+    </body>
+</html>

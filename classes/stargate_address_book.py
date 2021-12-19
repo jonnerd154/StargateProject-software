@@ -25,7 +25,13 @@ class StargateAddressBook:
      
     def get_local_address(self):
         return self.datastore.get("local_stargate_address")
-                
+        
+    def get_local_address_string(self):
+        if self.get_local_address() and len(self.get_local_address()) == 6:
+            return "[ " + ', '.join(str(x) for x in self.get_local_address()) + " ]"
+        else:
+            return False
+            
     def set_local_address(self, address):
         # TODO: Validate address
         # TODO: Ensure unique address

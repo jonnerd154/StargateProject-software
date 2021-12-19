@@ -9,6 +9,7 @@ from http.server import SimpleHTTPRequestHandler
 class StargateWebServer(SimpleHTTPRequestHandler):
     
     #Overload SimpleHTTPRequestHandler.log_message() to suppress logs from printing to console
+    # *** Comment this out for debugging!! ***
     def log_message(self, format, *args):
         pass
        
@@ -55,7 +56,15 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 		"wormhole_time_till_close": self.stargate.wh.get_time_remaining()
                 	}
                 	content = json.dumps( data )
-
+            
+                elif( entity == "subspace" ):
+                	data = {
+                		"local_stargate_address":         self.stargate.addrManager.getBook().get_local_address(),
+                		"local_stargate_address_string":  self.stargate.addrManager.getBook().get_local_address_string(),
+                		"subspace_public_key":            self.stargate.subspace.get_public_key(),
+                	}
+                	content = json.dumps( data )
+                	
                 self.send_response(200)
                 self.send_header("Content-type", "text/json")
                 self.end_headers()
@@ -68,6 +77,9 @@ class StargateWebServer(SimpleHTTPRequestHandler):
         
             return
         except:
+        
+            # raise # *** Un-comment for debugging!! ***
+            
             # Encountered an exception: send a 500
             self.send_response(500)
             self.end_headers()

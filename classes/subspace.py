@@ -1,4 +1,5 @@
 import socket
+import subprocess
 
 from database import Database
 
@@ -22,6 +23,10 @@ class Subspace:
     
         # We'll share one Client object through a few methods. Initialize it here.
         self.client = None
+        
+    def get_public_key(self):
+        cmd = 'sudo util/get_subspace_public_key.sh'
+        return subprocess.check_output(cmd, shell=True).decode('ascii')
         
     def send_raw(self, msg):
         message = msg.encode(self.encoding_format)
