@@ -1,8 +1,6 @@
 import socket
-import os, netifaces
 from threading import Thread
 from time import sleep
-from ipaddress import ip_address
 from icmplib import ping
 
 from stargate_address_manager import StargateAddressValidator
@@ -39,7 +37,7 @@ class StargateServer:
         self.keep_alive_running_check_interval = 0.5
 
         # Get server IP, preferable the IP of the stargate in subspace.
-        self.server_ip = self.get_stargate_server_ip()
+        self.server_ip = self.subspace.get_stargate_server_ip()
         self.server_address = (self.server_ip, self.port)
         
         # Configure the socket, open/bind
@@ -77,52 +75,6 @@ class StargateServer:
                 time_since_last_ping = 0
             else:
                 time_since_last_ping+=self.keep_alive_running_check_interval
-
-    def get_stargate_server_ip(self):
-        """
-        This method tries to get the IP address of the subspace network interface. It also tries to start the subspace
-        interface if it's not already present. If it can't get the subspace interface IP, it will try to get the wlan0 IP instead.
-        :return: The IP address is returned as a string.
-        """
-
-        server_ip = None  # initialize the variable
-
-        ## If the subspace interface is not active, try to activate it.
-        if not 'subspace' in netifaces.interfaces():
-            try:
-                self.log.log('Subspace network interface was not found, attempting to bring up the interface.')
-                os.popen('wg-quick up subspace').read()
-            except Exception as ex:
-                self.log.log('subspace ERROR: {}'.format(ex))
-
-        ## Try to get IP from subspace
-        if 'subspace' in netifaces.interfaces():
-            try:
-                server_ip = netifaces.ifaddresses('subspace')[2][0]['addr']
-                if ip_address(server_ip):
-                    ping(self.keep_alive_address, count=1, timeout=1) # ping the gateway creating some traffic signaling subspace that you are here.
-                    return server_ip
-            except Exception as ex:
-                self.log.log('ERROR getting subspace IP: {}'.format(ex))
-
-        # Try to get the IP from wlan0
-        if 'wlan0' in netifaces.interfaces():
-            try:
-                server_ip = netifaces.ifaddresses('wlan0')[2][0]['addr']
-                if ip_address(server_ip):
-                    return server_ip
-            except Exception as ex:
-                self.log.log('ERROR getting wlan0 IP: {}'.format(ex))
-
-        # Try to get the IP from eth0
-        if 'eth0' in netifaces.interfaces():
-            try:
-                server_ip = netifaces.ifaddresses('eth0')[2][0]['addr']
-                if ip_address(server_ip):
-                    return server_ip
-            except Exception as ex:
-                self.log.log('ERROR getting eth0 IP: {}'.format(ex))
-        return server_ip # returns None if no ip was found
 
     def handle_incoming_wormhole(self, conn, addr):
         connected = True  # while there is a connection from another gate.

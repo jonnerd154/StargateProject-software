@@ -44,6 +44,8 @@
                         }
                         
                         $('#publicKey').html(data.subspace_public_key) 
+                        $('#subspaceIPAddress').html(data.subspace_ip_address) 
+                        $('#lanIPAddress').html(data.lan_ip_address) 
                 
                     })
                     .fail(function(jqXHR, textStatus, errorThrown) {
@@ -65,13 +67,12 @@
         
         </script>
         
-        <div>
-            <div><span>Local Stargate Address:&nbsp;&nbsp;&nbsp;</span><span id="localStargateAddress">Loading...</span></div>
-            <div><span>Subspace Private Key:&nbsp;&nbsp;&nbsp;</span><span id="publicKey">Loading...</span></div>
-            <!-- 
-<div><span>Subspace IP Address:&nbsp;&nbsp;&nbsp;</span><span id="subspace_ip_address">Loading...</span></div>
-            <div><span>LAN IP Address:&nbsp;&nbsp;&nbsp;</span><span id="lan_ip_address">Loading...</span></div>
- -->
+        <div class='div-table'>
+            <div class="div-table-row"><span class="div-table-col-names">Local Stargate Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="localStargateAddress">Loading...</span></div>
+            <div class="div-table-row"><span class="div-table-col-names">Subspace Public Key:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="publicKey">Loading...</span></div>
+            <div class="div-table-row"><span class="div-table-col-names">Subspace IP Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="subspaceIPAddress">Loading...</span></div>
+            <div class="div-table-row"><span class="div-table-col-names">LAN IP Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="lanIPAddress">Loading...</span></div>
+
         </div>
          
         <hr />
