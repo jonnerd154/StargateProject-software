@@ -4,6 +4,7 @@ import threading
 from time import sleep
 import urllib.parse
 import collections
+import platform
 from http.server import SimpleHTTPRequestHandler
 
 class StargateWebServer(SimpleHTTPRequestHandler):
@@ -43,34 +44,35 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     content = json.dumps( self.stargate.addrManager.getBook().get_local_address() )
 
                 elif( entity == "status" ):
-                	data = {
-                		"address_buffer_outgoing":  self.stargate.address_buffer_outgoing,
-                		"locked_chevrons_outgoing": self.stargate.locked_chevrons_outgoing,
-                		"address_buffer_incoming":  self.stargate.address_buffer_incoming,
-                		"locked_chevrons_incoming": self.stargate.locked_chevrons_incoming,
-                		"wormhole_active":          self.stargate.wormhole,
-                		"black_hole_connected":     self.stargate.black_hole,
-                		"connected_planet":         self.stargate.connected_planet_name,
-                		"wormhole_open_time":       self.stargate.wh.open_time,
-                		"wormhole_max_time":        self.stargate.wh.wormhole_max_time,
-                		"wormhole_time_till_close": self.stargate.wh.get_time_remaining()
-                	}
-                	content = json.dumps( data )
+                    data = {
+                        "address_buffer_outgoing":  self.stargate.address_buffer_outgoing,
+                        "locked_chevrons_outgoing": self.stargate.locked_chevrons_outgoing,
+                        "address_buffer_incoming":  self.stargate.address_buffer_incoming,
+                        "locked_chevrons_incoming": self.stargate.locked_chevrons_incoming,
+                        "wormhole_active":          self.stargate.wormhole,
+                        "black_hole_connected":     self.stargate.black_hole,
+                        "connected_planet":         self.stargate.connected_planet_name,
+                        "wormhole_open_time":       self.stargate.wh.open_time,
+                        "wormhole_max_time":        self.stargate.wh.wormhole_max_time,
+                        "wormhole_time_till_close": self.stargate.wh.get_time_remaining()
+                    }
+                    content = json.dumps( data )
 
                 elif( entity == "info" ):
-                	data = {
-                		"local_stargate_address":         self.stargate.addrManager.getBook().get_local_address(),
-                		"local_stargate_address_string":  self.stargate.addrManager.getBook().get_local_address_string(),
-                		"subspace_public_key":            self.stargate.subspace.get_public_key(),
-                		"subspace_ip_address":            self.stargate.subspace.get_subspace_ip(),
-                		"lan_ip_address":                 self.stargate.subspace.get_lan_ip(),
-                		"software_version":               self.stargate.swUpdater.get_current_version(),
-                        "internet_available":			  self.stargate.netTools.has_internet_access(),
-                        "subspace_available":			  self.stargate.subspace.is_online(),
-                        "standard_gate_count":	  		  len(self.stargate.addrManager.getBook().get_standard_gates()),
-                        "fan_gate_count":	  		      len(self.stargate.addrManager.getBook().get_fan_gates())
-                	}
-                	content = json.dumps( data )
+                    data = {
+                        "local_stargate_address":         self.stargate.addrManager.getBook().get_local_address(),
+                        "local_stargate_address_string":  self.stargate.addrManager.getBook().get_local_address_string(),
+                        "subspace_public_key":            self.stargate.subspace.get_public_key(),
+                        "subspace_ip_address":            self.stargate.subspace.get_subspace_ip(),
+                        "lan_ip_address":                 self.stargate.subspace.get_lan_ip(),
+                        "software_version":               self.stargate.swUpdater.get_current_version(),
+                        "python_version":                 platform.python_version(),
+                        "internet_available":             self.stargate.netTools.has_internet_access(),
+                        "subspace_available":             self.stargate.subspace.is_online(),
+                        "standard_gate_count":            len(self.stargate.addrManager.getBook().get_standard_gates()),
+                        "fan_gate_count":                 len(self.stargate.addrManager.getBook().get_fan_gates())
+                    }
+                    content = json.dumps( data )
 
                 self.send_response(200)
                 self.send_header("Content-type", "text/json")
