@@ -180,7 +180,7 @@ class Subspace:
                     
                 return server_ip
         except Exception as ex:
-            self.log.log('ERROR getting {}} IP: {}'.format(interface_name, ex))
+            self.log.log('ERROR getting {} IP: {}'.format(interface_name, ex))
             return False
     
  
