@@ -67,3 +67,9 @@ sudo ln -s ../mods-available/proxy_http.load proxy_http.load
 ```
 sudo service apache2 restart
 ```
+
+# Disable the onboard audio adapter
+```
+sudo nano /boot/config.txt
+   # Change dtparam=audio=off
+```
