@@ -87,6 +87,7 @@
                             url: 'stargate/update',
                             data: JSON.stringify({
                                 action: 'set_local_stargate_address',
+                                address: allFields.serialize(),
                             })
                         })
                         .done(function(data) {
@@ -251,17 +252,17 @@
             <form>
                 <fieldset>
                     <label for="symbol_1">Symbol 1</label>
-                    <input type="number" name="name" min=0 max=38 length=40 id="symbol_1" value="1" class="text ui-widget-content ui-corner-all">
+                    <input type="number" name="symbol_1" min=0 max=38 length=40 id="symbol_1" value="1" class="text ui-widget-content ui-corner-all">
                     <label for="symbol_2">Symbol 2</label>
-                    <input type="number" name="name" min=0 max=38 id="symbol_2" value="2" class="text ui-widget-content ui-corner-all">
+                    <input type="number" name="symbol_2" min=0 max=38 id="symbol_2" value="2" class="text ui-widget-content ui-corner-all">
                     <label for="symbol_3">Symbol 3</label>
-                    <input type="number" name="name" min=0 max=38 id="symbol_3" value="3" class="text ui-widget-content ui-corner-all">
+                    <input type="number" name="symbol_3" min=0 max=38 id="symbol_3" value="3" class="text ui-widget-content ui-corner-all">
                     <label for="symbol_4">Symbol 4</label>
-                    <input type="number" name="name" min=0 max=38 id="symbol_4" value="4" class="text ui-widget-content ui-corner-all">
+                    <input type="number" name="symbol_4" min=0 max=38 id="symbol_4" value="4" class="text ui-widget-content ui-corner-all">
                     <label for="symbol_5">Symbol 5</label>
-                    <input type="number" name="name" min=0 max=38 id="symbol_5" value="5" class="text ui-widget-content ui-corner-all">
+                    <input type="number" name="symbol_5" min=0 max=38 id="symbol_5" value="5" class="text ui-widget-content ui-corner-all">
                     <label for="symbol_6">Symbol 6</label>
-                    <input type="number" name="name" min=0 max=38 id="symbol_6" value="6" class="text ui-widget-content ui-corner-all">
+                    <input type="number" name="symbol_6" min=0 max=38 id="symbol_6" value="6" class="text ui-widget-content ui-corner-all">
                     
 
                     <!-- Allow form submission with keyboard without duplicating the dialog button -->
