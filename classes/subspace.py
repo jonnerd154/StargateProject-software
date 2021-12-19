@@ -10,21 +10,26 @@ class Subspace:
         self.cfg = stargate.cfg
 
         self.database = Database(stargate.base_path)
+        
+        # Retrieve the configurations
+        self.port = self.cfg.get("subspace_port") # just for fun because the Stargate can stay open for 38 minutes. :)
+        self.timeout = self.cfg.get("subspace_timeout") # the timeout value when connecting to a remote stargate (seconds)
 
-        # TODO: Move to config
-        self.port = 3838 # just for fun because the Stargate can stay open for 38 minutes. :)
+        # Some other configurations that are relatively static will stay here
         self.header_bytes = 8
         self.encoding_format = 'utf-8'
         self.disconnect_message = '!DISCONNECT'
-        self.timeout = 10 # the timeout value when connecting to a remote stargate (seconds)
-
+    
+        # We'll share one Client object through a few methods. Initialize it here.
+        self.client = None
+        
     def send_raw(self, msg):
         message = msg.encode(self.encoding_format)
         msg_length = len(message)
         send_length = str(msg_length).encode(self.encoding_format)
         send_length += b' ' * (self.header_bytes - len(send_length))
-        client.send(send_length)
-        client.send(message)
+        self.client.send(send_length)
+        self.client.send(message)
 
     def send_to_remote_stargate(self, server_ip, message_string):
         """
@@ -38,15 +43,16 @@ class Subspace:
         The second value in the tuple is either None, or it contains the status of the remote gate, if we asked for it.
         """
 
-        client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client.settimeout(self.timeout) # set the timeout
-        connection_to_server = False
+        self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.client.settimeout(self.timeout) # set the timeout
+        connection_to_server = False # TODO: get rid of this var
         remote_gate_status = None
 
         ## Try to establish a connection to the server.
         try:
-            client.connect( (server_ip, self.port) )
-            connection_to_server = True
+            #print("Subspace send to {}:{} ::: {}".format(server_ip, self.port, message_string))
+            self.client.connect( (server_ip, self.port) )
+            connection_to_server = True # TODO: Move the if block below into the try block, get rid of this var
         except Exception as ex:
             self.log.log(f'Error sending to remote server -> {ex}')
             return connection_to_server, remote_gate_status # return false if we do not have a connection.
@@ -56,9 +62,9 @@ class Subspace:
 
             #If we ask for the status, expect an answer
             if message_string == 'what_is_your_status':
-                remote_gate_status = (client.recv(8).decode(encoding_format))
+                remote_gate_status = (self.client.recv(8).decode(encoding_format))
 
-            self.send(self.disconnect_message) # always disconnect.
+            self.send_raw(self.disconnect_message) # always disconnect.
             return True, remote_gate_status
 
     def get_ip_from_stargate_address(self, stargate_address, known_fan_made_stargates):
@@ -70,8 +76,8 @@ class Subspace:
         :return: The IP address is returned as a string.
         """
         for gate in known_fan_made_stargates:
-            if len(stargate_address) > 1 and stargate_address[0:2] == known_fan_made_stargates[gate][0][0:2]:
-                return  known_fan_made_stargates[gate][1]
+            if len(stargate_address) > 1 and stargate_address[0:2] == known_fan_made_stargates[gate]['gate_address'][0:2]:
+                return known_fan_made_stargates[gate]['ip_address']
         else:
             print( 'Unable to get IP for', stargate_address)
 
@@ -84,8 +90,8 @@ class Subspace:
         """
         stargate_ip = 'Unknown'
         for stargate in fan_gates_dictionary:
-            if fan_gates_dictionary[stargate][1] == ip:
-                return fan_gates_dictionary[stargate][0]
+            if fan_gates_dictionary[stargate]['ip_address'] == ip:
+                return fan_gates_dictionary[stargate]['name']
         return str(stargate_ip) # If the gate address of the IP was not found
 
     def get_status_of_remote_gate(self, remote_ip):
@@ -108,6 +114,6 @@ class Subspace:
         :return: The planet/stargate name is returned as a string.
         """
         try:
-            return [k for k, v in fan_gates.items() if v[1] == IP][0]
+            return [k for k, v in fan_gates.items() if v[1] == IP]['name']
         except:
             return 'Unknown'

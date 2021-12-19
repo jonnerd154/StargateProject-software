@@ -18,11 +18,11 @@ class SoftwareUpdate:
         self.audio = app.audio
 
         self.database = Database(app.base_path)
-
-        #TODO: move to config
-        self.base_url = 'https://thestargateproject.com/stargate_software_updates/'
-        self.fileDownloadUsername = 'Samantha'
-        self.fileDownloadPassword = 'CarterSG1!'
+        
+        # Retrieve the configurations
+        self.base_url = self.cfg.get("software_updates_url")
+        self.fileDownloadUsername = self.cfg.get("software_updates_username")
+        self.fileDownloadPassword = self.cfg.get("software_updates_password")
 
     def get_current_version(self):
         return self.current_version

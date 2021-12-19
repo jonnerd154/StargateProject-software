@@ -15,14 +15,14 @@ class ChevronManager:
         self.cfg = app.cfg
         self.audio = app.audio
         self.electronics = app.electronics
-
+        
         self.loadFromConfig(app)
 
     def loadFromConfig(self, app):
         # Retrieve the Chevron config and initialize the Chevron objects
         self.chevrons = {}
         for key, value in self.cfg.get("chevronMapping").items():
-            self.chevrons[int(key)] = Chevron( self.electronics, value['ledPin'], value['motorNumber'], self.audio )
+            self.chevrons[int(key)] = Chevron( self.electronics, value['ledPin'], value['motorNumber'], self.audio, self.cfg )
 
     def get( self, chevronNumber ):
         return self.chevrons[int(chevronNumber)]
@@ -52,21 +52,19 @@ class Chevron:
     The motor_number is the number for the motor as an int.
     """
 
-    def __init__(self, electronics, led_gpio, motor_number, audio):
+    def __init__(self, electronics, led_gpio, motor_number, audio, cfg):
 
+        self.cfg = cfg
         self.audio = audio
         self.electronics = electronics
-
-        self.enableMotors = True # TODO: Move to cfg
-        self.enableLights = True # TODO: Move to cfg
-
-        self.chevronDownAudioHeadStart = 0.2
-        self.chevronDownThrottle = -0.65 # negative
-        self.chevronDownTime = 0.1
-        self.chevronDownWaitTime = 0.35
-
-        self.chevronUpThrottle = 0.65 # positive
-        self.chevronUpTime = 0.2
+ 
+        # Retrieve Configurations
+        self.chevronDownAudioHeadStart = self.cfg.get("chevronDownAudioHeadStart") #0.2
+        self.chevronDownThrottle = self.cfg.get("chevronDownThrottle") #-0.65 # negative
+        self.chevronDownTime = self.cfg.get("chevronDownTime") #0.1
+        self.chevronDownWaitTime = self.cfg.get("chevronDownWaitTime") #0.35
+        self.chevronUpThrottle = self.cfg.get("chevronUpThrottle") #0.65 # positive
+        self.chevronUpTime = self.cfg.get("chevronUpTime") #0.2       
 
         self.motor_number = motor_number
         self.motor = self.electronics.get_chevron_motor(self.motor_number)
@@ -107,7 +105,8 @@ class Chevron:
     def incoming_on(self):
         if self.led:
             self.led.on()
-        choice(self.audio.incoming_chevron_sounds).play().wait_done()
+        
+        self.audio.play_random_clip_from_group("incoming_chevron_sounds", True)
 
     def off(self, sound=None):
         if sound == 'on':

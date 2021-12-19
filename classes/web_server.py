@@ -2,39 +2,76 @@ import os
 import json
 import threading
 from time import sleep
+import urllib.parse
+import collections
 from http.server import SimpleHTTPRequestHandler
 
 class StargateWebServer(SimpleHTTPRequestHandler):
- 
-    def translate_path(self, path):
-        fullpath = "/home/sg1/sg1/web" + path
-        return fullpath
-
-#   def translate_path(self, path):
-#         path = SimpleHTTPRequestHandler.translate_path(self, path)
-#         relpath = os.path.relpath(path, os.getcwd())
-#         fullpath = os.path.join('web', relpath)
-#         return fullpath
-
-    def translate_path(self, path):
-        path = SimpleHTTPRequestHandler.translate_path(self, path)
-        relpath = os.path.relpath(path, os.getcwd())
-        fullpath = os.path.join('web', relpath)
-        return fullpath
     
-    # Overload log_message to suppress logs from printing to console
+    #Overload SimpleHTTPRequestHandler.log_message() to suppress logs from printing to console
     def log_message(self, format, *args):
         pass
-        
+       
+    def parse_GET_vars(self):
+        qs = {}
+        path = self.path
+        if '?' in path:
+            path, tmp = path.split('?', 1)
+            qs = urllib.parse.parse_qs(tmp)
+        return path, qs
+     
     def do_GET(self):
-        fullPath = self.translate_path(self.path)
-        if fullPath:
-            try:
-                with open(fullPath, 'rb') as file: 
-                    self.wfile.write(file.read()) # Read the file and send the contents     
-            except:
-                pass
+        try:
+            request_path, get_vars = self.parse_GET_vars()
+            
+            if request_path == '/get':
+                entity = get_vars.get('entity')[0]
+
+                if ( entity == "standard_gates"):
+                    content = json.dumps( self.stargate.addrManager.getBook().get_standard_gates() )
+            
+                elif( entity == "fan_gates" ):
+                    content = json.dumps( self.stargate.addrManager.getBook().get_fan_gates() )
+                
+                elif( entity == "all_gates" ):
+                    all_addr = self.stargate.addrManager.getBook().get_all_nonlocal_addresses()
+                    ordered_dict = collections.OrderedDict(sorted(all_addr.items()))
+                    content = json.dumps( ordered_dict )
+            
+                elif( entity == "local_address" ):
+                    content = json.dumps( self.stargate.addrManager.getBook().get_local_address() )
+                    
+                elif( entity == "status" ):
+                	data = {
+                		"address_buffer_outgoing":  self.stargate.address_buffer_outgoing,
+                		"locked_chevrons_outgoing": self.stargate.locked_chevrons_outgoing,
+                		"address_buffer_incoming":  self.stargate.address_buffer_incoming,
+                		"locked_chevrons_incoming": self.stargate.locked_chevrons_incoming,
+                		"wormhole_active":          self.stargate.wormhole,
+                		"black_hole_connected":     self.stargate.black_hole,
+                		"connected_planet":         self.stargate.connected_planet_name,
+                		"wormhole_open_time":       self.stargate.wh.open_time,
+                		"wormhole_max_time":        self.stargate.wh.wormhole_max_time,
+                		"wormhole_time_till_close": self.stargate.wh.get_time_remaining()
+                	}
+                	content = json.dumps( data )
+
+                self.send_response(200)
+                self.send_header("Content-type", "text/json")
+                self.end_headers()
+                self.wfile.write(content.encode())
+               
+            else:
+                # Unhandled request: send a 404
+                self.send_response(404)
+                self.end_headers()
         
+            return
+        except:
+            # Encountered an exception: send a 500
+            self.send_response(500)
+            self.end_headers()
+                
     def do_POST(self):
         #print('POST PATH: {}'.format(self.path))
         if self.path == '/shutdown':
@@ -87,6 +124,33 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             elif data['action'] == "volume_up":
                 self.stargate.audio.volume_up()
                 
+            elif data['action'] == "sim_incoming":
+                if ( not self.stargate.wormhole ): # If we don't already have an established wormhole
+                    # Get the loopback address and dial it
+                    for symbol_number in self.stargate.addrManager.addressBook.get_local_loopback_address():
+                        self.stargate.address_buffer_incoming.append(symbol_number)
+                
+                    self.stargate.address_buffer_incoming.append(7) # Point of origin
+                    self.stargate.centre_button_incoming = True
+                
+                
+        elif self.path == '/dhd_press':
+            symbol_number = int(data['symbol'])
+            
+            if symbol_number > 0:
+                self.stargate.keyboard.queue_symbol(symbol_number)
+            elif symbol_number == 0:
+                self.stargate.fan_gate_online_status = False #TODO: This isn't necessarily true.
+                self.stargate.keyboard.queue_center_button()
+        
+        elif self.path == '/incoming_press':
+            symbol_number = int(data['symbol'])
+            
+            if symbol_number > 0:
+                self.stargate.address_buffer_incoming.append(symbol_number)
+            elif symbol_number == 0:
+                self.stargate.centre_button_incoming = True
+        
                 
         self.send_response(200, 'OK')
         self.end_headers()

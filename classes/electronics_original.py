@@ -10,8 +10,10 @@ class ElectronicsOriginal:
 
     def __init__(self, app):
         
-        self.enableStepperMotor = True
-        self.enableChevronMotors = False
+        self.cfg = app.cfg
+        
+        self.enableStepperMotor = self.cfg.get("enable_stepper_motor")
+        self.enableChevronMotors = self.cfg.get("enable_chevron_motors")
 
         self.motorShield1Address = 0x60
         self.motorShield2Address = 0x61
@@ -22,7 +24,8 @@ class ElectronicsOriginal:
 
         self.adc_resolution = 10 # The MCP3002 is a 10-bit ADC
         self.adc_vref = 3.3
-
+        self.spi_bit_rate = 1200000
+        
     # ------------------------------------------
 
         self.shieldConfig = None
@@ -102,7 +105,7 @@ class ElectronicsOriginal:
 
         # Make sure you've enabled the Raspi's SPI peripheral: `sudo raspi-config`
         self.spi = spidev.SpiDev(0, self.spi_ch)
-        self.spi.max_speed_hz = 1200000
+        self.spi.max_speed_hz = self.spi_bit_rate 
 
     def get_adc_by_channel(adc_ch):
         # CREDIT: https://learn.sparkfun.com/tutorials/python-programming-tutorial-getting-started-with-the-raspberry-pi/experiment-3-spi-and-analog-input

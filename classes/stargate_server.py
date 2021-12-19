@@ -17,22 +17,25 @@ class StargateServer:
     """
     def __init__(self, stargate):
 
-        self.thread = Thread
-
         self.stargate = stargate
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.base_path = stargate.base_path
+        self.subspace = stargate.subspace
+        self.addrManager = stargate.addrManager
+        self.addressBook = stargate.addrManager.getBook()
 
         self.database = Database(self.base_path)
+        
+        # Retrieve the configurations
+        self.port = self.cfg.get("subspace_port") # I chose 3838 because the Stargate can stay open for 38 minutes. :)  
+        self.keep_alive_interval = self.cfg.get("subspace_keep_alive_interval")
+        self.keep_alive_address = self.cfg.get("subspace_keep_alive_address")
 
-        #TODO: move some of this to config.json
+        # Some other configurations that are relatively static will stay here
         self.header = 8
-        self.port = 3838  # I chose 3838 because the Stargate can stay open for 38 minutes. :)
         self.encoding_format = 'utf-8'
         self.disconnect_message = '!DISCONNECT'
-        self.keep_alive_address = '172.30.0.1'
-        self.keep_alive_interval = 24
         self.keep_alive_running_check_interval = 0.5
 
         # Get server IP, preferable the IP of the stargate in subspace.
@@ -43,11 +46,11 @@ class StargateServer:
         self.open_socket()
 
         # Start a thread to keep the subspace connection alive. It's most likely not needed, but might help connections to establish faster.
-        thread_keep_alive = self.thread(target=self.keep_alive, args=(self.keep_alive_address, self.keep_alive_interval, self.stargate ))
+        thread_keep_alive = Thread(target=self.keep_alive, args=(self.keep_alive_address, self.keep_alive_interval, self.stargate ))
         thread_keep_alive.start()
 
-        # Keep the known fan_gates here.
-        self.known_fan_gates = self.stargate.addrManager.update_fan_gates_from_db()
+        # Update fan_gates from the subspace server
+        self.stargate.addrManager.update_fan_gates_from_db()
 
 
     def open_socket(self):
@@ -145,9 +148,9 @@ class StargateServer:
                             self.stargate.fan_gate_incoming_IP = addr[0] # Save the IO address when establishing a wormhole.
                             self.stargate.dialer.hardware.set_center_on()# Activate the centre_button_outgoing light
 
-                    planet_name = self.get_planet_name_from_IP(addr[0], self.known_fan_gates)
-                    stargate_address = self.get_stargate_address_from_IP(addr[0], self.known_fan_gates)
-                    self.log.log('Received from {} - {} -> {}'.format(planet_name, stargate_address, msg))
+                    planet_name = self.subspace.get_planet_name_from_IP(addr[0], self.addressBook.get_fan_gates())
+                    stargate_address = self.subspace.get_stargate_address_from_IP(addr[0], self.addressBook.get_fan_gates())
+                    self.log.log('1 Received from {} - {} -> {}'.format(planet_name, stargate_address, msg))
 
                 # If we are asked about the status (wormhole already active from a different gate or actively dialing out)
                 elif msg == 'what_is_your_status':
@@ -165,20 +168,20 @@ class StargateServer:
                     conn.send(str(status).encode(self.encoding_format))
 
                 # If we are receiving a stargate address, add it to the incoming buffer.
-                elif self.validate_string_as_stargate_address(msg):
-                    address = self.validate_string_as_stargate_address(msg)
+                elif self.addrManager.is_valid(msg):
+                    address = self.addrManager.is_valid(msg)
                     for symbol in address:
                         if not symbol in self.stargate.address_buffer_incoming:
                             self.stargate.address_buffer_incoming.append(symbol)
 
-                    planet_name = self.get_planet_name_from_IP(addr[0], self.known_fan_gates)
-                    stargate_address = self.get_stargate_address_from_IP(addr[0], self.known_fan_gates)
-                    self.log.log('Received from {} - {} -> {msg}'.format(planet_name, stargate_address))
+                    planet_name = self.subspace.get_planet_name_from_IP(addr[0], self.addressBook.get_fan_gates())
+                    stargate_address = self.subspace.get_stargate_address_from_IP(addr[0], self.addressBook.get_fan_gates())
+                    self.log.log('2 Received from {} - {} -> {}'.format(planet_name, stargate_address, msg))
 
                 # For unknown messages
                 else:
-                    stargate_address = self.get_stargate_address_from_IP(addr[0], self.known_fan_gates)
-                    self.log.log('Received UNKNOWN MESSAGE from {} - {} -> {} \t But I do not know what to do with that!'.format(addr[0], stargate_address, msg))
+                    stargate_address = self.subspace.get_stargate_address_from_IP(addr[0], self.addressBook.get_fan_gates())
+                    self.log.log('Received UNKNOWN MESSAGE from {} - {} -> {}     But I do not know what to do with that!'.format(addr[0], stargate_address, msg))
         conn.close()  # close the connection.
     def start(self):
         if self.server_ip: # If we have found an IP to use for the server.
@@ -187,7 +190,7 @@ class StargateServer:
 
             while True:
                 conn, addr = self.server.accept()
-                handle_incoming_wormhole_thread = self.thread(target=self.handle_incoming_wormhole, args=(conn, addr))
+                handle_incoming_wormhole_thread = Thread(target=self.handle_incoming_wormhole, args=(conn, addr))
                 handle_incoming_wormhole_thread.start()
         else:
             self.log.log('Unable to start the Stargate server, no IP address found')

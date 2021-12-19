@@ -1,69 +1,271 @@
 <html>
     <head>
-        <!-- Chevrons from Manz: https://codepen.io/manz/pen/zoREJL -->
         <meta charset="UTF-8"> 
         <title>Stargate Command</title>
+        <link rel="stylesheet" href="lib/jquery-ui-1.13.0.custom/jquery-ui.css">
         <link rel="stylesheet" href="main.css" />
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
     </head>
     <body>
+        <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
+
+        <script type="text/javascript">
+            
+        $(function() {
+            doPoll();
+        });
+        
+        // Configuration
+        var poll_delay_default = 5000
+        var poll_delay_dialing = 500
+        var poll_delay_established = 1000
+        
+        // State variables
+        var poll_delay = poll_delay_default
+        
+        var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
+        offline_modal.dialog({
+            autoOpen: false,
+            modal: true,
+            dialogClass: "no-close", 
+        });
+
+        function doPoll( singleShot = false ){
+            $.get('stargate/get?entity=status')
+                .done(function(data) {
+                    
+                    // Hide the offline modal
+                    hideOfflineModal()
+                    
+                    // Update the Wormhole status
+                    updateWormholeStatus(data)
+
+                    // Update the Address buffer and locked chevrons
+                    updateAddressBuffer(data)
+            
+                    // Update the Connected Planet status
+                    updateConnectedPlanetStatus(data)
+    
+                    // Schedule the next polling
+                    if ( !singleShot ){
+                        setTimeout(function(){doPoll( false ); }, poll_delay);
+                    }
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    // Show the "we're offline modal"
+                    showOfflineModal()
+                    
+                    // Slow the polling rate to default
+                    poll_delay = poll_delay_default
+                    
+                    // Schedule the next polling
+                    if ( !singleShot ){
+                        setTimeout(function(){doPoll( false ); }, poll_delay);
+                    }
+                }
+                
+            );
+     
+        }
+        
+        function showOfflineModal(){
+            offline_modal.dialog("open");
+        }
+        
+        function hideOfflineModal(){
+            offline_modal.dialog("close");
+        }
+        
+        function updateConnectedPlanetStatus(data){
+            if (data.wormhole_active && data.connected_planet){
+                
+                var content = "<p>Connected to " + data.connected_planet
+                // If we're connected to a black hole, make some changes
+                if (data.black_hole_connected){
+                    $('body').css('background-color', '#721121')
+                }
+                else{
+                    $('body').css('background-color', 'black')
+                }
+                content += "</p>"
+                $('#connected-planet').html(content) 
+                
+            }
+        }
+        
+        function updateWormholeStatus(data){
+            shutdownString = ""
+            if ( data.wormhole_open_time > 0 ){
+                if ( data.black_hole_connected ){
+                    timeString = "UNKNOWN: Time Dilation Detected!"
+                    shutdownString = "&nbsp;&nbsp;&nbsp;&nbsp;Shutdown in " + timeString;
+
+                }
+                else{
+                    timeString = new Date(data.wormhole_time_till_close * 1000).toISOString().substr(14, 5)
+                    shutdownString = "&nbsp;&nbsp;&nbsp;&nbsp;Shutdown in " + timeString;
+                }
+                
+                switch ( data.wormhole_active ){
+                    case "outgoing":
+                        $('#wormhole-status').html("<p>Active Wormhole (OUTGOING)" + shutdownString + "</p>")
+                        break 
+            
+                    case "incoming":
+                        $('#wormhole-status').html("<p>Active Wormhole (INCOMING)" + shutdownString + "</p>")
+                        break
+                }
+            }
+            else{            
+                // No wormhole established, reset the UI, and handle "establishing" state
+                if(data.wormhole_active && !data.wormhole_open_time){
+                    $('#wormhole-status').html("<p>Establishing Wormhole");
+                }
+                else{
+                    $('#wormhole-status').html("<p>No Active Wormhole");
+                }
+                
+                $('#connected-planet').html("&nbsp;")
+                $('body').css('background-color', 'black')
+            }
+        }
+        
+        function updateAddressBuffer(data){
+        
+            // If the address buffer is empty, clean things up
+            if ( ( data.address_buffer_outgoing.length == 0 &&
+                 data.address_buffer_incoming.length == 0 ) || // Empty incoming and outgoing buffers
+                 data.address_buffer_outgoing.length < $(".dial-sequence div").length || // Not in sync with the Stargate
+                 $(".dial-sequence div").length > 9 ){ // Too many symbols / not in sync with the Stargate
+                
+                // Clear the dial-sequence display
+                $('.dial-sequence').empty()
+                
+                // Make all symbols available again
+                $(".chevrons .chevron").removeClass("unavailable");
+                
+                // Slow the polling to default
+                poll_delay = poll_delay_default
+                
+            }
+            else{
+                // There are symbols in the buffer, we're either established or dialing
+                
+                // Adjust the polling rate
+                if ( data.wormhole_active ){
+                    poll_delay = poll_delay_established
+                }
+                else{
+                    poll_delay = poll_delay_dialing
+                }
+            }
+            for (i=0;i<data.address_buffer_outgoing.length;i++){
+                
+                // Get the symbol_number
+                symbol_number = data.address_buffer_outgoing[i]                  
+                     
+                // If this symbol isn't in the display, show it.
+                if ( $("#dialed-chevron"+symbol_number).length == 0 ){
+                
+                    // Copy the div from the control panel, wrap it, modify it, and add it to the dial-sequence display
+                    const thisChevronDivHtml = $("#chevron"+symbol_number).clone().wrap('<div/>').parent().html();
+                    const newChevron = $(thisChevronDivHtml);
+                    newChevron.attr('id', "dialed-chevron"+symbol_number);
+                    newChevron.css('transform', 'rotate(0)');
+                    newChevron.removeClass('unavailable');
+                    newChevron.addClass('filter-yellow')
+                    $('.dial-sequence').append(newChevron);
+                    setTimeout(function() { newChevron.addClass('show'); }, 10);
+                
+                    // Grey out this symbol in the control panel
+                    $("#chevron"+symbol_number).addClass('unavailable')
+                    
+                }
+                
+                // Is this chevron locked? If so, mark it as such
+                chevronLocked = i >= data.locked_chevrons_outgoing ? false : true
+                if (chevronLocked){
+                    $("#dialed-chevron"+symbol_number).removeClass('filter-yellow')
+                    $("#dialed-chevron"+symbol_number).addClass('filter-green')
+                } 
+            }
+        
+            // Resize display as required
+            if (data.address_buffer_outgoing.length > 7) {
+                $('.dial-sequence .chevron').addClass('smaller');
+            } 
+            else {
+                $('.dial-sequence .chevron').addClass('small').removeClass('smaller');
+            }
+        }
+        
+        
+        </script>
+        <div class="gate-status">
+            <span id='wormhole-status'></span>
+            <span id='connected-planet'>&nbsp;</span>
+        </div>
+        
         <div class="dial-sequence">
         </div>
-
+                
         <div class="chevrons">
-            <div class="chevron unavailable" num="0" id="chevron1"><img src="chevrons/001.svg" /></div>
-            <div class="chevron" num="1" id="chevron2"><img src="chevrons/002.svg" /></div>
-            <div class="chevron" num="2" id="chevron3"><img src="chevrons/003.svg" /></div>
-            <div class="chevron" num="3" id="chevron4"><img src="chevrons/004.svg" /></div>
-            <div class="chevron" num="4" id="chevron5"><img src="chevrons/005.svg" /></div>
-            <div class="chevron" num="5" id="chevron6"><img src="chevrons/006.svg" /></div>
-            <div class="chevron" num="6" id="chevron7"><img src="chevrons/007.svg" /></div>
-            <div class="chevron" num="7" id="chevron8"><img src="chevrons/008.svg" /></div>
-            <div class="chevron" num="8" id="chevron9"><img src="chevrons/009.svg" /></div>
-            <div class="chevron" num="9" id="chevron10"><img src="chevrons/010.svg" /></div>
-            <div class="chevron" num="10" id="chevron11"><img src="chevrons/011.svg" /></div>
-            <div class="chevron" num="11" id="chevron12"><img src="chevrons/012.svg" /></div>
-            <div class="chevron" num="12" id="chevron13"><img src="chevrons/013.svg" /></div>
-            <div class="chevron" num="13" id="chevron14"><img src="chevrons/014.svg" /></div>
-            <div class="chevron" num="14" id="chevron15"><img src="chevrons/015.svg" /></div>
-            <div class="chevron" num="15" id="chevron16"><img src="chevrons/016.svg" /></div>
-            <div class="chevron" num="16" id="chevron17"><img src="chevrons/017.svg" /></div>
-            <div class="chevron" num="17" id="chevron18"><img src="chevrons/018.svg" /></div>
-            <div class="chevron" num="18" id="chevron19"><img src="chevrons/019.svg" /></div>
-            <div class="chevron" num="19" id="chevron20"><img src="chevrons/020.svg" /></div>
-            <div class="chevron" num="20" id="chevron21"><img src="chevrons/021.svg" /></div>
-            <div class="chevron" num="21" id="chevron22"><img src="chevrons/022.svg" /></div>
-            <div class="chevron" num="22" id="chevron23"><img src="chevrons/023.svg" /></div>
-            <div class="chevron" num="23" id="chevron24"><img src="chevrons/024.svg" /></div>
-            <div class="chevron" num="24" id="chevron25"><img src="chevrons/025.svg" /></div>
-            <div class="chevron" num="25" id="chevron26"><img src="chevrons/026.svg" /></div>
-            <div class="chevron" num="26" id="chevron27"><img src="chevrons/027.svg" /></div>
-            <div class="chevron" num="27" id="chevron28"><img src="chevrons/028.svg" /></div>
-            <div class="chevron" num="28" id="chevron29"><img src="chevrons/029.svg" /></div>
-            <div class="chevron" num="29" id="chevron30"><img src="chevrons/030.svg" /></div>
-            <div class="chevron" num="30" id="chevron31"><img src="chevrons/031.svg" /></div>
-            <div class="chevron" num="31" id="chevron32"><img src="chevrons/032.svg" /></div>
-            <div class="chevron" num="32" id="chevron33"><img src="chevrons/033.svg" /></div>
-            <div class="chevron" num="33" id="chevron34"><img src="chevrons/034.svg" /></div>
-            <div class="chevron" num="34" id="chevron35"><img src="chevrons/035.svg" /></div>
-            <div class="chevron" num="35" id="chevron36"><img src="chevrons/036.svg" /></div>
-            <div class="chevron" num="36" id="chevron37"><img src="chevrons/037.svg" /></div>
-            <div class="chevron" num="37" id="chevron38"><img src="chevrons/038.svg" /></div>
-            <div class="chevron" num="38" id="chevron39"><img src="chevrons/039.svg" /></div>
-            <div class="chevronPresets" id="presetAddressesButton" onclick="window.location = 'dialingcomputer.htm';">Dialing Computer</div>
-            <div class="chevronReset" onclick="reset();">Reset</div>
+            <!-- Chevrons from Manz: https://codepen.io/manz/pen/zoREJL -->
+            <div class="chevron" num="1" id="chevron1"><img src="chevrons/001.svg" /></div>
+            <div class="chevron" num="2" id="chevron2"><img src="chevrons/002.svg" /></div>
+            <div class="chevron" num="3" id="chevron3"><img src="chevrons/003.svg" /></div>
+            <div class="chevron" num="4" id="chevron4"><img src="chevrons/004.svg" /></div>
+            <div class="chevron" num="5" id="chevron5"><img src="chevrons/005.svg" /></div>
+            <div class="chevron" num="6" id="chevron6"><img src="chevrons/006.svg" /></div>
+            <div class="chevron" num="7" id="chevron7"><img src="chevrons/007.svg" /></div>
+            <div class="chevron" num="8" id="chevron8"><img src="chevrons/008.svg" /></div>
+            <div class="chevron" num="9" id="chevron9"><img src="chevrons/009.svg" /></div>
+            <div class="chevron" num="10" id="chevron10"><img src="chevrons/010.svg" /></div>
+            <div class="chevron" num="11" id="chevron11"><img src="chevrons/011.svg" /></div>
+            <div class="chevron" num="12" id="chevron12"><img src="chevrons/012.svg" /></div>
+            <div class="chevron" num="13" id="chevron13"><img src="chevrons/013.svg" /></div>
+            <div class="chevron" num="14" id="chevron14"><img src="chevrons/014.svg" /></div>
+            <div class="chevron" num="15" id="chevron15"><img src="chevrons/015.svg" /></div>
+            <div class="chevron" num="16" id="chevron16"><img src="chevrons/016.svg" /></div>
+            <div class="chevron" num="17" id="chevron17"><img src="chevrons/017.svg" /></div>
+            <div class="chevron" num="18" id="chevron18"><img src="chevrons/018.svg" /></div>
+            <div class="chevron" num="19" id="chevron19"><img src="chevrons/019.svg" /></div>
+            <div class="chevron" num="20" id="chevron20"><img src="chevrons/020.svg" /></div>
+            <div class="chevron" num="21" id="chevron21"><img src="chevrons/021.svg" /></div>
+            <div class="chevron" num="22" id="chevron22"><img src="chevrons/022.svg" /></div>
+            <div class="chevron" num="23" id="chevron23"><img src="chevrons/023.svg" /></div>
+            <div class="chevron" num="24" id="chevron24"><img src="chevrons/024.svg" /></div>
+            <div class="chevron" num="25" id="chevron25"><img src="chevrons/025.svg" /></div>
+            <div class="chevron" num="26" id="chevron26"><img src="chevrons/026.svg" /></div>
+            <div class="chevron" num="27" id="chevron27"><img src="chevrons/027.svg" /></div>
+            <div class="chevron" num="28" id="chevron28"><img src="chevrons/028.svg" /></div>
+            <div class="chevron" num="29" id="chevron29"><img src="chevrons/029.svg" /></div>
+            <div class="chevron" num="30" id="chevron30"><img src="chevrons/030.svg" /></div>
+            <div class="chevron" num="31" id="chevron31"><img src="chevrons/031.svg" /></div>
+            <div class="chevron" num="32" id="chevron32"><img src="chevrons/032.svg" /></div>
+            <div class="chevron" num="33" id="chevron33"><img src="chevrons/033.svg" /></div>
+            <div class="chevron" num="34" id="chevron34"><img src="chevrons/034.svg" /></div>
+            <div class="chevron" num="35" id="chevron35"><img src="chevrons/035.svg" /></div>
+            <div class="chevron" num="36" id="chevron36"><img src="chevrons/036.svg" /></div>
+            <div class="chevron" num="37" id="chevron37"><img src="chevrons/037.svg" /></div>
+            <div class="chevron" num="38" id="chevron38"><img src="chevrons/038.svg" /></div>
+            <div class="chevron" num="39" id="chevron39"><img src="chevrons/039.svg" /></div>
+            <div class="chevron" num="0" id="chevron0">Center Button</div>
+            
         </div>
-        
-        <hr />
-        
+                
         <div class="controls">
             <br />
             <div class="control" onclick="window.location = 'testing.htm';">
                 Testing / Debug
             </div>
+            <div class="control" id="presetAddressesButton" onclick="window.location = 'dialingcomputer.htm';">
+                Address Book<br><br>
+            </div>
         </div>
 
-        <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-        <!--<script type="text/javascript" src="jquery-3.3.1.min.js"></script>-->
+        
         <script type="text/javascript">
             
             let dialSeq = [];
@@ -81,94 +283,26 @@
                     }
                 });
             }
-
-            function dial() {
-                enableDialing = false;
-
-                $('.dial-sequence').addClass('dialing');
+            
+            $('div.chevrons div.chevron').click(function() {
+                const symbol_number = $(this).attr('num');
 
                 $.post({
-                    url: '/update',
+                    url: '/stargate/dhd_press',
                     data: JSON.stringify({
-                        anim: 2,
-                        sequence: dialSeq
+                        symbol: symbol_number
                     })
+                })
+                .fail(function() {
+                    console.log("Failed to communicate with Stargate")
+                    $("<div>Failed to communicate with Stargate</div>").dialog();
                 })
                 .done(function() {
-                    checkDialingInt = setInterval(checkDialing, 2000);
-                })
-                .fail(function() {
-                    alert('Could not send dialling sequence!');
-                    reset();
-                });
-            }
-
-            $('div.chevrons div.chevron').click(function() {
-                if (!enableDialing)
-                    return;
-
-                const num = +$(this).attr('num');
-                const html = $(this).clone().wrap('<div/>').parent().html();
-
-                const existing = dialSeq.findIndex(function(s){ return s === num; });
-                if (existing >= 0)
-                    return;
-                
-                // Don't allow earth symbol until last chevron
-                if (dialSeq.length < 6) {
-                    if (num === 0)
-                        return;
-                }
-                
-                // gray out the chevron
-                $('#chevron'+(num+1)).addClass("unavailable");
-                
-                dialSeq.push(num);
-                const newChevron = $(html);
-                newChevron.attr('style', 'transform: rotate(0);');
-                $('.dial-sequence').append(newChevron);
-                
-                // Resize if more than 7 chevrons
-                if (dialSeq.length > 8) {
-                    $('.dial-sequence .chevron').addClass('smaller');
-                } else if (dialSeq.length > 7) {
-                    $('.dial-sequence .chevron').addClass('small').removeClass('smaller');
-                }
-                setTimeout(function() { newChevron.addClass('show'); }, 10);
-                
-                
-                // Disable all other chevrons if there are already 8 symbols
-                if (dialSeq.length === 8) {
-                    $('.chevrons .chevron').addClass("unavailable");
-                }
-                
-                // Enable point of origin chevron if there are at least 6 symbols
-                if (dialSeq.length > 5 && num != 0) {
-                    $('#chevron1').removeClass("unavailable");
-                }
-
-                if (dialSeq.length > 6 && num === 0) {
-                    $('.chevrons .chevron').addClass("unavailable");
-                    enableDialing = false;
-                    setTimeout(function() { dial(); }, 1200);
-                }
-            });
-
-            $('div.animations div.animation').click(function() {
-                const anim = +$(this).attr('anim');
-
-                $.post({
-                    url: '/update',
-                    data: JSON.stringify({
-                        anim: anim
-                    })
-                })
-                .fail(function() {
-                    alert('Could not connect with Stargate server');
+                    // Call the doPoll() function with single-shot mode so we can update ASAP
+                    doPoll( true )
                 });
             });
 
-        
             // Check for preset address in $_GET (via javascript instead of server-side)
             // https://stackoverflow.com/questions/1586330/access-get-directly-from-javascript
             var parts = window.location.search.substr(1).split("&");
@@ -177,21 +311,44 @@
                 var temp = parts[i].split("=");
                 $_GET[decodeURIComponent(temp[0])] = decodeURIComponent(temp[1]);
             }
-            // alert($_GET['address']); // 1
-            // alert($_GET.address);    // 2
+
             if($_GET.address) {
                 var chevrons = $_GET.address.split("-");
+                
+                // Add the home symbol
                 chevrons.push("1");
+                
+                // Add the center button
+                chevrons.push("0");
+                
+                // Configure some variable delays between presses to make it more realistic
                 var timeouts = [];
-                for(i=0;i<9;i++)
-                    timeouts.push(500*i);
-                function clickChevron(chevrons, i) {
-                    setTimeout(function() {$("#chevron"+chevrons[i]).click()}, timeouts[i]);
+                var delay_total = 0;
+                for(i=0;i<10;i++){
+                    if (i==0){
+                        console.log("Scheduling click for Chevron " + i + " after " + delay_total)
+                        timeouts.push(0);
+                    }
+                    else{
+                        var delay = Math.floor(1000 * ((Math.random() * 2.5) + 0.5));
+                        delay_total+=delay
+                        console.log("Scheduling click for Chevron " + i + " after " + delay_total)
+                        console.log(delay)
+                
+                        timeouts.push(delay_total);
+                    }
                 }
+
+                // Schedule the clicks
                 for (var i = 0; i < chevrons.length; i++) {
                     clickChevron(chevrons,i);
                 }
             }
+            
+            function clickChevron(chevrons, i) {
+                setTimeout(function() { $("#chevron"+chevrons[i]).click() }, timeouts[i]);
+            }
+            
         </script>
     </body>
 </html>

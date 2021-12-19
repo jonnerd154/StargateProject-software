@@ -20,21 +20,21 @@ class SymbolRing:
         self.audio = stargate.audio
         self.chevrons = stargate.chevrons
         self.base_path = stargate.base_path
-
-        # TODO: Move to cfg
-        self.stepper_drive_mode = "double"
-        self.total_steps = 1250 # Old value: 1251
-        self.micro_steps = 16
-        self.stepper_pos = 0
-        self.normal_speed = 0.002
-        self.slow_speed = 0.01
-        self.initial_speed = 0.01  # the initial speed
-        self.acceleration_length = 40  # the number of steps used for acceleration
-        self.ringDirectionModeLongest = True
-
-        # The symbols position on the symbol ring
+        
+        # Retrieve the configurations
+        self.stepper_drive_mode = self.cfg.get("stepper_drive_mode")
+        self.total_steps = self.cfg.get("stepper_one_revolution_steps") # Old value: 1251
+        self.micro_steps = self.cfg.get("stepper_micro_steps")
+        self.normal_speed = self.cfg.get("stepper_normal_speed")
+        self.slow_speed = self.cfg.get("stepper_slow_speed")
+        self.initial_speed = self.cfg.get("stepper_initial_speed")
+        self.acceleration_length = self.cfg.get("stepper_acceleration_length")  # the number of steps used for acceleration
+        self.ring_direction_mode_longest = self.cfg.get("stepper_ring_direction_mode_longest")
+        
+        # The symbol positions on the symbol ring
         self.symbol_step_positions = {1: 0, 2: 32, 3: 64, 4: 96, 5: 128, 6: 160, 7: 192, 8: 224, 9: 256, 10: 288, 11: 320, 12: 352, 13: 384, 14: 416, 15: 448, 16: 480, 17: 512, 18: 544, 19: 576, 20: 608, 21: 640, 22: 672, 23: 704, 24: 736, 25: 768, 26: 800, 27: 832, 28: 864, 29: 896, 30: 928, 31: 960, 32: 992, 33: 1024, 34: 1056, 35: 1088, 36: 1120, 37: 1152, 38: 1184, 39: 1216}
-        # The chevrons position on the stargate.
+        
+        # The chevron positions on the stargate
         self.chevron_step_positions = {1: 139, 2: 278, 3: 417, 4: 834, 5: 973, 6: 1112, 7: 0, 8: 556, 9: 695}
 
         ## --------------------------
@@ -45,6 +45,7 @@ class SymbolRing:
         self.stepperDriveMode = stargate.electronics.get_stepper_drive_mode(self.stepper_drive_mode)
 
         # Load the last known ring position
+        self.stepper_pos = 0
         self.position_store = StargateConfig(self.base_path, "ring_position.json", { "ring_position": 0 })
         self.position_store.set_log(self.log)
         self.position_store.load()
@@ -110,7 +111,8 @@ class SymbolRing:
             elif steps < self.acceleration_length:
                 current_speed = self.normal_speed
                 sleep(current_speed)
-
+        
+        self.release() # Release the stepper to prevent overheating
         self.audio.sound_stop('rolling_ring')  # stop the audio
 
     def calculate_steps(self, chevron_number, symbol_number):
@@ -143,7 +145,7 @@ class SymbolRing:
         calc_steps = self.calculate_steps(chevron_number, symbol_number) # calculate the steps
 
         # Choose which ring direction mode to use
-        if ( self.ringDirectionModeLongest is False ):
+        if ( self.ring_direction_mode_longest is False ):
             ## Option one. This will move the symbol the shortest direction, cc or ccw.
             if calc_steps: # If not None
                 self.move(calc_steps) # move the ring the calc_steps steps.

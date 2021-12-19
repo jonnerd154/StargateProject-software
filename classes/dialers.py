@@ -1,15 +1,22 @@
 from time import sleep
 
+import PyCmdMessenger
+
 class Dialer:
 
     def __init__(self, stargate):
 
         self.log = stargate.log
         self.cfg = stargate.cfg
-        
-        # TODO: Move to config
-        self.DHD_port = "/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00"
-        self.DHD_baud_rate = 115200
+                
+        # Retrieve the configurations
+        self.DHD_port = self.cfg.get("DHD_serial_port")
+        self.DHD_baud_rate = self.cfg.get("DHD_baud_rate")
+        self.DHD_brightness_center = self.cfg.get("DHD_brightness_center")
+        self.DHD_brightness_symbols = self.cfg.get("DHD_brightness_symbols")
+        self.DHD_color_center = self.cfg.get("DHD_color_center")
+        self.DHD_color_symbols = self.cfg.get("DHD_color_symbols")
+        self.DHD_enable = self.cfg.get("DHD_enable")
 
         self.hardware = None
         
@@ -18,19 +25,25 @@ class Dialer:
     def _connect_dialer(self):
         # Detect if we have a DHD connected, else use the keyboard
         try:
-            self.hardware = self.connect_dhd()
+            # If The DHD is disabled, raise an exception to use KeyboardMode
+            if not self.DHD_enable:
+                raise
+            self.hardware = self._connect_dhd()
         except:
-            self.log.log('No DHD found, switching to keyboard mode')
+            self.log.log('No DHD found or DHD is disabled. Switching to keyboard mode')
             self.hardware = KeyboardMode()
 
     def _connect_dhd(self):
         ### Connect to the DHD object. Will throw exception if not present
         dhd = DHDv2(self.DHD_port, self.DHD_baud_rate)
         self.log.log('DHDv2 Found. Connected.')
-
-        dhd.setBrightnessCenter(100)
-        dhd.setBrightnessSymbols(3)
-
+    
+        # Configure the DHD
+        dhd.setBrightnessCenter(self.DHD_brightness_center)
+        dhd.setBrightnessSymbols(self.DHD_brightness_symbols)
+        dhd.setColorCenter(self.DHD_color_center)
+        dhd.setColorSymbols(self.DHD_color_symbols)
+        
         # Blink the middle button to signal the DHD is ready
         dhd.setPixel(0, 255, 255, 255)
         dhd.latch()
@@ -40,42 +53,6 @@ class Dialer:
 
         return dhd
 
-class DHD:
-    """
-    This is the old DHD version. Not recommended. Use the new version instead.
-    """
-    def __init__(self):
-        import adafruit_dotstar as dotstar
-        import board
-        self.dots = dotstar.DotStar(board.D14, board.D15, 39, brightness=0.01)
-        self.center_dot = dotstar.DotStar(board.D14, board.D15, 1, brightness=0.15)
-
-    def light_on(self, symbol_number, color):
-        """
-        This helper function activates the light for the dhd button of "symbol" with the "color" specified.
-        :param symbol_number: The symbol number of which to control.
-        :param color: The color for the led as a tuple. eg: (250, 117, 0)
-        :return: nothing is returned.
-        """
-        symbol_number_to_dhd_light_map = {0: 0, 1: 25, 2: 19, 3: 38, 4: 20, 5: 23, 6: 30, 7: 28, 8: 3, 9: 22,
-                                          10: 11, 11: 36, 12: 34, 14: 17, 15: 6, 16: 9, 17: 18, 18: 16, 19: 26,
-                                          20: 21, 21: 37, 22: 27, 23: 15, 24: 29, 25: 1, 26: 14, 27: 4, 28: 10, 29: 31,
-                                          30: 8, 31: 5, 32: 24, 33: 12, 34: 33, 35: 7, 36: 2, 37: 35, 38: 32, 39: 13}
-        self.dots[symbol_number_to_dhd_light_map[symbol_number]] = color
-    def lights_off(self):
-        """
-        This method turns off all dhd lights
-        """
-        self.dots.fill((0, 0, 0))
-    def center_light_on(self):
-        """
-        A helper function to turn on the centre dhd light. It needs a bit more brightness than the other lights. Hence
-        this extra method.
-        """
-        self.center_dot[0] = (255, 0, 0)
-
-import PyCmdMessenger
-from pprint import pprint
 
 class DHDv2:
 
@@ -123,6 +100,9 @@ class DHDv2:
             ["latch", ""],  # Transmits the current pixel configuration in the RAM buffer out to the pixels
         ]
 
+        self.color_symbols = None
+        self.color_center = None
+
         # Initialize the messenger
         self.c = PyCmdMessenger.CmdMessenger(self.board, self.commands)
 
@@ -142,7 +122,6 @@ class DHDv2:
 
     def getPixelColorTuple(self, pixelIndex):
         self.c.send("get_pixel_color", pixelIndex)
-        pprint(self.c.receive())
         return self.c.receive()[1]
 
     def getPixelCount(self):
@@ -190,13 +169,19 @@ class DHDv2:
         self.latch()
     
     def set_center_on( self ):
-        self.setPixel(0, 255, 0, 0) # LED 0, Pure red.
+        self.setPixel(0, self.color_center[0], self.color_center[1], self.color_center[2]) # LED 0, Pure red.
         self.latch()
-             
+
     def set_symbol_on( self, symbol_number ):
-        self.setPixel(symbol_number, 250, 117, 0)
+        self.setPixel(symbol_number, self.color_symbols[0], self.color_symbols[1], self.color_symbols[2])
         self.latch()
-           
+          
+    def setColorCenter(self, colorTuple):
+        self.color_center = colorTuple
+        
+    def setColorSymbols(self, colorTuple):
+        self.color_symbols = colorTuple
+        
     def get_DHD_port():
         """
         This is a simple helper function to help locate the port for the DHD
@@ -275,3 +260,43 @@ class KeyboardMode:
 
     def set_symbol_on( self, symbol_number ):
         pass
+    
+    def setColorCenter(self, colorTuple):
+        pass
+                
+    def setColorSymbols(self, colorTuple):
+        pass
+
+# class DHD:
+#     """
+#     This is the old DHD version. Not recommended. Use the new version instead.
+#     """
+#     def __init__(self):
+#         import adafruit_dotstar as dotstar
+#         import board
+#         self.dots = dotstar.DotStar(board.D14, board.D15, 39, brightness=0.01)
+#         self.center_dot = dotstar.DotStar(board.D14, board.D15, 1, brightness=0.15)
+# 
+#     def light_on(self, symbol_number, color):
+#         """
+#         This helper function activates the light for the dhd button of "symbol" with the "color" specified.
+#         :param symbol_number: The symbol number of which to control.
+#         :param color: The color for the led as a tuple. eg: (250, 117, 0)
+#         :return: nothing is returned.
+#         """
+#         symbol_number_to_dhd_light_map = {0: 0, 1: 25, 2: 19, 3: 38, 4: 20, 5: 23, 6: 30, 7: 28, 8: 3, 9: 22,
+#                                           10: 11, 11: 36, 12: 34, 14: 17, 15: 6, 16: 9, 17: 18, 18: 16, 19: 26,
+#                                           20: 21, 21: 37, 22: 27, 23: 15, 24: 29, 25: 1, 26: 14, 27: 4, 28: 10, 29: 31,
+#                                           30: 8, 31: 5, 32: 24, 33: 12, 34: 33, 35: 7, 36: 2, 37: 35, 38: 32, 39: 13}
+#         self.dots[symbol_number_to_dhd_light_map[symbol_number]] = color
+#     def lights_off(self):
+#         """
+#         This method turns off all dhd lights
+#         """
+#         self.dots.fill((0, 0, 0))
+#     def center_light_on(self):
+#         """
+#         A helper function to turn on the centre dhd light. It needs a bit more brightness than the other lights. Hence
+#         this extra method.
+#         """
+#         self.center_dot[0] = (255, 0, 0)

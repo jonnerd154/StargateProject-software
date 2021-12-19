@@ -4,10 +4,12 @@ class KeyboardManager:
 
     def __init__(self, stargate):
 
+        self.stargate = stargate
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.audio = stargate.audio
-
+        self.addressBook = stargate.addrManager.getBook()
+        
     def key_press(self):
         """
         This helper function stops the program (thread) and waits for a single keypress.
@@ -56,35 +58,47 @@ class KeyboardManager:
                 else:
                     self.log.log(f'key: {key} -> symbol: {symbol_number} SYMBOL')
 
-            self.audio.play_random_clip("DHD")
-
             ## If the user inputs the - key to abort. Not possible from the DHD.
             if key == '-':
                 self.log.log("Abort Requested: Shutting down any active wormholes, stopping the gate.")
-                stargate.wormhole = False # Shutdown any open wormholes (particularly if turned on via web interface)
-                stargate.running = False  # Stop the stargate object from running.
+                self.stargate.wormhole = False # Shutdown any open wormholes (particularly if turned on via web interface)
+                self.stargate.running = False  # Stop the stargate object from running.
 
                 break # This will break us out of the while loop and end the function.
 
             ## If the user hits the centre_button
             elif key == 'A':
-                # If we are dialing
-                if len(stargate.address_buffer_outgoing) > 0 and not stargate.wormhole:
-                    stargate.centre_button_outgoing = True
-                    stargate.dialer.hardware.set_center_on() # Activate the centre_button_outgoing light
-                # If an outgoing wormhole is established
-                if stargate.wormhole == 'outgoing':
-                    if stargate.fan_gate_online_status: # If we are connected to a fan_gate
-                        send_to_remote_stargate(get_ip_from_stargate_address(stargate.address_buffer_outgoing, stargate.fan_gates), 'centre_button_incoming')
-                    if not stargate.black_hole: # If we did not dial the black hole.
-                        stargate.wormhole = False # cancel outgoing wormhole
+                self.queue_center_button()
 
             # If we are hitting symbols on the DHD.
-            elif symbol_number != 'unknown' and symbol_number not in stargate.address_buffer_outgoing:
-                # If we have not yet activated the centre_button
-                if not (stargate.centre_button_outgoing or stargate.centre_button_incoming):
-                    stargate.dialer.hardware.set_symbol_on( symbol_number ) # Light this symbol on the DHD
+            else:
+                self.queue_symbol(symbol_number)
+                
+    def queue_symbol(self, symbol_number):
+        self.audio.play_random_clip("DHD")
+        if symbol_number != 'unknown' and symbol_number not in self.stargate.address_buffer_outgoing:
+            # If we have not yet activated the centre_button
+            if not (self.stargate.centre_button_outgoing or self.stargate.centre_button_incoming):
+                self.stargate.dialer.hardware.set_symbol_on( symbol_number ) # Light this symbol on the DHD
 
-                    # Append the symbol to the outgoing address buffer
-                    stargate.address_buffer_outgoing.append(symbol_number)
-                    self.log.log(f'address_buffer_outgoing: {stargate.address_buffer_outgoing}') # Log the address_buffer
+                # Append the symbol to the outgoing address buffer
+                self.stargate.address_buffer_outgoing.append(symbol_number)
+                self.log.log(f'address_buffer_outgoing: {self.stargate.address_buffer_outgoing}') # Log the address_buffer
+            
+    def queue_center_button(self):
+        self.audio.play_random_clip("DHD")
+        # If we are dialing
+        if len(self.stargate.address_buffer_outgoing) > 0 and not self.stargate.wormhole:
+            self.stargate.centre_button_outgoing = True
+            self.stargate.dialer.hardware.set_center_on() # Activate the centre_button_outgoing light
+        # If an outgoing wormhole is established
+        if self.stargate.wormhole == 'outgoing':
+            # TODO: We shouldn't be doing subspace-y stuff in the keyboard manager
+            if self.stargate.fan_gate_online_status: # If we are connected to a fan_gate
+                self.stargate.subspace.send_to_remote_stargate(self.stargate.subspace.get_ip_from_stargate_address(self.stargate.address_buffer_outgoing, self.addressBook.get_fan_gates()), 'centre_button_incoming')
+            if not self.stargate.black_hole: # If we did not dial the black hole.
+                self.stargate.wormhole = False # cancel outgoing wormhole            
+            if self.stargate.fan_gate_online_status: # If we are connected to a fan_gate
+                self.stargate.subspace.send_to_remote_stargate(self.stargate.subspace.get_ip_from_stargate_address(self.stargate.address_buffer_outgoing, self.addressBook.get_fan_gates()), 'centre_button_incoming')
+            if not self.stargate.black_hole: # If we did not dial the black hole.
+                self.stargate.wormhole = False # cancel outgoing wormhole
