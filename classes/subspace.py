@@ -154,8 +154,12 @@ class Subspace:
 
         # Try to get the IP from eth0
         eth0 = self.get_ip_address_by_interface('eth0')
-        if eth0 : return eth0 
-        
+        if eth0 : return eth0
+
+		# Try to get the IP from en0 (MacOS)
+        en0 = self.get_ip_address_by_interface('en0')
+        if en0 : return en0
+
         return None # If no IP found, return None
 
     def get_lan_ip(self):
