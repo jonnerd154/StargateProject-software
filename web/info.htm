@@ -9,10 +9,13 @@
         <style>
         .button, .cycleChevronButton {margin:10px;}
         </style>
-    </head>
-    <body>
+        
         <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
+        
+    </head>
+    <body>
+        
 
         <script type="text/javascript" >
             $(function() {
@@ -40,7 +43,7 @@
                             $('#localStargateAddress').html(data.local_stargate_address_string)
                         }
                         else{
-                            $('#localStargateAddress').html("Not Configured!")
+                            $('#localStargateAddress').html("<span id='configLocalSGAddress'>Click to Configure</span>")
                         }
 
 
@@ -110,7 +113,7 @@
                         setTimeout(function(){updateInfo( false ); }, poll_delay);
 
                     })
-                }
+            }
 
             function showOfflineModal(){
                 offline_modal.dialog("open");
