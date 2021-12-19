@@ -171,13 +171,14 @@ class Subspace:
         en1 = self.get_ip_address_by_interface('en1')
         if en1 : return en1
 
-    def get_subspace_ip(self):
-        # Try to get the IP from wlan0
+    def get_subspace_ip(self, subspace_only = False):
+        # Try to get the IP from subspace
         subspace = self.get_ip_address_by_interface('subspace')
         if subspace : return subspace
 
-        lan = self.get_lan_ip()
-        if lan : return lan
+        if (not subspace_only):
+            lan = self.get_lan_ip()
+            if lan : return lan
 
         return None
 
