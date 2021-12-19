@@ -67,7 +67,7 @@ class ElectronicsNone:
         return 0
 
     def init_neopixels(self):
-        self.neopixels = NeopixelSim()
+        self.neopixels = NeopixelSim(self.neopixelLEDCount)
 
     def get_wormhole_pixels(self):
         return self.neopixels
@@ -77,4 +77,3 @@ class ElectronicsNone:
 
     def get_led(self, gpio_number):
         return LEDSim()
-
