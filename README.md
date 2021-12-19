@@ -38,7 +38,7 @@ sudo apt-get update
 sudo apt-get upgrade
 sudo apt-get install apache2 -y
 ```
-- Add Directory block and ModProxy config to /etc/apache2/apache2.conf:
+- Add Directory block and ModProxy config to `/etc/apache2/apache2.conf`:
 ```
 <Directory /home/sg1/sg1/web>
         Options Indexes FollowSymLinks
@@ -52,13 +52,13 @@ ProxyPass     /stargate/     http://localhost:8080/
 export APACHE_RUN_USER=sg1
 export APACHE_RUN_GROUP=sg1
 ```
-- Configure the virtualhost DocumentRoot (edit `/etc/apache2/sites-available/000-default.conf`)
+- Configure the virtualhost DocumentRoot (edit `/etc/apache2/sites-available/000-default.conf`...edit exiting DocumentRoot directive)
 ```
 DocumentRoot /home/sg1/sg1/web
 ```
 - Enable ModProxy and ModProxyHTTP
 ```
-cd /etc/apache2
+cd /etc/apache2/mods-enabled
 sudo ln -s ../mods-available/proxy.conf proxy.conf
 sudo ln -s ../mods-available/proxy.load proxy.load
 sudo ln -s ../mods-available/proxy_http.load proxy_http.load
