@@ -65,12 +65,13 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                         "subspace_public_key":            self.stargate.subspace.get_public_key(),
                         "subspace_ip_address":            self.stargate.subspace.get_subspace_ip(),
                         "lan_ip_address":                 self.stargate.subspace.get_lan_ip(),
-                        "software_version":               self.stargate.swUpdater.get_current_version(),
+                        "software_version":               str(self.stargate.swUpdater.get_current_version()),
                         "python_version":                 platform.python_version(),
                         "internet_available":             self.stargate.netTools.has_internet_access(),
                         "subspace_available":             self.stargate.subspace.is_online(),
                         "standard_gate_count":            len(self.stargate.addrManager.getBook().get_standard_gates()),
-                        "fan_gate_count":                 len(self.stargate.addrManager.getBook().get_fan_gates())
+                        "fan_gate_count":                 len(self.stargate.addrManager.getBook().get_fan_gates()),
+                        "dialer_mode":                    self.stargate.dialer.type
                     }
                     content = json.dumps( data )
 

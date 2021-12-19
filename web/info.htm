@@ -44,33 +44,35 @@
                         }
 
 
-												$('#lanIPAddress').html(data.lan_ip_address)
-												$('#softwareVersion').html(data.software_version)
-												$('#pythonVersion').html(data.python_version)
-												$('#fanGateCount').html(data.fan_gate_count)
-												$('#standardGateCount').html(data.standard_gate_count)
+                        $('#lanIPAddress').html(data.lan_ip_address)
+                        $('#softwareVersion').html(data.software_version)
+                        $('#pythonVersion').html(data.python_version)
+                        $('#fanGateCount').html(data.fan_gate_count)
+                        $('#standardGateCount').html(data.standard_gate_count)
+                        $('#dialerMode').html(data.dialer_mode)
 
-												if (data.subspace_public_key){
-													$('#publicKey').html(data.subspace_public_key)
-												}
-												else{
-													$('#publicKey').html("n/a")
-													$('#subspaceStatus').html("Not Configured")
-												}
 
-												if (data.internet_available){
-													$('#hasInternet').html("Connected")
-												}
-												else{
-													$('#hasInternet').html("Offline")
-												}
+                        if (data.subspace_public_key){
+                          $('#publicKey').html(data.subspace_public_key)
+                        }
+                        else{
+                          $('#publicKey').html("n/a")
+                          $('#subspaceStatus').html("Not Configured")
+                        }
 
-												if (data.subspace_available){
-													$('#subspaceStatus').html("Connected")
-												}
-												else{
-													$('#subspaceStatus').html("Offline")
-												}
+                        if (data.internet_available){
+                          $('#hasInternet').html("Connected")
+                        }
+                        else{
+                          $('#hasInternet').html("Offline")
+                        }
+
+                        if (data.subspace_available){
+                          $('#subspaceStatus').html("Connected")
+                        }
+                        else{
+                          $('#subspaceStatus').html("Offline")
+                        }
 
                         // If we don't have a Subspace IP,
                         if (!data.subspace_ip_address){
@@ -121,22 +123,24 @@
         </script>
 
         <div class='div-table'>
-					  <div class="div-table-row"><span class="div-table-col-names">Software Version:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="softwareVersion">Loading...</span></div>
-						<div class="div-table-row"><span class="div-table-col-names">Local Stargate Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="localStargateAddress">Loading...</span></div>
-						<div class="div-table-row"><span class="div-table-col-names">Subspace Status:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="subspaceStatus">Loading...</span></div>
+            <div class="div-table-row"><span class="div-table-col-names">Software Version:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="softwareVersion">Loading...</span></div>
+            <div class="div-table-row"><span class="div-table-col-names">Python Version:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="pythonVersion">Loading...</span></div>
+            <div class="div-table-row"><span class="div-table-col-names">Local Stargate Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="localStargateAddress">Loading...</span></div>
+            <div class="div-table-row"><span class="div-table-col-names">Subspace Status:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="subspaceStatus">Loading...</span></div>
             <div class="div-table-row"><span class="div-table-col-names">Subspace Public Key:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="publicKey">Loading...</span></div>
             <div class="div-table-row"><span class="div-table-col-names">Subspace IP Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="subspaceIPAddress">Loading...</span></div>
-						<div class="div-table-row"><span class="div-table-col-names">Internet Connection:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="hasInternet">Loading...</span></div>
-						<div class="div-table-row"><span class="div-table-col-names">LAN IP Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="lanIPAddress">Loading...</span></div>
-						<div class="div-table-row"><span class="div-table-col-names">Known Standard Gates:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="standardGateCount">Loading...</span></div>
-						<div class="div-table-row"><span class="div-table-col-names">Known Fan Gates:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="fanGateCount">Loading...</span></div>
+            <div class="div-table-row"><span class="div-table-col-names">Internet Connection:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="hasInternet">Loading...</span></div>
+            <div class="div-table-row"><span class="div-table-col-names">LAN IP Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="lanIPAddress">Loading...</span></div>
+            <div class="div-table-row"><span class="div-table-col-names">Known Standard Gates:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="standardGateCount">Loading...</span></div>
+            <div class="div-table-row"><span class="div-table-col-names">Known Fan Gates:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="fanGateCount">Loading...</span></div>
+            <div class="div-table-row"><span class="div-table-col-names">Dialer Mode:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="dialerMode">Loading...</span></div>
 
         </div>
 
         <hr />
 
         <div class="controls">
-        	<div class="control" onclick="window.location = 'index.htm';">
+          <div class="control" onclick="window.location = 'index.htm';">
                 Dialing page
             </div>
         </div>
