@@ -154,7 +154,18 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
                     self.stargate.address_buffer_incoming.append(7) # Point of origin
                     self.stargate.centre_button_incoming = True
-
+                    
+            elif data['action'] == "set_local_stargate_address":
+                print("Setting Local Stargate Address")
+            
+            elif data['action'] == "set_subspace_ip":
+                print("Setting Subspace IP Address")
+            
+            elif data['action'] == "subspace_up":
+                print("Subspace UP")
+            
+            elif data['action'] == "subspace_down":
+                print("Subspace DOWN")
 
         elif self.path == '/dhd_press':
             symbol_number = int(data['symbol'])
