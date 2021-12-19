@@ -31,7 +31,6 @@
                 var dialog, form,
 
                     // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
-                    emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
                     symbol_1 = $( "#symbol_1" ),
                     symbol_2 = $( "#symbol_2" ),
                     symbol_3 = $( "#symbol_3" ),
@@ -87,12 +86,18 @@
                             url: 'stargate/update',
                             data: JSON.stringify({
                                 action: 'set_local_stargate_address',
-                                address: allFields.serialize(),
+                                S1: parseInt(symbol_1.val()),
+                                S2: parseInt(symbol_2.val()),
+                                S3: parseInt(symbol_3.val()),
+                                S4: parseInt(symbol_4.val()),
+                                S5: parseInt(symbol_5.val()),
+                                S6: parseInt(symbol_6.val())
                             })
                         })
                         .done(function(data) {
                             if (data['success']){
                                 dialog.dialog( "close" );
+                                updateInfo();
                             }
                             else{
                                 $("<div></div>").html( data.error ).dialog({

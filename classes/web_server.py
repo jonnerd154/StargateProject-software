@@ -155,12 +155,21 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     self.stargate.address_buffer_incoming.append(7) # Point of origin
                     self.stargate.centre_button_incoming = True
                     
-            elif data['action'] == "set_local_stargate_address":
-                print("Setting Local Stargate Address")
-                data = {
-                    "success": False,
-                    "error": "BIG PROBLEM!",
-                }
+            elif data['action'] == "set_local_stargate_address":              
+                # Parse the address
+                try:
+                    address = [ data['S1'], data['S2'], data['S3'], data['S4'], data['S5'], data['S6'] ] 
+                except Exception as e:
+                    data = { "success": False, "error": "Required fields missing or invalid request" }
+                    
+                # Validate that this is an acceptable address
+                
+                
+                # Store the address:
+                # TODO: Error checking
+                self.stargate.addrManager.getBook().set_local_address(address)
+                data = { "success": True }
+                
                 self.send_json_response(data)
                 return
             
