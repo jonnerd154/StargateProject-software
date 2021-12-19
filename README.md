@@ -28,6 +28,9 @@ sudo nano /etc/hosts
 
 sudo nano /etc/hostname
 ## replace the contents with the same name as above (stargate)
+
+sudo hostname stargate
+
 sudo reboot
 ```
 When the Pi comes back up, you should be able to access the web console by navigating to:
