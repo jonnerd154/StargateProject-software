@@ -8,6 +8,11 @@
 
         <style>
         .button, .cycleChevronButton {margin:10px;}
+        
+        input[type='number']{
+            width:150px;
+        } 
+
         </style>
         
         <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
@@ -18,10 +23,101 @@
         
 
         <script type="text/javascript" >
-            $(function() {
+    
+            $( function() {
+                
                 updateInfo();
-            });
+                
+                var dialog, form,
 
+                    // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
+                    emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+                    symbol_1 = $( "#symbol_1" ),
+                    symbol_2 = $( "#symbol_2" ),
+                    symbol_3 = $( "#symbol_3" ),
+                    symbol_4 = $( "#symbol_4" ),
+                    symbol_5 = $( "#symbol_5" ),
+                    symbol_6 = $( "#symbol_6" ),
+                    allFields = $( [] ).add( symbol_1 ).add( symbol_2 ).add( symbol_3 ).add( symbol_4 ).add( symbol_5 ).add( symbol_6 ),
+
+                    tips = $( ".validateTips" );
+
+                function updateTips( t ) {
+                    tips
+                        .text( t )
+                        .addClass( "ui-state-highlight" );
+                    setTimeout(function() {
+                        tips.removeClass( "ui-state-highlight", 1500 );
+                    }, 500 );
+                }
+
+                function checkSymbol( o, n, min, max ) {
+                    if (o.val() == ""){
+                        o.addClass( "ui-state-error" );
+                        updateTips( n + " is required");
+                        return false
+                    }
+                    if ( o.val() > max || o.val() < min ) {
+                        o.addClass( "ui-state-error" );
+                        updateTips( "Value of " + o + " must be between " +
+                            min + " and " + max + "." );
+                        return false;
+                    } 
+                    else {
+                        return true;
+                    }
+                }
+
+                function validateAndSaveLocalAddress() {
+                    var valid = true;
+                    allFields.removeClass( "ui-state-error" );
+                    valid = valid && checkSymbol( symbol_1, "Symbol 1", 0, 37 );
+                    valid = valid && checkSymbol( symbol_2, "Symbol 2", 0, 37 );
+                    valid = valid && checkSymbol( symbol_3, "Symbol 3", 0, 37 );
+                    valid = valid && checkSymbol( symbol_4, "Symbol 4", 0, 37 );
+                    valid = valid && checkSymbol( symbol_5, "Symbol 5", 0, 37 );
+                    valid = valid && checkSymbol( symbol_6, "Symbol 6", 0, 37 );
+
+                    // TODO: Check that no symbols were used twice
+                    
+                    
+                    if ( valid ) {
+                        // Save to API
+                        success = true
+                        
+                        // If Valid, close the window
+                        if (success){
+                            dialog.dialog( "close" );
+                        }
+                    }
+                    return valid;
+                }
+
+                dialog = $( "#dialog-form" ).dialog({
+                    autoOpen: false,
+                    height: 400,
+                    width: 350,
+                    modal: true,
+                    buttons: {
+                        "Validate & Save": validateAndSaveLocalAddress,
+                        Cancel: function() {
+                            dialog.dialog( "close" );
+                        }
+                    },
+                    close: function() {
+                        form[ 0 ].reset();
+                        allFields.removeClass( "ui-state-error" );
+                    }
+                });
+
+                form = dialog.find( "form" ).on( "submit", function( event ) {
+                    event.preventDefault();
+                    validateAndSaveLocalAddress();
+                });
+
+                
+            } );
+                
             const poll_delay = 500
 
             var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
@@ -40,12 +136,14 @@
 
                         // Update the UI
                         if (data.local_stargate_address_string){
-                            $('#localStargateAddress').html(data.local_stargate_address_string)
+                            $('#localStargateAddress').html(data.local_stargate_address_string + "<button id='config-lcl-sg-addr'>Configure</button>")
                         }
                         else{
-                            $('#localStargateAddress').html("<span id='configLocalSGAddress'>Click to Configure</span>")
+                            $('#localStargateAddress').html("<button id='config-lcl-sg-addr'>Configure</button>")
                         }
-
+                        $( "#config-lcl-sg-addr" ).button().on( "click", function() {
+                            $( "#dialog-form" ).dialog( "open" );
+                        });
 
                         $('#lanIPAddress').html(data.lan_ip_address)
                         $('#softwareVersion').html(data.software_version)
@@ -53,7 +151,6 @@
                         $('#fanGateCount').html(data.fan_gate_count)
                         $('#standardGateCount').html(data.standard_gate_count)
                         $('#dialerMode').html(data.dialer_mode)
-
 
                         if (data.subspace_public_key){
                           $('#publicKey').html(data.subspace_public_key)
@@ -125,6 +222,31 @@
 
         </script>
 
+        <div id="dialog-form" title="Configure Local Gate Address">
+            <p class="validateTips">Enter the Address you which to use.</p>
+
+            <form>
+                <fieldset>
+                    <label for="symbol_1">Symbol 1</label>
+                    <input type="number" name="name" min=0 max=38 length=40 id="symbol_1" value="" class="text ui-widget-content ui-corner-all">
+                    <label for="symbol_2">Symbol 2</label>
+                    <input type="number" name="name" min=0 max=38 id="symbol_2" value="" class="text ui-widget-content ui-corner-all">
+                    <label for="symbol_3">Symbol 3</label>
+                    <input type="number" name="name" min=0 max=38 id="symbol_3" value="" class="text ui-widget-content ui-corner-all">
+                    <label for="symbol_4">Symbol 4</label>
+                    <input type="number" name="name" min=0 max=38 id="symbol_4" value="" class="text ui-widget-content ui-corner-all">
+                    <label for="symbol_5">Symbol 5</label>
+                    <input type="number" name="name" min=0 max=38 id="symbol_5" value="" class="text ui-widget-content ui-corner-all">
+                    <label for="symbol_6">Symbol 6</label>
+                    <input type="number" name="name" min=0 max=38 id="symbol_6" value="" class="text ui-widget-content ui-corner-all">
+                    
+
+                    <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                    <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+                </fieldset>
+            </form>
+        </div>
+
         <div class='div-table'>
             <div class="div-table-row"><span class="div-table-col-names">Software Version:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="softwareVersion">Loading...</span></div>
             <div class="div-table-row"><span class="div-table-col-names">Python Version:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="pythonVersion">Loading...</span></div>
@@ -143,8 +265,11 @@
         <hr />
 
         <div class="controls">
-          <div class="control" onclick="window.location = 'index.htm';">
-                Dialing page
+            <div class="control" onclick="window.location = 'testing.htm';">
+                Testing / Debug
+            </div>
+             <div class="control" onclick="window.location = 'index.htm';">
+                Dialing <br> page
             </div>
         </div>
 
