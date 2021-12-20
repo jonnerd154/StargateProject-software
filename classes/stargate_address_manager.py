@@ -117,6 +117,20 @@ class StargateAddressManager:
             except:
                 pass
         return False
+        
+    def verify_address_available(self, address):
+        if len(address) < 6:
+            return False, "Address requires 6 symbols"
+        
+        entry = self.addressBook.get_entry_by_address(address)
+        if entry:
+            if entry['type'] == "standard":
+                return False, "This address is already in use by {}".format(entry['name']), entry
+            if entry['type'] == "fan":
+                return "VERIFY_OWNED", "Address in use by a fan gate.", entry
+        
+        return True, "", None
+            
 
 class StargateAddressValidator:
 
