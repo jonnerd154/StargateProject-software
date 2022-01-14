@@ -1,4 +1,5 @@
 from time import sleep
+import adafruit_pixelbuf
 
 class StepperSim:
 
@@ -37,19 +38,28 @@ class LEDSim:
     def off(self):
         pass
 
-class NeopixelSim:
+class NeopixelSim(adafruit_pixelbuf.PixelBuf):
 
-	def __init__(self):
-		pass
+    def __init__( self, n: int,):
+        super().__init__(
+            n, brightness=1.0, byteorder="GRB", auto_write=True
+        )
 
-	def show(self):
-		pass
+    def deinit(self) -> None:
+        self.fill(0)
 
-	def fill(self, color_tuple):
-		pass
+    def __enter__(self):
+        return self
 
-	def __setitem__(self, index, val):
-		return None
+    def __exit__(self):
+        self.deinit()
 
-	def __getitem__(self, index):
-		return [ [], [], [] ]
+    def __repr__(self):
+        return "[" + ", ".join([str(x) for x in self]) + "]"
+
+    @property
+    def n(self) -> int:
+        return len(self)
+
+    def _transmit(self, buffer: bytearray) -> None:
+        pass

@@ -176,3 +176,28 @@ html {
 }
 
 .no-close .ui-dialog-titlebar-close {  display: none; }
+
+.div-table {
+  display: table;         
+  width: auto;         
+  #background-color: #eee;         
+  border: 1px solid #666666;         
+  border-spacing: 5px; /* cellspacing:poor IE support for  this */
+}
+.div-table-row {
+  display: table-row;
+  width: auto;
+  clear: both;
+}
+.div-table-col-names {
+  float: left; /* fix for  buggy browsers */
+  display: table-column;         
+  width: 200px;         
+  #background-color: #ccc;  
+}
+.div-table-col-values {
+  float: left; /* fix for  buggy browsers */
+  display: table-column;         
+  width: auto;         
+  #background-color: #ccc;  
+}

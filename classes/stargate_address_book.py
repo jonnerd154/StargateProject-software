@@ -25,7 +25,13 @@ class StargateAddressBook:
      
     def get_local_address(self):
         return self.datastore.get("local_stargate_address")
-                
+        
+    def get_local_address_string(self):
+        if self.get_local_address() and len(self.get_local_address()) == 6:
+            return "[ " + ', '.join(str(x) for x in self.get_local_address()) + " ]"
+        else:
+            return False
+            
     def set_local_address(self, address):
         # TODO: Validate address
         # TODO: Ensure unique address
@@ -40,12 +46,14 @@ class StargateAddressBook:
         #print("Searching Address Book for {}".format(address))
         found_standard_gate = self.get_standard_gate_by_address(address)
         if found_standard_gate:
+            found_standard_gate['type'] = 'standard'
             return found_standard_gate
         
         found_fan_gate = self.get_fan_gate_by_address(address)
         if found_fan_gate:
-            return found_standard_gate
-        
+            found_fan_gate['type'] = 'fan'
+            return found_fan_gate
+
         return False 
     
     def get_all_nonlocal_addresses(self):
@@ -60,9 +68,10 @@ class StargateAddressBook:
         return self.datastore.get("fan_gates")   
     
     def get_fan_gate_by_address(self, address):
-        for key, value in self.get_fan_gates().items():
-            if address == value['gate_address']:   
+        for key, value in self.get_fan_gates().items():           
+            if address == value['gate_address']:
                 return value
+                
         return False
           
     def set_fan_gate(self, name, gate_address, ip_address, is_black_hole=False):

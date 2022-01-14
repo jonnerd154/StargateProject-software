@@ -8,7 +8,7 @@ class Dialer:
 
         self.log = stargate.log
         self.cfg = stargate.cfg
-                
+
         # Retrieve the configurations
         self.DHD_port = self.cfg.get("DHD_serial_port")
         self.DHD_baud_rate = self.cfg.get("DHD_baud_rate")
@@ -19,9 +19,10 @@ class Dialer:
         self.DHD_enable = self.cfg.get("DHD_enable")
 
         self.hardware = None
-        
+        self.type = None
+
         self._connect_dialer()
-        
+
     def _connect_dialer(self):
         # Detect if we have a DHD connected, else use the keyboard
         try:
@@ -29,21 +30,23 @@ class Dialer:
             if not self.DHD_enable:
                 raise
             self.hardware = self._connect_dhd()
+            self.type = "DHDv2"
         except:
             self.log.log('No DHD found or DHD is disabled. Switching to keyboard mode')
             self.hardware = KeyboardMode()
+            self.type = "Keyboard"
 
     def _connect_dhd(self):
         ### Connect to the DHD object. Will throw exception if not present
         dhd = DHDv2(self.DHD_port, self.DHD_baud_rate)
         self.log.log('DHDv2 Found. Connected.')
-    
+
         # Configure the DHD
         dhd.setBrightnessCenter(self.DHD_brightness_center)
         dhd.setBrightnessSymbols(self.DHD_brightness_symbols)
         dhd.setColorCenter(self.DHD_color_center)
         dhd.setColorSymbols(self.DHD_color_symbols)
-        
+
         # Blink the middle button to signal the DHD is ready
         dhd.setPixel(0, 255, 255, 255)
         dhd.latch()
@@ -163,11 +166,11 @@ class DHDv2:
     def latch(self):
         self.c.send("latch")
         return True
-    
+
     def clear_lights(self):
         self.setAllPixelsToColor(0, 0, 0) # All Off
         self.latch()
-    
+
     def set_center_on( self ):
         self.setPixel(0, self.color_center[0], self.color_center[1], self.color_center[2]) # LED 0, Pure red.
         self.latch()
@@ -175,13 +178,13 @@ class DHDv2:
     def set_symbol_on( self, symbol_number ):
         self.setPixel(symbol_number, self.color_symbols[0], self.color_symbols[1], self.color_symbols[2])
         self.latch()
-          
+
     def setColorCenter(self, colorTuple):
         self.color_center = colorTuple
-        
+
     def setColorSymbols(self, colorTuple):
         self.color_symbols = colorTuple
-        
+
     def get_DHD_port():
         """
         This is a simple helper function to help locate the port for the DHD
@@ -198,7 +201,7 @@ class DHDv2:
 
         # If the DHD is not detected
         return None
-    
+
 
 class KeyboardMode:
     """
@@ -251,19 +254,19 @@ class KeyboardMode:
 
     def latch(self):
         pass
-    
+
     def clear_lights(self):
         pass
-    
+
     def set_center_on( self ):
         pass
 
     def set_symbol_on( self, symbol_number ):
         pass
-    
+
     def setColorCenter(self, colorTuple):
         pass
-                
+
     def setColorSymbols(self, colorTuple):
         pass
 
@@ -276,7 +279,7 @@ class KeyboardMode:
 #         import board
 #         self.dots = dotstar.DotStar(board.D14, board.D15, 39, brightness=0.01)
 #         self.center_dot = dotstar.DotStar(board.D14, board.D15, 1, brightness=0.15)
-# 
+#
 #     def light_on(self, symbol_number, color):
 #         """
 #         This helper function activates the light for the dhd button of "symbol" with the "color" specified.

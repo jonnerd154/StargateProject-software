@@ -1,4 +1,8 @@
 import socket
+import subprocess
+import os, netifaces
+from ipaddress import ip_address
+from icmplib import ping
 
 from database import Database
 
@@ -10,19 +14,24 @@ class Subspace:
         self.cfg = stargate.cfg
 
         self.database = Database(stargate.base_path)
-        
+
         # Retrieve the configurations
         self.port = self.cfg.get("subspace_port") # just for fun because the Stargate can stay open for 38 minutes. :)
         self.timeout = self.cfg.get("subspace_timeout") # the timeout value when connecting to a remote stargate (seconds)
+        self.keep_alive_address = self.cfg.get("subspace_keep_alive_address")
 
         # Some other configurations that are relatively static will stay here
         self.header_bytes = 8
         self.encoding_format = 'utf-8'
         self.disconnect_message = '!DISCONNECT'
-    
+
         # We'll share one Client object through a few methods. Initialize it here.
         self.client = None
-        
+
+    def get_public_key(self):
+        cmd = 'sudo util/get_subspace_public_key.sh'
+        return subprocess.check_output(cmd, shell=True).decode('ascii')
+
     def send_raw(self, msg):
         message = msg.encode(self.encoding_format)
         msg_length = len(message)
@@ -117,3 +126,78 @@ class Subspace:
             return [k for k, v in fan_gates.items() if v[1] == IP]['name']
         except:
             return 'Unknown'
+
+    def get_stargate_server_ip(self):
+        """
+        This method tries to get the IP address of the subspace network interface. It also tries to start the subspace
+        interface if it's not already present. If it can't get the subspace interface IP, it will try to get the wlan0 IP instead.
+        :return: The IP address is returned as a string.
+        """
+
+        server_ip = None  # initialize the variable
+
+        ## If the subspace interface is not active, try to activate it.
+        if not 'subspace' in netifaces.interfaces():
+            try:
+                self.log.log('Subspace network interface was not found, attempting to bring up the interface.')
+                os.popen('wg-quick up subspace').read()
+            except Exception as ex:
+                self.log.log('subspace ERROR: {}'.format(ex))
+
+        # Try to get the IP from subspace
+        subspace = self.get_ip_address_by_interface('subspace')
+        if subspace : return subspace
+
+        # Try to get the IP from wlan0
+        lan = self.get_lan_ip()
+        if lan : return lan
+
+        return None # If no IP found, return None
+
+    def get_lan_ip(self):
+        # Try to get the IP from wlan0
+        wlan0 = self.get_ip_address_by_interface('wlan0')
+        if wlan0 : return wlan0
+
+        # Try to get the IP from eth0
+        eth0 = self.get_ip_address_by_interface('eth0')
+        if eth0 : return eth0
+
+        # Try to get the IP from en0
+        en0 = self.get_ip_address_by_interface('en0')
+        if en0 : return en0
+
+        # Try to get the IP from en1 (MacOS)
+        en1 = self.get_ip_address_by_interface('en1')
+        if en1 : return en1
+
+    def get_subspace_ip(self, subspace_only = False):
+        # Try to get the IP from subspace
+        subspace = self.get_ip_address_by_interface('subspace')
+        if subspace : return subspace
+
+        if (not subspace_only):
+            lan = self.get_lan_ip()
+            if lan : return lan
+
+        return None
+
+    def get_ip_address_by_interface(self, interface_name, ping = False):
+        try:
+            server_ip = netifaces.ifaddresses(interface_name)[2][0]['addr']
+            if ip_address(server_ip):
+                if (ping):
+                    self.ping()
+
+                return server_ip
+        except Exception as ex:
+            self.log.log('ERROR getting {} IP: {}'.format(interface_name, ex), True)
+            return False
+
+    def is_online(self):
+        return self.ping()
+
+    def ping(self):
+        if ping(self.keep_alive_address, count=1, timeout=1).is_alive:
+            return True
+        return False
