@@ -85,5 +85,5 @@
   "wormhole_max_time_blackhole": 5259488,
   "audio_clip_wait_time_blackhole": 7,
   "allow_incoming_dialing": true,
-  "fan_gate_refresh_interval": 30
+  "fan_gate_refresh_interval": 30,
 }

@@ -24,9 +24,9 @@ class StargateAddressManager:
 
         self.validator = StargateAddressValidator()
 
-        # Update the fan gates from the DB every 30 minutes
+        # Update the fan gates from the DB every x minutes
         interval = self.cfg.get("fan_gate_refresh_interval")
-        stargate.app.schedule.every(interval).seconds.do( self.update_fan_gates_from_db )
+        stargate.app.schedule.every(interval).minutes.do( self.update_fan_gates_from_db )
 
     def getBook(self):
         return self.addressBook
