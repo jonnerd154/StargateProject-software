@@ -126,7 +126,11 @@ class StargateAddressManager:
 
     def verify_address_available(self, address):
         if len(address) < 6:
-            return False, "Address requires 6 symbols"
+            return False, "Address requires 6 symbols", None
+
+        remove_dups = list(dict.fromkeys(address))
+        if len(remove_dups) < 6:
+            return False, "Each symbol can only be used once.", None
 
         entry = self.addressBook.get_entry_by_address(address)
         if entry:
