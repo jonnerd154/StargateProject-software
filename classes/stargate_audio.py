@@ -75,8 +75,9 @@ class StargateAudio:
         while not path.isfile(filepath): # If the rand_file is not a file. (If it's a directory)
             rand_file = choice(listdir(path_to_folder)) # Choose a new one.
             filepath = path.join(path_to_folder, rand_file) # Update Filepath
-        self.random_clip = sa.WaveObject.from_wave_file(path_to_folder + '/' + rand_file)
-        self.random_clip.play()
+        clip = sa.WaveObject.from_wave_file(path_to_folder + '/' + rand_file)
+        self.random_clip = clip.play()
+
         return
 
     def random_clip_is_playing(self):
