@@ -6,7 +6,7 @@ class StepperSim:
     def __init__(self):
 
         self.onestepTime = 0.0038 # in seconds, how long does a step take to exec on real HW
-        self.onestepTime = 0 # in seconds, how long does a step take to exec on real HW
+        #self.onestepTime = 0 # For testing in "turbo sim" mode
         pass
 
     def onestep(self, direction, style):
@@ -43,7 +43,7 @@ class NeopixelSim(adafruit_pixelbuf.PixelBuf):
 
     def __init__( self, n: int,):
         super().__init__(
-            n, brightness=1.0, byteorder="GRB", auto_write=True
+            n, brightness=1.0, byteorder="GRB", auto_write=True # Can set this to False to tighten timings for testing
         )
 
     def deinit(self) -> None:
