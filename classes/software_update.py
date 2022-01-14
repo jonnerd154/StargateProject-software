@@ -18,11 +18,15 @@ class SoftwareUpdate:
         self.audio = app.audio
 
         self.database = Database(app.base_path)
-        
+
         # Retrieve the configurations
         self.base_url = self.cfg.get("software_updates_url")
         self.fileDownloadUsername = self.cfg.get("software_updates_username")
         self.fileDownloadPassword = self.cfg.get("software_updates_password")
+
+        # Update the fan gates from the DB every x hours
+        interval = self.cfg.get("software_update_interval")
+        app.schedule.every(interval).hours.do( self.check_and_install )
 
     def get_current_version(self):
         return self.current_version
