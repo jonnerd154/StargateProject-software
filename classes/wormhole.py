@@ -28,16 +28,16 @@ class Wormhole:
         self.audio_clip_wait_time_default = self.cfg.get("wormhole_open_random_sound_interval_seconds")  # The frequency of the random audio clips.
         self.audio_clip_wait_time_blackhole = self.cfg.get("audio_clip_wait_time_blackhole")
         self.wormhole_close_audio_headstart = self.cfg.get("wormhole_close_audio_headstart") # How early should we start playing the "wormhole close" sound clip before running the hardware close procedure
-         
+
         # Load some state variables
         self.audio_clip_wait_time = self.audio_clip_wait_time_default
         self.wormhole_max_time = self.wormhole_max_time_default
 
         # Turn off all the LEDs
         self.clear_wormhole()
-        
+
         self.open_time = None
-        
+
     ## The wormhole helper functions
     def clear_wormhole(self):
         """
@@ -46,7 +46,7 @@ class Wormhole:
         """
         pattern = self.pattern_off(self.tot_leds)
         self.set_wormhole_pattern(self.pixels, pattern)
-        
+
     def possible_wormholes(self, black_hole=False):
         def pattern1(number_of_leds, color1, color2):
             """
@@ -63,7 +63,7 @@ class Wormhole:
                 pattern[led] = color2
                 pattern[led - 1] = color2
             return pattern
-            
+
         def pattern2(number_of_leds, base_color, size):
             """
             This method creates the wormhole pattern2
@@ -84,7 +84,7 @@ class Wormhole:
                 pattern[(led + 2) % number_of_leds] = third_color
                 pattern[(led - 2) % number_of_leds] = third_color
             return pattern
-            
+
         def pattern3(number_of_leds, base_color, size):
             """
             This method creates the wormhole pattern3
@@ -200,7 +200,7 @@ class Wormhole:
         self.audio.sound_start('wormhole_close')  # Play the close wormhole audio
         sleep(self.wormhole_close_audio_headstart)
         self.fade_transition(no_pattern)
-        
+
         # Reset some state variables
         self.stargate.wormhole_max_time = self.wormhole_max_time_default # Reset the variable
         self.stargate.audio_clip_wait_time = self.audio_clip_wait_time_default # Reset the variable
@@ -328,7 +328,7 @@ class Wormhole:
             return math.floor(self.wormhole_max_time - time_elapsed)
         else:
             return 0
-        
+
     def establish_wormhole(self):
         """
         This is the main method in the wormhole class that opens and maintains a wormhole
@@ -349,7 +349,7 @@ class Wormhole:
         random_audio_start_time = time()
         random_audio_clip = False  # Initiate the variable
 
-        # If we dialled the black hole planet, change som variables
+        # If we dialed the black hole planet, change some variables
         if self.stargate.black_hole:  # If we dialed the black hole.
             possible_patterns = self.possible_wormholes(black_hole=True)
             self.wormhole_max_time = self.wormhole_max_time_blackhole * 60  # Make it 10 years...
@@ -363,6 +363,10 @@ class Wormhole:
         # Keep the wormhole open
         while self.stargate.wormhole and self.get_time_remaining() > 0:  # as long as stargate.wormhole, but for less time than the wormhole_max_time.
 
+            # TODO: These take a long time, and as a result we don't have tight timing
+            # on wormhole close/timeout, and the random clips.
+            #    Maybe the Neopixel stuff should run in it's own thread?
+            
             # random transition functions
             transition = choice(possible_transitions)
             if transition == 'fade':
@@ -372,23 +376,22 @@ class Wormhole:
             self.rotate_pattern(direction=choice(possible_directions), speed=randint(1, 10), revolutions=randint(1, 3))  # rotates the pattern.
 
             # Play random audio clips
+            self.log.log("checking audio")
             if (time() - random_audio_start_time) > self.audio_clip_wait_time:  # If there has been "silence" for more than audio_clip_wait_time
-                if not random_audio_clip:  # if the variable is False. Will only trigger for the first loop.
-                    random_audio_clip = self.audio.play_random_clip(audio_group)
-                elif hasattr(random_audio_clip, 'is_playing') and not random_audio_clip.is_playing():  # If it's not already playing
-                    random_audio_clip = self.audio.play_random_clip(audio_group)
+                self.audio.play_random_clip(audio_group) # Won't play if a clip is already playing
                 random_audio_start_time = time()
 
-        # when the loop exits, shut down the wormhole etc.
-        if (time() - self.open_time) > self.wormhole_max_time:  # if the wormhole closes due to the 38min time limit.
-            if hasattr(random_audio_clip, 'is_playing') and random_audio_clip.is_playing():  # If the random audio clip is still playing:
-                random_audio_clip.wait_done()  # wait until it's finished.
-            time_limit_audio = self.audio.play_random_clip("38min")  # The 38min ones.
-            time_limit_audio.wait_done()
+        # Wormhole is closing. Did it close because it ran out of power/time?
+        if self.get_time_remaining() < 0:  # if the wormhole closes due to the 38min time limit.
+            if self.audio.random_clip_is_playing():  # If the random audio clip is still playing:
+                self.audio.random_clip_wait_done()  # wait until it's finished.
+
+            self.audio.play_random_clip("38min")  # The 38min ones.
+            self.audio.random_clip_wait_done()  # wait until it's finished.
 
         self.close_wormhole()
         if self.audio.is_playing('wormhole_established'):
             self.audio.sound_stop('wormhole_established')
         self.stargate.wormhole = False # The close_wormhole method also does this.. shouldn't be needed.
         self.log.log(f'Disengaged Wormhole after {timedelta(seconds=int(time() - self.open_time))}')
-        self.open_time = None 
+        self.open_time = None

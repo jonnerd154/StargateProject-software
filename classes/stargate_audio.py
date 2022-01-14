@@ -31,13 +31,15 @@ class StargateAudio:
         self.sounds['chevron_6'] = { 'file': self.init_wav_file( "/chev_usual_6.wav" ) }
         self.sounds['chevron_7'] = { 'file': self.init_wav_file( "/chev_usual_7.wav" ) }
         self.incoming_chevron_sounds = [ self.sounds['chevron_4'],  self.sounds['chevron_5'],  self.sounds['chevron_6'],  self.sounds['chevron_7'] ]
-        
+
+        self.random_clip = None
+
         # Check/set the correct USB audio adapter. This is necessary because different raspberries detects the USB audio adapter differently.
         self.set_correct_audio_output_device()
-        
+
         self.volume = self.cfg.get('volume_as_percent')
         self.set_volume(self.volume)
-        
+
 
     def sound_start(self, clip_name):
         self.sounds[clip_name]['obj'] = self.sounds[clip_name]['file'].play()
@@ -53,7 +55,7 @@ class StargateAudio:
 
     def play_random_clip_from_group(self, group_name, wait_done):
         handle = choice(self.incoming_chevron_sounds)['file'].play()
-        
+
     def play_random_clip(self, directory):
 
         """
@@ -62,6 +64,10 @@ class StargateAudio:
         :return: the play object is returned.
         """
 
+        # Don't start playing another clip if one is already playing
+        if (self.random_clip_is_playing()):
+            return
+
         path_to_folder = self.soundFxRoot + "/" + directory
         rand_file = choice(listdir(path_to_folder))
         filepath =  path.join(path_to_folder, rand_file)
@@ -69,9 +75,19 @@ class StargateAudio:
         while not path.isfile(filepath): # If the rand_file is not a file. (If it's a directory)
             rand_file = choice(listdir(path_to_folder)) # Choose a new one.
             filepath = path.join(path_to_folder, rand_file) # Update Filepath
-        random_audio = sa.WaveObject.from_wave_file(path_to_folder + '/' + rand_file)
-        return random_audio.play()
+        self.random_clip = sa.WaveObject.from_wave_file(path_to_folder + '/' + rand_file)
+        self.random_clip.play()
+        return
 
+    def random_clip_is_playing(self):
+        try:
+            return self.random_clip.is_playing()
+        except AttributeError: # If there's never been a clip playing, this will be None.
+            return False
+
+    def random_clip_wait_done(self):
+        if self.random_clip_is_playing():
+            self.random_clip.wait_done()
 
     def get_usb_audio_device_card_number(self):
         """
@@ -122,11 +138,11 @@ class StargateAudio:
         :param percent_value: an integer between 0 and 100. 65 seems good.
         :return: Nothing is returned.
         """
-        
+
         # Update the config
         self.volume = percent_value
         self.cfg.set("volume_as_percent", self.volume)
-        
+
         try:
             subprocess.run(['amixer', '-M', 'set', 'Headphone', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             subprocess.run(['amixer', '-M', 'set', 'PCM', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -138,23 +154,23 @@ class StargateAudio:
     def volume_up(self, step=5):
         # Get current volume
         new_volume = self.volume
-        
+
         # Increase, to a max of 100
         new_volume+=step
         if (new_volume>100):
             new_volume = 100
-        
+
         # Set the volume, which also updates the config file
         self.set_volume(new_volume)
-    
+
     def volume_down(self, step=5):
         # Get current volume
         new_volume = self.volume
-        
+
         # Increase, to a max of 100
         new_volume-=step
         if (new_volume<0):
             new_volume = 0
-        
+
         # Set the volume, which also updates the config file
         self.set_volume(new_volume)
