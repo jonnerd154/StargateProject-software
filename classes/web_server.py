@@ -11,8 +11,8 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
     #Overload SimpleHTTPRequestHandler.log_message() to suppress logs from printing to console
     # *** Comment this out for debugging!! ***
-    # def log_message(self, format, *args):
-    #     pass
+    def log_message(self, format, *args):
+        pass
 
     def parse_GET_vars(self):
         qs = {}
@@ -94,7 +94,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             return
         except:
 
-            raise # *** Un-comment for debugging!! ***
+            # raise # *** Un-comment for debugging!! ***
 
             # Encountered an exception: send a 500
             self.send_response(500)
