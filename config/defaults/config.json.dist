@@ -83,5 +83,6 @@
   "wormhole_open_random_sound_interval_seconds": 17,
   "wormhole_close_audio_headstart": 1,
   "wormhole_max_time_blackhole": 5259488,
-  "audio_clip_wait_time_blackhole": 7
+  "audio_clip_wait_time_blackhole": 7,
+  "allow_incoming_dialing": true
 }

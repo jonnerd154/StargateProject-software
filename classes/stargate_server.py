@@ -88,6 +88,10 @@ class StargateServer:
 
                 # If we are receiving the centre_button_incoming
                 elif msg == 'centre_button_incoming':
+                    # Check if incoming wormholes are allowed
+                    if not self.cfg.get("allow_incoming_dialing"):
+                        return
+
                     # If a wormhole is already established, and we are receiving the centre_button_incoming from the same gate.
                     if self.stargate.wormhole and addr[0] == self.stargate.fan_gate_incoming_IP:
                         self.stargate.centre_button_incoming = False
@@ -121,6 +125,10 @@ class StargateServer:
 
                 # If we are receiving a stargate address, add it to the incoming buffer.
                 elif self.addrManager.is_valid(msg):
+                    # Check if incoming wormholes are allowed
+                    if not self.cfg.get("allow_incoming_dialing"):
+                        return
+
                     address = self.addrManager.is_valid(msg)
                     for symbol in address:
                         if not symbol in self.stargate.address_buffer_incoming:
