@@ -36,308 +36,350 @@
 
         <script type="text/javascript" >
 
-            $( function() {
+					// Configuration
+					var poll_delay_default = 5000
+					var poll_delay_offline = 500
 
-                updateInfo();
+					// State variables
+					var poll_delay = poll_delay_default
 
+					var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
+					offline_modal.dialog({
+							autoOpen: false,
+							modal: true,
+							dialogClass: "no-close",
+					});
 
+          $( function() {
+							doPoll();
+              updateInfo();
 
-                var dialog, form,
+              var dialog, form,
 
-                    // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
-                    symbol_1 = $( "#symbol_1" ),
-                    symbol_2 = $( "#symbol_2" ),
-                    symbol_3 = $( "#symbol_3" ),
-                    symbol_4 = $( "#symbol_4" ),
-                    symbol_5 = $( "#symbol_5" ),
-                    symbol_6 = $( "#symbol_6" ),
-                    allFields = $( [] ).add( symbol_1 ).add( symbol_2 ).add( symbol_3 ).add( symbol_4 ).add( symbol_5 ).add( symbol_6 ),
+                  // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
+                  symbol_1 = $( "#symbol_1" ),
+                  symbol_2 = $( "#symbol_2" ),
+                  symbol_3 = $( "#symbol_3" ),
+                  symbol_4 = $( "#symbol_4" ),
+                  symbol_5 = $( "#symbol_5" ),
+                  symbol_6 = $( "#symbol_6" ),
+                  allFields = $( [] ).add( symbol_1 ).add( symbol_2 ).add( symbol_3 ).add( symbol_4 ).add( symbol_5 ).add( symbol_6 ),
 
-                    tips = $( ".validateTips" );
+                  tips = $( ".validateTips" );
 
-                function updateTips( t ) {
-                    tips
-                        .text( t )
-                        .addClass( "ui-state-highlight" );
-                    setTimeout(function() {
-                        tips.removeClass( "ui-state-highlight", 1500 );
-                    }, 500 );
-                }
+              function updateTips( t ) {
+                  tips
+                      .text( t )
+                      .addClass( "ui-state-highlight" );
+                  setTimeout(function() {
+                      tips.removeClass( "ui-state-highlight", 1500 );
+                  }, 500 );
+              }
 
-                function checkSymbol( o, n, min, max ) {
-                    if (o.val() == ""){
-                        o.addClass( "ui-state-error" );
-                        updateTips( n + " is required");
-                        return false
-                    }
-                    if ( o.val() > max || o.val() < min ) {
-                        o.addClass( "ui-state-error" );
-                        updateTips( "Value of " + o + " must be between " +
-                            min + " and " + max + "." );
-                        return false;
-                    }
-                    else {
-                        return true;
-                    }
-                }
+              function checkSymbol( o, n, min, max ) {
+                  if (o.val() == ""){
+                      o.addClass( "ui-state-error" );
+                      updateTips( n + " is required");
+                      return false
+                  }
+                  if ( o.val() > max || o.val() < min ) {
+                      o.addClass( "ui-state-error" );
+                      updateTips( "Value of " + o + " must be between " +
+                          min + " and " + max + "." );
+                      return false;
+                  }
+                  else {
+                      return true;
+                  }
+              }
 
-                function validateAndSaveLocalAddress() {
-                    var valid = true;
-                    allFields.removeClass( "ui-state-error" );
-                    valid = valid && checkSymbol( symbol_1, "Symbol 1", 0, 37 );
-                    valid = valid && checkSymbol( symbol_2, "Symbol 2", 0, 37 );
-                    valid = valid && checkSymbol( symbol_3, "Symbol 3", 0, 37 );
-                    valid = valid && checkSymbol( symbol_4, "Symbol 4", 0, 37 );
-                    valid = valid && checkSymbol( symbol_5, "Symbol 5", 0, 37 );
-                    valid = valid && checkSymbol( symbol_6, "Symbol 6", 0, 37 );
+              function validateAndSaveLocalAddress() {
+                  var valid = true;
+                  allFields.removeClass( "ui-state-error" );
+                  valid = valid && checkSymbol( symbol_1, "Symbol 1", 0, 37 );
+                  valid = valid && checkSymbol( symbol_2, "Symbol 2", 0, 37 );
+                  valid = valid && checkSymbol( symbol_3, "Symbol 3", 0, 37 );
+                  valid = valid && checkSymbol( symbol_4, "Symbol 4", 0, 37 );
+                  valid = valid && checkSymbol( symbol_5, "Symbol 5", 0, 37 );
+                  valid = valid && checkSymbol( symbol_6, "Symbol 6", 0, 37 );
 
-                    // TODO: Check that no symbols were used twice
-
-
-                    if ( valid ) {
-                        // Save to API
-                        $.post({
-                            url: 'stargate/update',
-                            data: JSON.stringify({
-                                action: 'set_local_stargate_address',
-                                S1: parseInt(symbol_1.val()),
-                                S2: parseInt(symbol_2.val()),
-                                S3: parseInt(symbol_3.val()),
-                                S4: parseInt(symbol_4.val()),
-                                S5: parseInt(symbol_5.val()),
-                                S6: parseInt(symbol_6.val())
-                            })
-                        })
-                        .done(function(data) {
-                            if (data['success']){
-                                $("<div></div>").html( data.message ).dialog({
-                                    title: "CONGRATULATIONS!",
-                                    resizable: false,
-                                    modal: true,
-                                    buttons: {
-                                        'Ok': function()  {
-                                            $( this ).dialog( 'close' );
-                                        }
-                                    }
-                                });
-                                dialog.dialog( "close" );
-                                updateInfo();
-
-                            }
-                            else{
-                                $("<div></div>").html( data.error ).dialog({
-                                    title: "Error",
-                                    resizable: false,
-                                    modal: true,
-                                    buttons: {
-                                        'Ok': function()  {
-                                            $( this ).dialog( 'close' );
-                                        }
-                                    }
-                                });
-                            }
-
-                        })
-                        .fail(function() {
-                            console.log("Failed to communicate with Stargate")
-                            $("<div>Failed to communicate with Stargate</div>").dialog();
-                        });
-
-                    }
-                    return valid;
-                }
-
-                dialog = $( "#dialog-form" ).dialog({
-                    autoOpen: false,
-                    height: 500,
-                    width: 350,
-                    modal: true,
-                    buttons: {
-                        "Validate & Save": validateAndSaveLocalAddress,
-                        Cancel: function() {
-                            dialog.dialog( "close" );
-                        }
-                    },
-                    close: function() {
-                        form[ 0 ].reset();
-                        allFields.removeClass( "ui-state-error" );
-                    }
-                });
-
-                form = dialog.find( "form" ).on( "submit", function( event ) {
-                    event.preventDefault();
-                    validateAndSaveLocalAddress();
-                });
+                  // TODO: Check that no symbols were used twice
 
 
-            } );
+                  if ( valid ) {
+                      // Save to API
+                      $.post({
+                          url: 'stargate/update',
+                          data: JSON.stringify({
+                              action: 'set_local_stargate_address',
+                              S1: parseInt(symbol_1.val()),
+                              S2: parseInt(symbol_2.val()),
+                              S3: parseInt(symbol_3.val()),
+                              S4: parseInt(symbol_4.val()),
+                              S5: parseInt(symbol_5.val()),
+                              S6: parseInt(symbol_6.val())
+                          })
+                      })
+                      .done(function(data) {
+                          if (data['success']){
+                              $("<div></div>").html( data.message ).dialog({
+                                  title: "CONGRATULATIONS!",
+                                  resizable: false,
+                                  modal: true,
+                                  buttons: {
+                                      'Ok': function()  {
+                                          $( this ).dialog( 'close' );
+                                      }
+                                  }
+                              });
+                              dialog.dialog( "close" );
+                              updateInfo();
 
-            const poll_delay = 500
+                          }
+                          else{
+                              $("<div></div>").html( data.error ).dialog({
+                                  title: "Error",
+                                  resizable: false,
+                                  modal: true,
+                                  buttons: {
+                                      'Ok': function()  {
+                                          $( this ).dialog( 'close' );
+                                      }
+                                  }
+                              });
+                          }
 
-            var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
-            offline_modal.dialog({
-                autoOpen: false,
-                modal: true,
-                dialogClass: "no-close",
-            });
+                      })
+                      .fail(function() {
+                          console.log("Failed to communicate with Stargate")
+                          $("<div>Failed to communicate with Stargate</div>").dialog();
+                      });
 
-						var symbols = [] // This array will be populated by an ajax request
+                  }
+                  return valid;
+              }
 
-						function init_pulldowns(){
-							$('#symbol_1').ddslick({
-									data:symbols,
-									//width:300,
-									selectText: "Symbol 1",
-									imagePosition:"right",
-									onSelected: function(selectedData){
-											//callback function: do something with selectedData;
-									}
-							});
-							$('#symbol_2').ddslick({
-									data:symbols,
-									//width:300,
-									selectText: "Symbol 2",
-									imagePosition:"right",
-									onSelected: function(selectedData){
-											//callback function: do something with selectedData;
-									}
-							});
-							$('#symbol_3').ddslick({
-									data:symbols,
-									//width:300,
-									selectText: "Symbol 3",
-									imagePosition:"right",
-									onSelected: function(selectedData){
-											//callback function: do something with selectedData;
-									}
-							});
-							$('#symbol_4').ddslick({
-									data:symbols,
-									//width:300,
-									selectText: "Symbol 4",
-									imagePosition:"right",
-									onSelected: function(selectedData){
-											//callback function: do something with selectedData;
-									}
-							});
-							$('#symbol_5').ddslick({
-									data:symbols,
-									//width:300,
-									selectText: "Symbol 5",
-									imagePosition:"right",
-									onSelected: function(selectedData){
-											//callback function: do something with selectedData;
-									}
-							});
-							$('#symbol_6').ddslick({
-									data:symbols,
-									//width:300,
-									selectText: "Symbol 6",
-									imagePosition:"right",
-									onSelected: function(selectedData){
-											//callback function: do something with selectedData;
-									}
-							});
-						}
-            function updateInfo(){
-                $.get('stargate/get?entity=info')
-                    .done(function(data) {
+              dialog = $( "#dialog-form" ).dialog({
+                  autoOpen: false,
+                  height: 500,
+                  width: 350,
+                  modal: true,
+                  buttons: {
+                      "Validate & Save": validateAndSaveLocalAddress,
+                      Cancel: function() {
+                          dialog.dialog( "close" );
+                      }
+                  },
+                  close: function() {
+                      form[ 0 ].reset();
+                      allFields.removeClass( "ui-state-error" );
+                  }
+              });
 
-                        // Hide the offline modal
-                        hideOfflineModal()
-
-                        // Update the UI
-                        if (data.local_stargate_address_string){
-                            $('#localStargateAddress').html(data.local_stargate_address_string + "<button id='config-lcl-sg-addr'>Configure</button>")
-                        }
-                        else{
-                            $('#localStargateAddress').html("<button id='config-lcl-sg-addr'>Configure</button>")
-                        }
-                        $( "#config-lcl-sg-addr" ).button().on( "click", function() {
-                            $( "#dialog-form" ).dialog( "open" );
-                        });
-
-                        $('#lanIPAddress').html(data.lan_ip_address)
-                        $('#softwareVersion').html(data.software_version)
-                        $('#pythonVersion').html(data.python_version)
-                        $('#fanGateCount').html(data.fan_gate_count)
-                        $('#standardGateCount').html(data.standard_gate_count)
-                        $('#dialerMode').html(data.dialer_mode)
-
-                        if (data.subspace_public_key){
-                          $('#publicKey').html(data.subspace_public_key)
-                        }
-                        else{
-                          $('#publicKey').html("n/a")
-                          $('#subspaceStatus').html("Not Configured")
-                        }
-
-                        if (data.internet_available){
-                          $('#hasInternet').html("Connected")
-                        }
-                        else{
-                          $('#hasInternet').html("Offline")
-                        }
-
-                        if (data.subspace_available){
-                          $('#subspaceStatus').html("Connected")
-                        }
-                        else{
-                          $('#subspaceStatus').html("Offline")
-                        }
-
-                        // If we don't have a Subspace IP,
-                        if (!data.subspace_ip_address){
-
-                            // ...and we DO have a local_address configured, offer a link to email Kristian
-                            if (data.local_stargate_address_string){
-                                emailTo = "kristian@thestargateproject.com"
-                                subject = "New Stargate"
-                                body = "Hi Kristian,%0d%0a%0d%0aI'd like to get a Subspace IP address for my new Stargate. Can you set that up?%0d%0a%0d%0a" +
-                                       "Name/planet: %3CThe name you want in the %22address book%22%3E%0d%0a" +
-                                       "Email address: %3CYour email address%3E%0d%0a%0d%0a" +
-                                       "Stargate address: " + data.local_stargate_address_string + "%0d%0a" +
-                                       "Public key: " + data.subspace_public_key + "%0d%0a" +
-                                       "%0d%0aThanks,"
+              form = dialog.find( "form" ).on( "submit", function( event ) {
+                  event.preventDefault();
+                  validateAndSaveLocalAddress();
+              });
 
 
+          } );
 
-                                mailLinkContent = "<a href=\"mailto:" + emailTo + "?subject=" + subject + "&body=" + body + "\">Request Access to the Subspace Network</a>"
-                                $('#subspaceIPAddress').html(mailLinkContent)
-                            }
-                            else{
-                               $('#subspaceIPAddress').html("Not Configured!")
-                            }
-                        }
-                        else{
-                            $('#subspaceIPAddress').html(data.subspace_ip_address)
+          var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
+          offline_modal.dialog({
+              autoOpen: false,
+              modal: true,
+              dialogClass: "no-close",
+          });
 
-                        }
+					var symbols = [] // This array will be populated by an ajax request
 
-                    })
-                    .fail(function(jqXHR, textStatus, errorThrown) {
-                        // Show the "we're offline modal"
-                        showOfflineModal()
+					function init_pulldowns(){
+						$('#symbol_1').ddslick({
+								data:symbols,
+								//width:300,
+								selectText: "Symbol 1",
+								imagePosition:"right",
+								onSelected: function(selectedData){
+										//callback function: do something with selectedData;
+								}
+						});
+						$('#symbol_2').ddslick({
+								data:symbols,
+								//width:300,
+								selectText: "Symbol 2",
+								imagePosition:"right",
+								onSelected: function(selectedData){
+										//callback function: do something with selectedData;
+								}
+						});
+						$('#symbol_3').ddslick({
+								data:symbols,
+								//width:300,
+								selectText: "Symbol 3",
+								imagePosition:"right",
+								onSelected: function(selectedData){
+										//callback function: do something with selectedData;
+								}
+						});
+						$('#symbol_4').ddslick({
+								data:symbols,
+								//width:300,
+								selectText: "Symbol 4",
+								imagePosition:"right",
+								onSelected: function(selectedData){
+										//callback function: do something with selectedData;
+								}
+						});
+						$('#symbol_5').ddslick({
+								data:symbols,
+								//width:300,
+								selectText: "Symbol 5",
+								imagePosition:"right",
+								onSelected: function(selectedData){
+										//callback function: do something with selectedData;
+								}
+						});
+						$('#symbol_6').ddslick({
+								data:symbols,
+								//width:300,
+								selectText: "Symbol 6",
+								imagePosition:"right",
+								onSelected: function(selectedData){
+										//callback function: do something with selectedData;
+								}
+						});
+					}
 
-                        setTimeout(function(){updateInfo( false ); }, poll_delay);
+					function doPoll( singleShot = false ){
+	            $.get('stargate/get?entity=is_alive')
+	                .done(function(data) {
 
-                    })
+	                    // Hide the offline modal
+	                    hideOfflineModal()
 
-							$.get('stargate/get?entity=symbols_ddslick')
+											poll_delay = poll_delay_default
+
+	                    // Schedule the next polling
+	                    if ( !singleShot ){
+	                        setTimeout(function(){doPoll( false ); }, poll_delay);
+	                    }
+	                })
+	                .fail(function(jqXHR, textStatus, errorThrown) {
+	                    // Show the "we're offline modal"
+	                    showOfflineModal()
+
+	                    // Slow the polling rate to default
+	                    poll_delay = poll_delay_offline
+
+	                    // Schedule the next polling
+	                    if ( !singleShot ){
+	                        setTimeout(function(){doPoll( false ); }, poll_delay);
+	                    }
+	                }
+
+	            );
+
+	        }
+
+          function updateInfo(){
+              $.get('stargate/get?entity=info')
                   .done(function(data) {
-											symbols = data.symbols
-											init_pulldowns()
-									})
 
-            }
+                      // Hide the offline modal
+                      hideOfflineModal()
 
-            function showOfflineModal(){
-                offline_modal.dialog("open");
-            }
+                      // Update the UI
+                      if (data.local_stargate_address_string){
+                          $('#localStargateAddress').html(data.local_stargate_address_string + "<button id='config-lcl-sg-addr'>Configure</button>")
+                      }
+                      else{
+                          $('#localStargateAddress').html("<button id='config-lcl-sg-addr'>Configure</button>")
+                      }
+                      $( "#config-lcl-sg-addr" ).button().on( "click", function() {
+                          $( "#dialog-form" ).dialog( "open" );
+                      });
 
-            function hideOfflineModal(){
-                offline_modal.dialog("close");
-            }
+                      $('#lanIPAddress').html(data.lan_ip_address)
+                      $('#softwareVersion').html(data.software_version)
+                      $('#pythonVersion').html(data.python_version)
+                      $('#fanGateCount').html(data.fan_gate_count)
+                      $('#standardGateCount').html(data.standard_gate_count)
+                      $('#dialerMode').html(data.dialer_mode)
+
+                      if (data.subspace_public_key){
+                        $('#publicKey').html(data.subspace_public_key)
+                      }
+                      else{
+                        $('#publicKey').html("n/a")
+                        $('#subspaceStatus').html("Not Configured")
+                      }
+
+                      if (data.internet_available){
+                        $('#hasInternet').html("Connected")
+                      }
+                      else{
+                        $('#hasInternet').html("Offline")
+                      }
+
+                      if (data.subspace_available){
+                        $('#subspaceStatus').html("Connected")
+                      }
+                      else{
+                        $('#subspaceStatus').html("Offline")
+                      }
+
+                      // If we don't have a Subspace IP,
+                      if (!data.subspace_ip_address){
+
+                          // ...and we DO have a local_address configured, offer a link to email Kristian
+                          if (data.local_stargate_address_string){
+                              emailTo = "kristian@thestargateproject.com"
+                              subject = "New Stargate"
+                              body = "Hi Kristian,%0d%0a%0d%0aI'd like to get a Subspace IP address for my new Stargate. Can you set that up?%0d%0a%0d%0a" +
+                                     "Name/planet: %3CThe name you want in the %22address book%22%3E%0d%0a" +
+                                     "Email address: %3CYour email address%3E%0d%0a%0d%0a" +
+                                     "Stargate address: " + data.local_stargate_address_string + "%0d%0a" +
+                                     "Public key: " + data.subspace_public_key + "%0d%0a" +
+                                     "%0d%0aThanks,"
+
+
+
+                              mailLinkContent = "<a href=\"mailto:" + emailTo + "?subject=" + subject + "&body=" + body + "\">Request Access to the Subspace Network</a>"
+                              $('#subspaceIPAddress').html(mailLinkContent)
+                          }
+                          else{
+                             $('#subspaceIPAddress').html("Not Configured!")
+                          }
+                      }
+                      else{
+                          $('#subspaceIPAddress').html(data.subspace_ip_address)
+
+                      }
+
+                  })
+                  .fail(function(jqXHR, textStatus, errorThrown) {
+                      // Show the "we're offline modal"
+                      showOfflineModal()
+
+                      setTimeout(function(){updateInfo( false ); }, poll_delay);
+
+                  })
+
+						$.get('stargate/get?entity=symbols_ddslick')
+                .done(function(data) {
+										symbols = data.symbols
+										init_pulldowns()
+								})
+
+          }
+
+          function showOfflineModal(){
+              offline_modal.dialog("open");
+          }
+
+          function hideOfflineModal(){
+              offline_modal.dialog("close");
+          }
 
         </script>
 

@@ -43,6 +43,9 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 elif( entity == "local_address" ):
                     content = json.dumps( self.stargate.addrManager.getBook().get_local_address() )
 
+                elif( entity == "is_alive" ):
+                    content = json.dumps( { 'is_alive': True })
+
                 elif( entity == "status" ):
                     data = {
                         "address_buffer_outgoing":  self.stargate.address_buffer_outgoing,
