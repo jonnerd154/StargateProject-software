@@ -9,7 +9,7 @@ class KeyboardManager:
         self.cfg = stargate.cfg
         self.audio = stargate.audio
         self.addressBook = stargate.addrManager.getBook()
-        
+
     def key_press(self):
         """
         This helper function stops the program (thread) and waits for a single keypress.
@@ -42,6 +42,9 @@ class KeyboardManager:
                           'T': 36, 'Y': 37, '1': 38, 'I': 39
                           }
 
+        # If these symbols are entered, the gate will shutdown
+        abort_characters = [ '-', '\x03' ]  # '\x03' == Ctrl-C
+
         self.log.log("Listening for input from the Dialer. You can abort with the '-' key.")
         while True: # Keep running and ask for user input
             key = self.key_press() #Save the input key as a variable
@@ -50,7 +53,7 @@ class KeyboardManager:
                 symbol_number = key_symbol_map[key]  # convert key press to symbol_number
             except KeyError:  # if the pressed button is not a key in the self.key_symbol_map dictionary
                 symbol_number = 'unknown'
-                if key == '-':
+                if key in abort_characters:
                     symbol_number = 'abort'
                 elif key == 'A':
                     symbol_number = 'centre_button_outgoing'
@@ -59,7 +62,7 @@ class KeyboardManager:
                     self.log.log(f'key: {key} -> symbol: {symbol_number} SYMBOL')
 
             ## If the user inputs the - key to abort. Not possible from the DHD.
-            if key == '-':
+            if key in abort_characters:
                 self.log.log("Abort Requested: Shutting down any active wormholes, stopping the gate.")
                 self.stargate.wormhole = False # Shutdown any open wormholes (particularly if turned on via web interface)
                 self.stargate.running = False  # Stop the stargate object from running.
@@ -73,7 +76,7 @@ class KeyboardManager:
             # If we are hitting symbols on the DHD.
             else:
                 self.queue_symbol(symbol_number)
-                
+
     def queue_symbol(self, symbol_number):
         self.audio.play_random_clip("DHD")
         if symbol_number != 'unknown' and symbol_number not in self.stargate.address_buffer_outgoing:
@@ -84,7 +87,7 @@ class KeyboardManager:
                 # Append the symbol to the outgoing address buffer
                 self.stargate.address_buffer_outgoing.append(symbol_number)
                 self.log.log(f'address_buffer_outgoing: {self.stargate.address_buffer_outgoing}') # Log the address_buffer
-            
+
     def queue_center_button(self):
         self.audio.play_random_clip("DHD")
         # If we are dialing
@@ -97,7 +100,7 @@ class KeyboardManager:
             if self.stargate.fan_gate_online_status: # If we are connected to a fan_gate
                 self.stargate.subspace.send_to_remote_stargate(self.stargate.subspace.get_ip_from_stargate_address(self.stargate.address_buffer_outgoing, self.addressBook.get_fan_gates()), 'centre_button_incoming')
             if not self.stargate.black_hole: # If we did not dial the black hole.
-                self.stargate.wormhole = False # cancel outgoing wormhole            
+                self.stargate.wormhole = False # cancel outgoing wormhole
             if self.stargate.fan_gate_online_status: # If we are connected to a fan_gate
                 self.stargate.subspace.send_to_remote_stargate(self.stargate.subspace.get_ip_from_stargate_address(self.stargate.address_buffer_outgoing, self.addressBook.get_fan_gates()), 'centre_button_incoming')
             if not self.stargate.black_hole: # If we did not dial the black hole.
