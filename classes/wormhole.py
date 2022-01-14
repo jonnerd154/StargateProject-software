@@ -366,7 +366,7 @@ class Wormhole:
             # TODO: These take a long time, and as a result we don't have tight timing
             # on wormhole close/timeout, and the random clips.
             #    Maybe the Neopixel stuff should run in it's own thread?
-            
+
             # random transition functions
             transition = choice(possible_transitions)
             if transition == 'fade':
@@ -376,13 +376,12 @@ class Wormhole:
             self.rotate_pattern(direction=choice(possible_directions), speed=randint(1, 10), revolutions=randint(1, 3))  # rotates the pattern.
 
             # Play random audio clips
-            self.log.log("checking audio")
             if (time() - random_audio_start_time) > self.audio_clip_wait_time:  # If there has been "silence" for more than audio_clip_wait_time
                 self.audio.play_random_clip(audio_group) # Won't play if a clip is already playing
                 random_audio_start_time = time()
 
         # Wormhole is closing. Did it close because it ran out of power/time?
-        if self.get_time_remaining() < 0:  # if the wormhole closes due to the 38min time limit.
+        if self.get_time_remaining() < 1:  # if the wormhole closes due to the 38min time limit.
             if self.audio.random_clip_is_playing():  # If the random audio clip is still playing:
                 self.audio.random_clip_wait_done()  # wait until it's finished.
 
