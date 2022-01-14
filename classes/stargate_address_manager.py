@@ -1,4 +1,5 @@
 import ast
+from datetime import datetime
 
 from database import Database
 from stargate_address_book import StargateAddressBook
@@ -65,6 +66,8 @@ class StargateAddressManager:
 
                 # Add it to the datastore
                 self.addressBook.set_fan_gate(name, gate_address, ip_address)
+
+            self.cfg.set('last_fan_gate_update', str(datetime.now()))
             return self.fan_gates
 
     def valid_planet(self, address):
