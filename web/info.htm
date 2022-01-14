@@ -184,60 +184,19 @@
 					var symbols = [] // This array will be populated by an ajax request
 
 					function init_pulldowns(){
-						$('#symbol_1').ddslick({
-								data:symbols,
-								//width:300,
-								selectText: "Symbol 1",
-								imagePosition:"right",
-								onSelected: function(selectedData){
-										//callback function: do something with selectedData;
-								}
-						});
-						$('#symbol_2').ddslick({
-								data:symbols,
-								//width:300,
-								selectText: "Symbol 2",
-								imagePosition:"right",
-								onSelected: function(selectedData){
-										//callback function: do something with selectedData;
-								}
-						});
-						$('#symbol_3').ddslick({
-								data:symbols,
-								//width:300,
-								selectText: "Symbol 3",
-								imagePosition:"right",
-								onSelected: function(selectedData){
-										//callback function: do something with selectedData;
-								}
-						});
-						$('#symbol_4').ddslick({
-								data:symbols,
-								//width:300,
-								selectText: "Symbol 4",
-								imagePosition:"right",
-								onSelected: function(selectedData){
-										//callback function: do something with selectedData;
-								}
-						});
-						$('#symbol_5').ddslick({
-								data:symbols,
-								//width:300,
-								selectText: "Symbol 5",
-								imagePosition:"right",
-								onSelected: function(selectedData){
-										//callback function: do something with selectedData;
-								}
-						});
-						$('#symbol_6').ddslick({
-								data:symbols,
-								//width:300,
-								selectText: "Symbol 6",
-								imagePosition:"right",
-								onSelected: function(selectedData){
-										//callback function: do something with selectedData;
-								}
-						});
+						for(i=1;i<=6;i++){
+              $('#symbol_' + i).ddslick({
+  								data:symbols,
+  								//width:300,
+  								selectText: "Symbol " + i,
+  								imagePosition:"right",
+  								onSelected: function(selectedData){
+  										//callback function: do something with selectedData;
+                      // TODO: Disable this symbol in the other menus
+  								}
+              });
+            }
+					
 					}
 
 					function doPoll( singleShot = false ){
@@ -381,20 +340,6 @@
 
             <form>
                 <fieldset>
-                    <!--
-										<label for="symbol_1">Symbol 1</label>
-                    <input type="number" name="symbol_1" min=0 max=38 length=40 id="symbol_1" value="12" class="text ui-widget-content ui-corner-all">
-                    <label for="symbol_2">Symbol 2</label>
-                    <input type="number" name="symbol_2" min=0 max=38 id="symbol_2" value="18" class="text ui-widget-content ui-corner-all">
-                    <label for="symbol_3">Symbol 3</label>
-                    <input type="number" name="symbol_3" min=0 max=38 id="symbol_3" value="26" class="text ui-widget-content ui-corner-all">
-                    <label for="symbol_4">Symbol 4</label>
-                    <input type="number" name="symbol_4" min=0 max=38 id="symbol_4" value="7" class="text ui-widget-content ui-corner-all">
-                    <label for="symbol_5">Symbol 5</label>
-                    <input type="number" name="symbol_5" min=0 max=38 id="symbol_5" value="34" class="text ui-widget-content ui-corner-all">
-                    <label for="symbol_6">Symbol 6</label>
-                    <input type="number" name="symbol_6" min=0 max=38 id="symbol_6" value="11" class="text ui-widget-content ui-corner-all">
-									-->
 
 									<div id="symbol_1"></div>
 									<div id="symbol_2"></div>
