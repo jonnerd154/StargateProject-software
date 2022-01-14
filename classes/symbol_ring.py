@@ -15,6 +15,7 @@ class SymbolRing:
 
     def __init__(self, stargate):
 
+        self.stargate = stargate
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.audio = stargate.audio
@@ -95,6 +96,11 @@ class SymbolRing:
         self.audio.sound_start('rolling_ring')  # play the audio movement
         stepper_micro_pos = 0
         for i in range(steps):
+
+            # Check if the gate is still running, if not, break out of the loop.
+            if not self.stargate.running:
+                break
+
             self.stepper.onestep(direction=direction, style=self.stepperDriveMode)
             stepper_micro_pos += 8
             self.stepper_pos = (stepper_micro_pos // self.micro_steps) % self.total_steps # Update the self.stepper_pos value as the ring moves. Will have a value from 0 till self.total_steps = 1250.
@@ -111,7 +117,9 @@ class SymbolRing:
             elif steps < self.acceleration_length:
                 current_speed = self.normal_speed
                 sleep(current_speed)
-        
+
+            self.set_position() # Update the volatile position variable, we'll save it later.
+
         self.release() # Release the stepper to prevent overheating
         self.audio.sound_stop('rolling_ring')  # stop the audio
 

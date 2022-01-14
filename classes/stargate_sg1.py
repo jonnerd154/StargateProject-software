@@ -127,6 +127,13 @@ class StargateSG1:
         if len(self.address_buffer_outgoing) > self.locked_chevrons_outgoing:
             self.ring.move_symbol_to_chevron(self.address_buffer_outgoing[self.locked_chevrons_outgoing], self.locked_chevrons_outgoing + 1)  # Dial the symbol
             self.locked_chevrons_outgoing += 1  # Increment the locked chevrons variable.
+
+            # If the gate shutdown requested, play the stop-dialing sound, and stop doing things.
+            if not self.running:
+                self.shutdown(cancel_sound=False, wormhole_fail_sound=True)
+                sleep(0.5) # Time to allow the wormhole_fail_sound to finish
+                return
+
             try:
                 self.chevrons.get(self.locked_chevrons_outgoing).cycle_outgoing()  # Do the chevron locking thing.
             except KeyError:  # If we dialed more chevrons than the stargate can handle.
