@@ -11,8 +11,8 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
     #Overload SimpleHTTPRequestHandler.log_message() to suppress logs from printing to console
     # *** Comment this out for debugging!! ***
-    def log_message(self, format, *args):
-        pass
+    # def log_message(self, format, *args):
+    #     pass
 
     def parse_GET_vars(self):
         qs = {}
@@ -75,6 +75,12 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     }
                     content = json.dumps( data )
 
+                elif( entity == "symbols_ddslick" ):
+                    data = {
+                        "symbols": self.stargate.symbolManager.get_all_ddslick()
+                    }
+                    content = json.dumps( data )
+
                 self.send_response(200)
                 self.send_header("Content-type", "text/json")
                 self.end_headers()
@@ -88,7 +94,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             return
         except:
 
-            # raise # *** Un-comment for debugging!! ***
+            raise # *** Un-comment for debugging!! ***
 
             # Encountered an exception: send a 500
             self.send_response(500)
@@ -154,16 +160,16 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
                     self.stargate.address_buffer_incoming.append(7) # Point of origin
                     self.stargate.centre_button_incoming = True
-                    
-            elif data['action'] == "set_local_stargate_address": 
-                continue_to_save = True             
+
+            elif data['action'] == "set_local_stargate_address":
+                continue_to_save = True
                 # Parse the address
                 try:
-                    address = [ data['S1'], data['S2'], data['S3'], data['S4'], data['S5'], data['S6'] ] 
+                    address = [ data['S1'], data['S2'], data['S3'], data['S4'], data['S5'], data['S6'] ]
                 except Exception as e:
                     data = { "success": False, "error": "Required fields missing or invalid request" }
                     continue_to_save = False
-                    
+
                 # Validate that this is an acceptable address
                 if continue_to_save:
                     verify_avail, error, entry = self.stargate.addrManager.verify_address_available(address)
@@ -184,22 +190,22 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                         continue_to_save = False
                     else:
                         pass # Address not in use, clear to proceed
-                    
+
                 # Store the address:
                 if continue_to_save:
                     # TODO: Error checking
                     self.stargate.addrManager.getBook().set_local_address(address)
                     data = { "success": True, "message": "There are no conflicts with your chosen address.<br><br>Local Address Saved." }
-                
+
                 self.send_json_response(data)
                 return
-            
+
             elif data['action'] == "set_subspace_ip":
                 print("Setting Subspace IP Address")
-            
+
             elif data['action'] == "subspace_up":
                 print("Subspace UP")
-            
+
             elif data['action'] == "subspace_down":
                 print("Subspace DOWN")
 

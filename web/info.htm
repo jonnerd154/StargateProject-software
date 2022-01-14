@@ -8,26 +8,40 @@
 
         <style>
         .button, .cycleChevronButton {margin:10px;}
-        
+
+				.dd-selected-image, .dd-option-image {
+    			max-height: 25px !important;
+				}
+
+				label.dd-selected-text {
+				   line-height: 20px !important;
+
+				}
+				a.dd-selected, a.dd-option-description {
+					color: black;
+				}
+
         input[type='number']{
             width:150px;
-        } 
+        }
 
         </style>
-        
+
         <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
-        
+        <script type="text/javascript" src="lib/jquery.ddslick.min.js"></script>
     </head>
     <body>
-        
+
 
         <script type="text/javascript" >
-    
+
             $( function() {
-                
+
                 updateInfo();
-                
+
+
+
                 var dialog, form,
 
                     // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
@@ -61,7 +75,7 @@
                         updateTips( "Value of " + o + " must be between " +
                             min + " and " + max + "." );
                         return false;
-                    } 
+                    }
                     else {
                         return true;
                     }
@@ -78,8 +92,8 @@
                     valid = valid && checkSymbol( symbol_6, "Symbol 6", 0, 37 );
 
                     // TODO: Check that no symbols were used twice
-                    
-                    
+
+
                     if ( valid ) {
                         // Save to API
                         $.post({
@@ -108,7 +122,7 @@
                                 });
                                 dialog.dialog( "close" );
                                 updateInfo();
-                                
+
                             }
                             else{
                                 $("<div></div>").html( data.error ).dialog({
@@ -122,20 +136,20 @@
                                     }
                                 });
                             }
-                    
+
                         })
                         .fail(function() {
                             console.log("Failed to communicate with Stargate")
                             $("<div>Failed to communicate with Stargate</div>").dialog();
                         });
-                        
+
                     }
                     return valid;
                 }
 
                 dialog = $( "#dialog-form" ).dialog({
                     autoOpen: false,
-                    height: 400,
+                    height: 500,
                     width: 350,
                     modal: true,
                     buttons: {
@@ -155,9 +169,9 @@
                     validateAndSaveLocalAddress();
                 });
 
-                
+
             } );
-                
+
             const poll_delay = 500
 
             var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
@@ -167,6 +181,64 @@
                 dialogClass: "no-close",
             });
 
+						var symbols = [] // This array will be populated by an ajax request
+
+						function init_pulldowns(){
+							$('#symbol_1').ddslick({
+									data:symbols,
+									//width:300,
+									selectText: "Symbol 1",
+									imagePosition:"right",
+									onSelected: function(selectedData){
+											//callback function: do something with selectedData;
+									}
+							});
+							$('#symbol_2').ddslick({
+									data:symbols,
+									//width:300,
+									selectText: "Symbol 2",
+									imagePosition:"right",
+									onSelected: function(selectedData){
+											//callback function: do something with selectedData;
+									}
+							});
+							$('#symbol_3').ddslick({
+									data:symbols,
+									//width:300,
+									selectText: "Symbol 3",
+									imagePosition:"right",
+									onSelected: function(selectedData){
+											//callback function: do something with selectedData;
+									}
+							});
+							$('#symbol_4').ddslick({
+									data:symbols,
+									//width:300,
+									selectText: "Symbol 4",
+									imagePosition:"right",
+									onSelected: function(selectedData){
+											//callback function: do something with selectedData;
+									}
+							});
+							$('#symbol_5').ddslick({
+									data:symbols,
+									//width:300,
+									selectText: "Symbol 5",
+									imagePosition:"right",
+									onSelected: function(selectedData){
+											//callback function: do something with selectedData;
+									}
+							});
+							$('#symbol_6').ddslick({
+									data:symbols,
+									//width:300,
+									selectText: "Symbol 6",
+									imagePosition:"right",
+									onSelected: function(selectedData){
+											//callback function: do something with selectedData;
+									}
+							});
+						}
             function updateInfo(){
                 $.get('stargate/get?entity=info')
                     .done(function(data) {
@@ -250,6 +322,13 @@
                         setTimeout(function(){updateInfo( false ); }, poll_delay);
 
                     })
+
+							$.get('stargate/get?entity=symbols_ddslick')
+                  .done(function(data) {
+											symbols = data.symbols
+											init_pulldowns()
+									})
+
             }
 
             function showOfflineModal(){
@@ -267,7 +346,8 @@
 
             <form>
                 <fieldset>
-                    <label for="symbol_1">Symbol 1</label>
+                    <!--
+										<label for="symbol_1">Symbol 1</label>
                     <input type="number" name="symbol_1" min=0 max=38 length=40 id="symbol_1" value="12" class="text ui-widget-content ui-corner-all">
                     <label for="symbol_2">Symbol 2</label>
                     <input type="number" name="symbol_2" min=0 max=38 id="symbol_2" value="18" class="text ui-widget-content ui-corner-all">
@@ -279,7 +359,14 @@
                     <input type="number" name="symbol_5" min=0 max=38 id="symbol_5" value="34" class="text ui-widget-content ui-corner-all">
                     <label for="symbol_6">Symbol 6</label>
                     <input type="number" name="symbol_6" min=0 max=38 id="symbol_6" value="11" class="text ui-widget-content ui-corner-all">
-                    
+									-->
+
+									<div id="symbol_1"></div>
+									<div id="symbol_2"></div>
+									<div id="symbol_3"></div>
+									<div id="symbol_4"></div>
+									<div id="symbol_5"></div>
+									<div id="symbol_6"></div>
 
                     <!-- Allow form submission with keyboard without duplicating the dialog button -->
                     <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">

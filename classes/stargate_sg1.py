@@ -2,6 +2,7 @@ from threading import Thread
 from time import time, sleep
 from random import randrange
 
+from stargate_sg1_symbol_manager import StargateSG1SymbolManager
 from chevrons import ChevronManager
 from dialers import Dialer
 from keyboard_manager import KeyboardManager
@@ -35,6 +36,7 @@ class StargateSG1:
         self.initialize_gate_state_vars()
 
         ### Set up the needed classes and make them ready to use ###
+        self.symbolManager = StargateSG1SymbolManager()
         self.subspace = Subspace(self)
         self.addrManager = StargateAddressManager(self)
         self.keyboard = KeyboardManager(self)
@@ -54,7 +56,7 @@ class StargateSG1:
                 self.stargate_server_thread = Thread(target=StargateServer(self).start, daemon=True, args=())
                 self.stargate_server_thread.start()
             except:
-                raise 
+                raise
                 self.log.log("Failed to start StargateServer thread")
 
         ### Notify that the Stargate is ready
@@ -156,31 +158,31 @@ class StargateSG1:
                 delay = randrange(1, 800) / 100  # Add a delay with some randomness
             else:
                 delay = 0
-            
+
             # If we are still receiving the correct address to match the local stargate:
             buffer_first_6 = self.address_buffer_incoming[0:min(len(self.address_buffer_incoming), 6)] # get up to 6 symbols off incoming buffer
             local_first_6 = self.addrManager.addressBook.get_local_address()[0:min(len(self.address_buffer_incoming), 6)] # get up to 6 symbols off the local address_buffer_incoming
             loopback_first_6 = self.addrManager.addressBook.get_local_loopback_address()[0:min(len(self.address_buffer_incoming), 6)] # get up to 6 symbols off the loopback local address
-            
+
             # If the incoming address buffer matches our routable or unroutable local address, lock it.
             if buffer_first_6 == local_first_6 or buffer_first_6 == loopback_first_6:
                 self.locked_chevrons_incoming += 1  # Increment the locked chevrons variable.
                 try:
                     self.chevrons.get(self.locked_chevrons_incoming).incoming_on()  # Do the chevron locking thing.
                 except KeyError:  # If we dialed more chevrons than the stargate can handle.
-                    raise 
+                    raise
                     pass  # Just pass without activating a chevron.
                 # Play the audio clip for incoming wormhole
                 if self.locked_chevrons_incoming == 1:
                     self.audio.play_random_clip("IncomingWormhole")
-                
+
                 self.last_activity_time = time()  # update the last_activity_time
-                
+
                 # Do the logging
                 self.log.log(f'Incoming: Chevron {self.locked_chevrons_incoming} locked with symbol {self.address_buffer_incoming[self.locked_chevrons_incoming - 1]}')
-                
+
                 sleep(delay)  # if there's a delay, use it.
-                
+
 
     def try_sending_centre_button(self):
         """
@@ -193,15 +195,15 @@ class StargateSG1:
             self.log.log(f'Sent to fan_gate: centre_button_incoming')
 
     def get_connected_planet_name(self):
-    
+
         if (self.wormhole == 'outgoing'):
-            return self.addrManager.get_planet_name_by_address(self.address_buffer_outgoing) 
+            return self.addrManager.get_planet_name_by_address(self.address_buffer_outgoing)
         elif (self.wormhole == 'incoming'):
-            return self.addrManager.get_planet_name_by_address(self.address_buffer_incoming) 
+            return self.addrManager.get_planet_name_by_address(self.address_buffer_incoming)
         else:
             # Not connected
             return False
-            
+
     def establishing_wormhole(self):
         """
         This is the method that decides if we are to establish a wormhole or not
@@ -221,11 +223,11 @@ class StargateSG1:
                 # Update the state variables
                 self.wormhole = 'outgoing'
                 self.connected_planet_name = self.get_connected_planet_name()
-                
+
                 # Log some stuff
                 self.log.log('Valid address is locked')
                 self.log.log('OUTGOING Wormhole to {} established'.format(self.connected_planet_name))
-                
+
                 # Check if we dialed a black hole planet
                 if self.addrManager.getBook().get_entry_by_address(self.address_buffer_outgoing[0:-1])['is_black_hole']:
                     self.log.log("Oh no! It's the black hole planet!")
@@ -243,7 +245,7 @@ class StargateSG1:
                 # Update some state variables
                 self.wormhole = 'incoming'  # Set the wormhole state to activate the wormhole.
                 self.connected_planet_name = self.get_connected_planet_name()
-                
+
                 self.log.log('Incoming address is a match!')
                 self.log.log('INCOMING Wormhole from {} established'.format(self.connected_planet_name))
             else:
