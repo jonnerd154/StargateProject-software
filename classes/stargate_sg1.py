@@ -1,7 +1,6 @@
 from threading import Thread
 from time import time, sleep
 from random import randrange
-import schedule
 
 from stargate_sg1_symbol_manager import StargateSG1SymbolManager
 from chevrons import ChevronManager
@@ -29,6 +28,7 @@ class StargateSG1:
         self.base_path = app.base_path
         self.netTools = app.netTools
         self.swUpdater = self.app.swUpdater
+        self.schedule = app.schedule
 
         # Retrieve the configurations
         self.inactivityTimeout = self.cfg.get("dialing_timeout")
@@ -37,7 +37,6 @@ class StargateSG1:
         self.initialize_gate_state_vars()
 
         ### Set up the needed classes and make them ready to use ###
-        self.schedule = schedule # Alias the class here so it can be used in modules
         self.symbolManager = StargateSG1SymbolManager()
         self.subspace = Subspace(self)
         self.addrManager = StargateAddressManager(self)
@@ -118,7 +117,7 @@ class StargateSG1:
                 #When the wormhole is no longer running
                 self.shutdown(cancel_sound=False)
 
-            schedule.run_pending() # Run any scheduled items
+            self.schedule.run_pending() # Run any scheduled items
 
         # When the stargate is no longer running.
         self.shutdown(cancel_sound=False)
