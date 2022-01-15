@@ -92,12 +92,12 @@
         function validateAndSaveLocalAddress() {
           var valid = true;
           allFields.removeClass( "ui-state-error" );
-          valid = valid && checkSymbol( symbol_1, "Symbol 1", 0, 37 );
-          valid = valid && checkSymbol( symbol_2, "Symbol 2", 0, 37 );
-          valid = valid && checkSymbol( symbol_3, "Symbol 3", 0, 37 );
-          valid = valid && checkSymbol( symbol_4, "Symbol 4", 0, 37 );
-          valid = valid && checkSymbol( symbol_5, "Symbol 5", 0, 37 );
-          valid = valid && checkSymbol( symbol_6, "Symbol 6", 0, 37 );
+          valid = valid && checkSymbol( symbol_1, "Symbol 1", 2, 39 ); // 2-39: disallow Earth symbol.
+          valid = valid && checkSymbol( symbol_2, "Symbol 2", 2, 39 ); // 2-39: disallow Earth symbol.
+          valid = valid && checkSymbol( symbol_3, "Symbol 3", 2, 39 ); // 2-39: disallow Earth symbol.
+          valid = valid && checkSymbol( symbol_4, "Symbol 4", 2, 39 ); // 2-39: disallow Earth symbol.
+          valid = valid && checkSymbol( symbol_5, "Symbol 5", 2, 39 ); // 2-39: disallow Earth symbol.
+          valid = valid && checkSymbol( symbol_6, "Symbol 6", 2, 39 ); // 2-39: disallow Earth symbol.
 
           if ( valid ) {
               // Save to API
@@ -240,7 +240,7 @@
                 // Load the current address into the form
                 for (i=0;i<6;i++){
                   pulldown = $('#symbol_' + (i+1).toString())
-                  value = data.local_stargate_address[i]
+                  value = data.local_stargate_address[i]-1 // Minus 1 because these are indexes, not values we're setting.
                   setPulldownValue( pulldown, value )
                 }
             });
