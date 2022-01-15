@@ -14,7 +14,6 @@ if sudo test -f "$WGROOT"/publickey; then
     sudo cat $WGROOT/publickey
 else
   sudo su root -c "cd "$WGROOT"; umask 077; wg genkey | tee privatekey | wg pubkey > publickey; cat publickey"
-
 fi
 
 exit 0
