@@ -332,7 +332,14 @@
 
             // Update the UI
             if (data.local_stargate_address_string){
-              $('#localStargateAddress').html("<div id='lcl_addr_image_container'></div><button id='config-lcl-sg-addr'>Configure</button>")
+
+              // Display the configured local address
+              $('#localStargateAddress').html("<div id='lcl_addr_image_container'></div>")
+
+              // If we don't have a Subspace IP address configured, offer the config button
+              if ( data.subspace_ip_address_config == null || data.subspace_ip_address_config == "" ){
+                $('#localStargateAddress').html( $('#localStargateAddress').html() + "<button id='config-lcl-sg-addr'>Configure</button>")
+              }
 
               // Load the current address in images
               html = ""
