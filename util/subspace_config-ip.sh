@@ -21,11 +21,29 @@ then
  exit 1
 fi
 
+# For Raspi
 sudo su root -c "cd "$WGROOT"; wg-quick up subspace; wg set subspace private-key privatekey;"
 sudo su root -c "ip addr add $1 dev subspace; wg-quick save subspace"
 sudo su root -c "systemctl enable wg-quick@subspace"
 
 # TODO: This process needs to change on MacOS - the executables are different.
+
+# Edit /usr/local/etc/wireguard/subspace.conf to read:
+#
+    # [Interface]
+    # PrivateKey = [PRIVATE KEY]
+    # Address = [IP ADDRESS]
+    #
+    # [Peer]
+    # PublicKey = [PUBLIC KEY]
+    # AllowedIPs = 172.30.0.0/16
+    # Endpoint = subspace.thestargateproject.com:51821
+    # PersistentKeepalive = 25
+#
+# Then run:
+#  wg-quick down subspace
+#  wg-quick up subspace
+
 echo "Configuration saved. Please reboot the Raspi (sudo reboot)."
 #sudo reboot
 
