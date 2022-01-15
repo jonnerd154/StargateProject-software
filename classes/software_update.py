@@ -54,8 +54,10 @@ class SoftwareUpdate:
             root_path = Path(__file__).parent.absolute()
 
             # get the user ID and group ID of the owner of this file (__file__). (In most instances this would result in the UID 1001 for the sg1 user.
-            uid = pwd.getpwnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).pw_uid
-            gid = grp.getgrnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).gr_gid
+            #uid = pwd.getpwnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).pw_uid
+            #gid = grp.getgrnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).gr_gid
+            uid = pwd.getpwuid(stat(__file__).st_uid).pw_name
+            gid = pwd.getpwuid(stat(__file__).st_uid).pw_gid
 
             ### Get the information from the DB ###
             sw_update = self.database.get_software_updates()
