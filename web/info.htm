@@ -395,7 +395,7 @@
             }
 
             // If we don't have a Subspace IP,
-            if (!data.subspace_ip_address){
+            if (!data.subspace_ip_address_config){
 
               // ...and we DO have a local_address configured, offer a link to email Kristian
               if (data.local_stargate_address_string){
@@ -426,7 +426,7 @@
               }
             }
             else{
-              $('#subspaceIPAddress').html(data.subspace_ip_address)
+              $('#subspaceIPAddress').html(data.subspace_ip_address_config)
             }
           })
           .fail(function(jqXHR, textStatus, errorThrown) {
