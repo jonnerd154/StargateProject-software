@@ -232,8 +232,17 @@
             else{
               $('#localStargateAddress').html("<button id='config-lcl-sg-addr'>Configure</button>")
             }
+
+            // Setup the "Configure" button on-click handler
             $( "#config-lcl-sg-addr" ).button().on( "click", function() {
               $( "#dialog-form" ).dialog( "open" );
+
+                // Load the current address into the form
+                for (i=0;i<6;i++){
+                  pulldown = $('#symbol_' + (i+1).toString())
+                  value = data.local_stargate_address[i]
+                  setPulldownValue( pulldown, value )
+                }
             });
 
             $('#lanIPAddress').html(data.lan_ip_address)
@@ -309,6 +318,10 @@
               symbols = data.symbols
               init_pulldowns()
           })
+      }
+
+      function setPulldownValue( pulldown, value ){
+          pulldown.ddslick('select', {index: value });
       }
 
       function showOfflineModal(){
