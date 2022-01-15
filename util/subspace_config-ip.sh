@@ -22,7 +22,7 @@ then
 fi
 
 sudo su root -c "cd "$WGROOT"; wg-quick up subspace; wg set subspace private-key privatekey;"
-sudo su root -c "ip addr add $1 dev subspace wg-quick save subspace"
+sudo su root -c "ip addr add $1 dev subspace; wg-quick save subspace"
 sudo su root -c "systemctl enable wg-quick@subspace"
 
 # TODO: This process needs to change on MacOS - the executables are different.
