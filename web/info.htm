@@ -245,6 +245,7 @@
             $('#fanGateCount').html(data.fan_gate_count)
             $('#standardGateCount').html(data.standard_gate_count)
             $('#dialerMode').html(data.dialer_mode)
+            $('#hardwareMode').html(data.hardware_mode)
 
             if (data.subspace_public_key){
               $('#publicKey').html(data.subspace_public_key)
@@ -352,6 +353,7 @@
       <div class="div-table-row"><span class="div-table-col-names">Known Fan Gates:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="fanGateCount">Loading...</span></div>
       <div class="div-table-row"><span class="div-table-col-names">&nbsp;&nbsp;Last Updated:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="fanGateLastUpdate">Loading...</span></div>
       <div class="div-table-row"><span class="div-table-col-names">Dialer Mode:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="dialerMode">Loading...</span></div>
+      <div class="div-table-row"><span class="div-table-col-names">Hardware in Use:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="hardwareMode">Loading...</span></div>
     </div>
 
     <hr />

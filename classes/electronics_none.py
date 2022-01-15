@@ -4,6 +4,8 @@ class ElectronicsNone:
 
     def __init__(self, app):
 
+        self.name = "Impaired - No Motor, LED, and/or NeoPixel Hardware"
+
         self.neopixelPin = None
         self.neopixelLEDCount = 122 # must be non-zero
 

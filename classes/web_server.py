@@ -77,7 +77,8 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                         "standard_gate_count":            len(self.stargate.addrManager.getBook().get_standard_gates()),
                         "fan_gate_count":                 len(self.stargate.addrManager.getBook().get_fan_gates()),
                         "last_fan_gate_update":           self.stargate.cfg.get('last_fan_gate_update'),
-                        "dialer_mode":                    self.stargate.dialer.type
+                        "dialer_mode":                    self.stargate.dialer.type,
+                        "hardware_mode":                  self.stargate.electronics.name
                     }
                     content = json.dumps( data )
 
