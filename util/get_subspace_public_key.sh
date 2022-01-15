@@ -7,7 +7,7 @@
 if [[ "$OSTYPE" == "darwin"* ]]; then
   WGROOT=/usr/local/etc/wireguard/ # For MacOS
 else
-  WGROOT=/etc/wireguard/publickey # For Raspi
+  WGROOT=/etc/wireguard/ # For Raspi
 fi
 
 if sudo test -f "$WGROOT"/publickey; then
