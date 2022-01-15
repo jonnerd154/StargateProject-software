@@ -29,8 +29,30 @@ class Subspace:
         self.client = None
 
     def get_public_key(self):
-        cmd = 'sudo util/get_subspace_public_key.sh'
-        return subprocess.check_output(cmd, shell=True).decode('ascii')
+        try:
+            cmd = 'sudo util/get_subspace_public_key.sh'
+            return subprocess.check_output(cmd, shell=True).decode('ascii')
+        except:
+            return False
+
+    def set_ip_address(self, ip_address):
+        # Save it to the config so we can use it later
+        self.cfg.set('subspace_ip_address', ip_address)
+
+        # Update the WireGuard Config
+        return self.configure_wireguard_ip(ip_address)
+
+    def get_configured_ip(self):
+        # Return the cached/local-config value (not from WireGuard/ifconfig)
+        return self.cfg.get('subspace_ip_address')
+
+    def configure_wireguard_ip(self, ip_address):
+        try:
+            cmd = 'sudo util/subspace_config-ip.sh {}'.format(ip_address)
+            subprocess.check_output(cmd, shell=True).decode('ascii')
+            return True
+        except:
+            return False
 
     def send_raw(self, msg):
         message = msg.encode(self.encoding_format)
