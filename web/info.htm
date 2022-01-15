@@ -63,7 +63,7 @@
         doPoll();
         updateInfo();
 
-        var dialog, form,
+        var dialog, form, dialog_ss_ip, form_ss_ip
 
             // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
             symbol_1 = $( "#symbol_1" ),
@@ -74,6 +74,9 @@
             symbol_6 = $( "#symbol_6" ),
             allFields = $( [] ).add( symbol_1 ).add( symbol_2 ).add( symbol_3 ).add( symbol_4 ).add( symbol_5 ).add( symbol_6 ),
 
+            subspace_ip_input = $( "#subspace_ip_input" ),
+            allFields_ss_ip = $( [] ).add( subspace_ip_input ),
+
             tips = $( ".validateTips" );
 
         function updateTips( t ) {
@@ -83,20 +86,89 @@
           }, 500 );
         }
 
-        function checkSymbol( o, n, min, max ) {
+        function checkIPAddress( o, n ){
+          // Check if blank
           if (o.val() == ""){
             o.addClass( "ui-state-error" );
             updateTips( n + " is required");
             return false
           }
+
+          // Check if valid
+          if (!(/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test( o.val() ) ) ) {
+            o.addClass( "ui-state-error" );
+            updateTips( n + " entered is not valid");
+            return false
+          }
+
+          // If we get here, it's valid
+          return true
+        }
+
+        function checkSymbol( o, n, min, max ) {
+          // Check if blank
+          if (o.val() == ""){
+            o.addClass( "ui-state-error" );
+            updateTips( n + " is required");
+            return false
+          }
+
+          // Check in range
           if ( o.val() > max || o.val() < min ) {
             o.addClass( "ui-state-error" );
             updateTips( "Value of " + o + " must be between " +
                 min + " and " + max + "." );
             return false;
           }
-          else {
+
+          // If we get here, it's valid
             return true;
+        }
+
+        function validateAndSaveSubspaceAddress(){
+          allFields_ss_ip.removeClass( "ui-state-error" );
+
+          if ( checkIPAddress( subspace_ip_input, "Subspace IP" ) ) {
+              // Save to API
+              $.post({
+                url: 'stargate/update',
+                data: JSON.stringify({
+                  action: 'set_subspace_ip',
+                  ip: subspace_ip_input.val().toString()
+                })
+              })
+              .done(function(data) {
+                if (data['success']){
+                  $("<div></div>").html( data.message ).dialog({
+                      title: "CONGRATULATIONS!",
+                      resizable: false,
+                      modal: true,
+                      buttons: {
+                        'Ok': function()  {
+                          $( this ).dialog( 'close' );
+                        }
+                      }
+                  });
+                  dialog_ss_ip.dialog( "close" );
+                  updateInfo();
+                }
+                else{
+                  $("<div></div>").html( data.error ).dialog({
+                    title: "Error",
+                    resizable: false,
+                    modal: true,
+                    buttons: {
+                      'Ok': function()  {
+                        $( this ).dialog( 'close' );
+                      }
+                    }
+                  });
+                }
+              })
+              .fail(function() {
+                console.log("Failed to communicate with Stargate")
+                $("<div>Failed to communicate with Stargate</div>").dialog();
+              });
           }
         }
 
@@ -182,6 +254,28 @@
             validateAndSaveLocalAddress();
         });
 
+        dialog_ss_ip = $( "#dialog-form-subspace-ip" ).dialog({
+            autoOpen: false,
+            height: 300,
+            width: 350,
+            modal: true,
+            buttons: {
+                "Validate & Save": validateAndSaveSubspaceAddress,
+                Cancel: function() {
+                    dialog_ss_ip.dialog( "close" );
+                }
+            },
+            close: function() {
+                form[ 0 ].reset();
+                allFields_ss_ip.removeClass( "ui-state-error" );
+            }
+        });
+
+        form_ss_ip = dialog_ss_ip.find( "form" ).on( "submit", function( event ) {
+            event.preventDefault();
+            validateAndSaveSubspaceAddress();
+        });
+
       }); // End of on-ready function
 
       var symbols = [] // This array will be populated by an ajax request
@@ -255,7 +349,7 @@
               $('#localStargateAddress').html("<button id='config-lcl-sg-addr'>Configure</button>")
             }
 
-            // Setup the "Configure" button on-click handler
+            // Setup the "Configure Local Address" button on-click handler
             $( "#config-lcl-sg-addr" ).button().on( "click", function() {
               $( "#dialog-form" ).dialog( "open" );
 
@@ -316,8 +410,16 @@
 
 
 
-                  mailLinkContent = "<a href=\"mailto:" + emailTo + "?subject=" + subject + "&body=" + body + "\">Request Access to the Subspace Network</a>"
-                  $('#subspaceIPAddress').html(mailLinkContent)
+                         mailLinkContent = "<a href=\"mailto:" + emailTo + "?subject=" + subject + "&body=" + body + "\">Step 1: Request Access to the Subspace Network</a>"
+                         ipConfigLink = "Step 2: <button id='config-subspace-ip-addr'>Configure Subspace IP Address</button>"
+                  $('#subspaceIPAddress').html(mailLinkContent + "<br>" + ipConfigLink)
+
+                  // Setup the "Configure Subspace IP Address" button on-click handler
+                  $( "#config-subspace-ip-addr" ).button().on( "click", function() {
+                    $( "#dialog-form-subspace-ip" ).dialog( "open" );
+                      // Load the current address into the form
+
+                  });
               }
               else{
                  $('#subspaceIPAddress').html("Not Configured!")
@@ -366,6 +468,18 @@
             <div id="symbol_4"></div>
             <div id="symbol_5"></div>
             <div id="symbol_6"></div>
+
+            <!-- Allow form submission with keyboard without duplicating the dialog button -->
+            <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+          </fieldset>
+      </form>
+    </div>
+
+    <div id="dialog-form-subspace-ip" title="Configure Subspace IP Address">
+      <p class="validateTips">Enter the IP address assigned to this gate by Kristian</p>
+      <form>
+          <fieldset>
+            <input type="text" class="form-control" id="subspace_ip_input" name="subspace_ip" placeholder="Subspace IP Address"/>
 
             <!-- Allow form submission with keyboard without duplicating the dialog button -->
             <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
