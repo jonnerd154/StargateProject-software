@@ -24,6 +24,17 @@
         input[type='number']{
             width:150px;
         }
+
+        #lcl_addr_image_container img{
+          max-height: 40px;
+          filter: invert(1);
+        }
+
+        #lcl_addr_image_container, #localStargateAddress{
+          display: inline-flex;
+          align-items: center;
+        }
+
         </style>
 
         <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
@@ -227,7 +238,18 @@
 
             // Update the UI
             if (data.local_stargate_address_string){
-              $('#localStargateAddress').html(data.local_stargate_address_string + "<button id='config-lcl-sg-addr'>Configure</button>")
+              $('#localStargateAddress').html("<div id='lcl_addr_image_container'></div><button id='config-lcl-sg-addr'>Configure</button>")
+
+              // Load the current address in images
+              html = ""
+              for (i=0;i<6;i++){
+                imageUrl = "/chevrons/" + String(data.local_stargate_address[i]).padStart(3, '0') + ".svg";
+                imageHtml = "<img src='" + imageUrl + "' alt='" + data.local_stargate_address[i] + "'>"
+                html += imageHtml
+              }
+              html += "<span style='padding: 10px;'>" + data.local_stargate_address_string + "</span>"
+              $('#lcl_addr_image_container').html(html)
+
             }
             else{
               $('#localStargateAddress').html("<button id='config-lcl-sg-addr'>Configure</button>")
