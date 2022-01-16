@@ -1,6 +1,19 @@
+<!-- 
+*******************************************************************
+***   Kristian's Stargate Project - TheStargateProject.com      ***
+*******************************************************************
+***                                                             ***
+***   Original Software written by Kristian Tysse               ***
+***   Restructuring and Development by Jonathan Moyes           ***
+***   Web Interface adapted from Dan Clarke:                    ***
+***      https://github.com/danclarke/WorkingStargateMk2Raspi   ***
+***                                                             ***
+*******************************************************************
+-->
+
 <html>
     <head>
-        <meta charset="UTF-8"> 
+        <meta charset="UTF-8">
         <title>Stargate Command</title>
         <link rel="stylesheet" href="lib/jquery-ui-1.13.0.custom/jquery-ui.css">
         <link rel="stylesheet" href="main.css" />
@@ -11,42 +24,42 @@
         <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
 
         <script type="text/javascript">
-            
+
         $(function() {
             doPoll();
         });
-        
+
         // Configuration
         var poll_delay_default = 5000
         var poll_delay_dialing = 500
         var poll_delay_established = 1000
-        
+
         // State variables
         var poll_delay = poll_delay_default
-        
+
         var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
         offline_modal.dialog({
             autoOpen: false,
             modal: true,
-            dialogClass: "no-close", 
+            dialogClass: "no-close",
         });
 
         function doPoll( singleShot = false ){
             $.get('stargate/get?entity=status')
                 .done(function(data) {
-                    
+
                     // Hide the offline modal
                     hideOfflineModal()
-                    
+
                     // Update the Wormhole status
                     updateWormholeStatus(data)
 
                     // Update the Address buffer and locked chevrons
                     updateAddressBuffer(data)
-            
+
                     // Update the Connected Planet status
                     updateConnectedPlanetStatus(data)
-    
+
                     // Schedule the next polling
                     if ( !singleShot ){
                         setTimeout(function(){doPoll( false ); }, poll_delay);
@@ -55,31 +68,31 @@
                 .fail(function(jqXHR, textStatus, errorThrown) {
                     // Show the "we're offline modal"
                     showOfflineModal()
-                    
+
                     // Slow the polling rate to default
                     poll_delay = poll_delay_default
-                    
+
                     // Schedule the next polling
                     if ( !singleShot ){
                         setTimeout(function(){doPoll( false ); }, poll_delay);
                     }
                 }
-                
+
             );
-     
+
         }
-        
+
         function showOfflineModal(){
             offline_modal.dialog("open");
         }
-        
+
         function hideOfflineModal(){
             offline_modal.dialog("close");
         }
-        
+
         function updateConnectedPlanetStatus(data){
             if (data.wormhole_active && data.connected_planet){
-                
+
                 var content = "<p>Connected to " + data.connected_planet
                 // If we're connected to a black hole, make some changes
                 if (data.black_hole_connected){
@@ -89,11 +102,11 @@
                     $('body').css('background-color', 'black')
                 }
                 content += "</p>"
-                $('#connected-planet').html(content) 
-                
+                $('#connected-planet').html(content)
+
             }
         }
-        
+
         function updateWormholeStatus(data){
             shutdownString = ""
             if ( data.wormhole_open_time > 0 ){
@@ -106,18 +119,18 @@
                     timeString = new Date(data.wormhole_time_till_close * 1000).toISOString().substr(14, 5)
                     shutdownString = "&nbsp;&nbsp;&nbsp;&nbsp;Shutdown in " + timeString;
                 }
-                
+
                 switch ( data.wormhole_active ){
                     case "outgoing":
                         $('#wormhole-status').html("<p>Active Wormhole (OUTGOING)" + shutdownString + "</p>")
-                        break 
-            
+                        break
+
                     case "incoming":
                         $('#wormhole-status').html("<p>Active Wormhole (INCOMING)" + shutdownString + "</p>")
                         break
                 }
             }
-            else{            
+            else{
                 // No wormhole established, reset the UI, and handle "establishing" state
                 if(data.wormhole_active && !data.wormhole_open_time){
                     $('#wormhole-status').html("<p>Establishing Wormhole");
@@ -125,33 +138,33 @@
                 else{
                     $('#wormhole-status').html("<p>No Active Wormhole");
                 }
-                
+
                 $('#connected-planet').html("&nbsp;")
                 $('body').css('background-color', 'black')
             }
         }
-        
+
         function updateAddressBuffer(data){
-        
+
             // If the address buffer is empty, clean things up
             if ( ( data.address_buffer_outgoing.length == 0 &&
                  data.address_buffer_incoming.length == 0 ) || // Empty incoming and outgoing buffers
                  data.address_buffer_outgoing.length < $(".dial-sequence div").length || // Not in sync with the Stargate
                  $(".dial-sequence div").length > 9 ){ // Too many symbols / not in sync with the Stargate
-                
+
                 // Clear the dial-sequence display
                 $('.dial-sequence').empty()
-                
+
                 // Make all symbols available again
                 $(".chevrons .chevron").removeClass("unavailable");
-                
+
                 // Slow the polling to default
                 poll_delay = poll_delay_default
-                
+
             }
             else{
                 // There are symbols in the buffer, we're either established or dialing
-                
+
                 // Adjust the polling rate
                 if ( data.wormhole_active ){
                     poll_delay = poll_delay_established
@@ -161,13 +174,13 @@
                 }
             }
             for (i=0;i<data.address_buffer_outgoing.length;i++){
-                
+
                 // Get the symbol_number
-                symbol_number = data.address_buffer_outgoing[i]                  
-                     
+                symbol_number = data.address_buffer_outgoing[i]
+
                 // If this symbol isn't in the display, show it.
                 if ( $("#dialed-chevron"+symbol_number).length == 0 ){
-                
+
                     // Copy the div from the control panel, wrap it, modify it, and add it to the dial-sequence display
                     const thisChevronDivHtml = $("#chevron"+symbol_number).clone().wrap('<div/>').parent().html();
                     const newChevron = $(thisChevronDivHtml);
@@ -177,39 +190,39 @@
                     newChevron.addClass('filter-yellow')
                     $('.dial-sequence').append(newChevron);
                     setTimeout(function() { newChevron.addClass('show'); }, 10);
-                
+
                     // Grey out this symbol in the control panel
                     $("#chevron"+symbol_number).addClass('unavailable')
-                    
+
                 }
-                
+
                 // Is this chevron locked? If so, mark it as such
                 chevronLocked = i >= data.locked_chevrons_outgoing ? false : true
                 if (chevronLocked){
                     $("#dialed-chevron"+symbol_number).removeClass('filter-yellow')
                     $("#dialed-chevron"+symbol_number).addClass('filter-green')
-                } 
+                }
             }
-        
+
             // Resize display as required
             if (data.address_buffer_outgoing.length > 7) {
                 $('.dial-sequence .chevron').addClass('smaller');
-            } 
+            }
             else {
                 $('.dial-sequence .chevron').addClass('small').removeClass('smaller');
             }
         }
-        
-        
+
+
         </script>
         <div class="gate-status">
             <span id='wormhole-status'></span>
             <span id='connected-planet'>&nbsp;</span>
         </div>
-        
+
         <div class="dial-sequence">
         </div>
-                
+
         <div class="chevrons">
             <!-- Chevrons from Manz: https://codepen.io/manz/pen/zoREJL -->
             <div class="chevron" num="1" id="chevron1"><img src="chevrons/001.svg" /></div>
@@ -251,10 +264,10 @@
             <div class="chevron" num="37" id="chevron37"><img src="chevrons/037.svg" /></div>
             <div class="chevron" num="38" id="chevron38"><img src="chevrons/038.svg" /></div>
             <div class="chevron" num="39" id="chevron39"><img src="chevrons/039.svg" /></div>
-            
+
             <div class="chevron" num="0" id="chevron0"><img id='center_button_image' src="img/center_button.png" /></div>
         </div>
-                
+
         <div class="controls">
             <br />
             <div class="control" onclick="window.location = 'testing.htm';">
@@ -265,9 +278,9 @@
             </div>
         </div>
 
-        
+
         <script type="text/javascript">
-            
+
             let dialSeq = [];
             let enableDialing = true;
             let checkDialingInt = 0;
@@ -283,7 +296,7 @@
                     }
                 });
             }
-            
+
             $('div.chevrons div.chevron').click(function() {
                 const symbol_number = $(this).attr('num');
 
@@ -314,13 +327,13 @@
 
             if($_GET.address) {
                 var chevrons = $_GET.address.split("-");
-                
+
                 // Add the home symbol
                 chevrons.push("1");
-                
+
                 // Add the center button
                 chevrons.push("0");
-                
+
                 // Configure some variable delays between presses to make it more realistic
                 var timeouts = [];
                 var delay_total = 0;
@@ -334,7 +347,7 @@
                         delay_total+=delay
                         console.log("Scheduling click for Chevron " + i + " after " + delay_total)
                         console.log(delay)
-                
+
                         timeouts.push(delay_total);
                     }
                 }
@@ -344,11 +357,11 @@
                     clickChevron(chevrons,i);
                 }
             }
-            
+
             function clickChevron(chevrons, i) {
                 setTimeout(function() { $("#chevron"+chevrons[i]).click() }, timeouts[i]);
             }
-            
+
         </script>
     </body>
 </html>
