@@ -1,107 +1,18 @@
-# TheStargateProject Milky Way Stargate Software
+# TheStargateProject.com
+# Software for Stargates
 
-# Running the Stargate Software
-Log into the machine and type `sudo /home/sg1/sg1_venv/bin/python /home/sg1/sg1/main.py`
-
-# Running the Hardware Test Routine
-Log into the machine and type `sudo /home/sg1/sg1_venv/bin/python /home/sg1/sg1/test.py`
-
-# To install or update from requirements.txt
-```
-source sg1_venv/bin/activate
-pip install --upgrade pip
-pip install -r sg1/requirements.txt
-pip install pip-upgrader
-pip-upgrade sg1/requirements.txt
-```
+# Running the Stargate Software manually
+Log into the machine and type `sudo cd /home/sg1/sg1 && /home/sg1/sg1_venv/bin/python main.py`
 
 # Dial Aphopis's base with a keyboard
  - `cFX1K98A`
 
-# Crontab
- - `*/8 * * * * /home/sg1/sg1_venv/bin/python3.8 /home/sg1/sg1/scripts/speakerON.py`
+# Web interface
+A web interface is provided to allow testing of individual hardware components, dialing, address book, and much more. Find it here:
 
-# To add Bonjour support (easy DNS)
-```
-sudo apt-get install avahi-daemon
-sudo nano /etc/hosts
-## Modify the `127.0.1.1` entry as below, then save the file:
-  127.0.1.1 [tab] stargate
-sudo nano /etc/hostname
-## Modify to say "stargate"
-sudo hostname stargate
+[http://stargate.local](http://stargate.local)
 
-sudo reboot
-```
-When the Pi comes back up, you should be able to `ssh sg1@stargate.local`
-
-# Install Apache Web Server
-```
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get install apache2 -y
-```
-- Add Directory block and ModProxy config to `/etc/apache2/apache2.conf`:
-```
-<Directory /home/sg1/sg1/web>
-        Options Indexes FollowSymLinks
-        AllowOverride None
-        Require all granted
-</Directory>
-ProxyPass     /stargate/     http://localhost:8080/
-```
-- Set the user/group for Apache to `sg1` (edit `/etc/apache2/envvars`)
-```
-export APACHE_RUN_USER=sg1
-export APACHE_RUN_GROUP=sg1
-```
-- Configure the virtualhost DocumentRoot (edit `/etc/apache2/sites-available/000-default.conf`...edit existing DocumentRoot directive)
-```
-DocumentRoot /home/sg1/sg1/web
-```
-- Enable ModProxy and ModProxyHTTP
-```
-cd /etc/apache2/mods-enabled
-sudo ln -s ../mods-available/proxy.conf proxy.conf
-sudo ln -s ../mods-available/proxy.load proxy.load
-sudo ln -s ../mods-available/proxy_http.load proxy_http.load
-```
-- Restart apache to load the new configs
-```
-sudo service apache2 restart
-```
-
-# Disable the onboard audio adapter
-```
-sudo nano /boot/config.txt
-   # Change dtparam=audio=off
-```
-
-# Setup logrotated
-`sudo nano /etc/logrotate.d/stargate`
-
-```
-/home/sg1/sg1/logs/sg1.log {
-    missingok
-    notifempty
-    size 30k
-    daily
-    rotate 30
-    create 0600 sg1 sg1
-}
-
-/home/sg1/sg1/logs/database.log {
-    missingok
-    notifempty
-    size 30k
-    daily
-    rotate 30
-    create 0600 sg1 sg1
-}
-```
-`sudo logrotate --force /etc/logrotate.conf`
-
-# CREDITS
-Kristian Tysse wrote all of the original code. In 2021, Jonathan Moyes restructured the code and extended it to include additional functionalities.
-
-The Web UI basic implementation of the Web API Server were based on Dan Clarke's work: https://github.com/danclarke/WorkingStargateMk2Raspi
+# Credits
+- Kristian Tysse design and wrote all of the original code, most of which is still in use today's program.
+- Jonathan Moyes restructured the code and extended it to include additional functionalities.
+- The Web UI basic implementation of the Web API Server were based on Dan Clarke's work: https://github.com/danclarke/WorkingStargateMk2Raspi
