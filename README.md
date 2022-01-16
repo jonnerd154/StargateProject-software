@@ -55,7 +55,7 @@ ProxyPass     /stargate/     http://localhost:8080/
 export APACHE_RUN_USER=sg1
 export APACHE_RUN_GROUP=sg1
 ```
-- Configure the virtualhost DocumentRoot (edit `/etc/apache2/sites-available/000-default.conf`...edit exiting DocumentRoot directive)
+- Configure the virtualhost DocumentRoot (edit `/etc/apache2/sites-available/000-default.conf`...edit existing DocumentRoot directive)
 ```
 DocumentRoot /home/sg1/sg1/web
 ```
