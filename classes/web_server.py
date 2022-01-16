@@ -231,7 +231,6 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             if symbol_number > 0:
                 self.stargate.keyboard.queue_symbol(symbol_number)
             elif symbol_number == 0:
-                self.stargate.fan_gate_online_status = False #TODO: This isn't necessarily true.
                 self.stargate.keyboard.queue_center_button()
 
         elif self.path == '/incoming_press':

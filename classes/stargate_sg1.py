@@ -79,7 +79,7 @@ class StargateSG1:
         self.locked_chevrons_incoming = 0 # The current number of locked outgoing chevrons
         self.wormhole = False # The state of the wormhole.
         self.black_hole = False # Did we dial the black hole?
-        self.fan_gate_online_status = None # To keep track of the dialed fan_gate status
+        self.fan_gate_online_status = True # To keep track of the dialed fan_gate status. Assume it's online until proven otherwise
         self.fan_gate_incoming_IP = None # To keep track of the IP address for the remote gate that establishes a wormhole
         self.connected_planet_name = None
 
@@ -145,16 +145,21 @@ class StargateSG1:
             self.log.log(f'Chevron {self.locked_chevrons_outgoing} locked with symbol: {self.address_buffer_outgoing[self.locked_chevrons_outgoing - 1]}')
             self.last_activity_time = time()  # update the last_activity_time
 
-            ## Check if we are dialing a fan_gate and send the symbols to the remote gate.
+            ## If we are dialing a fan_gate, send the symbols to the remote gate.
             if self.addrManager.is_fan_made_stargate(self.address_buffer_outgoing):
+                self.log.log("We're dialing a fan gate...")
                 # If we don't know the online status of the fan_gate or it is online.
-                if self.fan_gate_online_status is None or self.fan_gate_online_status:
+                if self.fan_gate_online_status:
                     # send the locked symbols to the remote gate.
-                    if self.subspace.send_to_remote_stargate(self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addrManager.get_fan_gates() ), str(self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]))[0]:
+                    this_gate_ip = self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addrManager.get_fan_gates() )
+                    this_message = str( self.address_buffer_outgoing[0:self.locked_chevrons_outgoing] )
+
+                    if self.subspace.send_to_remote_stargate( this_gate_ip, this_message)[0]:
                         self.log.log(f'Sent to fan_gate: {self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]}')
                         self.fan_gate_online_status = True  # set the online status to True
-                    else:
-                        self.fan_gate_online_status = False  # set the online status to False, to keep the dialing running more smoothly if the fan_gate is offline.
+                else:
+                    self.log.log(f'Fan Gate is offline...skipping send')
+                    self.fan_gate_online_status = False  # set the online status to False, to keep the dialing running more smoothly if the fan_gate is offline.
 
     def incoming_dialing(self):
         """

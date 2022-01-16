@@ -24,9 +24,9 @@ class StargateServer:
         self.addressBook = stargate.addrManager.getBook()
 
         self.database = Database(self.base_path)
-        
+
         # Retrieve the configurations
-        self.port = self.cfg.get("subspace_port") # I chose 3838 because the Stargate can stay open for 38 minutes. :)  
+        self.port = self.cfg.get("subspace_port") # I chose 3838 because the Stargate can stay open for 38 minutes. :)
         self.keep_alive_interval = self.cfg.get("subspace_keep_alive_interval")
         self.keep_alive_address = self.cfg.get("subspace_keep_alive_address")
 
@@ -39,7 +39,7 @@ class StargateServer:
         # Get server IP, preferable the IP of the stargate in subspace.
         self.server_ip = self.subspace.get_stargate_server_ip()
         self.server_address = (self.server_ip, self.port)
-        
+
         # Configure the socket, open/bind
         self.open_socket()
 
@@ -64,6 +64,10 @@ class StargateServer:
         :return: Nothing is returned
         """
 
+        # TODO: Use schedule
+
+        self.log.log(f'Sending Keepalive')
+
         time_since_last_ping = 0
         while stargate.running:
 
@@ -77,17 +81,23 @@ class StargateServer:
                 time_since_last_ping+=self.keep_alive_running_check_interval
 
     def handle_incoming_wormhole(self, conn, addr):
+        self.log.log('handle_incoming_wormhole({}, {}'.format(conn, addr))
+
         connected = True  # while there is a connection from another gate.
         while connected:
+            self.log.log('connected loop')
+
             msg_length = conn.recv(self.header).decode(self.encoding_format)
             if msg_length:  # if the msg_length is not None
                 msg_length = int(msg_length)
                 msg = conn.recv(msg_length).decode(self.encoding_format)
                 if msg == self.disconnect_message:  # always disconnect after sending a message to the server.
+                    self.log.log('disconnect request')
                     connected = False
 
                 # If we are receiving the centre_button_incoming
                 elif msg == 'centre_button_incoming':
+                    self.log.log('centre_button_incoming')
                     # Check if incoming wormholes are allowed
                     if not self.cfg.get("allow_incoming_dialing"):
                         return
@@ -110,7 +120,7 @@ class StargateServer:
 
                 # If we are asked about the status (wormhole already active from a different gate or actively dialing out)
                 elif msg == 'what_is_your_status':
-                    # self.log.log('Received from {} -> {}'.format(addr, msg))
+                    self.log.log('Received what_is_your_status from {} -> {}'.format(addr, msg))
                     # It the wormhole is already established, or if we are dialing out.
                     if self.stargate.wormhole or len(self.stargate.address_buffer_outgoing) > 0:
                         # If the established wormhole is from the remote gate
@@ -125,6 +135,8 @@ class StargateServer:
 
                 # If we are receiving a stargate address, add it to the incoming buffer.
                 elif self.addrManager.is_valid(msg):
+                    self.log.log('Received a valid address fragment {}'.format(msg))
+
                     # Check if incoming wormholes are allowed
                     if not self.cfg.get("allow_incoming_dialing"):
                         return

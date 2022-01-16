@@ -55,6 +55,7 @@ class Subspace:
             return False
 
     def send_raw(self, msg):
+        self.log.log('def send_raw(self, msg) {}'.format(msg))
         message = msg.encode(self.encoding_format)
         msg_length = len(message)
         send_length = str(msg_length).encode(self.encoding_format)
@@ -63,6 +64,8 @@ class Subspace:
         self.client.send(message)
 
     def send_to_remote_stargate(self, server_ip, message_string):
+        self.log.log("send_to_remote_stargate( {}, {} )".format(server_ip, message_string))
+
         """
         This is the stargate client function. It is used to send messages to a Stargate server. It automatically sends the
         disconnect message after the message_string.
@@ -81,7 +84,7 @@ class Subspace:
 
         ## Try to establish a connection to the server.
         try:
-            #print("Subspace send to {}:{} ::: {}".format(server_ip, self.port, message_string))
+            self.log.log("Subspace send to {}:{} ::: {}".format(server_ip, self.port, message_string))
             self.client.connect( (server_ip, self.port) )
             connection_to_server = True # TODO: Move the if block below into the try block, get rid of this var
         except Exception as ex:
@@ -90,10 +93,12 @@ class Subspace:
 
         if connection_to_server:
             self.send_raw(message_string) # Send the message
+            self.log.log('SEND RAW Line 93: {}'.format(message_string))
 
             #If we ask for the status, expect an answer
             if message_string == 'what_is_your_status':
                 remote_gate_status = (self.client.recv(8).decode(encoding_format))
+                self.log.log('Received STATUS CHECK Line 98: {}'.format(remote_gate_status))
 
             self.send_raw(self.disconnect_message) # always disconnect.
             return True, remote_gate_status
