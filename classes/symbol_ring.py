@@ -1,7 +1,6 @@
 from time import sleep
 
 from stargate_config import StargateConfig
-from hardware_detection import HardwareDetector
 from homing import SymbolRingHomingManager
 
 class SymbolRing:
@@ -21,7 +20,7 @@ class SymbolRing:
         self.audio = stargate.audio
         self.chevrons = stargate.chevrons
         self.base_path = stargate.base_path
-        
+
         # Retrieve the configurations
         self.stepper_drive_mode = self.cfg.get("stepper_drive_mode")
         self.total_steps = self.cfg.get("stepper_one_revolution_steps") # Old value: 1251
@@ -31,19 +30,19 @@ class SymbolRing:
         self.initial_speed = self.cfg.get("stepper_initial_speed")
         self.acceleration_length = self.cfg.get("stepper_acceleration_length")  # the number of steps used for acceleration
         self.ring_direction_mode_longest = self.cfg.get("stepper_ring_direction_mode_longest")
-        
+
         # The symbol positions on the symbol ring
         self.symbol_step_positions = {1: 0, 2: 32, 3: 64, 4: 96, 5: 128, 6: 160, 7: 192, 8: 224, 9: 256, 10: 288, 11: 320, 12: 352, 13: 384, 14: 416, 15: 448, 16: 480, 17: 512, 18: 544, 19: 576, 20: 608, 21: 640, 22: 672, 23: 704, 24: 736, 25: 768, 26: 800, 27: 832, 28: 864, 29: 896, 30: 928, 31: 960, 32: 992, 33: 1024, 34: 1056, 35: 1088, 36: 1120, 37: 1152, 38: 1184, 39: 1216}
-        
+
         # The chevron positions on the stargate
         self.chevron_step_positions = {1: 139, 2: 278, 3: 417, 4: 834, 5: 973, 6: 1112, 7: 0, 8: 556, 9: 695}
 
         ## --------------------------
 
         self.stepper = stargate.electronics.get_stepper()
-        self.forwardDirection = stargate.electronics.get_stepper_forward()
-        self.backwardDirection = stargate.electronics.get_stepper_backward()
-        self.stepperDriveMode = stargate.electronics.get_stepper_drive_mode(self.stepper_drive_mode)
+        self.forward_direction = stargate.electronics.get_stepper_forward()
+        self.backward_direction = stargate.electronics.get_stepper_backward()
+        self.stepper_drive_mode = stargate.electronics.get_stepper_drive_mode(self.stepper_drive_mode)
 
         # Load the last known ring position
         self.stepper_pos = 0
@@ -52,7 +51,7 @@ class SymbolRing:
         self.position_store.load()
 
         ## Initialize the Homing Manager
-        self.homingManager = SymbolRingHomingManager(stargate, self)
+        self.homing_manager = SymbolRingHomingManager(stargate, self)
 
         # Release the ring for safety
         self.release()
@@ -69,10 +68,9 @@ class SymbolRing:
         if 5 < position < (max_steps - 5):  # if the position is between 5 and 5 lower than max.
             if position < (max_steps // 2):  # If the offset is positive/counter clock wise.
                 return position * -1
-            else:  # if the offset is negative/clock wise.
-                return max_steps - position
-        else:
-            return 0
+            # if the offset is negative/clock wise.
+            return max_steps - position
+        return 0
 
     def move(self, steps, direction=False):
         """
@@ -85,10 +83,10 @@ class SymbolRing:
         ## Set the direction ##
         if not direction:
             if steps >= 0:  # If steps is positive move forward
-                direction = self.forwardDirection
+                direction = self.forward_direction
             else:  # if steps is negative move backward
                 steps = abs(steps)
-                direction = self.backwardDirection
+                direction = self.backward_direction
 
         current_speed = self.initial_speed
 
@@ -101,7 +99,7 @@ class SymbolRing:
             if not self.stargate.running:
                 break
 
-            self.stepper.onestep(direction=direction, style=self.stepperDriveMode)
+            self.stepper.onestep(direction=direction, style=self.stepper_drive_mode)
             stepper_micro_pos += 8
             self.stepper_pos = (stepper_micro_pos // self.micro_steps) % self.total_steps # Update the self.stepper_pos value as the ring moves. Will have a value from 0 till self.total_steps = 1250.
 
@@ -153,7 +151,7 @@ class SymbolRing:
         calc_steps = self.calculate_steps(chevron_number, symbol_number) # calculate the steps
 
         # Choose which ring direction mode to use
-        if ( self.ring_direction_mode_longest is False ):
+        if self.ring_direction_mode_longest is False:
             ## Option one. This will move the symbol the shortest direction, cc or ccw.
             if calc_steps: # If not None
                 self.move(calc_steps) # move the ring the calc_steps steps.
@@ -173,8 +171,8 @@ class SymbolRing:
         return self.position_store.get('ring_position')
 
     def set_position(self):
-        calculatedPosition = ( (self.stepper_pos + self.get_position() ) % self.total_steps) + self.homingManager.offset
-        self.position_store.set_non_persistent('ring_position', calculatedPosition)
+        calculated_position = ( (self.stepper_pos + self.get_position() ) % self.total_steps) + self.homing_manager.offset
+        self.position_store.set_non_persistent('ring_position', calculated_position)
 
     def save_position(self):
         self.position_store.save()

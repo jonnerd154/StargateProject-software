@@ -1,6 +1,5 @@
 import os
 import json
-import threading
 from time import sleep
 import urllib.parse
 import collections
@@ -11,42 +10,42 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
     #Overload SimpleHTTPRequestHandler.log_message() to suppress logs from printing to console
     # *** Comment this out for debugging!! ***
-    def log_message(self, format, *args):
+    def log_message(self, fmt, *args):
         pass
 
-    def parse_GET_vars(self):
-        qs = {}
+    def parse_get_vars(self):
+        query_string = {}
         path = self.path
         if '?' in path:
             path, tmp = path.split('?', 1)
-            qs = urllib.parse.parse_qs(tmp)
-        return path, qs
+            query_string = urllib.parse.parse_qs(tmp)
+        return path, query_string
 
-    def do_GET(self):
+    def do_GET(self): # pylint: disable=invalid-name
         try:
-            request_path, get_vars = self.parse_GET_vars()
+            request_path, get_vars = self.parse_get_vars()
 
             if request_path == '/get':
                 entity = get_vars.get('entity')[0]
 
-                if ( entity == "standard_gates"):
+                if entity == "standard_gates":
                     content = json.dumps( self.stargate.addrManager.getBook().get_standard_gates() )
 
-                elif( entity == "fan_gates" ):
+                elif entity == "fan_gates":
                     content = json.dumps( self.stargate.addrManager.getBook().get_fan_gates() )
 
-                elif( entity == "all_gates" ):
+                elif entity == "all_gates":
                     all_addr = self.stargate.addrManager.getBook().get_all_nonlocal_addresses()
                     ordered_dict = collections.OrderedDict(sorted(all_addr.items()))
                     content = json.dumps( ordered_dict )
 
-                elif( entity == "local_address" ):
+                elif entity == "local_address":
                     content = json.dumps( self.stargate.addrManager.getBook().get_local_address() )
 
-                elif( entity == "is_alive" ):
+                elif entity == "is_alive":
                     content = json.dumps( { 'is_alive': True })
 
-                elif( entity == "status" ):
+                elif entity == "status":
                     data = {
                         "gate_name":                self.stargate.addrManager.getBook().get_local_gate_name(),
                         "local_address":            self.stargate.addrManager.getBook().get_local_address(),
@@ -63,7 +62,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     }
                     content = json.dumps( data )
 
-                elif( entity == "info" ):
+                elif entity == "info":
                     data = {
                         "gate_name":                      self.stargate.addrManager.getBook().get_local_gate_name(),
                         "local_stargate_address":         self.stargate.addrManager.getBook().get_local_address(),
@@ -86,7 +85,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     }
                     content = json.dumps( data )
 
-                elif( entity == "symbols_ddslick" ):
+                elif entity == "symbols_ddslick":
                     data = {
                         "symbols": self.stargate.symbolManager.get_all_ddslick()
                     }
@@ -111,7 +110,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             self.send_response(500)
             self.end_headers()
 
-    def do_POST(self):
+    def do_POST(self): # pylint: disable=invalid-name
         #print('POST PATH: {}'.format(self.path))
         if self.path == '/shutdown':
             self.stargate.wormhole = False
@@ -164,7 +163,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 self.stargate.audio.volume_up()
 
             elif data['action'] == "sim_incoming":
-                if ( not self.stargate.wormhole ): # If we don't already have an established wormhole
+                if not self.stargate.wormhole: # If we don't already have an established wormhole
                     # Get the loopback address and dial it
                     for symbol_number in self.stargate.addrManager.addressBook.get_local_loopback_address():
                         self.stargate.address_buffer_incoming.append(symbol_number)
@@ -177,23 +176,23 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 # Parse the address
                 try:
                     address = [ data['S1'], data['S2'], data['S3'], data['S4'], data['S5'], data['S6'] ]
-                except Exception as e:
+                except:
                     data = { "success": False, "error": "Required fields missing or invalid request" }
                     continue_to_save = False
 
                 # Validate that this is an acceptable address
                 if continue_to_save:
-                    verify_avail, error, entry = self.stargate.addrManager.verify_address_available(address)
+                    verify_avail, error, entry = self.stargate.addrManager.verify_address_available(address) # pylint: disable=unused-variable
                     if verify_avail == "VERIFY_OWNED":
                         # This address is in use by a fan gate, but someone might be (re)configuring their own gate.
                         try:
-                            if (data['owner_confirmed']):
+                            if data['owner_confirmed']:
                                 pass # Valid, continue to save
                             else:
                                 data = { "success": False, "error": error }
                                 continue_to_save = False
-                        except Exception as e:
-                            data = { "success": False, "extend": "owner_unconfirmed", "error": "This address is in use by a Fan Gate - \"{}\"".format(entry['name']) }
+                        except:
+                            data = { "success": False, "extend": "owner_unconfirmed", "error": "This address is in use by a Fan Gate - \"{entry['name']}\"" }
                             continue_to_save = False
                     elif verify_avail == False:
                         # This address is in use by a standard gate
@@ -254,4 +253,3 @@ class StargateWebServer(SimpleHTTPRequestHandler):
         self.send_header("Content-type", "text/json")
         self.end_headers()
         self.wfile.write(content.encode())
-        return
