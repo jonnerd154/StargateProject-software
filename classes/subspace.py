@@ -89,6 +89,7 @@ class Subspace:
             connection_to_server = True # TODO: Move the if block below into the try block, get rid of this var
         except Exception as ex:
             self.log.log(f'Error sending to remote server -> {ex}')
+            remote_gate_status = False
             return connection_to_server, remote_gate_status # return false if we do not have a connection.
 
         if connection_to_server:
