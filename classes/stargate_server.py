@@ -37,7 +37,7 @@ class StargateServer:
         self.keep_alive_running_check_interval = 0.5
 
         # Get server IP, preferable the IP of the stargate in subspace.
-        self.server_ip = self.subspace.get_stargate_server_ip()
+        self.server_ip = "0.0.0.0" #self.subspace.get_stargate_server_ip()
         self.server_address = (self.server_ip, self.port)
 
         # Configure the socket, open/bind
