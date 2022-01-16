@@ -76,6 +76,29 @@ sudo nano /boot/config.txt
    # Change dtparam=audio=off
 ```
 
+# Setup logrotated
+`sudo nano /etc/logrotate.d/stargate`
+
+```/home/sg1/sg1/logs/sg1.log {
+    missingok
+    notifempty
+    size 30k
+    daily
+    rotate 30
+    create 0600 sg1 sg1
+}
+
+/home/sg1/sg1/logs/database.log {
+    missingok
+    notifempty
+    size 30k
+    daily
+    rotate 30
+    create 0600 sg1 sg1
+}
+```
+`sudo logrotate --force /etc/logrotate.conf`
+
 # CREDITS
 Kristian Tysse wrote all of the original code. In 2021, Jonathan Moyes restructured the code and extended it to include additional functionalities.
 
