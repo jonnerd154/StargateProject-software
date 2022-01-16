@@ -167,8 +167,6 @@ class StargateSG1:
         This method handles the incoming dialing of the stargate. It's kept in it's own method so not to clutter up the update method too much.
         :return: Nothing is returned
         """
-        from pprint import pformat
-        self.log.log(pformat(self.address_buffer_incoming))
 
         # If there are dialed incoming symbols that are not yet locked and we are currently not dialing out.
         if len(self.address_buffer_incoming) > self.locked_chevrons_incoming and len(self.address_buffer_outgoing) == 0:
@@ -186,12 +184,16 @@ class StargateSG1:
 
             # If the incoming address buffer matches our routable or unroutable local address, lock it.
             if buffer_first_6 == local_first_6 or buffer_first_6 == loopback_first_6:
+                from pprint import pformat
+                self.log.log("VALID. Buffer:" + pformat(self.address_buffer_incoming))
+
                 self.locked_chevrons_incoming += 1  # Increment the locked chevrons variable.
                 try:
                     self.chevrons.get(self.locked_chevrons_incoming).incoming_on()  # Do the chevron locking thing.
                 except KeyError:  # If we dialed more chevrons than the stargate can handle.
-                    raise
+                    raise # TODO: Remove debug (?)
                     pass  # Just pass without activating a chevron.
+
                 # Play the audio clip for incoming wormhole
                 if self.locked_chevrons_incoming == 1:
                     self.audio.play_random_clip("IncomingWormhole")
