@@ -175,7 +175,7 @@
         function validateAndSaveLocalAddress() {
           var valid = true;
           allFields.removeClass( "ui-state-error" );
-          valid = valid && checkSymbol( symbol_1, "Symbol 1", 2, 39 ); // 2-39: disallow Earth symbol.
+          valid = valid && checkSymbol( symbol_1, "Symbol 1", 2, 39 ); // 2-39: disallow Earth symbol. # TODO: Change when other origin symbols are supported
           valid = valid && checkSymbol( symbol_2, "Symbol 2", 2, 39 ); // 2-39: disallow Earth symbol.
           valid = valid && checkSymbol( symbol_3, "Symbol 3", 2, 39 ); // 2-39: disallow Earth symbol.
           valid = valid && checkSymbol( symbol_4, "Symbol 4", 2, 39 ); // 2-39: disallow Earth symbol.
