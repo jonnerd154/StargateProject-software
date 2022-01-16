@@ -160,7 +160,7 @@ class StargateSG1:
 
                     # Check for success
                     if hasConnection:
-                        self.log.log(f'Sent: {self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]}')
+                        self.log.log(f'Subspace Sent: {self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]}')
                     else:
                         self.log.log('This Gate is offline. Skipping Subspace sends for remainder of this dialing attempt.')
                         self.fan_gate_online_status = False # Gate is offline, don't keep sending messages during this dialing attempt
