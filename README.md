@@ -80,7 +80,8 @@ sudo nano /boot/config.txt
 # Setup logrotated
 `sudo nano /etc/logrotate.d/stargate`
 
-```/home/sg1/sg1/logs/sg1.log {
+```
+/home/sg1/sg1/logs/sg1.log {
     missingok
     notifempty
     size 30k
