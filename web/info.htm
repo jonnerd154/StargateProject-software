@@ -295,12 +295,18 @@
         } // End for
 
       } // End init_pulldowns
-
+      var is_online = true
       function doPoll( singleShot = false ){
         $.get('stargate/get?entity=is_alive')
           .done(function(data) {
             // Hide the offline modal
             hideOfflineModal()
+
+            // If we're recovering from being offline, refresh
+            if (!is_online){
+              updateInfo()
+            }
+            is_online = true
 
             poll_delay = poll_delay_default
 
@@ -312,6 +318,8 @@
           .fail(function(jqXHR, textStatus, errorThrown) {
             // Show the "we're offline modal"
             showOfflineModal()
+            is_online = false
+
 
             // Slow the polling rate to default
             poll_delay = poll_delay_offline
