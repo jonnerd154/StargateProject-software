@@ -106,6 +106,7 @@ class StargateSG1:
 
                 ### Check for inactivity ###
                 # If there are something in the buffers and no activity for 1 minute while dialing.
+                # TODO: Use Schedule
                 if self.inactivity( self.inactivityTimeout ):
                     self.log.log('Inactivity detected, aborting.')
                     self.shutdown()
@@ -145,9 +146,11 @@ class StargateSG1:
             self.log.log(f'Chevron {self.locked_chevrons_outgoing} locked with symbol: {self.address_buffer_outgoing[self.locked_chevrons_outgoing - 1]}')
             self.last_activity_time = time()  # update the last_activity_time
 
+            # TODO: Some of this belongs in Subspace. For example, deciding whether to send a message based
+            #         on gate status should be handled by Subspace. outgoing_dialing() doesn't need to worry about that.
+
             ## If we are dialing a fan_gate, send the symbols to the remote gate.
             if self.addrManager.is_fan_made_stargate(self.address_buffer_outgoing):
-                self.log.log("We're dialing a fan gate...")
                 # If the gate is presumed to be online, send it.
                 if self.fan_gate_online_status:
                     # send the locked symbols to the remote gate.
@@ -157,7 +160,7 @@ class StargateSG1:
 
                     # Check for success
                     if hasConnection:
-                        self.log.log(f'Sent to fan_gate: {self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]}')
+                        self.log.log(f'Sent: {self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]}')
                     else:
                         self.log.log('This Gate is offline. Skipping Subspace sends for remainder of this dialing attempt.')
                         self.fan_gate_online_status = False # Gate is offline, don't keep sending messages during this dialing attempt
@@ -185,9 +188,7 @@ class StargateSG1:
             # If the incoming address buffer matches our routable or unroutable local address, lock it.
             if buffer_first_6 == local_first_6 or buffer_first_6 == loopback_first_6:
                 from pprint import pformat
-                self.log.log("LCLADDR:  " + pformat(self.addrManager.addressBook.get_local_address() ) )
-                self.log.log("I_Buffer: " + pformat(self.address_buffer_incoming))
-                self.log.log("VALID")
+                self.log.log("Address matching. Incoming Buffer: " + pformat(self.address_buffer_incoming))
 
                 self.locked_chevrons_incoming += 1  # Increment the locked chevrons variable.
                 try:
@@ -206,8 +207,10 @@ class StargateSG1:
                 self.log.log(f'Incoming: Chevron {self.locked_chevrons_incoming} locked with symbol {self.address_buffer_incoming[self.locked_chevrons_incoming - 1]}')
 
                 sleep(delay)  # if there's a delay, use it.
+            else:
+                self.log.log("Address is not a match for this gate")
 
-
+    # TODO: Some of this belongs in Subspace.
     def try_sending_centre_button(self):
         """
         This functions simply checks if it is possible to send the centre_button to the remote gate and sends it.
@@ -216,7 +219,7 @@ class StargateSG1:
         """
         if self.fan_gate_online_status and self.centre_button_outgoing and len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing:
             self.subspace.send_to_remote_stargate(self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addrManager.get_fan_gates() ), 'centre_button_incoming')
-            self.log.log(f'Sent to fan_gate: centre_button_incoming')
+            self.log.log(f'Sent: Center Button')
 
     def get_connected_planet_name(self):
 
@@ -313,6 +316,9 @@ class StargateSG1:
         :param seconds: The number of seconds of allowed inactivity
         :return: True if inactivity is detected, False if not
         """
+
+        # TODO: Use schedule
+
         if not self.wormhole: #If we are in the dialing phase
             if self.last_activity_time: #If the variable is not None
                 if (len(self.address_buffer_incoming) > 0) or (len(self.address_buffer_outgoing) > 0): # If there are something in the buffers
@@ -320,12 +326,14 @@ class StargateSG1:
                         return True
         return False
 
-    # TODO: Move to subspace
     def possible_to_establish_wormhole(self):
         """
         This is a method to help check if we are able to establish a wormhole or not.
         :return: Returns True if we can establish a wormhole, and False if not
         """
+
+        # TODO: Some of this belongs in Subspace.
+
         # If the dialed address is valid
         if len(self.address_buffer_outgoing) > 0 and self.addrManager.valid_planet(self.address_buffer_outgoing) or \
             len(self.address_buffer_incoming) > 0 and self.addrManager.valid_planet(self.address_buffer_incoming):
