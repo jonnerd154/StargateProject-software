@@ -6,7 +6,7 @@ from icmplib import ping
 
 from database import Database
 
-class Subspace:
+class SubspaceClient:
 
     def __init__(self, stargate):
 

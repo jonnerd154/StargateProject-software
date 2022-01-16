@@ -8,7 +8,7 @@ from dialers import Dialer
 from keyboard_manager import KeyboardManager
 from symbol_ring import SymbolRing
 from stargate_address_manager import StargateAddressManager
-from subspace import Subspace
+from subspace_client import SubspaceClient
 from wormhole import Wormhole
 from stargate_server import StargateServer
 
@@ -38,7 +38,7 @@ class StargateSG1:
 
         ### Set up the needed classes and make them ready to use ###
         self.symbolManager = StargateSG1SymbolManager()
-        self.subspace = Subspace(self)
+        self.subspace = SubspaceClient(self)
         self.addrManager = StargateAddressManager(self)
         self.keyboard = KeyboardManager(self)
         self.chevrons = ChevronManager(self)
