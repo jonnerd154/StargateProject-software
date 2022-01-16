@@ -1,6 +1,18 @@
+<!--
+*******************************************************************
+***   Kristian's Stargate Project - TheStargateProject.com      ***
+*******************************************************************
+***                                                             ***
+***   Original Software written by Kristian Tysse               ***
+***   Restructuring and Development by Jonathan Moyes           ***
+***   Web Interface adapted from Dan Clarke:                    ***
+***      https://github.com/danclarke/WorkingStargateMk2Raspi   ***
+***                                                             ***
+*******************************************************************
+-->
 <html>
     <head>
-        <meta charset="UTF-8"> 
+        <meta charset="UTF-8">
         <title>Stargate Command</title>
         <link rel="stylesheet" href="lib/jquery-ui-1.13.0.custom/jquery-ui.css">
         <link rel="stylesheet" href="main.css" />
@@ -22,11 +34,11 @@
               <div class="button" action="symbol_backward">
                 Backward
             </div>
-	        <!--<div class="animation" action="goHome">
+          <!--<div class="animation" action="goHome">
                 Home Stargate
             </div>
             -->
-	    <hr />
+      <hr />
         <h2>Lighting control </h2>
             <div class="button" action="chevron_led_on">
                 Chevrons On
@@ -46,7 +58,7 @@
             </div>
          -->
         <hr />
-        <h2>Cycle Chevrons (Motors, Lights, Sound)</h2>   
+        <h2>Cycle Chevrons (Motors, Lights, Sound)</h2>
             <div class="cycleChevronButton" chevron_number='1'>
                 Chevron 1
             </div>
@@ -74,39 +86,39 @@
             <div class="cycleChevronButton" chevron_number='9'>
                 Chevron 9
             </div>
-            
+
         <hr />
-        <h2>Sound</h2>     
+        <h2>Sound</h2>
             <div class="button" action="volume_down">
                 Volume Down
             </div>
         	<div class="button" action="volume_up">
                 Volume Up
             </div>
-            
-            
-       
-        
+
+
+
+
         <hr />
-        <h2>Simulate</h2>   
+        <h2>Simulate</h2>
             <div class="button" action="sim_incoming">
             Incoming Wormhole
-            </div> 
+            </div>
             <div class="button" action="wormhole_off">
             Disconnect<br>&nbsp;
-            </div>           
+            </div>
         </div>
-        
+
         <!--
         <hr />
-        <h2>Iris Control (Iris is OPEN)</h2>   
+        <h2>Iris Control (Iris is OPEN)</h2>
             <div class="cycleChevronButton" chevron_number='1'>
             Close Iris
-            </div>           
+            </div>
         </div>
         -->
         </div>
-         
+
         	<hr />
         <div class="controls">
         	<div class="control" onclick="window.location = 'index.htm';">
@@ -122,21 +134,40 @@
                 Shutdown
             </div>
         </div>
-        
+
         <script type="text/javascript">
-        	
-            function reboot() {
-                $.post({
-                    url: 'stargate/reboot'
-                });
-            }
-            
-            function shutdown() {
-                $.post({
-                    url: 'stargate/shutdown'
-                });
-            }
-            
+          // Configuration
+          var poll_delay_default = 5000
+          var poll_delay_offline = 500
+
+          // State variables
+          var poll_delay = poll_delay_default
+
+          var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
+            offline_modal.dialog({
+            autoOpen: false,
+            modal: true,
+            dialogClass: "no-close",
+          });
+
+          $( function() {
+            initialize_button_handlers()
+            doPoll();
+          })
+
+          function reboot() {
+              $.post({
+                  url: 'stargate/reboot'
+              });
+          }
+
+          function shutdown() {
+              $.post({
+                  url: 'stargate/shutdown'
+              });
+          }
+
+          function initialize_button_handlers(){
             $('div.button_container div.cycleChevronButton').click(function() {
                 const chevron_number = $(this).attr('chevron_number');
 
@@ -152,7 +183,7 @@
                     $("<div>Failed to communicate with Stargate</div>").dialog();
                 });
             });
-            
+
             $('div.button_container div.button').click(function() {
                 const action = $(this).attr('action');
 
@@ -167,6 +198,45 @@
                     $("<div>Failed to communicate with Stargate</div>").dialog();
                 });
             });
+          }
+
+          function doPoll( singleShot = false ){
+            $.get('stargate/get?entity=is_alive')
+              .done(function(data) {
+
+                // Hide the offline modal
+                hideOfflineModal()
+
+                poll_delay = poll_delay_default
+
+                // Schedule the next polling
+                if ( !singleShot ){
+                  setTimeout(function(){doPoll( false ); }, poll_delay);
+                }
+              })
+              .fail(function(jqXHR, textStatus, errorThrown) {
+                  // Show the "we're offline modal"
+                  showOfflineModal()
+
+                  // Slow the polling rate to default
+                  poll_delay = poll_delay_offline
+
+                  // Schedule the next polling
+                  if ( !singleShot ){
+                    setTimeout(function(){doPoll( false ); }, poll_delay);
+                  }
+              }
+            );
+
+          }
+
+          function showOfflineModal(){
+            offline_modal.dialog("open");
+          }
+
+          function hideOfflineModal(){
+            offline_modal.dialog("close");
+          }
 
         </script>
     </body>

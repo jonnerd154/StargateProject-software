@@ -9,9 +9,11 @@ from hardware_simulation import DCMotorSim, StepperSim
 class ElectronicsOriginal:
 
     def __init__(self, app):
-        
+
         self.cfg = app.cfg
-        
+
+        self.name = "Kristian's Original 3-Shield Stack w/Optional Homing"
+
         self.enableStepperMotor = self.cfg.get("enable_stepper_motor")
         self.enableChevronMotors = self.cfg.get("enable_chevron_motors")
 
@@ -25,7 +27,7 @@ class ElectronicsOriginal:
         self.adc_resolution = 10 # The MCP3002 is a 10-bit ADC
         self.adc_vref = 3.3
         self.spi_bit_rate = 1200000
-        
+
     # ------------------------------------------
 
         self.shieldConfig = None
@@ -44,7 +46,7 @@ class ElectronicsOriginal:
 
     def init_motor_shields(self):
         # Initialize all of the shields as DC motors
-        
+
         if self.enableChevronMotors:
             self.shieldConfig =  {
             #1: MotorKit(address=self.motorShield1Address).motor1, # Used for Stepper
@@ -78,8 +80,8 @@ class ElectronicsOriginal:
             self.stepper = MotorKit(address=self.motorShield1Address).stepper1
         else:
             self.stepper = StepperSim()
-            
-        
+
+
 
     def get_chevron_motor(self, chevron_number):
         return self.shieldConfig[chevron_number]
@@ -105,7 +107,7 @@ class ElectronicsOriginal:
 
         # Make sure you've enabled the Raspi's SPI peripheral: `sudo raspi-config`
         self.spi = spidev.SpiDev(0, self.spi_ch)
-        self.spi.max_speed_hz = self.spi_bit_rate 
+        self.spi.max_speed_hz = self.spi_bit_rate
 
     def get_adc_by_channel(adc_ch):
         # CREDIT: https://learn.sparkfun.com/tutorials/python-programming-tutorial-getting-started-with-the-raspberry-pi/experiment-3-spi-and-analog-input
@@ -137,6 +139,7 @@ class ElectronicsOriginal:
         return (self.adc_vref * adc_value) / (2^self.adc_resolution) #TODO: This should be minus one
 
     def homing_enabled(self):
+        # TODO: Move this to software config, default to disabled.
         if 0.000 < self.adc_to_voltage( self.get_adc_by_channel(1) ) < 1:
             return True
         return False

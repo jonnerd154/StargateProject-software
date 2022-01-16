@@ -1,8 +1,9 @@
-import pymysql, requests, pwd, grp, sys, subprocess
+import pymysql, requests, pwd, sys, subprocess
 from os import stat, makedirs, path
 from base64 import b64decode
 from ast import literal_eval
 from pathlib import Path
+from datetime import datetime
 
 from network_tools import NetworkTools
 from database import Database
@@ -18,11 +19,15 @@ class SoftwareUpdate:
         self.audio = app.audio
 
         self.database = Database(app.base_path)
-        
+
         # Retrieve the configurations
         self.base_url = self.cfg.get("software_updates_url")
         self.fileDownloadUsername = self.cfg.get("software_updates_username")
         self.fileDownloadPassword = self.cfg.get("software_updates_password")
+
+        # Update the fan gates from the DB every x hours
+        interval = self.cfg.get("software_update_interval")
+        app.schedule.every(interval).hours.do( self.check_and_install )
 
     def get_current_version(self):
         return self.current_version
@@ -46,11 +51,11 @@ class SoftwareUpdate:
 
             ## Some needed variables
             update_found = False
-
             root_path = Path(__file__).parent.absolute()
+
             # get the user ID and group ID of the owner of this file (__file__). (In most instances this would result in the UID 1001 for the sg1 user.
-            uid = pwd.getpwnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).pw_uid
-            gid = grp.getgrnam(pwd.getpwuid(stat(__file__).st_uid).pw_name).gr_gid
+            uid = pwd.getpwuid(stat(__file__).st_uid).pw_name
+            gid = pwd.getpwuid(stat(__file__).st_uid).pw_gid
 
             ### Get the information from the DB ###
             sw_update = self.database.get_software_updates()
@@ -63,7 +68,7 @@ class SoftwareUpdate:
                     update_audio = self.audio.play_random_audio_clip("update")
                     update_found = True
                     self.log.log("Newer version {} detected!".format(entry[1]))
-
+                    self.cfg.set('software_update_status', 'Update Available: v{}'.format(entry[1]) )
                     new_files = literal_eval(entry[2]) # make a list of the new files
                     # Get the new files
                     for file in new_files:
@@ -90,6 +95,12 @@ class SoftwareUpdate:
 
             if not update_found:
                 self.log.log("The Stargate is up-to-date.")
+                self.cfg.set('software_update_last_check', str(datetime.now() ) )
+                self.cfg.set('software_update_status', 'up-to-date' )
+                self.cfg.set('software_update_exception', False )
 
         except Exception as ex:
             self.log.log("Software update failed with error: {}".format(ex))
+            self.cfg.set('software_update_last_check', str(datetime.now()))
+            # Flag the problem in update_exception, not update_status so that update_status can show that an update is available.
+            self.cfg.set('software_update_exception', True)

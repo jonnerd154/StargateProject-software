@@ -1,7 +1,19 @@
+<!--
+*******************************************************************
+***   Kristian's Stargate Project - TheStargateProject.com      ***
+*******************************************************************
+***                                                             ***
+***   Original Software written by Kristian Tysse               ***
+***   Restructuring and Development by Jonathan Moyes           ***
+***   Web Interface adapted from Dan Clarke:                    ***
+***      https://github.com/danclarke/WorkingStargateMk2Raspi   ***
+***                                                             ***
+*******************************************************************
+-->
 <html>
     <head>
         <!-- Chevrons from Manz: https://codepen.io/manz/pen/zoREJL -->
-        <meta charset="UTF-8"> 
+        <meta charset="UTF-8">
         <title>Stargate Command</title>
         <link rel="stylesheet" href="lib/jquery-ui-1.13.0.custom/jquery-ui.css">
         <link rel="stylesheet" href="main.css" />
@@ -11,7 +23,7 @@
         <div id="presets">
             <!-- This div will be populated with entries from the API-sourced AddressBook -->
         </div>
-       
+
     	<div class="controls">
         	<div class="control" onclick="window.location = 'index.htm';">
                 Dialing page
@@ -20,28 +32,48 @@
 
         <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
-          
+
 
         <script type="text/javascript">
-            
-        $.ajax({
-            dataType: "json",
-            url: "/stargate/get",
-            data: {
-                entity: "all_gates"
-            },
-            success: function( json ) {
-                console.log( "JSON Data: " + json );
-                addresses = json
-                load_address_book()
-            },
-            error: function (xhr, textStatus, errorThrown){
-                console.log("Failed to load Address Book from Stargate")
-                $("<div>Failed to load Address Book from Stargate</div>").dialog();
-            } 
 
-        });
-        
+				// Configuration
+				var poll_delay_default = 5000
+				var poll_delay_offline = 500
+
+				// State variables
+				var poll_delay = poll_delay_default
+				var is_online = false
+
+				var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
+				offline_modal.dialog({
+						autoOpen: false,
+						modal: true,
+						dialogClass: "no-close",
+				});
+
+				// This function is run on document-ready
+				$( function() {
+						doPoll()
+				})
+
+				function update_address_book(){
+					$.ajax({
+							dataType: "json",
+							url: "/stargate/get",
+							data: {
+									entity: "all_gates"
+							},
+							success: function( json ) {
+									addresses = json
+									load_address_book()
+							},
+							error: function (xhr, textStatus, errorThrown){
+									console.log("Failed to load Address Book from Stargate")
+									$("<div>Failed to load Address Book from Stargate</div>").dialog();
+							}
+
+					});
+				}
         function load_address_book(){
             $.each(addresses, function( index, value ) {
                 address_raw = value.gate_address
@@ -59,6 +91,50 @@
                 $("#presets").append('<div class="presetAddress" onclick="window.location = \'index.htm?address=' + address_string + '\';"><div class="name">' + value.name + ' ' + fan_gate_string + '</div><div class="glyphs">' + address +  '</div></div>' );
             });
         }
+
+				function doPoll( singleShot = false ){
+						$.get('stargate/get?entity=is_alive')
+								.done(function(data) {
+									  // If we're coming back from being offline, update the address book
+										if (!is_online){
+											update_address_book()
+										}
+
+										// Hide the offline modal
+										hideOfflineModal()
+
+										poll_delay = poll_delay_default
+										is_online = true
+										// Schedule the next polling
+										if ( !singleShot ){
+												setTimeout(function(){doPoll( false ); }, poll_delay);
+										}
+								})
+								.fail(function(jqXHR, textStatus, errorThrown) {
+										// Show the "we're offline modal"
+										showOfflineModal()
+										is_online = false
+										// Slow the polling rate to default
+										poll_delay = poll_delay_offline
+
+										// Schedule the next polling
+										if ( !singleShot ){
+												setTimeout(function(){doPoll( false ); }, poll_delay);
+										}
+								}
+
+						);
+
+				}
+
+				function showOfflineModal(){
+						offline_modal.dialog("open");
+				}
+
+				function hideOfflineModal(){
+						offline_modal.dialog("close");
+				}
+
         </script>
     </body>
 </html>

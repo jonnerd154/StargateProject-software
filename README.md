@@ -1,4 +1,4 @@
-# StargateProject2021
+# TheStargateProject Milky Way Stargate Software
 
 # Running the Stargate Software
 Log into the machine and type `sudo /home/sg1/sg1_venv/bin/python /home/sg1/sg1/main.py`
@@ -75,3 +75,31 @@ sudo service apache2 restart
 sudo nano /boot/config.txt
    # Change dtparam=audio=off
 ```
+
+# Setup logrotated
+`sudo nano /etc/logrotate.d/stargate`
+
+```/home/sg1/sg1/logs/sg1.log {
+    missingok
+    notifempty
+    size 30k
+    daily
+    rotate 30
+    create 0600 sg1 sg1
+}
+
+/home/sg1/sg1/logs/database.log {
+    missingok
+    notifempty
+    size 30k
+    daily
+    rotate 30
+    create 0600 sg1 sg1
+}
+```
+`sudo logrotate --force /etc/logrotate.conf`
+
+# CREDITS
+Kristian Tysse wrote all of the original code. In 2021, Jonathan Moyes restructured the code and extended it to include additional functionalities.
+
+The Web UI basic implementation of the Web API Server were based on Dan Clarke's work: https://github.com/danclarke/WorkingStargateMk2Raspi

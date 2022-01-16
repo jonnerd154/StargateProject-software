@@ -6,7 +6,7 @@ from icmplib import ping
 
 from database import Database
 
-class Subspace:
+class SubspaceClient:
 
     def __init__(self, stargate):
 
@@ -14,6 +14,9 @@ class Subspace:
         self.cfg = stargate.cfg
 
         self.database = Database(stargate.base_path)
+
+        self.logging = "normal"
+        #self.logging = "verbose"
 
         # Retrieve the configurations
         self.port = self.cfg.get("subspace_port") # just for fun because the Stargate can stay open for 38 minutes. :)
@@ -29,8 +32,30 @@ class Subspace:
         self.client = None
 
     def get_public_key(self):
-        cmd = 'sudo util/get_subspace_public_key.sh'
-        return subprocess.check_output(cmd, shell=True).decode('ascii')
+        try:
+            cmd = 'sudo util/get_subspace_public_key.sh'
+            return subprocess.check_output(cmd, shell=True).decode('ascii')
+        except:
+            return False
+
+    def set_ip_address(self, ip_address):
+        # Save it to the config so we can use it later
+        self.cfg.set('subspace_ip_address', ip_address)
+
+        # Update the WireGuard Config
+        return self.configure_wireguard_ip(ip_address)
+
+    def get_configured_ip(self):
+        # Return the cached/local-config value (not from WireGuard/ifconfig)
+        return self.cfg.get('subspace_ip_address')
+
+    def configure_wireguard_ip(self, ip_address):
+        try:
+            cmd = 'sudo util/subspace_config-ip.sh {}'.format(ip_address)
+            subprocess.check_output(cmd, shell=True).decode('ascii')
+            return True
+        except:
+            return False
 
     def send_raw(self, msg):
         message = msg.encode(self.encoding_format)
@@ -52,6 +77,8 @@ class Subspace:
         The second value in the tuple is either None, or it contains the status of the remote gate, if we asked for it.
         """
 
+        if self.logging == "verbose": self.log.log("send_to_remote_stargate( {}, {} )".format(server_ip, message_string))
+
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.settimeout(self.timeout) # set the timeout
         connection_to_server = False # TODO: get rid of this var
@@ -59,11 +86,11 @@ class Subspace:
 
         ## Try to establish a connection to the server.
         try:
-            #print("Subspace send to {}:{} ::: {}".format(server_ip, self.port, message_string))
             self.client.connect( (server_ip, self.port) )
             connection_to_server = True # TODO: Move the if block below into the try block, get rid of this var
         except Exception as ex:
             self.log.log(f'Error sending to remote server -> {ex}')
+            remote_gate_status = False
             return connection_to_server, remote_gate_status # return false if we do not have a connection.
 
         if connection_to_server:
@@ -72,6 +99,7 @@ class Subspace:
             #If we ask for the status, expect an answer
             if message_string == 'what_is_your_status':
                 remote_gate_status = (self.client.recv(8).decode(encoding_format))
+                if self.logging == "verbose": self.log.log('Received STATUS REPLY Line 98: {}'.format(remote_gate_status))
 
             self.send_raw(self.disconnect_message) # always disconnect.
             return True, remote_gate_status
@@ -88,7 +116,7 @@ class Subspace:
             if len(stargate_address) > 1 and stargate_address[0:2] == known_fan_made_stargates[gate]['gate_address'][0:2]:
                 return known_fan_made_stargates[gate]['ip_address']
         else:
-            print( 'Unable to get IP for', stargate_address)
+            self.log.log( 'Unable to get IP for', stargate_address)
 
     def get_stargate_address_from_IP(self, ip, fan_gates_dictionary):
         """

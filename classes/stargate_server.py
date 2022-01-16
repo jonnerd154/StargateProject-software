@@ -24,9 +24,12 @@ class StargateServer:
         self.addressBook = stargate.addrManager.getBook()
 
         self.database = Database(self.base_path)
-        
+
+        self.logging = "normal"
+        #self.logging = "verbose"
+
         # Retrieve the configurations
-        self.port = self.cfg.get("subspace_port") # I chose 3838 because the Stargate can stay open for 38 minutes. :)  
+        self.port = self.cfg.get("subspace_port") # I chose 3838 because the Stargate can stay open for 38 minutes. :)
         self.keep_alive_interval = self.cfg.get("subspace_keep_alive_interval")
         self.keep_alive_address = self.cfg.get("subspace_keep_alive_address")
 
@@ -37,9 +40,9 @@ class StargateServer:
         self.keep_alive_running_check_interval = 0.5
 
         # Get server IP, preferable the IP of the stargate in subspace.
-        self.server_ip = self.subspace.get_stargate_server_ip()
+        self.server_ip = "0.0.0.0" #self.subspace.get_stargate_server_ip()
         self.server_address = (self.server_ip, self.port)
-        
+
         # Configure the socket, open/bind
         self.open_socket()
 
@@ -64,6 +67,10 @@ class StargateServer:
         :return: Nothing is returned
         """
 
+        # TODO: Use schedule
+
+        if self.logging == "verbose": self.log.log(f'Sending Keepalive')
+
         time_since_last_ping = 0
         while stargate.running:
 
@@ -77,23 +84,34 @@ class StargateServer:
                 time_since_last_ping+=self.keep_alive_running_check_interval
 
     def handle_incoming_wormhole(self, conn, addr):
+        if self.logging == "verbose": self.log.log('handle_incoming_wormhole({}, {}'.format(conn, addr))
+
         connected = True  # while there is a connection from another gate.
         while connected:
+            if self.logging == "verbose": self.log.log('connected loop')
+
             msg_length = conn.recv(self.header).decode(self.encoding_format)
             if msg_length:  # if the msg_length is not None
                 msg_length = int(msg_length)
                 msg = conn.recv(msg_length).decode(self.encoding_format)
                 if msg == self.disconnect_message:  # always disconnect after sending a message to the server.
+                    if self.logging == "verbose": self.log.log('disconnect request')
                     connected = False
 
                 # If we are receiving the centre_button_incoming
                 elif msg == 'centre_button_incoming':
+                    if self.logging == "verbose": self.log.log('centre_button_incoming')
+                    # Check if incoming wormholes are allowed
+                    if not self.cfg.get("allow_incoming_dialing"):
+                        return
+
                     # If a wormhole is already established, and we are receiving the centre_button_incoming from the same gate.
                     if self.stargate.wormhole and addr[0] == self.stargate.fan_gate_incoming_IP:
                         self.stargate.centre_button_incoming = False
                         self.stargate.wormhole = False
                     # If we are dialling (no wormhole established)
                     else:
+                        self.log.log("Received Center Button Incoming")
                         self.stargate.centre_button_incoming = True
                         # If there are not already a saved IP, or if we dialed an none fan_gate
                         if not self.stargate.fan_gate_incoming_IP:
@@ -102,11 +120,11 @@ class StargateServer:
 
                     planet_name = self.subspace.get_planet_name_from_IP(addr[0], self.addressBook.get_fan_gates())
                     stargate_address = self.subspace.get_stargate_address_from_IP(addr[0], self.addressBook.get_fan_gates())
-                    self.log.log('1 Received from {} - {} -> {}'.format(planet_name, stargate_address, msg))
+                    if self.logging == "verbose": self.log.log('Line 123: Received from {} - {} -> {}'.format(planet_name, stargate_address, msg))
 
                 # If we are asked about the status (wormhole already active from a different gate or actively dialing out)
                 elif msg == 'what_is_your_status':
-                    # self.log.log('Received from {} -> {}'.format(addr, msg))
+                    self.log.log('Received what_is_your_status from {} -> {}'.format(addr, msg))
                     # It the wormhole is already established, or if we are dialing out.
                     if self.stargate.wormhole or len(self.stargate.address_buffer_outgoing) > 0:
                         # If the established wormhole is from the remote gate
@@ -121,6 +139,11 @@ class StargateServer:
 
                 # If we are receiving a stargate address, add it to the incoming buffer.
                 elif self.addrManager.is_valid(msg):
+
+                    # Check if incoming wormholes are allowed
+                    if not self.cfg.get("allow_incoming_dialing"):
+                        return
+
                     address = self.addrManager.is_valid(msg)
                     for symbol in address:
                         if not symbol in self.stargate.address_buffer_incoming:
@@ -128,13 +151,14 @@ class StargateServer:
 
                     planet_name = self.subspace.get_planet_name_from_IP(addr[0], self.addressBook.get_fan_gates())
                     stargate_address = self.subspace.get_stargate_address_from_IP(addr[0], self.addressBook.get_fan_gates())
-                    self.log.log('2 Received from {} - {} -> {}'.format(planet_name, stargate_address, msg))
+                    if self.logging == "verbose": self.log.log('LINE 154 Received from {} - {} -> {}'.format(planet_name, stargate_address, msg))
 
                 # For unknown messages
                 else:
                     stargate_address = self.subspace.get_stargate_address_from_IP(addr[0], self.addressBook.get_fan_gates())
                     self.log.log('Received UNKNOWN MESSAGE from {} - {} -> {}     But I do not know what to do with that!'.format(addr[0], stargate_address, msg))
         conn.close()  # close the connection.
+
     def start(self):
         if self.server_ip: # If we have found an IP to use for the server.
             self.server.listen()

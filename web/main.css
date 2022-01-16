@@ -1,3 +1,16 @@
+/*
+*******************************************************************
+***   Kristian's Stargate Project - TheStargateProject.com      ***
+*******************************************************************
+***                                                             ***
+***   Original Software written by Kristian Tysse               ***
+***   Restructuring and Development by Jonathan Moyes           ***
+***   Web Interface adapted from Dan Clarke:                    ***
+***      https://github.com/danclarke/WorkingStargateMk2Raspi   ***
+***                                                             ***
+*******************************************************************
+*/
+
 html {
     background-color: black;
     color: white;
@@ -39,15 +52,15 @@ html {
                 opacity: 1;
                 transform: scale(1);
             }
-            
+
         .dial-sequence .chevron.small {
             width: 10%;
         }
-        
+
         .dial-sequence .chevron.smaller{
             width: 9%;
         }
-        
+
         .dial-sequence .chevron img{
             /*filter: invert(1);*/
         }
@@ -78,11 +91,17 @@ html {
         width: 100%;
         height: 100%;
     }
-    
+
     .chevron.unavailable img {
         opacity: .5;
     }
-    
+
+#center_button_image{
+  filter: invert(0);
+  width: 100%;
+  height: 100%;
+}
+
 .chevronPresets {
     width: 324px;
     height: 100px;
@@ -164,8 +183,8 @@ html {
         width: 75px;
         height: 75px;
     }
-    
-    
+
+
 .filter-green{
     filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);
 }
@@ -178,10 +197,10 @@ html {
 .no-close .ui-dialog-titlebar-close {  display: none; }
 
 .div-table {
-  display: table;         
-  width: auto;         
-  #background-color: #eee;         
-  border: 1px solid #666666;         
+  display: table;
+  width: auto;
+  #background-color: #eee;
+  border: 1px solid #666666;
   border-spacing: 5px; /* cellspacing:poor IE support for  this */
 }
 .div-table-row {
@@ -191,13 +210,13 @@ html {
 }
 .div-table-col-names {
   float: left; /* fix for  buggy browsers */
-  display: table-column;         
-  width: 200px;         
-  #background-color: #ccc;  
+  display: table-column;
+  width: 200px;
+  #background-color: #ccc;
 }
 .div-table-col-values {
   float: left; /* fix for  buggy browsers */
-  display: table-column;         
-  width: auto;         
-  #background-color: #ccc;  
+  display: table-column;
+  width: auto;
+  #background-color: #ccc;
 }

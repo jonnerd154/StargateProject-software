@@ -8,7 +8,7 @@ from dialers import Dialer
 from keyboard_manager import KeyboardManager
 from symbol_ring import SymbolRing
 from stargate_address_manager import StargateAddressManager
-from subspace import Subspace
+from subspace_client import SubspaceClient
 from wormhole import Wormhole
 from stargate_server import StargateServer
 
@@ -28,6 +28,7 @@ class StargateSG1:
         self.base_path = app.base_path
         self.netTools = app.netTools
         self.swUpdater = self.app.swUpdater
+        self.schedule = app.schedule
 
         # Retrieve the configurations
         self.inactivityTimeout = self.cfg.get("dialing_timeout")
@@ -37,7 +38,7 @@ class StargateSG1:
 
         ### Set up the needed classes and make them ready to use ###
         self.symbolManager = StargateSG1SymbolManager()
-        self.subspace = Subspace(self)
+        self.subspace = SubspaceClient(self)
         self.addrManager = StargateAddressManager(self)
         self.keyboard = KeyboardManager(self)
         self.chevrons = ChevronManager(self)
@@ -78,7 +79,7 @@ class StargateSG1:
         self.locked_chevrons_incoming = 0 # The current number of locked outgoing chevrons
         self.wormhole = False # The state of the wormhole.
         self.black_hole = False # Did we dial the black hole?
-        self.fan_gate_online_status = None # To keep track of the dialed fan_gate status
+        self.fan_gate_online_status = True # To keep track of the dialed fan_gate status. Assume it's online until proven otherwise
         self.fan_gate_incoming_IP = None # To keep track of the IP address for the remote gate that establishes a wormhole
         self.connected_planet_name = None
 
@@ -105,6 +106,7 @@ class StargateSG1:
 
                 ### Check for inactivity ###
                 # If there are something in the buffers and no activity for 1 minute while dialing.
+                # TODO: Use Schedule
                 if self.inactivity( self.inactivityTimeout ):
                     self.log.log('Inactivity detected, aborting.')
                     self.shutdown()
@@ -116,8 +118,11 @@ class StargateSG1:
                 #When the wormhole is no longer running
                 self.shutdown(cancel_sound=False)
 
+            self.schedule.run_pending() # Run any scheduled items
+
         # When the stargate is no longer running.
         self.shutdown(cancel_sound=False)
+
 
     def outgoing_dialing(self):
         """
@@ -141,22 +146,31 @@ class StargateSG1:
             self.log.log(f'Chevron {self.locked_chevrons_outgoing} locked with symbol: {self.address_buffer_outgoing[self.locked_chevrons_outgoing - 1]}')
             self.last_activity_time = time()  # update the last_activity_time
 
-            ## Check if we are dialing a fan_gate and send the symbols to the remote gate.
+            # TODO: Some of this belongs in Subspace. For example, deciding whether to send a message based
+            #         on gate status should be handled by Subspace. outgoing_dialing() doesn't need to worry about that.
+
+            ## If we are dialing a fan_gate, send the symbols to the remote gate.
             if self.addrManager.is_fan_made_stargate(self.address_buffer_outgoing):
-                # If we don't know the online status of the fan_gate or it is online.
-                if self.fan_gate_online_status is None or self.fan_gate_online_status:
+                # If the gate is presumed to be online, send it.
+                if self.fan_gate_online_status:
                     # send the locked symbols to the remote gate.
-                    if self.subspace.send_to_remote_stargate(self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addrManager.get_fan_gates() ), str(self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]))[0]:
-                        self.log.log(f'Sent to fan_gate: {self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]}')
-                        self.fan_gate_online_status = True  # set the online status to True
+                    this_gate_ip = self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addrManager.get_fan_gates() )
+                    this_message = str( self.address_buffer_outgoing[0:self.locked_chevrons_outgoing] )
+                    hasConnection = self.subspace.send_to_remote_stargate( this_gate_ip, this_message)[0] # Attempt to send
+
+                    # Check for success
+                    if hasConnection:
+                        self.log.log(f'Subspace Sent: {self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]}')
                     else:
-                        self.fan_gate_online_status = False  # set the online status to False, to keep the dialing running more smoothly if the fan_gate is offline.
+                        self.log.log('This Gate is offline. Skipping Subspace sends for remainder of this dialing attempt.')
+                        self.fan_gate_online_status = False # Gate is offline, don't keep sending messages during this dialing attempt
 
     def incoming_dialing(self):
         """
         This method handles the incoming dialing of the stargate. It's kept in it's own method so not to clutter up the update method too much.
         :return: Nothing is returned
         """
+
         # If there are dialed incoming symbols that are not yet locked and we are currently not dialing out.
         if len(self.address_buffer_incoming) > self.locked_chevrons_incoming and len(self.address_buffer_outgoing) == 0:
 
@@ -173,12 +187,16 @@ class StargateSG1:
 
             # If the incoming address buffer matches our routable or unroutable local address, lock it.
             if buffer_first_6 == local_first_6 or buffer_first_6 == loopback_first_6:
+                from pprint import pformat
+                self.log.log("Address matching. Incoming Buffer: " + pformat(self.address_buffer_incoming))
+
                 self.locked_chevrons_incoming += 1  # Increment the locked chevrons variable.
                 try:
                     self.chevrons.get(self.locked_chevrons_incoming).incoming_on()  # Do the chevron locking thing.
                 except KeyError:  # If we dialed more chevrons than the stargate can handle.
-                    raise
+                    raise # TODO: Remove debug (?)
                     pass  # Just pass without activating a chevron.
+
                 # Play the audio clip for incoming wormhole
                 if self.locked_chevrons_incoming == 1:
                     self.audio.play_random_clip("IncomingWormhole")
@@ -189,8 +207,10 @@ class StargateSG1:
                 self.log.log(f'Incoming: Chevron {self.locked_chevrons_incoming} locked with symbol {self.address_buffer_incoming[self.locked_chevrons_incoming - 1]}')
 
                 sleep(delay)  # if there's a delay, use it.
+            else:
+                self.log.log("Address is not a match for this gate")
 
-
+    # TODO: Some of this belongs in Subspace.
     def try_sending_centre_button(self):
         """
         This functions simply checks if it is possible to send the centre_button to the remote gate and sends it.
@@ -199,7 +219,7 @@ class StargateSG1:
         """
         if self.fan_gate_online_status and self.centre_button_outgoing and len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing:
             self.subspace.send_to_remote_stargate(self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addrManager.get_fan_gates() ), 'centre_button_incoming')
-            self.log.log(f'Sent to fan_gate: centre_button_incoming')
+            self.log.log(f'Sent: Center Button')
 
     def get_connected_planet_name(self):
 
@@ -296,6 +316,9 @@ class StargateSG1:
         :param seconds: The number of seconds of allowed inactivity
         :return: True if inactivity is detected, False if not
         """
+
+        # TODO: Use schedule
+
         if not self.wormhole: #If we are in the dialing phase
             if self.last_activity_time: #If the variable is not None
                 if (len(self.address_buffer_incoming) > 0) or (len(self.address_buffer_outgoing) > 0): # If there are something in the buffers
@@ -303,12 +326,14 @@ class StargateSG1:
                         return True
         return False
 
-    # TODO: Move to subspace
     def possible_to_establish_wormhole(self):
         """
         This is a method to help check if we are able to establish a wormhole or not.
         :return: Returns True if we can establish a wormhole, and False if not
         """
+
+        # TODO: Some of this belongs in Subspace.
+
         # If the dialed address is valid
         if len(self.address_buffer_outgoing) > 0 and self.addrManager.valid_planet(self.address_buffer_outgoing) or \
             len(self.address_buffer_incoming) > 0 and self.addrManager.valid_planet(self.address_buffer_incoming):

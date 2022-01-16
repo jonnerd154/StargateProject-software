@@ -13,6 +13,7 @@ sys.path.append('config')
 from http.server import HTTPServer
 import threading
 import atexit
+import schedule
 
 from stargate_config import StargateConfig
 from ancients_log_book import AncientsLogBook
@@ -32,20 +33,33 @@ class GateApplication:
 
         ### Load our config file
         self.cfg = StargateConfig(self.base_path, "config.json")
-        
+
         ### Setup the logger
         self.log = AncientsLogBook(self.base_path, "sg1.log")
         self.cfg.set_log(self.log)
         self.cfg.load()
-        
+
+        # Some credits
+        self.log.log('*******************************************************************')
+        self.log.log("***   Kristian's Stargate Project - TheStargateProject.com      ***".upper())
+        self.log.log('*******************************************************************')
+        self.log.log("***                                                             ***".upper())
+        self.log.log('***   Original Software written by Kristian Tysse               ***')
+        self.log.log('***   Restructuring and Development by Jonathan Moyes           ***')
+        self.log.log('***   Web Interface adapted from Dan Clarke:                    ***')
+        self.log.log('***      https://github.com/danclarke/WorkingStargateMk2Raspi   ***')
+        self.log.log("***                                                             ***".upper())
+        self.log.log('*******************************************************************\r\n')
+
         ### Detect our electronics and initialize the hardware
         self.electronics = Electronics(self).hardware
 
         ### Initialize the Audio class and do some setup
         self.audio = StargateAudio(self, self.base_path)
 
-        ### We'll use NetworkTools throughout the app, initialize it here.
+        ### We'll use NetworkTools and Schedule throughout the app, initialize them here.
         self.netTools = NetworkTools(self.log)
+        self.schedule = schedule # Alias the class here so it can be used in with a clear interface
 
         ### Check for new software updates ###
         self.swUpdater = SoftwareUpdate(self)
@@ -54,8 +68,10 @@ class GateApplication:
 
         ### Create the Stargate object
         self.log.log('Booting up the Stargate! Version {}'.format(self.swUpdater.get_current_version()))
+
+        # Actually start it...
         self.stargate = StargateSG1(self)
-        
+
         ### Start the web server
         try:
             StargateWebServer.stargate = self.stargate
@@ -64,7 +80,7 @@ class GateApplication:
             self.httpd_thread.daemon = True
             self.httpd_thread.start()
             self.log.log('Web Services API running on: {}:{}'.format( self.netTools.get_local_ip(), self.cfg.get("httpServerPort") ))
-            
+
         except:
             raise #self.log.log("Failed to start webserver. Is the port in use?")
 

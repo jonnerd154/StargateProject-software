@@ -43,8 +43,13 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 elif( entity == "local_address" ):
                     content = json.dumps( self.stargate.addrManager.getBook().get_local_address() )
 
+                elif( entity == "is_alive" ):
+                    content = json.dumps( { 'is_alive': True })
+
                 elif( entity == "status" ):
                     data = {
+                        "gate_name":                self.stargate.addrManager.getBook().get_local_gate_name(),
+                        "local_address":            self.stargate.addrManager.getBook().get_local_address(),
                         "address_buffer_outgoing":  self.stargate.address_buffer_outgoing,
                         "locked_chevrons_outgoing": self.stargate.locked_chevrons_outgoing,
                         "address_buffer_incoming":  self.stargate.address_buffer_incoming,
@@ -60,18 +65,24 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
                 elif( entity == "info" ):
                     data = {
+                        "gate_name":                      self.stargate.addrManager.getBook().get_local_gate_name(),
                         "local_stargate_address":         self.stargate.addrManager.getBook().get_local_address(),
                         "local_stargate_address_string":  self.stargate.addrManager.getBook().get_local_address_string(),
                         "subspace_public_key":            self.stargate.subspace.get_public_key(),
-                        "subspace_ip_address":            self.stargate.subspace.get_subspace_ip(True),
+                        "subspace_ip_address_config":     self.stargate.subspace.get_configured_ip(),
+                        "subspace_ip_address_active":     self.stargate.subspace.get_subspace_ip(True),
                         "lan_ip_address":                 self.stargate.subspace.get_lan_ip(),
                         "software_version":               str(self.stargate.swUpdater.get_current_version()),
+                        "software_update_last_check":     self.stargate.cfg.get('software_update_last_check'),
+                        "software_update_status":         self.stargate.cfg.get('software_update_status'),
                         "python_version":                 platform.python_version(),
                         "internet_available":             self.stargate.netTools.has_internet_access(),
                         "subspace_available":             self.stargate.subspace.is_online(),
                         "standard_gate_count":            len(self.stargate.addrManager.getBook().get_standard_gates()),
                         "fan_gate_count":                 len(self.stargate.addrManager.getBook().get_fan_gates()),
-                        "dialer_mode":                    self.stargate.dialer.type
+                        "last_fan_gate_update":           self.stargate.cfg.get('last_fan_gate_update'),
+                        "dialer_mode":                    self.stargate.dialer.type,
+                        "hardware_mode":                  self.stargate.electronics.name
                     }
                     content = json.dumps( data )
 
@@ -193,7 +204,6 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
                 # Store the address:
                 if continue_to_save:
-                    # TODO: Error checking
                     self.stargate.addrManager.getBook().set_local_address(address)
                     data = { "success": True, "message": "There are no conflicts with your chosen address.<br><br>Local Address Saved." }
 
@@ -201,7 +211,16 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 return
 
             elif data['action'] == "set_subspace_ip":
-                print("Setting Subspace IP Address")
+                # TODO: Validate the IP address again (client did it, but we should too)
+                success = self.stargate.subspace.set_ip_address(data['ip'])
+
+                if success:
+                    data = { "success": success, "message": "Subspace IP Address Saved." }
+                else:
+                    data = { "success": success, "message": "There was an error while saving the IP Address." }
+
+                self.send_json_response(data)
+                return
 
             elif data['action'] == "subspace_up":
                 print("Subspace UP")
@@ -215,7 +234,6 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             if symbol_number > 0:
                 self.stargate.keyboard.queue_symbol(symbol_number)
             elif symbol_number == 0:
-                self.stargate.fan_gate_online_status = False #TODO: This isn't necessarily true.
                 self.stargate.keyboard.queue_center_button()
 
         elif self.path == '/incoming_press':
