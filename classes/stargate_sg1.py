@@ -167,6 +167,9 @@ class StargateSG1:
         This method handles the incoming dialing of the stargate. It's kept in it's own method so not to clutter up the update method too much.
         :return: Nothing is returned
         """
+        from pprint import pformat
+        self.log.log(pformat(self.address_buffer_incoming))
+
         # If there are dialed incoming symbols that are not yet locked and we are currently not dialing out.
         if len(self.address_buffer_incoming) > self.locked_chevrons_incoming and len(self.address_buffer_outgoing) == 0:
 
