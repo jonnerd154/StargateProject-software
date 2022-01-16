@@ -13,4 +13,6 @@ A web interface is provided to allow testing of individual hardware components, 
 - Jonathan Moyes restructured the code and extended it to include additional functionalities.
 - The Web UI basic implementation of the Web API Server were based on Dan Clarke's work: https://github.com/danclarke/WorkingStargateMk2Raspi
 
-Stargate SG-1, Stargate Atlantis & Stargate Universe are ™ & © of Metro-Goldwyn-Mayer Studios Inc.  This site is in no way sponsored or endorsed by: SyFy or MGM. This site was created solely as a hobby project and to help other Stargate fans create their own Stargates and to keep the passion and love for Stargate alive. TheStargateProject.com is a fan-based project and is not intended to infringe upon any copyrights or registered trademarks.
+Stargate SG-1, Stargate Atlantis & Stargate Universe are ™ & © of Metro-Goldwyn-Mayer Studios Inc.  This project is in no way sponsored or endorsed by: SyFy or MGM. This project was created solely as a hobby project and to help other Stargate fans create their own Stargates and to keep the passion and love for Stargate alive. 
+
+TheStargateProject.com is a fan-based project and is not intended to infringe upon any copyrights or registered trademarks.
