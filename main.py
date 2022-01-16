@@ -43,12 +43,12 @@ class GateApplication:
         self.log.log('*******************************************************************')
         self.log.log("***   Kristian's Stargate Project - TheStargateProject.com      ***".upper())
         self.log.log('*******************************************************************')
-        self.log.log("***                                                             ***".upper())
+        self.log.log("***                                                             ***")
         self.log.log('***   Original Software written by Kristian Tysse               ***')
         self.log.log('***   Restructuring and Development by Jonathan Moyes           ***')
         self.log.log('***   Web Interface adapted from Dan Clarke:                    ***')
         self.log.log('***      https://github.com/danclarke/WorkingStargateMk2Raspi   ***')
-        self.log.log("***                                                             ***".upper())
+        self.log.log("***                                                             ***")
         self.log.log('*******************************************************************\r\n')
 
         ### Detect our electronics and initialize the hardware
