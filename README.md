@@ -25,9 +25,10 @@ pip-upgrade sg1/requirements.txt
 ```
 sudo apt-get install avahi-daemon
 sudo nano /etc/hosts
-## Modify the `127.0.0.1` entry as below, then save the file:
-  127.0.0.1 [tab] stargate
-
+## Modify the `127.0.1.1` entry as below, then save the file:
+  127.0.1.1 [tab] stargate
+sudo nano /etc/hostname
+## Modify to say "stargate"
 sudo hostname stargate
 
 sudo reboot
@@ -54,7 +55,7 @@ ProxyPass     /stargate/     http://localhost:8080/
 export APACHE_RUN_USER=sg1
 export APACHE_RUN_GROUP=sg1
 ```
-- Configure the virtualhost DocumentRoot (edit `/etc/apache2/sites-available/000-default.conf`...edit exiting DocumentRoot directive)
+- Configure the virtualhost DocumentRoot (edit `/etc/apache2/sites-available/000-default.conf`...edit existing DocumentRoot directive)
 ```
 DocumentRoot /home/sg1/sg1/web
 ```
@@ -79,7 +80,8 @@ sudo nano /boot/config.txt
 # Setup logrotated
 `sudo nano /etc/logrotate.d/stargate`
 
-```/home/sg1/sg1/logs/sg1.log {
+```
+/home/sg1/sg1/logs/sg1.log {
     missingok
     notifempty
     size 30k
