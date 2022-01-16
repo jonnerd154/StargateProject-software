@@ -185,7 +185,7 @@ class StargateSG1:
             # If the incoming address buffer matches our routable or unroutable local address, lock it.
             if buffer_first_6 == local_first_6 or buffer_first_6 == loopback_first_6:
                 from pprint import pformat
-                self.log.log("LCLADDR:  " + pformat(self.addrManager.addressBook.get_local_address())
+                self.log.log("LCLADDR:  " + pformat(self.addrManager.addressBook.get_local_address() ) )
                 self.log.log("I_Buffer: " + pformat(self.address_buffer_incoming))
                 self.log.log("VALID")
 
