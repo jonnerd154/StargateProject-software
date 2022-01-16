@@ -12,7 +12,7 @@ A web interface is provided to allow testing of individual hardware components, 
 ## Credits
 - Kristian Tysse designed and wrote all of the original code, most of which is still in use today's program.
 - Jonathan Moyes restructured the code and extended it to include additional functionalities.
-- The Web UI basic implementation of the Web API Server were based on Dan Clarke's work: https://github.com/danclarke/WorkingStargateMk2Raspi
+- The Web UI and basic implementation of the Stargate API Server were based on Dan Clarke's work: https://github.com/danclarke/WorkingStargateMk2Raspi
 
 Stargate SG-1, Stargate Atlantis & Stargate Universe are ™ & © of Metro-Goldwyn-Mayer Studios Inc.  This project is in no way sponsored or endorsed by: SyFy or MGM. This project was created solely as a hobby project and to help other Stargate fans create their own Stargates and to keep the passion and love for Stargate alive. 
 
