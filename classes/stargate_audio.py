@@ -1,7 +1,7 @@
-import simpleaudio as sa
 from os import listdir, path
 from random import choice
 import subprocess
+import simpleaudio as sa
 
 class StargateAudio:
 
@@ -10,11 +10,11 @@ class StargateAudio:
         self.log = app.log
         self.cfg = app.cfg
 
-        self.soundFxRoot = base_path + "/soundfx" # No trailing slash
+        self.sound_fx_root = base_path + "/soundfx" # No trailing slash
 
         # Make ready the sound effects
         self.sounds = {}
-        self.sounds['rolling_ring'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/roll.wav")) }
+        self.sounds['rolling_ring'] = { 'file': sa.WaveObject.from_wave_file(str(self.sound_fx_root + "/roll.wav")) }
 
         self.sounds['dialing_cancel'] = { 'file': self.init_wav_file( "/cancel.wav" ) }
         self.sounds['dialing_fail'] =   { 'file': self.init_wav_file( "/dial_fail_sg1.wav" ) }
@@ -51,10 +51,10 @@ class StargateAudio:
         return self.sounds[clip_name]['obj'].is_playing()
 
     def init_wav_file(self, file_path):
-        return sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/" + file_path))
+        return sa.WaveObject.from_wave_file(str(self.sound_fx_root + "/" + file_path))
 
-    def play_random_clip_from_group(self, group_name, wait_done):
-        handle = choice(self.incoming_chevron_sounds)['file'].play()
+    def incoming_chevron(self):
+        choice(self.incoming_chevron_sounds)['file'].play()
 
     def play_random_clip(self, directory):
 
@@ -65,10 +65,10 @@ class StargateAudio:
         """
 
         # Don't start playing another clip if one is already playing
-        if (self.random_clip_is_playing()):
+        if self.random_clip_is_playing():
             return
 
-        path_to_folder = self.soundFxRoot + "/" + directory
+        path_to_folder = self.sound_fx_root + "/" + directory
         rand_file = choice(listdir(path_to_folder))
         filepath =  path.join(path_to_folder, rand_file)
 
@@ -113,7 +113,7 @@ class StargateAudio:
         for line in lines:
             if 'defaults.ctl.card ' in line:
                 return line[-2]
-
+        return None
 
     def set_correct_audio_output_device(self):
         """
@@ -122,16 +122,16 @@ class StargateAudio:
         """
         try:
             # If the wrong card is set in the alsa.conf file
-            if get_usb_audio_device_card_number() != get_active_audio_card_number():
-                self.log.log(f'Updating the alsa.conf file with card {get_usb_audio_device_card_number()}')
+            if self.get_usb_audio_device_card_number() != self.get_active_audio_card_number():
+                self.log.log(f'Updating the alsa.conf file with card {self.get_usb_audio_device_card_number()}')
 
-                ctl = 'defaults.ctl.card ' + str(get_usb_audio_device_card_number())
-                pcm = 'defaults.pcm.card ' + str(get_usb_audio_device_card_number())
+                ctl = 'defaults.ctl.card ' + str(self.get_usb_audio_device_card_number())
+                pcm = 'defaults.pcm.card ' + str(self.get_usb_audio_device_card_number())
                 # replace the lines in the alsa.conf file.
                 subprocess.run(['sudo', 'sed', '-i', f"/defaults.ctl.card /c\{ctl}", '/usr/share/alsa/alsa.conf'])
                 subprocess.run(['sudo', 'sed', '-i', f"/defaults.pcm.card /c\{pcm}", '/usr/share/alsa/alsa.conf'])
         except:
-            pass
+            self.log.log("Failed to set audio adapter config")
 
     def set_volume(self, percent_value):
         """
@@ -158,8 +158,7 @@ class StargateAudio:
 
         # Increase, to a max of 100
         new_volume+=step
-        if (new_volume>100):
-            new_volume = 100
+        new_volume = min(new_volume, 100)
 
         # Set the volume, which also updates the config file
         self.set_volume(new_volume)
@@ -170,8 +169,7 @@ class StargateAudio:
 
         # Increase, to a max of 100
         new_volume-=step
-        if (new_volume<0):
-            new_volume = 0
+        new_volume = max(new_volume, 0)
 
         # Set the volume, which also updates the config file
         self.set_volume(new_volume)

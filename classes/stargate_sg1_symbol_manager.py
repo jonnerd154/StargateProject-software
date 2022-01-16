@@ -20,7 +20,8 @@ class StargateSG1SymbolManager:
 
         return symbols_out
 
-    def get_all(self):
+    @staticmethod
+    def get_all():
         return [
             {
                 'index': 1,

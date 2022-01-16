@@ -1,5 +1,5 @@
-import pymysql
 from base64 import b64decode
+import pymysql
 
 from ancients_log_book import AncientsLogBook
 from stargate_config import StargateConfig
@@ -16,24 +16,26 @@ class Database:
         self.cfg.set_log(self.log)
         self.cfg.load()
 
+        self.database = None
+
     def connect(self):
         self.log.log("Connecting")
-        self.db = pymysql.connect(  host=self.cfg.get('db_host'),
+        self.database = pymysql.connect(  host=self.cfg.get('db_host'),
                                     user=self.cfg.get('db_user'),
                                     password=str( b64decode( self.cfg.get('db_pass') ), 'utf-8'), #TODO: password isn't secure.
                                     database=self.cfg.get('db_name') )
 
     def disconnect(self):
         self.log.log("Disconnecting")
-        self.db.close()
+        self.database.close()
 
     def get_fan_gates(self):
         self.log.log("Retrieving Fan Gates")
 
         self.connect()
 
-        cursor = self.db.cursor()
-        sql = f"SELECT * FROM `fan_gates`"
+        cursor = self.database.cursor()
+        sql = "SELECT * FROM `fan_gates`"
         cursor.execute(sql)
         result = cursor.fetchall()
 
@@ -46,8 +48,8 @@ class Database:
 
         self.connect()
 
-        cursor = self.db.cursor()
-        sql = f"SELECT * FROM `software_update`"
+        cursor = self.database.cursor()
+        sql = "SELECT * FROM `software_update`"
         cursor.execute(sql)
         result = cursor.fetchall()
 

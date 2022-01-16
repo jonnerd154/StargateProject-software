@@ -17,16 +17,16 @@ class NetworkTools:
         :return: True if there is a connection to the internet, and false if not.
         """
 
-        # noinspection PyTypeChecker
         if 'succeeded' in self.check_net(self.cloudflare):
             # self.log.log('We have Internet connection!')
             return True
-        elif 'succeeded' in self.check_net(self.google):
+
+        if 'succeeded' in self.check_net(self.google):
             # self.log.log('We have Internet connection!')
             return True
-        else:
-            self.log.log('No Internet connection! Some features will not work!')
-            return False
+
+        self.log.log('No Internet connection! Some features will not work!')
+        return False
 
     def check_net(self, host):
         """
@@ -43,30 +43,30 @@ class NetworkTools:
         :param fqdn_or_ip: A string of an IP or a FQDN
         :return: The IP address is returned as a string, or None is returned if it fails.
         """
-        ip = None
+        _ip_address = None
         try:
-            ip = ip_address(fqdn_or_ip)
+            _ip_address = ip_address(fqdn_or_ip)
             # print('yay, it is an IP')
         except ValueError:
             try:
                 # print('NOPE, not an IP, getting IP from FQDN')
-                ip = socket.gethostbyname(fqdn_or_ip)
+                _ip_address = socket.gethostbyname(fqdn_or_ip)
                 # print('I found the IP:', ip)
             except:
                 pass
         except:
-            self.log.log("Unable to determine IP address '{}'".format(fqdn_or_ip))
-            ip = None
-        return str(ip)
-    
+            self.log.log(f"Unable to determine IP address '{fqdn_or_ip}'")
+            _ip_address = None
+        return str(_ip_address)
+
     def get_local_ip(self):
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        my_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
             # doesn't even have to be reachable
-            s.connect((self.google, 1))
-            IP = s.getsockname()[0]
+            my_sock.connect((self.google, 1))
+            ret = my_sock.getsockname()[0]
         except Exception:
-            IP = '127.0.0.1'
+            ret = '127.0.0.1'
         finally:
-            s.close()
-        return IP
+            my_sock.close()
+        return ret
