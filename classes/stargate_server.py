@@ -108,6 +108,7 @@ class StargateServer:
                         self.stargate.wormhole = False
                     # If we are dialling (no wormhole established)
                     else:
+                        self.log.log("processed center button incoming LINE 111")
                         self.stargate.centre_button_incoming = True
                         # If there are not already a saved IP, or if we dialed an none fan_gate
                         if not self.stargate.fan_gate_incoming_IP:
