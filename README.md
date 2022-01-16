@@ -25,9 +25,10 @@ pip-upgrade sg1/requirements.txt
 ```
 sudo apt-get install avahi-daemon
 sudo nano /etc/hosts
-## Modify the `127.0.0.1` entry as below, then save the file:
-  127.0.0.1 [tab] stargate
-
+## Modify the `127.0.1.1` entry as below, then save the file:
+  127.0.1.1 [tab] stargate
+sudo nano /etc/hostname
+## Modify to say "stargate"
 sudo hostname stargate
 
 sudo reboot
