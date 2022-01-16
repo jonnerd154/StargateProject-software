@@ -148,18 +148,19 @@ class StargateSG1:
             ## If we are dialing a fan_gate, send the symbols to the remote gate.
             if self.addrManager.is_fan_made_stargate(self.address_buffer_outgoing):
                 self.log.log("We're dialing a fan gate...")
-                # If we don't know the online status of the fan_gate or it is online.
+                # If the gate is presumed to be online, send it.
                 if self.fan_gate_online_status:
                     # send the locked symbols to the remote gate.
                     this_gate_ip = self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addrManager.get_fan_gates() )
                     this_message = str( self.address_buffer_outgoing[0:self.locked_chevrons_outgoing] )
+                    hasConnection = self.subspace.send_to_remote_stargate( this_gate_ip, this_message)[0] # Attempt to send
 
-                    if self.subspace.send_to_remote_stargate( this_gate_ip, this_message)[0]:
+                    # Check for success
+                    if hasConnection:
                         self.log.log(f'Sent to fan_gate: {self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]}')
-                        self.fan_gate_online_status = True  # set the online status to True
-                else:
-                    self.log.log(f'Fan Gate is offline...skipping send')
-                    self.fan_gate_online_status = False  # set the online status to False, to keep the dialing running more smoothly if the fan_gate is offline.
+                    else:
+                        self.log.log('This Gate is offline. Skipping Subspace sends for remainder of this dialing attempt.')
+                        self.fan_gate_online_status = False # Gate is offline, don't keep sending messages during this dialing attempt
 
     def incoming_dialing(self):
         """
