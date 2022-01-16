@@ -48,6 +48,8 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
                 elif( entity == "status" ):
                     data = {
+                        "gate_name":                self.stargate.addrManager.getBook().get_local_gate_name(),
+                        "local_address":            self.stargate.addrManager.getBook().get_local_address(),
                         "address_buffer_outgoing":  self.stargate.address_buffer_outgoing,
                         "locked_chevrons_outgoing": self.stargate.locked_chevrons_outgoing,
                         "address_buffer_incoming":  self.stargate.address_buffer_incoming,
@@ -63,6 +65,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
                 elif( entity == "info" ):
                     data = {
+                        "gate_name":                      self.stargate.addrManager.getBook().get_local_gate_name(),
                         "local_stargate_address":         self.stargate.addrManager.getBook().get_local_address(),
                         "local_stargate_address_string":  self.stargate.addrManager.getBook().get_local_address_string(),
                         "subspace_public_key":            self.stargate.subspace.get_public_key(),

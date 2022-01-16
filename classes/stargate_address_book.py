@@ -37,6 +37,15 @@ class StargateAddressBook:
         # TODO: Ensure unique address
         self.datastore.set("local_stargate_address", address)
 
+    def get_local_gate_name(self):
+        if self.get_local_address() is []:
+            return "Stargate"
+        name = self.manager.get_planet_name_by_address( self.get_local_address() )
+        if name == "Unknown Address":
+            return "Stargate"
+        else:
+            return name
+
     def get_local_loopback_address(self):
         return self.datastore.get("local_stargate_address_loopback") # Equivalent to 127.0.0.1
 
