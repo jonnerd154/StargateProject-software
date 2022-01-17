@@ -1,9 +1,9 @@
-from adafruit_motorkit import MotorKit
+from adafruit_motorkit import MotorKit # pylint: disable=import-error
 from adafruit_motor import stepper as stp
-import spidev
-import neopixel
-import board
-from gpiozero import LED
+import spidev # pylint: disable=import-error
+import neopixel # pylint: disable=import-error
+import board # pylint: disable=import-error
+from gpiozero import LED # pylint: disable=import-error
 
 from hardware_simulation import DCMotorSim, StepperSim
 

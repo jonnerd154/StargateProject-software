@@ -62,7 +62,7 @@ class StargateSG1:
 
         ### Run the stargate server if we have an internet connection ###
         # The stargate_server runs in it's own thread listening for incoming wormholes
-        if self.netTools.has_internet_access():
+        if self.net_tools.has_internet_access():
             try:
                 self.stargate_server_thread = Thread(target=StargateServer(self).start, daemon=True, args=())
                 self.stargate_server_thread.start()
@@ -117,7 +117,7 @@ class StargateSG1:
                 ### Check for inactivity ###
                 # If there are something in the buffers and no activity for 1 minute while dialing.
                 # TODO: Use Schedule
-                if self.inactivity( self.inactivityTimeout ):
+                if self.inactivity( self.inactivity_timeout ):
                     self.log.log('Inactivity detected, aborting.')
                     self.shutdown()
 
@@ -351,7 +351,7 @@ class StargateSG1:
                     self.log.log('The dialed fan_gate is NOT online!')
                     return False
                 # If the dialed fan_gate is already busy, with an active wormhole or outgoing dialing is in progress.
-                if self.get_status_of_remote_gate(self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addr_manager.get_fan_gates() )):
+                if self.subspace.get_status_of_remote_gate(self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addr_manager.get_fan_gates() )):
                     self.log.log('The dialed fan_gate is already busy!')
                     return False
             return True  # returns true if we can establish a wormhole

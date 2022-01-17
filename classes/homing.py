@@ -1,5 +1,7 @@
 
 class SymbolRingHomingManager:
+    # TODO: this whole file needs lots of work - I just moved the code here, but Homing is NOT implemented right now.
+    # pylint: disable-all
 
     def __init__(self, stargate, ring):
 
