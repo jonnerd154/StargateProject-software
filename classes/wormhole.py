@@ -151,15 +151,15 @@ class Wormhole:
             off_pattern.append((0, 0, 0))
         return off_pattern
 
-    @staticmethod
-    def set_wormhole_pattern(pixels, pattern):
+    #@staticmethod
+    def set_wormhole_pattern(self, pixels, pattern):
         """
         This method sets the pattern on the led strip, and displays it. No fading!
         pixels: The pixel object where to set the pattern. eg self.pixels
         :return: The pattern is returned as a string. (Am i sure it's not a list? Is this a typo?)
         """
-        for led in enumerate(pattern):
-            pixels[led] = pattern[led]
+        for index, led_state in enumerate(pattern):
+            pixels[index] = led_state
         pixels.show()
         return pattern
 

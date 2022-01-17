@@ -10,7 +10,7 @@ class KeyboardManager:
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.audio = stargate.audio
-        self.address_book = stargate.addrManager.getBook()
+        self.address_book = stargate.addr_manager.get_book()
 
     @staticmethod
     def key_press():

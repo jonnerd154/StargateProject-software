@@ -96,11 +96,14 @@ class StargateAudio:
         This function gets the card number for the USB audio adapter.
         :return: It will return a number (string) that should correspond to the card number for the USB adapter. If it can't find it, it returns 1
         """
-        audio_devices = subprocess.run(['aplay', '-l'], capture_output=True, text=True, check=False).stdout.splitlines() #TODO: Check should be true, throws exception if non-zero exit code
-        for line in audio_devices:
-            if 'USB' in line:
-                return line[5]
-        return 1
+        try:
+            audio_devices = subprocess.run(['aplay', '-l'], capture_output=True, text=True, check=False).stdout.splitlines() #TODO: Check should be true, throws exception if non-zero exit code
+            for line in audio_devices:
+                if 'USB' in line:
+                    return line[5]
+                return 1
+        except FileNotFoundError:
+            return 1
 
     @staticmethod
     def get_active_audio_card_number():
@@ -109,12 +112,15 @@ class StargateAudio:
         :return: It will return an integer that should correspond to the card number for the USB adapter. If it can't find it, it returns 1
         """
         # Get the contents of the file
-        with open('/usr/share/alsa/alsa.conf', 'r', encoding="utf8") as alsa_file:
-            lines = alsa_file.readlines()
-        for line in lines:
-            if 'defaults.ctl.card ' in line:
-                return line[-2]
-        return None
+        try:
+            with open('/usr/share/alsa/alsa.conf', 'r', encoding="utf8") as alsa_file:
+                lines = alsa_file.readlines()
+            for line in lines:
+                if 'defaults.ctl.card ' in line:
+                    return line[-2]
+            return None
+        except FileNotFoundError:
+            return None
 
     def set_correct_audio_output_device(self):
         """
@@ -153,7 +159,7 @@ class StargateAudio:
             subprocess.run(['amixer', '-M', 'set', 'PCM', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False) #TODO: Check should be true
             subprocess.run(['amixer', '-M', 'set', 'Speaker', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False) #TODO: Check should be true
             self.log.log(f'Audio set to {self.volume}%')
-        except subprocess.CalledProcessError:
+        except (FileNotFoundError, subprocess.CalledProcessError):
             self.log.log('Unable to set the volume. You can set the volume level manually by running the alsamixer command.')
 
     def volume_up(self, step=5):

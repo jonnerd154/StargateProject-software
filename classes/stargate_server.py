@@ -20,7 +20,7 @@ class StargateServer:
         self.base_path = stargate.base_path
         self.subspace = stargate.subspace
         self.addr_manager = stargate.addr_manager
-        self.address_book = stargate.addr_manager.getBook()
+        self.address_book = stargate.addr_manager.get_book()
 
         self.database = Database(self.base_path)
 
@@ -46,7 +46,7 @@ class StargateServer:
         self.open_socket()
 
         # Start a thread to keep the subspace connection alive. It's most likely not needed, but might help connections to establish faster.
-        thread_keep_alive = Thread(target=self.keep_alive, args=(self.keep_alive_address, self.keep_alive_interval, self.stargate ))
+        thread_keep_alive = Thread(target=self.keep_alive, args=(self.keep_alive_address, self.stargate ))
         thread_keep_alive.start()
 
         # Update fan_gates from the subspace server

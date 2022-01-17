@@ -1,6 +1,6 @@
 import os
 from time import sleep
-
+from serial.serialutil import SerialException
 import PyCmdMessenger
 
 class Dialer: # pylint: disable=too-few-public-methods
@@ -32,7 +32,7 @@ class Dialer: # pylint: disable=too-few-public-methods
                 raise AttributeError
             self.hardware = self._connect_dhd()
             self.type = "DHDv2"
-        except ValueError:
+        except SerialException:
             self.log.log('No DHD found or DHD is disabled. Switching to keyboard mode')
             self.hardware = KeyboardMode()
             self.type = "Keyboard"
