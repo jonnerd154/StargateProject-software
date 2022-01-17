@@ -37,7 +37,7 @@ class SubspaceClient:
         try:
             cmd = 'sudo util/get_subspace_public_key.sh'
             return subprocess.check_output(cmd, shell=True).decode('ascii')
-        except:
+        except subprocess.CalledProcessError:
             return False
 
     def set_ip_address(self, subspace_ip):
@@ -57,7 +57,7 @@ class SubspaceClient:
             cmd = f'sudo util/subspace_config-ip.sh {subspace_ip}'
             subprocess.check_output(cmd, shell=True).decode('ascii')
             return True
-        except:
+        except subprocess.CalledProcessError:
             return False
 
     def send_raw(self, msg):
@@ -92,7 +92,7 @@ class SubspaceClient:
         try:
             self.client.connect( (server_ip, self.port) )
             connection_to_server = True # TODO: Move the if block below into the try block, get rid of this var
-        except Exception as ex:
+        except socket.error as ex:
             self.log.log(f'Error sending to remote server -> {ex}')
             remote_gate_status = False
             return connection_to_server, remote_gate_status # return false if we do not have a connection.
@@ -162,7 +162,7 @@ class SubspaceClient:
         """
         try:
             return [k for k, v in fan_gates.items() if v[1] == remote_ip]['name']
-        except:
+        except KeyError:
             return 'Unknown'
 
     def get_stargate_server_ip(self):
@@ -177,8 +177,8 @@ class SubspaceClient:
             try:
                 self.log.log('Subspace network interface was not found, attempting to bring up the interface.')
                 os.popen('wg-quick up subspace').read()
-            except Exception as ex:
-                self.log.log('subspace ERROR: {}'.format(ex))
+            except (IndexError, KeyError) as ex:
+                self.log.log(f'subspace ERROR: {ex}')
 
         # Try to get the IP from subspace
         subspace = self.get_ip_address_by_interface('subspace')
@@ -236,7 +236,8 @@ class SubspaceClient:
                     self.ping()
 
                 return server_ip
-        except Exception as _ex:
+            return False
+        except (IndexError, KeyError) as _ex:
             self.log.log('ERROR getting {interface_name} IP: {_ex}', True)
             return False
 

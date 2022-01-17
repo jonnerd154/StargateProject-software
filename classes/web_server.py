@@ -6,11 +6,13 @@ import collections
 import platform
 from http.server import SimpleHTTPRequestHandler
 
+
+
 class StargateWebServer(SimpleHTTPRequestHandler):
 
     #Overload SimpleHTTPRequestHandler.log_message() to suppress logs from printing to console
     # *** Comment this out for debugging!! ***
-    def log_message(self, fmt, *args):
+    def log_message(self, format, *args): # pylint: disable=redefined-builtin
         pass
 
     def parse_get_vars(self):
@@ -102,7 +104,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 self.end_headers()
 
             return
-        except:
+        except: # pylint: disable=bare-except
 
             # raise # *** Un-comment for debugging!! ***
 
@@ -176,7 +178,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 # Parse the address
                 try:
                     address = [ data['S1'], data['S2'], data['S3'], data['S4'], data['S5'], data['S6'] ]
-                except:
+                except KeyError:
                     data = { "success": False, "error": "Required fields missing or invalid request" }
                     continue_to_save = False
 
@@ -191,10 +193,10 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                             else:
                                 data = { "success": False, "error": error }
                                 continue_to_save = False
-                        except:
+                        except KeyError:
                             data = { "success": False, "extend": "owner_unconfirmed", "error": "This address is in use by a Fan Gate - \"{entry['name']}\"" }
                             continue_to_save = False
-                    elif verify_avail == False:
+                    elif verify_avail is False:
                         # This address is in use by a standard gate
                         data = { "success": False, "error": error }
                         continue_to_save = False

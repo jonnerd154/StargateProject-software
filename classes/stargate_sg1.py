@@ -67,8 +67,8 @@ class StargateSG1:
                 self.stargate_server_thread = Thread(target=StargateServer(self).start, daemon=True, args=())
                 self.stargate_server_thread.start()
             except:
-                raise
                 self.log.log("Failed to start StargateServer thread")
+                raise
 
         ### Notify that the Stargate is ready
         self.audio.play_random_clip("startup")

@@ -90,7 +90,8 @@ class StargateAudio:
         if self.random_clip_is_playing():
             self.random_clip.wait_done()
 
-    def get_usb_audio_device_card_number(self):
+    @staticmethod
+    def get_usb_audio_device_card_number():
         """
         This function gets the card number for the USB audio adapter.
         :return: It will return a number (string) that should correspond to the card number for the USB adapter. If it can't find it, it returns 1
@@ -101,8 +102,8 @@ class StargateAudio:
                 return line[5]
         return 1
 
-
-    def get_active_audio_card_number(self):
+    @staticmethod
+    def get_active_audio_card_number():
         """
         This function gets the active audio card number from the /usr/share/alsa/alsa.conf file.
         :return: It will return an integer that should correspond to the card number for the USB adapter. If it can't find it, it returns 1
@@ -130,7 +131,7 @@ class StargateAudio:
                 # replace the lines in the alsa.conf file.
                 subprocess.run(['sudo', 'sed', '-i', f"/defaults.ctl.card /c\{ctl}", '/usr/share/alsa/alsa.conf'])
                 subprocess.run(['sudo', 'sed', '-i', f"/defaults.pcm.card /c\{pcm}", '/usr/share/alsa/alsa.conf'])
-        except:
+        except subprocess.CalledProcessError:
             self.log.log("Failed to set audio adapter config")
 
     def set_volume(self, percent_value):
@@ -149,7 +150,7 @@ class StargateAudio:
             subprocess.run(['amixer', '-M', 'set', 'PCM', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             subprocess.run(['amixer', '-M', 'set', 'Speaker', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             self.log.log(f'Audio set to {self.volume}%')
-        except:
+        except subprocess.CalledProcessError:
             self.log.log('Unable to set the volume. You can set the volume level manually by running the alsamixer command.')
 
     def volume_up(self, step=5):

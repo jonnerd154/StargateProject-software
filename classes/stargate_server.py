@@ -84,7 +84,7 @@ class StargateServer:
 
     def handle_incoming_wormhole(self, conn, addr):
         if self.logging == "verbose":
-            self.log.log('handle_incoming_wormhole({}, {}'.format(conn, addr))
+            self.log.log(f'handle_incoming_wormhole({conn}, {addr}')
 
         connected = True  # while there is a connection from another gate.
         while connected:
