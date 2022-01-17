@@ -12,7 +12,8 @@ class KeyboardManager:
         self.audio = stargate.audio
         self.address_book = stargate.addrManager.getBook()
 
-    def key_press(self):
+    @staticmethod
+    def key_press():
         """
         This helper function stops the program (thread) and waits for a single keypress.
         :return: The pressed key is returned.

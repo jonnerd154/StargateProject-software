@@ -94,10 +94,12 @@ class ElectronicsOriginal:
     def get_stepper(self):
         return self.stepper
 
-    def get_stepper_forward(self):
+    @staticmethod
+    def get_stepper_forward():
         return stp.FORWARD
 
-    def get_stepper_backward(self):
+    @staticmethod
+    def get_stepper_backward():
         return stp.BACKWARD
 
     def get_stepper_drive_mode(self, drive_mode):
@@ -161,7 +163,8 @@ class ElectronicsOriginal:
     def get_wormhole_pixel_count(self):
         return self.neopixel_led_count
 
-    def get_led(self, gpio_number):
+    @staticmethod
+    def get_led(gpio_number):
         if gpio_number:
             return LED(gpio_number)
         return None

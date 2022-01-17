@@ -28,7 +28,8 @@ class NetworkTools:
         self.log.log('No Internet connection! Some features will not work!')
         return False
 
-    def check_net(self, host):
+    @staticmethod
+    def check_net(host):
         """
         A little helper that returns the output of the nc command, to check if there is net connection.
         :param host: the host to check
@@ -52,9 +53,9 @@ class NetworkTools:
                 # print('NOPE, not an IP, getting IP from FQDN')
                 _ip_address = socket.gethostbyname(fqdn_or_ip)
                 # print('I found the IP:', ip)
-            except:
+            except ValueError:
                 pass
-        except:
+        except Exception: # TODO: use specific Exception type
             self.log.log(f"Unable to determine IP address '{fqdn_or_ip}'")
             _ip_address = None
         return str(_ip_address)
@@ -65,7 +66,7 @@ class NetworkTools:
             # doesn't even have to be reachable
             my_sock.connect((self.google, 1))
             ret = my_sock.getsockname()[0]
-        except Exception:
+        except socket.error:
             ret = '127.0.0.1'
         finally:
             my_sock.close()

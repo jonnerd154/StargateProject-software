@@ -14,4 +14,4 @@ class Electronics: # pylint: disable=too-few-public-methods
                 self.hardware = ElectronicsOriginal(app)
         else:
             from electronics_none import ElectronicsNone # pylint: disable=import-outside-toplevel
-            self.hardware = ElectronicsNone(app)
+            self.hardware = ElectronicsNone()
