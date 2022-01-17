@@ -10,7 +10,7 @@ import requests
 
 from network_tools import NetworkTools
 from database import Database
-from version import version as current_version # pylint: disable=import-error
+from version import VERSION as current_version
 
 class SoftwareUpdate:
 

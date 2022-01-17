@@ -121,6 +121,9 @@ class StargateAudio:
         This functions checks if the USB audio adapter is correctly set in the alsa.conf file and fixes it if not.
         :return: Nothing is returned
         """
+
+        # pylint: disable=anomalous-backslash-in-string
+
         try:
             # If the wrong card is set in the alsa.conf file
             if self.get_usb_audio_device_card_number() != self.get_active_audio_card_number():
