@@ -28,14 +28,14 @@ class ChevronManager:
         :param chevrons: the dictionary of chevrons
         :return: Nothing is returned
         """
-        for number, chevron in self.chevrons.items():
+        for chevron in self.chevrons.values():
             if sound_on == 'on':
                 chevron.off(sound_on='on')
             else:
                 chevron.off()
 
     def all_lights_on(self):
-        for number, chevron in self.chevrons.items():
+        for chevron in self.chevrons.values():
             chevron.light_on()
 
 
@@ -85,7 +85,8 @@ class Chevron:
         self.light_on()
         sleep(self.chevron_down_wait_time) # wait time without motion
 
-    def up(self):
+    #TODO: Consider renaming
+    def up(self): # pylint: disable=invalid-name
         ### Chevron Down ###
         self.audio.sound_start('chevron_2') # chev up audio
         self.motor.throttle = self.chevron_up_throttle # Start the motor

@@ -1,8 +1,9 @@
+import os
 from time import sleep
 
 import PyCmdMessenger
 
-class Dialer:
+class Dialer: # pylint: disable=too-few-public-methods
 
     def __init__(self, stargate):
 
@@ -10,13 +11,13 @@ class Dialer:
         self.cfg = stargate.cfg
 
         # Retrieve the configurations
-        self.DHD_port = self.cfg.get("DHD_serial_port")
-        self.DHD_baud_rate = self.cfg.get("DHD_baud_rate")
-        self.DHD_brightness_center = self.cfg.get("DHD_brightness_center")
-        self.DHD_brightness_symbols = self.cfg.get("DHD_brightness_symbols")
-        self.DHD_color_center = self.cfg.get("DHD_color_center")
-        self.DHD_color_symbols = self.cfg.get("DHD_color_symbols")
-        self.DHD_enable = self.cfg.get("DHD_enable")
+        self.dhd_port = self.cfg.get("DHD_serial_port")
+        self.dhd_baud_rate = self.cfg.get("DHD_baud_rate")
+        self.dhd_brightness_center = self.cfg.get("DHD_brightness_center")
+        self.dhd_brightness_symbols = self.cfg.get("DHD_brightness_symbols")
+        self.dhd_color_center = self.cfg.get("DHD_color_center")
+        self.dhd_color_symbols = self.cfg.get("DHD_color_symbols")
+        self.dhd_enable = self.cfg.get("DHD_enable")
 
         self.hardware = None
         self.type = None
@@ -27,31 +28,31 @@ class Dialer:
         # Detect if we have a DHD connected, else use the keyboard
         try:
             # If The DHD is disabled, raise an exception to use KeyboardMode
-            if not self.DHD_enable:
+            if not self.dhd_enable:
                 raise
             self.hardware = self._connect_dhd()
             self.type = "DHDv2"
-        except:
+        except ValueError:
             self.log.log('No DHD found or DHD is disabled. Switching to keyboard mode')
             self.hardware = KeyboardMode()
             self.type = "Keyboard"
 
     def _connect_dhd(self):
         ### Connect to the DHD object. Will throw exception if not present
-        dhd = DHDv2(self.DHD_port, self.DHD_baud_rate)
+        dhd = DHDv2(self.dhd_port, self.dhd_baud_rate)
         self.log.log('DHDv2 Found. Connected.')
 
         # Configure the DHD
-        dhd.setBrightnessCenter(self.DHD_brightness_center)
-        dhd.setBrightnessSymbols(self.DHD_brightness_symbols)
-        dhd.setColorCenter(self.DHD_color_center)
-        dhd.setColorSymbols(self.DHD_color_symbols)
+        dhd.set_brightness_center(self.dhd_brightness_center)
+        dhd.set_brightness_symbols(self.dhd_brightness_symbols)
+        dhd.set_color_center(self.dhd_color_center)
+        dhd.set_color_symbols(self.dhd_color_symbols)
 
         # Blink the middle button to signal the DHD is ready
-        dhd.setPixel(0, 255, 255, 255)
+        dhd.set_pixel(0, 255, 255, 255)
         dhd.latch()
         sleep(0.5)
-        dhd.setAllPixelsToColor(0, 0, 0)
+        dhd.set_all_pixels_to_color(0, 0, 0)
         dhd.latch()
 
         return dhd
@@ -107,60 +108,58 @@ class DHDv2:
         self.color_center = None
 
         # Initialize the messenger
-        self.c = PyCmdMessenger.CmdMessenger(self.board, self.commands)
+        self.c = PyCmdMessenger.CmdMessenger(self.board, self.commands) # pylint: disable=invalid-name
 
-        pass
-
-    def getFirmwareVersion(self):
+    def get_firmware_version(self):
         self.c.send("get_fw_version")
         return self.c.receive()[1][0]
 
-    def getHardwareVersion(self):
+    def get_hardware_version(self):
         self.c.send("get_hw_version")
         return self.c.receive()[1][0]
 
-    def getIdentifierString(self):
+    def get_identifier_string(self):
         self.c.send("get_identifier")
         return self.c.receive()[1][0]
 
-    def getPixelColorTuple(self, pixelIndex):
-        self.c.send("get_pixel_color", pixelIndex)
+    def get_pixel_color_tuple(self, pixel_index):
+        self.c.send("get_pixel_color", pixel_index)
         return self.c.receive()[1]
 
-    def getPixelCount(self):
+    def get_pixel_count(self):
         self.c.send("get_pixel_count")
         return self.c.receive()[1][0]
 
-    def setBrightnessSymbols(self, brightness):
+    def set_brightness_symbols(self, brightness):
         self.c.send("set_brightness_symbols", brightness)
         return True
 
-    def setBrightnessCenter(self, brightness):
+    def set_brightness_center(self, brightness):
         self.c.send("set_brightness_center", brightness)
         return True
 
-    def setAllPixelsToColor(self, red, green, blue):
+    def set_all_pixels_to_color(self, red, green, blue):
         self.c.send("set_all", red, green, blue)
         return True
 
-    def setPixel(self, pixelIndex, red, green, blue):
+    def set_pixel(self, pixel_index, red, green, blue):
         symbol_number_to_dhd_light_map = {0: 0, 1: 34, 2: 2, 3: 21, 4: 20, 5: 36, 6: 29, 7: 31, 8: 18, 9: 37,
                                           10: 10, 11: 23, 12: 25, 14: 4, 15: 15, 16: 12, 17: 3, 18: 5, 19: 33,
                                           20: 38, 21: 22, 22: 32, 23: 6, 24: 30, 25: 1, 26: 7, 27: 17, 28: 11, 29: 28,
                                           30: 13, 31: 16, 32: 35, 33: 9, 34: 26, 35: 14, 36: 19, 37: 24, 38: 27, 39: 8}
-        self.c.send("set_pixel", symbol_number_to_dhd_light_map[pixelIndex], red, green, blue)
+        self.c.send("set_pixel", symbol_number_to_dhd_light_map[pixel_index], red, green, blue)
         return True
 
-    def setPixel_use_LED_id(self, pixelIndex, red, green, blue):
-        self.c.send("set_pixel", pixelIndex, red, green, blue)
+    def set_pixel_use_led_id(self, pixel_index, red, green, blue):
+        self.c.send("set_pixel", pixel_index, red, green, blue)
         return True
 
-    def clearAllPixels(self):
+    def clear_all_pixels(self):
         self.c.send("clear_all")
         return True
 
-    def clearPixel(self, pixelIndex):
-        self.c.send("clear_pixel", pixelIndex)
+    def clear_pixel(self, pixel_index):
+        self.c.send("clear_pixel", pixel_index)
         return True
 
     def latch(self):
@@ -168,24 +167,25 @@ class DHDv2:
         return True
 
     def clear_lights(self):
-        self.setAllPixelsToColor(0, 0, 0) # All Off
+        self.set_all_pixels_to_color(0, 0, 0) # All Off
         self.latch()
 
     def set_center_on( self ):
-        self.setPixel(0, self.color_center[0], self.color_center[1], self.color_center[2]) # LED 0, Pure red.
+        self.set_pixel(0, self.color_center[0], self.color_center[1], self.color_center[2]) # LED 0, Pure red.
         self.latch()
 
     def set_symbol_on( self, symbol_number ):
-        self.setPixel(symbol_number, self.color_symbols[0], self.color_symbols[1], self.color_symbols[2])
+        self.set_pixel(symbol_number, self.color_symbols[0], self.color_symbols[1], self.color_symbols[2])
         self.latch()
 
-    def setColorCenter(self, colorTuple):
-        self.color_center = colorTuple
+    def set_color_center(self, color_tuple):
+        self.color_center = color_tuple
 
-    def setColorSymbols(self, colorTuple):
-        self.color_symbols = colorTuple
+    def set_color_symbols(self, color_tuple):
+        self.color_symbols = color_tuple
 
-    def get_DHD_port():
+    @staticmethod
+    def get_dhd_port():
         """
         This is a simple helper function to help locate the port for the DHD
         :return: The file path for the DHD is returned. If it is not found, returns None.
@@ -212,62 +212,81 @@ class KeyboardMode:
     def __init__(self):
         pass
 
-    def getFirmwareVersion(self):
+    @staticmethod
+    def get_firmware_version():
         pass
 
-    def getHardwareVersion(self):
+    @staticmethod
+    def get_hardware_version():
         pass
 
-    def getIdentifierString(self):
+    @staticmethod
+    def get_identifier_string():
         pass
 
-    def getPixelColorTuple(self, pixelIndex):
+    @staticmethod
+    def get_pixel_color_tuple(pixel_index):
         pass
 
-    def getPixelCount(self):
+    @staticmethod
+    def get_pixel_count():
         pass
 
-    def setBrightnessSymbols(self, brightness):
+    @staticmethod
+    def set_brightness_symbols(brightness):
         pass
 
-    def setBrightnessCenter(self, brightness):
+    @staticmethod
+    def set_brightness_center(brightness):
         pass
 
-    def setAllPixelsToColor(self, red, green, blue):
+    @staticmethod
+    def set_all_pixels_to_color(red, green, blue):
         pass
 
-    def setPixel(self, pixelIndex, red, green, blue):
+    @staticmethod
+    def set_pixel(pixel_index, red, green, blue): # pylint: disable=unused-argument
+        # pylint: disable-next=unused-variable
         symbol_number_to_dhd_light_map = {0: 0, 1: 34, 2: 2, 3: 21, 4: 20, 5: 36, 6: 29, 7: 31, 8: 18, 9: 37,
                                           10: 10, 11: 23, 12: 25, 14: 4, 15: 15, 16: 12, 17: 3, 18: 5, 19: 33,
                                           20: 38, 21: 22, 22: 32, 23: 6, 24: 30, 25: 1, 26: 7, 27: 17, 28: 11, 29: 28,
                                           30: 13, 31: 16, 32: 35, 33: 9, 34: 26, 35: 14, 36: 19, 37: 24, 38: 27, 39: 8}
+        # TODO: initialize dummy data instead
+
+    @staticmethod
+    def set_pixel_use_led_id(pixel_index, red, green, blue):
         pass
 
-    def setPixel_use_LED_id(self, pixelIndex, red, green, blue):
+    @staticmethod
+    def clear_all_pixels():
         pass
 
-    def clearAllPixels(self):
+    @staticmethod
+    def clear_pixel(pixel_index):
         pass
 
-    def clearPixel(self, pixelIndex):
+    @staticmethod
+    def latch():
         pass
 
-    def latch(self):
+    @staticmethod
+    def clear_lights():
         pass
 
-    def clear_lights(self):
+    @staticmethod
+    def set_center_on():
         pass
 
-    def set_center_on( self ):
+    @staticmethod
+    def set_symbol_on(symbol_number):
         pass
 
-    def set_symbol_on( self, symbol_number ):
+    @staticmethod
+    def set_color_center(color_tuple):
         pass
 
-    def setColorCenter(self, colorTuple):
-        pass
-
-    def setColorSymbols(self, colorTuple):
+    @staticmethod
+    def set_color_symbols(color_tuple):
         pass
 
 # class DHD:
