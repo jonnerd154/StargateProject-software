@@ -1,2 +1,20 @@
 [MASTER]
 init-hook='import sys; sys.path.append("classes")'
+extension-pkg-whitelist=netifaces
+disable=
+    C0114, # missing-module-docstring
+    C0115, # missing-class-docstring
+    C0116, # missing-function-docstring
+    C0301, # line-too-long
+    W0511, # fixme
+
+[TYPECHECK]
+# Currently, the stargate object is linked to WebServer after initialization of the WebServer
+# object. Un-commenting this line will suppress the warnings.
+
+# TODO: wrap WebServer in another Class that can override the constructor,
+#    link Stargate, then initialize the parent class
+generated-members=stargate
+
+#[FORMAT]
+#max-line-length=240
