@@ -1,6 +1,3 @@
-
-import functools
-
 class HardwareDetector:
 
     def __init__(self):
@@ -32,7 +29,7 @@ class HardwareDetector:
             try:
                 bus.read_byte(device)
                 devices.append(hex(device))
-            except: # exception if read_byte fails
+            except: # exception if read_byte fails # pylint: disable=bare-except
                 pass
         return devices
 

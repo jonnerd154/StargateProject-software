@@ -2,6 +2,8 @@ import sys
 from datetime import datetime
 import threading
 
+# pylint: disable=too-few-public-methods
+
 class AncientsLogBook:
 
     def __init__(self, base_path, log_file, print_to_console = True):
@@ -19,9 +21,9 @@ class AncientsLogBook:
         :return: Nothing is returned.
         """
 
-        with open(self.log_dir +"/"+ self.gate_log, 'a+') as log_file:
+        with open(self.log_dir +"/"+ self.gate_log, 'a+', encoding="utf8") as log_file:
             timestamp = datetime.now().replace(microsecond=0)
-            log_line = '\n[{}]\t{}'.format(timestamp, msg)
+            log_line = f'\n[{timestamp}]\t{msg}'
             log_file.write(log_line)
 
         if (self.print_to_console and not print_to_console_override):
