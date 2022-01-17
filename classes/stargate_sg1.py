@@ -196,7 +196,7 @@ class StargateSG1:
             loopback_first_6 = self.addr_manager.addressBook.get_local_loopback_address()[0:min(len(self.address_buffer_incoming), 6)] # get up to 6 symbols off the loopback local address
 
             # If the incoming address buffer matches our routable or unroutable local address, lock it.
-            if buffer_first_6 == local_first_6 or buffer_first_6 == loopback_first_6:
+            if buffer_first_6 in (local_first_6, loopback_first_6):
                 self.log.log("Address matching. Incoming Buffer: " + self.address_buffer_incoming)
 
                 self.locked_chevrons_incoming += 1  # Increment the locked chevrons variable.

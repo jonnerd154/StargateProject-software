@@ -35,7 +35,7 @@ class NetworkTools:
         :param host: the host to check
         :return: returns the output as seen if run in a shell.
         """
-        return subprocess.run(['nc', host, '53', '-w', '3', '-zv'], capture_output=True, text=True).stderr
+        return subprocess.run(['nc', host, '53', '-w', '3', '-zv'], capture_output=True, text=True, check=False).stderr # TODO: Check should be True/handled
 
     def get_ip(self, fqdn_or_ip):
         """
@@ -55,7 +55,7 @@ class NetworkTools:
                 # print('I found the IP:', ip)
             except ValueError:
                 pass
-        except Exception: # TODO: use specific Exception type
+        except Exception: # pylint: disable=broad-except # TODO: use specific Exception type
             self.log.log(f"Unable to determine IP address '{fqdn_or_ip}'")
             _ip_address = None
         return str(_ip_address)

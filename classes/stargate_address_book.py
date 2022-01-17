@@ -77,7 +77,7 @@ class StargateAddressBook:
         return self.datastore.get("fan_gates")
 
     def get_fan_gate_by_address(self, address):
-        for key, value in self.get_fan_gates().items():
+        for value in self.get_fan_gates().values():
             if address == value['gate_address']:
                 return value
 
@@ -96,7 +96,7 @@ class StargateAddressBook:
         return self.datastore.get("standard_gates")
 
     def get_standard_gate_by_address(self, address):
-        for key, value in self.get_standard_gates().items():
+        for value in self.get_standard_gates().values():
             if address == value['gate_address']:
                 return value
         return False

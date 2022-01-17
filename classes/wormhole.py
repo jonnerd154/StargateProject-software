@@ -158,7 +158,7 @@ class Wormhole:
         pixels: The pixel object where to set the pattern. eg self.pixels
         :return: The pattern is returned as a string. (Am i sure it's not a list? Is this a typo?)
         """
-        for led in range(len(pattern)):
+        for led in enumerate(pattern):
             pixels[led] = pattern[led]
         pixels.show()
         return pattern
@@ -255,7 +255,7 @@ class Wormhole:
             :return: a new tween list is returned.
             """
             in_between_pattern = []
-            for i in range(len(new)):  # For the length of the new pattern list
+            for i in enumerate(new):  # For the length of the new pattern list
                 # The two leds to gradually match.
                 current_led = current[i]
                 new_led = new[i]

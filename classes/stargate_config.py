@@ -22,7 +22,7 @@ class StargateConfig:
         # Open the json file and load it into a python object
         try:
             #print("Loading {}".format(self.file_name))
-            with open(self.get_full_file_path()) as file:
+            with open(self.get_full_file_path(), "r", encoding="utf8") as file:
                 self.config = json.load(file)
         except FileNotFoundError:
             # If the file wasn't found, and we were given defaults, initialize the file.
@@ -77,7 +77,7 @@ class StargateConfig:
         self.config[key] = value
 
     def save(self):
-        with open(self.get_full_file_path(), 'w+') as file:
+        with open(self.get_full_file_path(), 'w+', encoding="utf8") as file:
             json.dump(self.config, file, indent=2)
 
     def remove_all(self):

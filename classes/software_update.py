@@ -10,7 +10,7 @@ import requests
 
 from network_tools import NetworkTools
 from database import Database
-from version import version as current_version
+from version import version as current_version # pylint: disable=import-error
 
 class SoftwareUpdate:
 
@@ -79,7 +79,7 @@ class SoftwareUpdate:
                         filepath = Path.joinpath(root_path, file) # the path of the new file
                         try:
                             makedirs(path.dirname(filepath)) # create directories if they do not exist:
-                        except:
+                        except OSError:
                             pass
 
                         with open(filepath, 'wb') as file:
@@ -105,7 +105,7 @@ class SoftwareUpdate:
                 self.cfg.set('software_update_status', 'up-to-date' )
                 self.cfg.set('software_update_exception', False )
 
-        except Exception as ex:
+        except Exception as ex: # pylint: disable=broad-except
             self.log.log(f"Software update failed with error: {ex}")
             self.cfg.set('software_update_last_check', str(datetime.now()))
             # Flag the problem in update_exception, not update_status so that update_status can show that an update is available.
