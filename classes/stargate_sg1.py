@@ -10,7 +10,7 @@ from symbol_ring import SymbolRing
 from stargate_address_manager import StargateAddressManager
 from subspace_client import SubspaceClient
 from wormhole import Wormhole
-from stargate_server import StargateServer
+from subspace_server import SubspaceServer
 
 class StargateSG1:
     """
@@ -48,7 +48,7 @@ class StargateSG1:
 
         ### Set up the needed classes and make them ready to use ###
         self.symbol_manager = StargateSG1SymbolManager()
-        self.subspace = SubspaceClient(self)
+        self.subspace_client = SubspaceClient(self)
         self.addr_manager = StargateAddressManager(self)
         self.keyboard = KeyboardManager(self)
         self.chevrons = ChevronManager(self)
@@ -64,10 +64,10 @@ class StargateSG1:
         # The stargate_server runs in it's own thread listening for incoming wormholes
         if self.net_tools.has_internet_access():
             try:
-                self.stargate_server_thread = Thread(target=StargateServer(self).start, daemon=True, args=())
-                self.stargate_server_thread.start()
+                self.subspace_client_server_thread = Thread(target=SubspaceServer(self).start, daemon=True, args=())
+                self.subspace_client_server_thread.start()
             except:
-                self.log.log("Failed to start StargateServer thread")
+                self.log.log("Failed to start SubspaceServer thread")
                 raise
 
         ### Notify that the Stargate is ready
@@ -164,9 +164,9 @@ class StargateSG1:
                 # If the gate is presumed to be online, send it.
                 if self.fan_gate_online_status:
                     # send the locked symbols to the remote gate.
-                    this_gate_ip = self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addr_manager.get_fan_gates() )
+                    this_gate_ip = self.subspace_client.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addr_manager.get_fan_gates() )
                     this_message = str( self.address_buffer_outgoing[0:self.locked_chevrons_outgoing] )
-                    has_connection = self.subspace.send_to_remote_stargate( this_gate_ip, this_message)[0] # Attempt to send
+                    has_connection = self.subspace_client.send_to_remote_stargate( this_gate_ip, this_message)[0] # Attempt to send
 
                     # Check for success
                     if has_connection:
@@ -226,7 +226,7 @@ class StargateSG1:
         :return: Nothing is returned.
         """
         if self.fan_gate_online_status and self.centre_button_outgoing and len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing:
-            self.subspace.send_to_remote_stargate(self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addr_manager.get_fan_gates() ), 'centre_button_incoming')
+            self.subspace_client.send_to_remote_stargate(self.subspace_client.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addr_manager.get_fan_gates() ), 'centre_button_incoming')
             self.log.log('Sent: Center Button')
 
     def get_connected_planet_name(self):
@@ -351,7 +351,7 @@ class StargateSG1:
                     self.log.log('The dialed fan_gate is NOT online!')
                     return False
                 # If the dialed fan_gate is already busy, with an active wormhole or outgoing dialing is in progress.
-                if self.subspace.get_status_of_remote_gate(self.subspace.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addr_manager.get_fan_gates() )):
+                if self.subspace_client.get_status_of_remote_gate(self.subspace_client.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addr_manager.get_fan_gates() )):
                     self.log.log('The dialed fan_gate is already busy!')
                     return False
             return True  # returns true if we can establish a wormhole

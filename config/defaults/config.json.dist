@@ -86,5 +86,6 @@
   "audio_clip_wait_time_blackhole": 7,
   "allow_incoming_dialing": true,
   "fan_gate_refresh_interval": 30,
-  "software_update_interval": 24
+  "software_update_interval": 24,
+  "web_debug_enable": true
 }

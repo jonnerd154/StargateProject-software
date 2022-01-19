@@ -5,9 +5,9 @@ from icmplib import ping
 
 from database import Database
 
-class StargateServer:
+class SubspaceServer:
     """
-    This Class starts a stargate server to listen for incoming connections. The server runs on port 3838. It tries to setup the server on
+    This Class starts a subspace server to listen for incoming connections. The server runs on port 3838. It tries to setup the server on
     the subspace interface. Failing that, it will use the wlan0 interface instead. Failing that it will use the eth0 interface.
     The Stargate server is run in "parallel" in its own thread.
     :return: Nothing is returned.
@@ -18,7 +18,7 @@ class StargateServer:
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.base_path = stargate.base_path
-        self.subspace = stargate.subspace
+        self.subspace_client = stargate.subspace_client
         self.addr_manager = stargate.addr_manager
         self.address_book = stargate.addr_manager.get_book()
 
@@ -39,7 +39,7 @@ class StargateServer:
         self.keep_alive_running_check_interval = 0.5
 
         # Get server IP, preferable the IP of the stargate in subspace.
-        self.server_ip = "0.0.0.0" #self.subspace.get_stargate_server_ip()
+        self.server_ip = "0.0.0.0" #self.subspace_client.get_stargate_server_ip()
         self.server_address = (self.server_ip, self.port)
 
         # Configure the socket, open/bind
@@ -121,8 +121,8 @@ class StargateServer:
                             self.stargate.fan_gate_incoming_ip = addr[0] # Save the IO address when establishing a wormhole.
                             self.stargate.dialer.hardware.set_center_on()# Activate the centre_button_outgoing light
 
-                    planet_name = self.subspace.get_planet_name_from_IP(addr[0], self.address_book.get_fan_gates())
-                    stargate_address = self.subspace.get_stargate_address_from_IP(addr[0], self.address_book.get_fan_gates())
+                    planet_name = self.subspace_client.get_planet_name_from_IP(addr[0], self.address_book.get_fan_gates())
+                    stargate_address = self.subspace_client.get_stargate_address_from_IP(addr[0], self.address_book.get_fan_gates())
                     if self.logging == "verbose":
                         self.log.log(f'Line 123: Received from {planet_name} - {stargate_address} -> {msg}')
 
@@ -153,14 +153,14 @@ class StargateServer:
                         if not symbol in self.stargate.address_buffer_incoming:
                             self.stargate.address_buffer_incoming.append(symbol)
 
-                    planet_name = self.subspace.get_planet_name_from_IP(addr[0], self.address_book.get_fan_gates())
-                    stargate_address = self.subspace.get_stargate_address_from_IP(addr[0], self.address_book.get_fan_gates())
+                    planet_name = self.subspace_client.get_planet_name_from_IP(addr[0], self.address_book.get_fan_gates())
+                    stargate_address = self.subspace_client.get_stargate_address_from_IP(addr[0], self.address_book.get_fan_gates())
                     if self.logging == "verbose":
                         self.log.log(f'LINE 154 Received from {planet_name} - {stargate_address} -> {msg}')
 
                 # For unknown messages
                 else:
-                    stargate_address = self.subspace.get_stargate_address_from_IP(addr[0], self.address_book.get_fan_gates())
+                    stargate_address = self.subspace_client.get_stargate_address_from_IP(addr[0], self.address_book.get_fan_gates())
                     self.log.log(f'Received UNKNOWN MESSAGE from {addr[0]} - {stargate_address} -> {msg}')
         conn.close()  # close the connection.
 

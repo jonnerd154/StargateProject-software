@@ -237,7 +237,7 @@ class SubspaceClient:
 
                 return server_ip
             return False
-        except (IndexError, KeyError) as _ex:
+        except (KeyError, ValueError) as _ex:
             self.log.log('ERROR getting {interface_name} IP: {_ex}', True)
             return False
 

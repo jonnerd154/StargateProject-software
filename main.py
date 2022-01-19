@@ -75,6 +75,7 @@ class GateApplication:
         ### Start the web server
         try:
             StargateWebServer.stargate = self.stargate
+            StargateWebServer.debug = self.cfg.get("web_debug_enable")
             self.httpd_server = HTTPServer(('', self.cfg.get("httpServerPort")), StargateWebServer)
             self.httpd_thread = threading.Thread(name="stargate-http", target=self.httpd_server.serve_forever)
             self.httpd_thread.daemon = True
