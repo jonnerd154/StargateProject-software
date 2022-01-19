@@ -1,7 +1,7 @@
-import simpleaudio as sa
 from os import listdir, path
 from random import choice
 import subprocess
+import simpleaudio as sa
 
 class StargateAudio:
 
@@ -10,11 +10,11 @@ class StargateAudio:
         self.log = app.log
         self.cfg = app.cfg
 
-        self.soundFxRoot = base_path + "/soundfx" # No trailing slash
+        self.sound_fx_root = base_path + "/soundfx" # No trailing slash
 
         # Make ready the sound effects
         self.sounds = {}
-        self.sounds['rolling_ring'] = { 'file': sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/roll.wav")) }
+        self.sounds['rolling_ring'] = { 'file': sa.WaveObject.from_wave_file(str(self.sound_fx_root + "/roll.wav")) }
 
         self.sounds['dialing_cancel'] = { 'file': self.init_wav_file( "/cancel.wav" ) }
         self.sounds['dialing_fail'] =   { 'file': self.init_wav_file( "/dial_fail_sg1.wav" ) }
@@ -51,10 +51,10 @@ class StargateAudio:
         return self.sounds[clip_name]['obj'].is_playing()
 
     def init_wav_file(self, file_path):
-        return sa.WaveObject.from_wave_file(str(self.soundFxRoot + "/" + file_path))
+        return sa.WaveObject.from_wave_file(str(self.sound_fx_root + "/" + file_path))
 
-    def play_random_clip_from_group(self, group_name, wait_done):
-        handle = choice(self.incoming_chevron_sounds)['file'].play()
+    def incoming_chevron(self):
+        choice(self.incoming_chevron_sounds)['file'].play()
 
     def play_random_clip(self, directory):
 
@@ -65,10 +65,10 @@ class StargateAudio:
         """
 
         # Don't start playing another clip if one is already playing
-        if (self.random_clip_is_playing()):
+        if self.random_clip_is_playing():
             return
 
-        path_to_folder = self.soundFxRoot + "/" + directory
+        path_to_folder = self.sound_fx_root + "/" + directory
         rand_file = choice(listdir(path_to_folder))
         filepath =  path.join(path_to_folder, rand_file)
 
@@ -90,48 +90,58 @@ class StargateAudio:
         if self.random_clip_is_playing():
             self.random_clip.wait_done()
 
-    def get_usb_audio_device_card_number(self):
+    @staticmethod
+    def get_usb_audio_device_card_number():
         """
         This function gets the card number for the USB audio adapter.
         :return: It will return a number (string) that should correspond to the card number for the USB adapter. If it can't find it, it returns 1
         """
-        audio_devices = subprocess.run(['aplay', '-l'], capture_output=True, text=True).stdout.splitlines()
-        for line in audio_devices:
-            if 'USB' in line:
-                return line[5]
-        return 1
+        try:
+            audio_devices = subprocess.run(['aplay', '-l'], capture_output=True, text=True, check=False).stdout.splitlines() #TODO: Check should be true, throws exception if non-zero exit code
+            for line in audio_devices:
+                if 'USB' in line:
+                    return line[5]
+                return 1
+        except FileNotFoundError:
+            return 1
 
-
-    def get_active_audio_card_number(self):
+    @staticmethod
+    def get_active_audio_card_number():
         """
         This function gets the active audio card number from the /usr/share/alsa/alsa.conf file.
         :return: It will return an integer that should correspond to the card number for the USB adapter. If it can't find it, it returns 1
         """
         # Get the contents of the file
-        with open('/usr/share/alsa/alsa.conf') as alsa_file:
-            lines = alsa_file.readlines()
-        for line in lines:
-            if 'defaults.ctl.card ' in line:
-                return line[-2]
-
+        try:
+            with open('/usr/share/alsa/alsa.conf', 'r', encoding="utf8") as alsa_file:
+                lines = alsa_file.readlines()
+            for line in lines:
+                if 'defaults.ctl.card ' in line:
+                    return line[-2]
+            return None
+        except FileNotFoundError:
+            return None
 
     def set_correct_audio_output_device(self):
         """
         This functions checks if the USB audio adapter is correctly set in the alsa.conf file and fixes it if not.
         :return: Nothing is returned
         """
+
+        # pylint: disable=anomalous-backslash-in-string
+
         try:
             # If the wrong card is set in the alsa.conf file
-            if get_usb_audio_device_card_number() != get_active_audio_card_number():
-                self.log.log(f'Updating the alsa.conf file with card {get_usb_audio_device_card_number()}')
+            if self.get_usb_audio_device_card_number() != self.get_active_audio_card_number():
+                self.log.log(f'Updating the alsa.conf file with card {self.get_usb_audio_device_card_number()}')
 
-                ctl = 'defaults.ctl.card ' + str(get_usb_audio_device_card_number())
-                pcm = 'defaults.pcm.card ' + str(get_usb_audio_device_card_number())
+                ctl = 'defaults.ctl.card ' + str(self.get_usb_audio_device_card_number())
+                pcm = 'defaults.pcm.card ' + str(self.get_usb_audio_device_card_number())
                 # replace the lines in the alsa.conf file.
-                subprocess.run(['sudo', 'sed', '-i', f"/defaults.ctl.card /c\{ctl}", '/usr/share/alsa/alsa.conf'])
-                subprocess.run(['sudo', 'sed', '-i', f"/defaults.pcm.card /c\{pcm}", '/usr/share/alsa/alsa.conf'])
-        except:
-            pass
+                subprocess.run(['sudo', 'sed', '-i', f"/defaults.ctl.card /c\{ctl}", '/usr/share/alsa/alsa.conf'], check=False) #TODO: Check should be true
+                subprocess.run(['sudo', 'sed', '-i', f"/defaults.pcm.card /c\{pcm}", '/usr/share/alsa/alsa.conf'], check=False) #TODO: Check should be true
+        except subprocess.CalledProcessError:
+            self.log.log("Failed to set audio adapter config")
 
     def set_volume(self, percent_value):
         """
@@ -145,11 +155,11 @@ class StargateAudio:
         self.cfg.set("volume_as_percent", self.volume)
 
         try:
-            subprocess.run(['amixer', '-M', 'set', 'Headphone', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            subprocess.run(['amixer', '-M', 'set', 'PCM', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            subprocess.run(['amixer', '-M', 'set', 'Speaker', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(['amixer', '-M', 'set', 'Headphone', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False) #TODO: Check should be true
+            subprocess.run(['amixer', '-M', 'set', 'PCM', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False) #TODO: Check should be true
+            subprocess.run(['amixer', '-M', 'set', 'Speaker', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False) #TODO: Check should be true
             self.log.log(f'Audio set to {self.volume}%')
-        except:
+        except (FileNotFoundError, subprocess.CalledProcessError):
             self.log.log('Unable to set the volume. You can set the volume level manually by running the alsamixer command.')
 
     def volume_up(self, step=5):
@@ -158,8 +168,7 @@ class StargateAudio:
 
         # Increase, to a max of 100
         new_volume+=step
-        if (new_volume>100):
-            new_volume = 100
+        new_volume = min(new_volume, 100)
 
         # Set the volume, which also updates the config file
         self.set_volume(new_volume)
@@ -170,8 +179,7 @@ class StargateAudio:
 
         # Increase, to a max of 100
         new_volume-=step
-        if (new_volume<0):
-            new_volume = 0
+        new_volume = max(new_volume, 0)
 
         # Set the volume, which also updates the config file
         self.set_volume(new_volume)

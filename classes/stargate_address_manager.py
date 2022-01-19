@@ -1,4 +1,4 @@
-import ast
+from ast import literal_eval
 from datetime import datetime
 
 from database import Database
@@ -11,17 +11,17 @@ class StargateAddressManager:
         self.stargate = stargate
         self.log = stargate.log
         self.cfg = stargate.cfg
-        self.netTools = stargate.netTools
+        self.net_tools = stargate.net_tools
         self.base_path = stargate.base_path
 
         self.database = Database(stargate.base_path)
-        self.addressBook = StargateAddressBook(self)
+        self.address_book = StargateAddressBook(self)
 
         # TODO: Refactor code to use the address book, rather than these variables
-        self.known_planets = self.addressBook.get_standard_gates()
+        self.known_planets = self.address_book.get_standard_gates()
 
         ### Retrieve and merge all fan gates, local and in-DB
-        self.fan_gates = self.addressBook.get_fan_gates() ### Stargate fan-made gate addresses
+        self.fan_gates = self.address_book.get_fan_gates() ### Stargate fan-made gate addresses
 
         self.validator = StargateAddressValidator()
 
@@ -29,8 +29,8 @@ class StargateAddressManager:
         interval = self.cfg.get("fan_gate_refresh_interval")
         stargate.app.schedule.every(interval).minutes.do( self.update_fan_gates_from_db )
 
-    def getBook(self):
-        return self.addressBook
+    def get_book(self):
+        return self.address_book
 
     def is_valid(self, address):
         return self.validator.is_valid(address)
@@ -39,8 +39,8 @@ class StargateAddressManager:
         # Get only the first 6 symbols
         address_compare = address[0:6]
 
-        entry = self.addressBook.get_entry_by_address(address_compare)
-        if (entry):
+        entry = self.address_book.get_entry_by_address(address_compare)
+        if entry:
             return entry['name']
 
         # TODO: Compare to Fan Gates and Local Gates, too!
@@ -48,7 +48,7 @@ class StargateAddressManager:
 
     def get_fan_gates(self):
         #TODO: Remove
-        return self.addressBook.get_fan_gates()
+        return self.address_book.get_fan_gates()
 
     def update_fan_gates_from_db(self):
         """
@@ -57,18 +57,19 @@ class StargateAddressManager:
         :return: The updated fan_gate dictionary is returned.
         """
         self.log.log("Updating Fan Gates from Database")
-        if self.stargate.netTools.has_internet_access():
+        if self.stargate.net_tools.has_internet_access():
             for gate in self.database.get_fan_gates():
                 # Setup the variables
                 name = gate[0]
-                gate_address = ast.literal_eval(gate[1])
-                ip_address = self.netTools.get_ip(gate[2])
+                gate_address = literal_eval(gate[1])
+                ip_address = self.net_tools.get_ip(gate[2])
 
                 # Add it to the datastore
-                self.addressBook.set_fan_gate(name, gate_address, ip_address)
+                self.address_book.set_fan_gate(name, gate_address, ip_address)
 
             self.cfg.set('last_fan_gate_update', str(datetime.now()))
-            return self.fan_gates
+
+        return self.fan_gates
 
     def valid_planet(self, address):
         """
@@ -88,11 +89,11 @@ class StargateAddressManager:
             del copy_of_address[-1]
 
         # Look through the address book for matching addresses. Returns full book entry, or False
-        return self.addressBook.get_entry_by_address(copy_of_address)
+        return self.address_book.get_entry_by_address(copy_of_address)
 
     def is_black_hole(self, address):
         # Helper function for abstraction
-        if ( self.addressBook.is_black_hole_by_address(address)):
+        if self.address_book.is_black_hole_by_address(address):
             self.log.log("Oh no! It's the black hole planet!")
             return True
         return False
@@ -110,7 +111,7 @@ class StargateAddressManager:
                 }
         :return: True if we are dialing a fan made address, False if not.
         """
-        local_address = self.addressBook.get_local_address()
+        local_address = self.address_book.get_local_address()
         for gate in self.get_fan_gates():
             try:
                 #If we dial our own local address:
@@ -118,9 +119,9 @@ class StargateAddressManager:
                     return False
                 # If we dial a known fan_gate
                 #TODO: Use addressBook
-                elif dialed_address[:2] == self.fan_gates[gate]['gate_address'][:2]:
+                if dialed_address[:2] == self.fan_gates[gate]['gate_address'][:2]:
                     return True
-            except:
+            except (AttributeError, KeyError):
                 pass
         return False
 
@@ -132,29 +133,30 @@ class StargateAddressManager:
         if len(remove_dups) < 6:
             return False, "Each symbol can only be used once.", None
 
-        entry = self.addressBook.get_entry_by_address(address)
+        entry = self.address_book.get_entry_by_address(address)
         if entry:
             if entry['type'] == "standard":
-                return False, "This address is already in use by {}".format(entry['name']), entry
+                return False, f"This address is already in use by {entry['name']}", entry
             if entry['type'] == "fan":
                 return "VERIFY_OWNED", "Address in use by a fan gate.", entry
 
         return True, "", None
 
 
-class StargateAddressValidator:
+class StargateAddressValidator: # pylint: disable=too-few-public-methods
 
     def __init__(self):
         pass
 
-    def is_valid(self, input_address): # was called validate_string_as_stargate_address
+    @staticmethod
+    def is_valid(input_address): # was called validate_string_as_stargate_address
         """
         This is just a simple helper function to check if the input is indeed a representation of a stargate address.
         The input does not need to be a complete address.
         :param input_address: Any string
         :return: returns the stargate address as a list if validation is okay and False if not.
         """
-        from ast import literal_eval
+
         # If the input is not a string or a list
         if not isinstance(input_address, (str, list)):
             print(f'ERROR: {input_address} must be str or list!')
@@ -162,11 +164,11 @@ class StargateAddressValidator:
             return False
         # Make sure we are working with a list type
         address = None #initialize the variable
-        if type(input_address) == str:
+        if isinstance(input_address, str):
             try:
-                if type(literal_eval(input_address)) == list:
+                if isinstance(literal_eval(input_address), list):
                     address = literal_eval(input_address)
-            except:
+            except AttributeError:
                 print(f'Unable to convert {input_address} to list')
                 return False
         else:
@@ -176,6 +178,6 @@ class StargateAddressValidator:
         try:
             if all(isinstance(x, int) for x in address):
                 return address
-        except:
+        except AttributeError:
             return False
         return False

@@ -1,55 +1,56 @@
 import os
 import json
-import threading
 from time import sleep
 import urllib.parse
 import collections
 import platform
 from http.server import SimpleHTTPRequestHandler
 
+
+
 class StargateWebServer(SimpleHTTPRequestHandler):
 
     #Overload SimpleHTTPRequestHandler.log_message() to suppress logs from printing to console
     # *** Comment this out for debugging!! ***
-    def log_message(self, format, *args):
+    def log_message(self, format, *args): # pylint: disable=redefined-builtin
         pass
 
-    def parse_GET_vars(self):
-        qs = {}
+    def parse_get_vars(self):
+        query_string = {}
         path = self.path
         if '?' in path:
             path, tmp = path.split('?', 1)
-            qs = urllib.parse.parse_qs(tmp)
-        return path, qs
+            query_string = urllib.parse.parse_qs(tmp)
+        return path, query_string
 
-    def do_GET(self):
+    def do_GET(self): # pylint: disable=invalid-name
         try:
-            request_path, get_vars = self.parse_GET_vars()
+            request_path, get_vars = self.parse_get_vars()
 
             if request_path == '/get':
                 entity = get_vars.get('entity')[0]
 
-                if ( entity == "standard_gates"):
-                    content = json.dumps( self.stargate.addrManager.getBook().get_standard_gates() )
+                if entity == "standard_gates":
+                    content = json.dumps( self.stargate.addr_manager.get_book().get_standard_gates() )
 
-                elif( entity == "fan_gates" ):
-                    content = json.dumps( self.stargate.addrManager.getBook().get_fan_gates() )
+                elif entity == "fan_gates":
+                    content = json.dumps( self.stargate.addr_manager.get_book().get_fan_gates() )
 
-                elif( entity == "all_gates" ):
-                    all_addr = self.stargate.addrManager.getBook().get_all_nonlocal_addresses()
+                elif entity == "all_gates":
+                    all_addr = self.stargate.addr_manager.get_book().get_all_nonlocal_addresses()
                     ordered_dict = collections.OrderedDict(sorted(all_addr.items()))
                     content = json.dumps( ordered_dict )
 
-                elif( entity == "local_address" ):
-                    content = json.dumps( self.stargate.addrManager.getBook().get_local_address() )
+                elif entity == "local_address":
+                    content = json.dumps( self.stargate.addr_manager.get_book().get_local_address() )
 
-                elif( entity == "is_alive" ):
+                elif entity == "is_alive":
                     content = json.dumps( { 'is_alive': True })
 
-                elif( entity == "status" ):
+                elif entity == "status":
                     data = {
-                        "gate_name":                self.stargate.addrManager.getBook().get_local_gate_name(),
-                        "local_address":            self.stargate.addrManager.getBook().get_local_address(),
+                        "gate_name":                self.stargate.addr_manager.get_book().get_local_gate_name(),
+                        "local_address":            self.stargate.addr_manager.get_book().get_local_address(),
                         "address_buffer_outgoing":  self.stargate.address_buffer_outgoing,
                         "locked_chevrons_outgoing": self.stargate.locked_chevrons_outgoing,
                         "address_buffer_incoming":  self.stargate.address_buffer_incoming,
@@ -63,11 +64,11 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     }
                     content = json.dumps( data )
 
-                elif( entity == "info" ):
+                elif entity == "info":
                     data = {
-                        "gate_name":                      self.stargate.addrManager.getBook().get_local_gate_name(),
-                        "local_stargate_address":         self.stargate.addrManager.getBook().get_local_address(),
-                        "local_stargate_address_string":  self.stargate.addrManager.getBook().get_local_address_string(),
+                        "gate_name":                      self.stargate.addr_manager.get_book().get_local_gate_name(),
+                        "local_stargate_address":         self.stargate.addr_manager.get_book().get_local_address(),
+                        "local_stargate_address_string":  self.stargate.addr_manager.get_book().get_local_address_string(),
                         "subspace_public_key":            self.stargate.subspace.get_public_key(),
                         "subspace_ip_address_config":     self.stargate.subspace.get_configured_ip(),
                         "subspace_ip_address_active":     self.stargate.subspace.get_subspace_ip(True),
@@ -78,15 +79,15 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                         "python_version":                 platform.python_version(),
                         "internet_available":             self.stargate.netTools.has_internet_access(),
                         "subspace_available":             self.stargate.subspace.is_online(),
-                        "standard_gate_count":            len(self.stargate.addrManager.getBook().get_standard_gates()),
-                        "fan_gate_count":                 len(self.stargate.addrManager.getBook().get_fan_gates()),
+                        "standard_gate_count":            len(self.stargate.addr_manager.get_book().get_standard_gates()),
+                        "fan_gate_count":                 len(self.stargate.addr_manager.get_book().get_fan_gates()),
                         "last_fan_gate_update":           self.stargate.cfg.get('last_fan_gate_update'),
                         "dialer_mode":                    self.stargate.dialer.type,
                         "hardware_mode":                  self.stargate.electronics.name
                     }
                     content = json.dumps( data )
 
-                elif( entity == "symbols_ddslick" ):
+                elif entity == "symbols_ddslick":
                     data = {
                         "symbols": self.stargate.symbolManager.get_all_ddslick()
                     }
@@ -103,7 +104,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 self.end_headers()
 
             return
-        except:
+        except: # pylint: disable=bare-except
 
             # raise # *** Un-comment for debugging!! ***
 
@@ -111,7 +112,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             self.send_response(500)
             self.end_headers()
 
-    def do_POST(self):
+    def do_POST(self): # pylint: disable=invalid-name
         #print('POST PATH: {}'.format(self.path))
         if self.path == '/shutdown':
             self.stargate.wormhole = False
@@ -164,9 +165,9 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 self.stargate.audio.volume_up()
 
             elif data['action'] == "sim_incoming":
-                if ( not self.stargate.wormhole ): # If we don't already have an established wormhole
+                if not self.stargate.wormhole: # If we don't already have an established wormhole
                     # Get the loopback address and dial it
-                    for symbol_number in self.stargate.addrManager.addressBook.get_local_loopback_address():
+                    for symbol_number in self.stargate.addr_manager.addressBook.get_local_loopback_address():
                         self.stargate.address_buffer_incoming.append(symbol_number)
 
                     self.stargate.address_buffer_incoming.append(7) # Point of origin
@@ -177,25 +178,25 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 # Parse the address
                 try:
                     address = [ data['S1'], data['S2'], data['S3'], data['S4'], data['S5'], data['S6'] ]
-                except Exception as e:
+                except KeyError:
                     data = { "success": False, "error": "Required fields missing or invalid request" }
                     continue_to_save = False
 
                 # Validate that this is an acceptable address
                 if continue_to_save:
-                    verify_avail, error, entry = self.stargate.addrManager.verify_address_available(address)
+                    verify_avail, error, entry = self.stargate.addr_manager.verify_address_available(address) # pylint: disable=unused-variable
                     if verify_avail == "VERIFY_OWNED":
                         # This address is in use by a fan gate, but someone might be (re)configuring their own gate.
                         try:
-                            if (data['owner_confirmed']):
+                            if data['owner_confirmed']:
                                 pass # Valid, continue to save
                             else:
                                 data = { "success": False, "error": error }
                                 continue_to_save = False
-                        except Exception as e:
-                            data = { "success": False, "extend": "owner_unconfirmed", "error": "This address is in use by a Fan Gate - \"{}\"".format(entry['name']) }
+                        except KeyError:
+                            data = { "success": False, "extend": "owner_unconfirmed", "error": "This address is in use by a Fan Gate - \"{entry['name']}\"" }
                             continue_to_save = False
-                    elif verify_avail == False:
+                    elif verify_avail is False:
                         # This address is in use by a standard gate
                         data = { "success": False, "error": error }
                         continue_to_save = False
@@ -204,7 +205,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
                 # Store the address:
                 if continue_to_save:
-                    self.stargate.addrManager.getBook().set_local_address(address)
+                    self.stargate.addr_manager.get_book().set_local_address(address)
                     data = { "success": True, "message": "There are no conflicts with your chosen address.<br><br>Local Address Saved." }
 
                 self.send_json_response(data)
@@ -254,4 +255,3 @@ class StargateWebServer(SimpleHTTPRequestHandler):
         self.send_header("Content-type", "text/json")
         self.end_headers()
         self.wfile.write(content.encode())
-        return

@@ -1,18 +1,21 @@
-import pymysql, requests, pwd, sys, subprocess
-from os import stat, makedirs, path
-from base64 import b64decode
+import pwd
+import sys
+import subprocess
+
+from os import stat, makedirs, path, chown, execl
 from ast import literal_eval
 from pathlib import Path
 from datetime import datetime
+import requests
 
 from network_tools import NetworkTools
 from database import Database
+from version import VERSION as current_version
 
 class SoftwareUpdate:
 
     def __init__(self, app):
 
-        from version import version as current_version # TODO: move to a json file
         self.current_version = current_version
         self.log = app.log
         self.cfg = app.cfg
@@ -22,8 +25,8 @@ class SoftwareUpdate:
 
         # Retrieve the configurations
         self.base_url = self.cfg.get("software_updates_url")
-        self.fileDownloadUsername = self.cfg.get("software_updates_username")
-        self.fileDownloadPassword = self.cfg.get("software_updates_password")
+        self.file_download_username = self.cfg.get("software_updates_username")
+        self.file_download_password = self.cfg.get("software_updates_password")
 
         # Update the fan gates from the DB every x hours
         interval = self.cfg.get("software_update_interval")
@@ -45,9 +48,9 @@ class SoftwareUpdate:
             self.log.log('Checking for software updates.')
 
             ## Verify that we have an internet connection, if not, return false.
-            if ( not NetworkTools(self.log).has_internet_access()):
+            if not NetworkTools(self.log).has_internet_access():
                 self.log.log('No internet connection available. Aborting Software Update.')
-                return False
+                return
 
             ## Some needed variables
             update_found = False
@@ -67,20 +70,23 @@ class SoftwareUpdate:
                 if entry[1] > self.current_version:
                     update_audio = self.audio.play_random_audio_clip("update")
                     update_found = True
-                    self.log.log("Newer version {} detected!".format(entry[1]))
-                    self.cfg.set('software_update_status', 'Update Available: v{}'.format(entry[1]) )
+                    self.log.log(f"Newer version {entry[1]} detected!")
+                    self.cfg.set('software_update_status', f'Update Available: v{entry[1]}')
                     new_files = literal_eval(entry[2]) # make a list of the new files
                     # Get the new files
                     for file in new_files:
-                        r = requests.get(self.base_url + str(entry[1]) + '/' + file, auth=( self.fileDownloadUsername, self.fileDownloadPassword )) # get the file
+                        req = requests.get(self.base_url + str(entry[1]) + '/' + file, auth=( self.file_download_username, self.file_download_password )) # get the file
                         filepath = Path.joinpath(root_path, file) # the path of the new file
                         try:
                             makedirs(path.dirname(filepath)) # create directories if they do not exist:
-                        except:
+                        except OSError:
                             pass
-                        open(filepath, 'wb').write(r.content) # save the file
-                        os.chown(str(root_path / file), uid, gid) # Set correct owner and group for the file
-                        self.log.log("{} is updated!".format(file))
+
+                        with open(filepath, 'wb') as file:
+                            file.write(req.content) # save the file
+
+                        chown(str(root_path / file), uid, gid) # Set correct owner and group for the file
+                        self.log.log(f"{file} is updated!")
 
                         #If requirements.txt is new, run install of requirements.
                         if file == 'requirements.txt':
@@ -91,7 +97,7 @@ class SoftwareUpdate:
 
                     # Install the update and restart.
                     self.log.log('Update installed -> restarting the program')
-                    os.execl(sys.executable, *([sys.executable] + sys.argv))  # Restart the program
+                    execl(sys.executable, *([sys.executable] + sys.argv))  # Restart the program
 
             if not update_found:
                 self.log.log("The Stargate is up-to-date.")
@@ -99,8 +105,8 @@ class SoftwareUpdate:
                 self.cfg.set('software_update_status', 'up-to-date' )
                 self.cfg.set('software_update_exception', False )
 
-        except Exception as ex:
-            self.log.log("Software update failed with error: {}".format(ex))
+        except Exception as ex: # pylint: disable=broad-except
+            self.log.log(f"Software update failed with error: {ex}")
             self.cfg.set('software_update_last_check', str(datetime.now()))
             # Flag the problem in update_exception, not update_status so that update_status can show that an update is available.
             self.cfg.set('software_update_exception', True)

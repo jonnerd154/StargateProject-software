@@ -147,39 +147,39 @@ class Wormhole:
         :return: the pattern is returned as a list
         """
         off_pattern = []
-        for i in range(number_of_leds):
+        for index in range(number_of_leds): # pylint: disable=unused-variable
             off_pattern.append((0, 0, 0))
         return off_pattern
 
-    @staticmethod
-    def set_wormhole_pattern(pixels, pattern):
+    #@staticmethod
+    def set_wormhole_pattern(self, pixels, pattern):
         """
         This method sets the pattern on the led strip, and displays it. No fading!
         pixels: The pixel object where to set the pattern. eg self.pixels
         :return: The pattern is returned as a string. (Am i sure it's not a list? Is this a typo?)
         """
-        for led in range(len(pattern)):
-            pixels[led] = pattern[led]
+        for index, led_state in enumerate(pattern):
+            pixels[index] = led_state
         pixels.show()
         return pattern
 
     def open_wormhole(self):
-            """
-            Method for opening the wormhole. For some reason i did not use the fade_transition function here..
-            :return: Nothing is returned.
-            """
-            self.audio.sound_start('wormhole_open')  # Open wormhole audio
-            for i in range(20):
-                self.pixels.fill(((i // 2) * 2, i * 2, i * 2))
-                self.pixels.show()
-            sleep(0.5)
-            for i in range(20, 128):
-                self.pixels.fill(((i // 2) * 2, i * 2, i * 2))
-                self.pixels.show()
-            for i in range(255, 50, -2):
-                self.pixels.fill((i // 2, i, i))
-                self.pixels.show()
-            sleep(0.3)
+        """
+        Method for opening the wormhole. For some reason i did not use the fade_transition function here..
+        :return: Nothing is returned.
+        """
+        self.audio.sound_start('wormhole_open')  # Open wormhole audio
+        for i in range(20):
+            self.pixels.fill(((i // 2) * 2, i * 2, i * 2))
+            self.pixels.show()
+        sleep(0.5)
+        for i in range(20, 128):
+            self.pixels.fill(((i // 2) * 2, i * 2, i * 2))
+            self.pixels.show()
+        for i in range(255, 50, -2):
+            self.pixels.fill((i // 2, i, i))
+            self.pixels.show()
+        sleep(0.3)
 
     def close_wormhole(self):
         """
@@ -189,7 +189,7 @@ class Wormhole:
 
         def pattern_blue(number_of_leds):
             blue_pattern = []
-            for i in range(number_of_leds):
+            for index in range(number_of_leds): # pylint: disable=unused-variable
                 blue_pattern.append((81, 110, 158))
             return blue_pattern
 
@@ -207,96 +207,95 @@ class Wormhole:
         self.stargate.wormhole = False  # Put it back the way it should be.
 
     def rotate_pattern(self, pattern=None, direction='ccw', speed=0, revolutions=1):
-            """
-            This functions spins a led pattern along the led strip.
-            :param pattern: The pattern as a list. (this is optional) If left blank, we try to rotate the current pattern on the led strip.
-            :param direction: The direction as a string, either cw og ccw.
-            :param speed: the speed as a number. 0 is fastest, and higher is slow. eg, speed=1 (1 - 10 seems as good speeds)
-            :param revolutions: The number of rounds to turn the pattern. 1 round is one whole revolution.
-            :return: Noting is returned
-            """
-            ### Determine what pattern to spin ###
-            ## convert NeoPixel object to list ###
-            if pattern is None:
-                p = self.pixels
-                current_pattern = []
-                for led in p:
-                    current_pattern.append(led)
-            else:
-                current_pattern = pattern
-            # print (current_pattern)
+        """
+        This functions spins a led pattern along the led strip.
+        :param pattern: The pattern as a list. (this is optional) If left blank, we try to rotate the current pattern on the led strip.
+        :param direction: The direction as a string, either cw og ccw.
+        :param speed: the speed as a number. 0 is fastest, and higher is slow. eg, speed=1 (1 - 10 seems as good speeds)
+        :param revolutions: The number of rounds to turn the pattern. 1 round is one whole revolution.
+        :return: Noting is returned
+        """
+        ### Determine what pattern to spin ###
+        ## convert NeoPixel object to list ###
+        if pattern is None:
+            pix = self.pixels
+            current_pattern = []
+            for led in pix:
+                current_pattern.append(led)
+        else:
+            current_pattern = pattern
 
-            ### direction ###
-            rot_direction = -1
-            if direction == 'cw':
-                rot_direction = 1
+        ### direction ###
+        rot_direction = -1
+        if direction == 'cw':
+            rot_direction = 1
 
-            ### Rotate the pattern ###
-            for revolution in range(revolutions):
-                for rotate in range(len(current_pattern)):
-                    if not self.stargate.wormhole:  # if the wormhole is cancelled
-                        return  # this exits the whole for loop, even if nested.
-                    current_pattern = [current_pattern[(i + rot_direction) % len(current_pattern)]
-                                       for i, x in enumerate(current_pattern)]
-                    self.set_wormhole_pattern(self.pixels, current_pattern)
-                    sleep(speed / 100)
+        ### Rotate the pattern ###
+        for revolution in range(revolutions): # pylint: disable=unused-variable
+            for rotate in range(len(current_pattern)): # pylint: disable=unused-variable
+                if not self.stargate.wormhole:  # if the wormhole is cancelled
+                    return  # this exits the whole for loop, even if nested.
+                current_pattern = [current_pattern[(i + rot_direction) % len(current_pattern)]
+                                   for i, x in enumerate(current_pattern)]
+                self.set_wormhole_pattern(self.pixels, current_pattern)
+                sleep(speed / 100)
 
     def fade_transition(self, new_pattern):
+        """
+        This functions tries to fade the existing pattern over to the new_pattern. The new patterns are lists of tuples for each led.
+        :new_pattern: This is the new pattern to match, as a list
+        """
+        pix = self.pixels  # these are the current pixels from the strip as neopixel object.
+
+        def create_tween_pattern(current, new):
             """
-            This functions tries to fade the existing pattern over to the new_pattern. The new patterns are lists of tuples for each led.
-            :new_pattern: This is the new pattern to match, as a list
+            This function takes two pattern lists, and creates a tween pattern list one step faded towards the new list.
+            :param current: the current_list as is on the led strip
+            :param new: the new list to fade towards
+            :return: a new tween list is returned.
             """
-            p = self.pixels  # these are the current pixels from the strip as neopixel object.
+            in_between_pattern = []
+            for i in enumerate(new):  # For the length of the new pattern list
+                # The two leds to gradually match.
+                current_led = current[i]
+                new_led = new[i]
 
-            def create_tween_pattern(current, new):
-                """
-                This function takes two pattern lists, and creates a tween pattern list one step faded towards the new list.
-                :param current: the current_list as is on the led strip
-                :param new: the new list to fade towards
-                :return: a new tween list is returned.
-                """
-                in_between_pattern = []
-                for i in range(len(new)):  # For the length of the new pattern list
-                    # The two leds to gradually match.
-                    current_led = current[i]
-                    new_led = new[i]
+                # The current r,g and b's
+                red = current_led[0]
+                green = current_led[1]
+                blue = current_led[2]
 
-                    # The current r,g and b's
-                    r = current_led[0]
-                    g = current_led[1]
-                    b = current_led[2]
+                ## increment/decrement the r
+                if current_led[0] > new_led[0]:
+                    red = current_led[0] - 1
+                elif current_led[0] < new_led[0]:
+                    red = current_led[0] + 1
+                ## increment/decrement the g
+                if current_led[1] > new_led[1]:
+                    green = current_led[1] - 1
+                elif current_led[1] < new_led[1]:
+                    green = current_led[1] + 1
+                ## increment/decrement the b
+                if current_led[2] > new_led[2]:
+                    blue = current_led[2] - 1
+                elif current_led[2] < new_led[2]:
+                    blue = current_led[2] + 1
+                # print ((r,g,b))
+                in_between_pattern.append((red, green, blue))
+            return in_between_pattern
 
-                    ## increment/decrement the r
-                    if current_led[0] > new_led[0]:
-                        r = current_led[0] - 1
-                    elif current_led[0] < new_led[0]:
-                        r = current_led[0] + 1
-                    ## increment/decrement the g
-                    if current_led[1] > new_led[1]:
-                        g = current_led[1] - 1
-                    elif current_led[1] < new_led[1]:
-                        g = current_led[1] + 1
-                    ## increment/decrement the b
-                    if current_led[2] > new_led[2]:
-                        b = current_led[2] - 1
-                    elif current_led[2] < new_led[2]:
-                        b = current_led[2] + 1
-                    # print ((r,g,b))
-                    in_between_pattern.append((r, g, b))
-                return in_between_pattern
+        ## convert NeoPixel object to list ###
+        current_pattern = []
+        for led in pix:
+            current_pattern.append(led)
 
-            ## convert NeoPixel object to list ###
-            current_pattern = []
-            for led in p:
-                current_pattern.append(led)
-
-            ## These are the two lists we are working with.
-            # print(current_pattern)
-            # print(new_pattern)
-            while current_pattern != new_pattern and self.stargate.wormhole:
-                tween_pattern = create_tween_pattern(current_pattern, new_pattern)
-                current_pattern = tween_pattern
-                self.set_wormhole_pattern(self.pixels, tween_pattern)
+        ## These are the two lists we are working with.
+        # print(current_pattern)
+        # print(new_pattern)
+        while current_pattern != new_pattern and self.stargate.wormhole:
+            tween_pattern = create_tween_pattern(current_pattern, new_pattern)
+            current_pattern = tween_pattern
+            self.set_wormhole_pattern(self.pixels, tween_pattern)
 
     def sweep_transition(self, new_pattern):
         """
@@ -304,10 +303,10 @@ class Wormhole:
         :param new_pattern:
         :return: Noting is returned
         """
-        p = self.pixels
+        pix = self.pixels
         ## convert NeoPixel object to list ###
         current_pattern = []
-        for led in p:
+        for led in pix:
             current_pattern.append(led)
 
         # random direction
@@ -323,11 +322,10 @@ class Wormhole:
                 self.set_wormhole_pattern(self.pixels, current_pattern)
 
     def get_time_remaining(self):
-        if ( self.open_time ):
+        if self.open_time:
             time_elapsed = time() - self.open_time
             return math.floor(self.wormhole_max_time - time_elapsed)
-        else:
-            return 0
+        return 0
 
     def establish_wormhole(self):
         """
@@ -347,7 +345,6 @@ class Wormhole:
 
         self.open_time = time()
         random_audio_start_time = time()
-        random_audio_clip = False  # Initiate the variable
 
         # If we dialed the black hole planet, change some variables
         if self.stargate.black_hole:  # If we dialed the black hole.

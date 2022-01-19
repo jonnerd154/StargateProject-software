@@ -1,31 +1,34 @@
-from hardware_simulation import *
+from hardware_simulation import StepperSim
+from hardware_simulation import DCMotorSim
+from hardware_simulation import LEDSim
+from hardware_simulation import NeopixelSim
 
 class ElectronicsNone:
 
-    def __init__(self, app):
+    def __init__(self):
 
         self.name = "Impaired - No Motor, LED, and/or NeoPixel Hardware"
 
-        self.neopixelPin = None
-        self.neopixelLEDCount = 122 # must be non-zero
+        self.neopixel_pin = None
+        self.neopixel_led_count = 122 # must be non-zero
 
         self.adc_resolution = None
         self.adc_vref = None
 
     # ------------------------------------------
 
-        self.shieldConfig = None
+        self.shield_config = None
         self.stepper = None
         self.init_motor_shields()
 
-        self.driveModes = {}
+        self.drive_modes = {}
 
         self.neopixels = None
         self.init_neopixels()
 
     def init_motor_shields(self):
         # Initialize all of the shields as DC motors
-        self.shieldConfig =  {
+        self.shield_config =  {
             3: DCMotorSim(),
             4: DCMotorSim(),
             5: DCMotorSim(),
@@ -42,40 +45,48 @@ class ElectronicsNone:
         self.stepper = StepperSim()
 
     def get_chevron_motor(self, chevron_number):
-        return self.shieldConfig[chevron_number]
+        return self.shield_config[chevron_number]
 
     def get_stepper(self):
         return self.stepper
 
-    def get_stepper_forward(self):
+    @staticmethod
+    def get_stepper_forward():
         return 0
 
-    def get_stepper_backward(self):
+    @staticmethod
+    def get_stepper_backward():
         return 0
 
-    def get_stepper_drive_mode(self, driveMode):
+    @staticmethod
+    def get_stepper_drive_mode(drive_mode): # pylint: disable=unused-argument
         return 0
 
+    @staticmethod
     def init_spi_for_adc():
         pass
 
-    def get_adc_by_channel(adc_ch):
+    @staticmethod
+    def get_adc_by_channel():
         return 0
 
-    def homing_enabled(self):
+    @staticmethod
+    def homing_enabled():
         return False
 
-    def get_homing_sensor_voltage(self):
+    @staticmethod
+    def get_homing_sensor_voltage():
         return 0
 
     def init_neopixels(self):
-        self.neopixels = NeopixelSim(self.neopixelLEDCount)
+        self.neopixels = NeopixelSim(self.neopixel_led_count)
 
     def get_wormhole_pixels(self):
         return self.neopixels
 
     def get_wormhole_pixel_count(self):
-        return self.neopixelLEDCount
+        return self.neopixel_led_count
 
-    def get_led(self, gpio_number):
+    @staticmethod
+    def get_led(gpio_number): # pylint: disable=unused-argument
         return LEDSim()

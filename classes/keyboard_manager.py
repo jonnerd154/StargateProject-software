@@ -1,4 +1,6 @@
-import sys, tty, termios
+import sys
+import tty
+import termios
 
 class KeyboardManager:
 
@@ -8,30 +10,30 @@ class KeyboardManager:
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.audio = stargate.audio
-        self.addressBook = stargate.addrManager.getBook()
+        self.address_book = stargate.addr_manager.get_book()
 
-    def key_press(self):
+    @staticmethod
+    def key_press():
         """
         This helper function stops the program (thread) and waits for a single keypress.
         :return: The pressed key is returned.
         """
 
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
+        file_desc = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(file_desc)
         try:
             tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(1)
+            char = sys.stdin.read(1)
         finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
+            termios.tcsetattr(file_desc, termios.TCSADRAIN, old_settings)
+        return char
 
 
-    def ask_for_input(self, stargate):
+    def ask_for_input(self):
         """
         This function takes the stargate as input and listens for user input (from the DHD or keyboard). The pressed key
         is converted to a stargate symbol number as seen in this document: https://www.rdanderson.com/stargate/glyphs/index.htm
         This function is run in parallel in its own thread.
-        :param stargate: The stargate object itself.
         :return: Nothing is returned, but the stargate is manipulated.
         """
 
@@ -70,7 +72,7 @@ class KeyboardManager:
                 break # This will break us out of the while loop and end the function.
 
             ## If the user hits the centre_button
-            elif key == 'A':
+            if key == 'A':
                 self.queue_center_button()
 
             # If we are hitting symbols on the DHD.
@@ -98,10 +100,10 @@ class KeyboardManager:
         if self.stargate.wormhole == 'outgoing':
             # TODO: We shouldn't be doing subspace-y stuff in the keyboard manager
             if self.stargate.fan_gate_online_status: # If we are connected to a fan_gate
-                self.stargate.subspace.send_to_remote_stargate(self.stargate.subspace.get_ip_from_stargate_address(self.stargate.address_buffer_outgoing, self.addressBook.get_fan_gates()), 'centre_button_incoming')
+                self.stargate.subspace.send_to_remote_stargate(self.stargate.subspace.get_ip_from_stargate_address(self.stargate.address_buffer_outgoing, self.address_book.get_fan_gates()), 'centre_button_incoming')
             if not self.stargate.black_hole: # If we did not dial the black hole.
                 self.stargate.wormhole = False # cancel outgoing wormhole
             if self.stargate.fan_gate_online_status: # If we are connected to a fan_gate
-                self.stargate.subspace.send_to_remote_stargate(self.stargate.subspace.get_ip_from_stargate_address(self.stargate.address_buffer_outgoing, self.addressBook.get_fan_gates()), 'centre_button_incoming')
+                self.stargate.subspace.send_to_remote_stargate(self.stargate.subspace.get_ip_from_stargate_address(self.stargate.address_buffer_outgoing, self.address_book.get_fan_gates()), 'centre_button_incoming')
             if not self.stargate.black_hole: # If we did not dial the black hole.
                 self.stargate.wormhole = False # cancel outgoing wormhole

@@ -29,8 +29,8 @@ class StargateAddressBook:
     def get_local_address_string(self):
         if self.get_local_address() and len(self.get_local_address()) == 6:
             return "[ " + ', '.join(str(x) for x in self.get_local_address()) + " ]"
-        else:
-            return False
+
+        return False
 
     def set_local_address(self, address):
         # TODO: Validate address
@@ -38,13 +38,13 @@ class StargateAddressBook:
         self.datastore.set("local_stargate_address", address)
 
     def get_local_gate_name(self):
-        if self.get_local_address() is []:
+        if not self.get_local_address():
             return "Stargate"
         name = self.manager.get_planet_name_by_address( self.get_local_address() )
         if name == "Unknown Address":
             return "Stargate"
-        else:
-            return name
+
+        return name
 
     def get_local_loopback_address(self):
         return self.datastore.get("local_stargate_address_loopback") # Equivalent to 127.0.0.1
@@ -77,7 +77,7 @@ class StargateAddressBook:
         return self.datastore.get("fan_gates")
 
     def get_fan_gate_by_address(self, address):
-        for key, value in self.get_fan_gates().items():
+        for value in self.get_fan_gates().values():
             if address == value['gate_address']:
                 return value
 
@@ -96,7 +96,7 @@ class StargateAddressBook:
         return self.datastore.get("standard_gates")
 
     def get_standard_gate_by_address(self, address):
-        for key, value in self.get_standard_gates().items():
+        for value in self.get_standard_gates().values():
             if address == value['gate_address']:
                 return value
         return False

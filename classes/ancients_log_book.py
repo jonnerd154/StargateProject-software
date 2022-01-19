@@ -1,38 +1,34 @@
-import pwd, grp, sys
-from os import stat
+import sys
 from datetime import datetime
 import threading
 
+# pylint: disable=too-few-public-methods
+
 class AncientsLogBook:
 
-    def __init__(self, base_path, log_file, printToConsole = True):
+    def __init__(self, base_path, log_file, print_to_console = True):
 
-        self.printToConsole = printToConsole
+        self.print_to_console = print_to_console
 
-        self.gateLog = log_file
-        self.logDir = base_path + "/logs" #No trailing slash
+        self.gate_log = log_file
+        self.log_dir = base_path + "/logs" #No trailing slash
 
-        # TODO: Open the log file here, and do any creation/permission repairs.
-        #    log() should only be appending to the file.
-
-        pass
-
-    def log(self, str, printToConsoleOverride = False):
+    def log(self, msg, print_to_console_override = False):
         """
         This functions logs the string_for_logging to the end of file.
         :param file: the file name as a string. It will be placed in the same folder as the file from where this function is run.
-        :param string_for_logging: the entry for the log, as a string. The timestamp will be prepended automatically.
+        :param msg: the entry for the log, as a string. The timestamp will be prepended automatically.
         :return: Nothing is returned.
         """
 
-        with open(self.logDir +"/"+ self.gateLog, 'a+') as logFile:
+        with open(self.log_dir +"/"+ self.gate_log, 'a+', encoding="utf8") as log_file:
             timestamp = datetime.now().replace(microsecond=0)
-            logLine = '\n[{}]\t{}'.format(timestamp, str)
-            logFile.write(logLine)
+            log_line = f'\n[{timestamp}]\t{msg}'
+            log_file.write(log_line)
 
-        if (self.printToConsole and not printToConsoleOverride):
+        if (self.print_to_console and not print_to_console_override):
             # Some magic to prevent threads from messing up newlines on the console print
-            printLock = threading.Lock()
-            with printLock:
-                print(logLine, end='\r')
+            print_lock = threading.Lock()
+            with print_lock:
+                print(log_line, end='\r')
                 sys.stdout.flush()
