@@ -255,7 +255,9 @@ class Wormhole:
             :return: a new tween list is returned.
             """
             in_between_pattern = []
-            for i in enumerate(new):  # For the length of the new pattern list
+
+            for i in range(len(new)):  # For the length of the new pattern list
+
                 # The two leds to gradually match.
                 current_led = current[i]
                 new_led = new[i]
