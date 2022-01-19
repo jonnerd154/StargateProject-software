@@ -192,8 +192,8 @@ class StargateSG1:
 
             # If we are still receiving the correct address to match the local stargate:
             buffer_first_6 = self.address_buffer_incoming[0:min(len(self.address_buffer_incoming), 6)] # get up to 6 symbols off incoming buffer
-            local_first_6 = self.addr_manager.addressBook.get_local_address()[0:min(len(self.address_buffer_incoming), 6)] # get up to 6 symbols off the local address_buffer_incoming
-            loopback_first_6 = self.addr_manager.addressBook.get_local_loopback_address()[0:min(len(self.address_buffer_incoming), 6)] # get up to 6 symbols off the loopback local address
+            local_first_6 = self.addr_manager.get_book().get_local_address()[0:min(len(self.address_buffer_incoming), 6)] # get up to 6 symbols off the local address_buffer_incoming
+            loopback_first_6 = self.addr_manager.get_book().get_local_loopback_address()[0:min(len(self.address_buffer_incoming), 6)] # get up to 6 symbols off the loopback local address
 
             # If the incoming address buffer matches our routable or unroutable local address, lock it.
             if buffer_first_6 in (local_first_6, loopback_first_6):
@@ -274,8 +274,8 @@ class StargateSG1:
         # If the centre_button_incoming is active and all dialed symbols are locked.
         elif self.centre_button_incoming and 0 < len(self.address_buffer_incoming) == self.locked_chevrons_incoming:
             # If the incoming wormhole matches the local address
-            if self.address_buffer_incoming[0:-1] == self.addr_manager.addressBook.get_local_address() or \
-                self.address_buffer_incoming[0:-1] == self.addr_manager.addressBook.get_local_loopback_address():
+            if self.address_buffer_incoming[0:-1] == self.addr_manager.get_book().get_local_address() or \
+                self.address_buffer_incoming[0:-1] == self.addr_manager.get_book().get_local_loopback_address():
                 # Update some state variables
                 self.wormhole = 'incoming'  # Set the wormhole state to activate the wormhole.
                 self.connected_planet_name = self.get_connected_planet_name()

@@ -31,7 +31,7 @@ class StargateAddressBookMigration():
 
     def migrate(self):
         # Clear out the existing config
-        print("(Re)initializing Stargate AddressBook datastore")
+        print("(Re)initializing StargateAddressBook datastore")
         self.address_book.initialize_storage()
 
         # Get the local stargate address, set it in the cfg

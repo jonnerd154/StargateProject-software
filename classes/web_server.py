@@ -152,11 +152,11 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     self.stargate.wormhole = False
 
                 elif data['action'] == "symbol_forward":
-                    self.stargate.ring.move( 33, self.stargate.ring.forwardDirection ) # Steps, Direction
+                    self.stargate.ring.move( 33, self.stargate.ring.forward_direction ) # Steps, Direction
                     self.stargate.ring.release()
 
                 elif data['action'] == "symbol_backward":
-                    self.stargate.ring.move( 33, self.stargate.ring.backwardDirection ) # Steps, Direction
+                    self.stargate.ring.move( 33, self.stargate.ring.backward_direction ) # Steps, Direction
                     self.stargate.ring.release()
 
                 elif data['action'] == "volume_down":
@@ -168,7 +168,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 elif data['action'] == "sim_incoming":
                     if not self.stargate.wormhole: # If we don't already have an established wormhole
                         # Get the loopback address and dial it
-                        for symbol_number in self.stargate.addr_manager.addressBook.get_local_loopback_address():
+                        for symbol_number in self.stargate.addr_manager.get_book().get_local_loopback_address():
                             self.stargate.address_buffer_incoming.append(symbol_number)
 
                         self.stargate.address_buffer_incoming.append(7) # Point of origin
