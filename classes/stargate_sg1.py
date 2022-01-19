@@ -197,7 +197,7 @@ class StargateSG1:
 
             # If the incoming address buffer matches our routable or unroutable local address, lock it.
             if buffer_first_6 in (local_first_6, loopback_first_6):
-                self.log.log("Address matching. Incoming Buffer: " + self.address_buffer_incoming)
+                self.log.log("Address matching. Incoming Buffer: " + str(self.address_buffer_incoming))
 
                 self.locked_chevrons_incoming += 1  # Increment the locked chevrons variable.
                 try:
