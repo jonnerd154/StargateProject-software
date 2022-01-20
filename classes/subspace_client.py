@@ -155,27 +155,14 @@ class SubspaceClient:
 
     # TODO: Move to NetTools
     def get_lan_ip(self):
-        # TODO: Refactor to loop over a list of interface names
 
-        # Try to get the IP from wlan0
-        wlan0 = self.get_ip_address_by_interface('wlan0')
-        if wlan0:
-            return wlan0
+        interfaces = [ 'wlan0', 'eth0', 'en0', 'en1' ]
 
-        # Try to get the IP from eth0
-        eth0 = self.get_ip_address_by_interface('eth0')
-        if eth0:
-            return eth0
-
-        # Try to get the IP from en0
-        en0 = self.get_ip_address_by_interface('en0')
-        if en0:
-            return en0
-
-        # Try to get the IP from en1 (MacOS)
-        en1 = self.get_ip_address_by_interface('en1')
-        if en1:
-            return en1
+        # Try to get the IP from each of the interfaces
+        for interface in interfaces:
+            result = self.get_ip_address_by_interface(interface)
+            if result:
+                return result
 
         return None
 

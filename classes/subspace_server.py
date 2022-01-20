@@ -86,7 +86,7 @@ class SubspaceServer:
         if self.logging == "verbose":
             self.log.log(f'handle_incoming_wormhole({conn}, {addr}')
 
-        stargate_address = self.subspace_client.get_stargate_address_from_IP(addr[0])
+        stargate_address = self.addr_manager.get_stargate_address_from_IP(addr[0])
 
         connected = True  # while there is a connection from another gate.
         while connected:
