@@ -167,6 +167,7 @@ class SubspaceClient:
         :return: The planet/stargate name is returned as a string.
         """
         try:
+            # TODO: throws a syntax warning: maybe use .values() ?
             return [k for k, v in fan_gates.items() if v[1] == remote_ip]['name']
         except KeyError:
             return 'Unknown'
