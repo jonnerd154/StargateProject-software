@@ -108,6 +108,7 @@ class SubspaceServer:
                         self.log.log('centre_button_incoming')
                     # Check if incoming wormholes are allowed
                     if not self.cfg.get("allow_incoming_dialing"):
+                        conn.close()  # close the connection.
                         return
 
                     # If a wormhole is already established, and we are receiving the centre_button_incoming from the same gate.
@@ -147,6 +148,7 @@ class SubspaceServer:
 
                     # Check if incoming wormholes are allowed
                     if not self.cfg.get("allow_incoming_dialing"):
+                        conn.close()  # close the connection.
                         return
 
                     address = self.addr_manager.is_valid(msg)
