@@ -111,6 +111,7 @@ class SubspaceClient:
 
         return False, False
 
+    # TODO: Move to Address Book Manager, and don't pass fan_gates
     def get_ip_from_stargate_address(self, stargate_address, known_fan_made_stargates):
         """
         This functions gets the IP address from the first two symbols in the gate_address. The first two symbols of the
@@ -126,6 +127,7 @@ class SubspaceClient:
             self.log.log( 'Unable to get IP for', stargate_address)
             return None
 
+    # TODO: Move to Address Book Manager, and don't pass fan_gates
     @staticmethod
     def get_stargate_address_from_ip(remote_ip, fan_gates_dictionary):
         """
@@ -192,7 +194,10 @@ class SubspaceClient:
 
         return None # If no IP found, return None
 
+    # TODO: Move to NetTools
     def get_lan_ip(self):
+        # TODO: Refactor to loop over a list of interface names
+
         # Try to get the IP from wlan0
         wlan0 = self.get_ip_address_by_interface('wlan0')
         if wlan0:
@@ -215,6 +220,7 @@ class SubspaceClient:
 
         return None
 
+    # TODO: Move to NetTools
     def get_subspace_ip(self, subspace_only = False):
         # Try to get the IP from subspace
         subspace = self.get_ip_address_by_interface('subspace')
@@ -228,6 +234,7 @@ class SubspaceClient:
 
         return None
 
+    # TODO: Move to NetTools?
     def get_ip_address_by_interface(self, interface_name, do_ping = False):
         try:
             server_ip = netifaces.ifaddresses(interface_name)[2][0]['addr']
