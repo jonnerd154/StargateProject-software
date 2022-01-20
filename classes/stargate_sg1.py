@@ -226,7 +226,8 @@ class StargateSG1:
         :return: Nothing is returned.
         """
         if self.fan_gate_online_status and self.centre_button_outgoing and len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing:
-            self.subspace_client.send_to_remote_stargate(self.subspace_client.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addr_manager.get_fan_gates() ), 'centre_button_incoming')
+            _ip_address = self.subspace_client.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addr_manager.get_fan_gates() )
+            self.subspace_client.send_to_remote_stargate( _ip_address, 'centre_button_incoming' )
             self.log.log('Sent: Center Button')
 
     def get_connected_planet_name(self):
