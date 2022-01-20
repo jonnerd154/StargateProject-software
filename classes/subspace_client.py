@@ -80,6 +80,10 @@ class SubspaceClient:
         The second value in the tuple is either None, or it contains the status of the remote gate, if we asked for it.
         """
 
+        # If we don't have an IP, don't try to send anything
+        if server_ip is None:
+            return
+
         if self.logging == "verbose":
             self.log.log(f"send_to_remote_stargate( {server_ip}, {message_string} )")
 
