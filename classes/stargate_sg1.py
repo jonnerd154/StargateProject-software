@@ -164,7 +164,7 @@ class StargateSG1:
                 # If the gate is presumed to be online, send it.
                 if self.fan_gate_online_status:
                     # send the locked symbols to the remote gate.
-                    this_gate_ip = self.subspace_client.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addr_manager.get_fan_gates() )
+                    this_gate_ip = self.addr_manager.get_ip_from_stargate_address(self.address_buffer_outgoing )
                     this_message = str( self.address_buffer_outgoing[0:self.locked_chevrons_outgoing] )
                     has_connection = self.subspace_client.send_to_remote_stargate( this_gate_ip, this_message)[0] # Attempt to send
 
@@ -226,7 +226,7 @@ class StargateSG1:
         :return: Nothing is returned.
         """
         if self.fan_gate_online_status and self.centre_button_outgoing and len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing:
-            _ip_address = self.subspace_client.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addr_manager.get_fan_gates() )
+            _ip_address = self.addr_manager.get_ip_from_stargate_address(self.address_buffer_outgoing )
             self.subspace_client.send_to_remote_stargate( _ip_address, 'centre_button_incoming' )
             self.log.log('Sent: Center Button')
 
@@ -352,7 +352,7 @@ class StargateSG1:
                     self.log.log('The dialed fan_gate is NOT online!')
                     return False
                 # If the dialed fan_gate is already busy, with an active wormhole or outgoing dialing is in progress.
-                if self.subspace_client.get_status_of_remote_gate(self.subspace_client.get_ip_from_stargate_address(self.address_buffer_outgoing, self.addr_manager.get_fan_gates() )):
+                if self.subspace_client.get_status_of_remote_gate(self.addr_manager.get_ip_from_stargate_address(self.address_buffer_outgoing )):
                     self.log.log('The dialed fan_gate is already busy!')
                     return False
             return True  # returns true if we can establish a wormhole

@@ -154,6 +154,21 @@ class StargateAddressManager:
                 return stargate_config['name'] # TODO: Should this return `gate_address`?
         return str(stargate_ip) # If the gate address of the IP was not found
 
+    def get_ip_from_stargate_address(self, stargate_address):
+        """
+        This functions gets the IP address from the first two symbols in the gate_address. The first two symbols of the
+        fan_gates are always unique.
+        :param stargate_address: This is the destination for which to match with an IP.
+        :param known_fan_made_stargates: This is the dictionary of the known stargates
+        :return: The IP address is returned as a string.
+        """
+        for stargate_config in self.get_fan_gates().values():
+            if len(stargate_address) > 1 and stargate_address[0:2] == stargate_config['gate_address'][0:2]:
+                return stargate_config['ip_address']
+
+        self.log.log( f'Unable to get IP for {stargate_address}')
+        return None
+
 class StargateAddressValidator: # pylint: disable=too-few-public-methods
 
     def __init__(self):

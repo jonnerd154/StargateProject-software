@@ -115,22 +115,6 @@ class SubspaceClient:
 
         return False, False
 
-    # TODO: Move to Address Book Manager, and don't pass fan_gates
-    def get_ip_from_stargate_address(self, stargate_address, known_fan_made_stargates):
-        """
-        This functions gets the IP address from the first two symbols in the gate_address. The first two symbols of the
-        fan_gates are always unique.
-        :param stargate_address: This is the destination for which to match with an IP.
-        :param known_fan_made_stargates: This is the dictionary of the known stargates
-        :return: The IP address is returned as a string.
-        """
-        for gate in known_fan_made_stargates:
-            if len(stargate_address) > 1 and stargate_address[0:2] == known_fan_made_stargates[gate]['gate_address'][0:2]:
-                return known_fan_made_stargates[gate]['ip_address']
-
-        self.log.log( f'Unable to get IP for {stargate_address}')
-        return None
-
     def get_status_of_remote_gate(self, remote_ip):
         """
         This helper functions tries to determine if the wormhole of the remote gate is already active, or if we are currently dialing out.
