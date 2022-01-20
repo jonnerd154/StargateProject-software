@@ -126,21 +126,6 @@ class SubspaceClient:
             return False
         return True
 
-    # TODO: Move to Address Book Manager, and don't pass fan_gates
-    @staticmethod
-    def get_planet_name_from_ip(remote_ip, fan_gates):
-        """
-        This function gets the planet name of the IP in the fan_gate dictionary.
-        :param fan_gates: The dictionary of fan_gates from the database
-        :param IP: the IP address as a string
-        :return: The planet/stargate name is returned as a string.
-        """
-        try:
-            # TODO: throws a syntax warning: maybe use .values() ?
-            return [k for k, v in fan_gates.items() if v[1] == remote_ip]['name']
-        except KeyError:
-            return 'Unknown'
-
     def get_stargate_server_ip(self):
         """
         This method tries to get the IP address of the subspace network interface. It also tries to start the subspace

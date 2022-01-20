@@ -169,6 +169,19 @@ class StargateAddressManager:
         self.log.log( f'Unable to get IP for {stargate_address}')
         return None
 
+    def get_planet_name_from_ip(self, remote_ip):
+        """
+        This function gets the planet name of the IP in the fan_gate dictionary.
+        :param fan_gates: The dictionary of fan_gates from the database
+        :param IP: the IP address as a string
+        :return: The planet/stargate name is returned as a string.
+        """
+        try:
+            # TODO: throws a syntax warning: maybe use .values() ?
+            return [k for k, v in self.get_fan_gates().items() if v[1] == remote_ip]['name']
+        except KeyError:
+            return 'Unknown'
+
 class StargateAddressValidator: # pylint: disable=too-few-public-methods
 
     def __init__(self):

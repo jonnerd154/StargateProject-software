@@ -124,7 +124,7 @@ class SubspaceServer:
                             self.stargate.fan_gate_incoming_ip = addr[0] # Save the IO address when establishing a wormhole.
                             self.stargate.dialer.hardware.set_center_on()# Activate the centre_button_outgoing light
 
-                    planet_name = self.subspace_client.get_planet_name_from_IP(addr[0], self.address_book.get_fan_gates())
+                    planet_name = self.addr_manager.get_planet_name_from_IP(addr[0], self.address_book.get_fan_gates())
                     if self.logging == "verbose":
                         self.log.log(f'Line 123: Received from {planet_name} - {stargate_address} -> {msg}')
 
@@ -156,7 +156,7 @@ class SubspaceServer:
                         if not symbol in self.stargate.address_buffer_incoming:
                             self.stargate.address_buffer_incoming.append(symbol)
 
-                    planet_name = self.subspace_client.get_planet_name_from_IP(addr[0], self.address_book.get_fan_gates())
+                    planet_name = self.addr_manager.get_planet_name_from_IP(addr[0], self.address_book.get_fan_gates())
                     if self.logging == "verbose":
                         self.log.log(f'LINE 154 Received from {planet_name} - {stargate_address} -> {msg}')
 
