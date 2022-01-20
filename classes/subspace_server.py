@@ -86,6 +86,8 @@ class SubspaceServer:
         if self.logging == "verbose":
             self.log.log(f'handle_incoming_wormhole({conn}, {addr}')
 
+        stargate_address = self.subspace_client.get_stargate_address_from_IP(addr[0])
+
         connected = True  # while there is a connection from another gate.
         while connected:
             if self.logging == "verbose":
@@ -122,7 +124,6 @@ class SubspaceServer:
                             self.stargate.dialer.hardware.set_center_on()# Activate the centre_button_outgoing light
 
                     planet_name = self.subspace_client.get_planet_name_from_IP(addr[0], self.address_book.get_fan_gates())
-                    stargate_address = self.subspace_client.get_stargate_address_from_IP(addr[0], self.address_book.get_fan_gates())
                     if self.logging == "verbose":
                         self.log.log(f'Line 123: Received from {planet_name} - {stargate_address} -> {msg}')
 
@@ -154,14 +155,13 @@ class SubspaceServer:
                             self.stargate.address_buffer_incoming.append(symbol)
 
                     planet_name = self.subspace_client.get_planet_name_from_IP(addr[0], self.address_book.get_fan_gates())
-                    stargate_address = self.subspace_client.get_stargate_address_from_IP(addr[0], self.address_book.get_fan_gates())
                     if self.logging == "verbose":
                         self.log.log(f'LINE 154 Received from {planet_name} - {stargate_address} -> {msg}')
 
                 # For unknown messages
                 else:
-                    stargate_address = self.subspace_client.get_stargate_address_from_IP(addr[0], self.address_book.get_fan_gates())
                     self.log.log(f'Received UNKNOWN MESSAGE from {addr[0]} - {stargate_address} -> {msg}')
+
         conn.close()  # close the connection.
 
     def start(self):

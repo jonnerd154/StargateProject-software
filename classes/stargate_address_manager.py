@@ -142,6 +142,17 @@ class StargateAddressManager:
 
         return True, "", None
 
+    def get_stargate_address_from_ip(self, remote_ip):
+        """
+        This function simply gets the stargate address that matches the IP address
+        :param remote_ip: the IP address as a string
+        :return: The stargate's IP address is returned as a string, or "Unknown" if not found
+        """
+        stargate_ip = 'Unknown'
+        for stargate_config in self.get_fan_gates().values():
+            if stargate_config['ip_address'] == remote_ip:
+                return stargate_config['name'] # TODO: Should this return `gate_address`?
+        return str(stargate_ip) # If the gate address of the IP was not found
 
 class StargateAddressValidator: # pylint: disable=too-few-public-methods
 
