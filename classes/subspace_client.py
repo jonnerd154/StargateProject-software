@@ -124,8 +124,8 @@ class SubspaceClient:
             if len(stargate_address) > 1 and stargate_address[0:2] == known_fan_made_stargates[gate]['gate_address'][0:2]:
                 return known_fan_made_stargates[gate]['ip_address']
 
-            self.log.log( 'Unable to get IP for', stargate_address)
-            return None
+        self.log.log( f'Unable to get IP for {stargate_address}')
+        return None
 
     # TODO: Move to Address Book Manager, and don't pass fan_gates
     @staticmethod
