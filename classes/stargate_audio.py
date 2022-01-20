@@ -40,21 +40,29 @@ class StargateAudio:
         self.volume = self.cfg.get('volume_as_percent')
         self.set_volume(self.volume)
 
+        self.enable_audio = self.cfg.get('enable_audio')
+
+
 
     def sound_start(self, clip_name):
-        self.sounds[clip_name]['obj'] = self.sounds[clip_name]['file'].play()
+        if self.enable_audio:
+            self.sounds[clip_name]['obj'] = self.sounds[clip_name]['file'].play()
 
     def sound_stop(self, clip_name):
-        self.sounds[clip_name]['obj'].stop()
+        if self.enable_audio:
+            self.sounds[clip_name]['obj'].stop()
 
     def is_playing(self, clip_name):
-        return self.sounds[clip_name]['obj'].is_playing()
+        if self.enable_audio:
+            return self.sounds[clip_name]['obj'].is_playing()
+        return False
 
     def init_wav_file(self, file_path):
         return sa.WaveObject.from_wave_file(str(self.sound_fx_root + "/" + file_path))
 
     def incoming_chevron(self):
-        choice(self.incoming_chevron_sounds)['file'].play()
+        if self.enable_audio:
+            choice(self.incoming_chevron_sounds)['file'].play()
 
     def play_random_clip(self, directory):
 
@@ -63,6 +71,9 @@ class StargateAudio:
         :param path_to_folder: The path to the folder containing the audio clips as a string, including the trailing slash.
         :return: the play object is returned.
         """
+
+        if not self.enable_audio:
+            return
 
         # Don't start playing another clip if one is already playing
         if self.random_clip_is_playing():
@@ -81,6 +92,9 @@ class StargateAudio:
         return
 
     def random_clip_is_playing(self):
+        if not self.enable_audio:
+            return False
+
         try:
             return self.random_clip.is_playing()
         except AttributeError: # If there's never been a clip playing, this will be None.
