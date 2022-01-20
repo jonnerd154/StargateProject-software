@@ -193,7 +193,7 @@ class SubspaceClient:
 
         return None
 
-    # TODO: Move to NetTools?
+    # TODO: Move to NetTools
     def get_ip_address_by_interface(self, interface_name, do_ping = False):
         try:
             server_ip = netifaces.ifaddresses(interface_name)[2][0]['addr']
@@ -207,9 +207,11 @@ class SubspaceClient:
             self.log.log('ERROR getting {interface_name} IP: {_ex}', True)
             return False
 
+    # TODO: Move to NetTools
     def is_online(self):
         return self.ping()
 
+    # TODO: Move to NetTools
     def ping(self):
         if ping(self.keep_alive_address, count=1, timeout=1).is_alive:
             return True
