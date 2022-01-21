@@ -6,8 +6,6 @@ import collections
 import platform
 from http.server import SimpleHTTPRequestHandler
 
-
-
 class StargateWebServer(SimpleHTTPRequestHandler):
 
     #Overload SimpleHTTPRequestHandler.log_message() to suppress logs from printing to console
