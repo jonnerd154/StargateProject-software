@@ -33,7 +33,7 @@ class GateApplication:
         if not os.geteuid() == 0:
             print("The Stargate software must run with root-like permissions (use sudo)")
             print("Stopping startup.")
-            quit()
+            sys.exit(1)
 
         self.base_path = os.path.split(os.path.abspath(__file__))[0]
 
