@@ -45,7 +45,7 @@
         });
 
         function doPoll( singleShot = false ){
-            $.get('stargate/get_dialing_status')
+            $.get('stargate/get/dialing_status')
                 .done(function(data) {
 
                     // Hide the offline modal
