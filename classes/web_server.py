@@ -118,75 +118,73 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             data = json.loads(body)
             #print('POST DATA: {}'.format(data))
 
-            if self.path == '/do':
+            ##### DO ACTION HANDLERS BELOW ####
+            if self.path == '/do/shutdown':
+                self.stargate.wormhole = False
+                sleep(5)
+                self.send_response(200, 'OK')
+                os.system('systemctl poweroff')
+                return
 
-                ##### DO ACTION HANDLERS BELOW ####
-                if data['action'] == '/shutdown':
-                    self.stargate.wormhole = False
-                    sleep(5)
-                    self.send_response(200, 'OK')
-                    os.system('systemctl poweroff')
-                    return
+            elif self.path == '/do/reboot':
+                self.stargate.wormhole = False
+                sleep(5)
+                self.send_response(200, 'OK')
+                os.system('systemctl reboot')
+                return
 
-                elif data['action'] == '/reboot':
-                    self.stargate.wormhole = False
-                    sleep(5)
-                    self.send_response(200, 'OK')
-                    os.system('systemctl reboot')
-                    return
+            elif self.path == "/do/chevron_cycle":
+                self.stargate.chevrons.get(int(data['chevron_number'])).cycle_outgoing()
 
-                elif data['action'] == "chevron_cycle":
-                    self.stargate.chevrons.get(int(data['chevron_number'])).cycle_outgoing()
+            elif self.path == "/do/all_chevron_leds_off":
+                self.stargate.chevrons.all_off()
+                self.stargate.wormhole = False
 
-                elif data['action'] == "all_leds_off":
-                    self.stargate.chevrons.all_off()
-                    self.stargate.wormhole = False
+            elif self.path == "/do/all_chevron_leds_on":
+                self.stargate.chevrons.all_lights_on()
 
-                elif data['action'] == "chevron_led_on":
-                    self.stargate.chevrons.all_lights_on()
+            elif self.path == "/do/wormhole_on":
+                self.stargate.wormhole = True
 
-                elif data['action'] == "wormhole_on":
-                    self.stargate.wormhole = True
+            elif self.path == "/do/wormhole_off":
+                self.stargate.wormhole = False
 
-                elif data['action'] == "wormhole_off":
-                    self.stargate.wormhole = False
+            elif self.path == "/do/symbol_forward":
+                self.stargate.ring.move( 33, self.stargate.ring.forward_direction ) # Steps, Direction
+                self.stargate.ring.release()
 
-                elif data['action'] == "symbol_forward":
-                    self.stargate.ring.move( 33, self.stargate.ring.forward_direction ) # Steps, Direction
-                    self.stargate.ring.release()
+            elif self.path == "/do/symbol_backward":
+                self.stargate.ring.move( 33, self.stargate.ring.backward_direction ) # Steps, Direction
+                self.stargate.ring.release()
 
-                elif data['action'] == "symbol_backward":
-                    self.stargate.ring.move( 33, self.stargate.ring.backward_direction ) # Steps, Direction
-                    self.stargate.ring.release()
+            elif self.path == "/do/volume_down":
+                self.stargate.audio.volume_down()
 
-                elif data['action'] == "volume_down":
-                    self.stargate.audio.volume_down()
+            elif self.path == "/do/volume_up":
+                self.stargate.audio.volume_up()
 
-                elif data['action'] == "volume_up":
-                    self.stargate.audio.volume_up()
+            elif self.path == "/do/simulate_incoming":
+                if not self.stargate.wormhole: # If we don't already have an established wormhole
+                    # Get the loopback address and dial it
+                    for symbol_number in self.stargate.addr_manager.get_book().get_local_loopback_address():
+                        self.stargate.address_buffer_incoming.append(symbol_number)
 
-                elif data['action'] == "sim_incoming":
-                    if not self.stargate.wormhole: # If we don't already have an established wormhole
-                        # Get the loopback address and dial it
-                        for symbol_number in self.stargate.addr_manager.get_book().get_local_loopback_address():
-                            self.stargate.address_buffer_incoming.append(symbol_number)
+                    self.stargate.address_buffer_incoming.append(7) # Point of origin
+                    self.stargate.centre_button_incoming = True
 
-                        self.stargate.address_buffer_incoming.append(7) # Point of origin
-                        self.stargate.centre_button_incoming = True
+            elif self.path == "/do/subspace_up":
+                print("Subspace UP")
 
-                elif data['action'] == "subspace_up":
-                    print("Subspace UP")
+            elif self.path == "/do/subspace_down":
+                print("Subspace DOWN")
 
-                elif data['action'] == "subspace_down":
-                    print("Subspace DOWN")
+            elif self.path == "/do/dhd_press":
+                symbol_number = int(data['symbol'])
 
-                elif data['action'] == "dhd_press":
-                    symbol_number = int(data['symbol'])
-
-                    if symbol_number > 0:
-                        self.stargate.keyboard.queue_symbol(symbol_number)
-                    elif symbol_number == 0:
-                        self.stargate.keyboard.queue_center_button()
+                if symbol_number > 0:
+                    self.stargate.keyboard.queue_symbol(symbol_number)
+                elif symbol_number == 0:
+                    self.stargate.keyboard.queue_center_button()
 
                 # elif data['action'] == "incoming_press":
                 #     symbol_number = int(data['symbol'])
