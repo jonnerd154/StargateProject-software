@@ -169,7 +169,7 @@ If there are no errors reported, congrats! It's probably working.
 Edit `sg1`'s crontab:
 `crontab -e` and add the following to the bottom of the file:
 ```
-*/8 * * * * /home/sg1/sg1_venv/bin/python3 /home/sg1/sg1/scripts/speakerON.py
+*/8 * * * * /home/sg1/sg1_venv/bin/python3 /home/sg1/sg1/scripts/speaker_on.py
 ```
 
 ## Disable power management/savings on the wifi adapter:
