@@ -29,6 +29,12 @@ class GateApplication:
 
     def __init__(self):
 
+        # Check that we're running with root-like permissions (sudo)
+        if not os.geteuid() == 0:
+            print("The Stargate software must run with root-like permissions (use sudo)")
+            print("Stopping startup.")
+            quit()
+
         self.base_path = os.path.split(os.path.abspath(__file__))[0]
 
         ### Load our config file
