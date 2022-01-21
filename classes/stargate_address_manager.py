@@ -1,5 +1,7 @@
 from ast import literal_eval
 from datetime import datetime
+import requests
+import json
 
 from database import Database
 from stargate_address_book import StargateAddressBook
@@ -24,9 +26,11 @@ class StargateAddressManager:
 
         self.validator = StargateAddressValidator()
 
+        self.info_api_url = self.cfg.get("stargate_info_api_url")
+
         # Update the fan gates from the DB every x minutes
-        interval = self.cfg.get("fan_gate_refresh_interval")
-        stargate.app.schedule.every(interval).minutes.do( self.update_fan_gates_from_db )
+        update_interval = self.cfg.get("fan_gate_refresh_interval")
+        stargate.app.schedule.every(update_interval).minutes.do( self.update_fan_gates_from_api )
 
     def get_book(self):
         return self.address_book
@@ -44,24 +48,31 @@ class StargateAddressManager:
 
         return "Unknown Address"
 
-    def update_fan_gates_from_db(self):
+    def update_fan_gates_from_api(self):
         """
-        This function gets the fan_gates from the database and merges it with the hard_coded fan_gates dictionary
-        :param hard_coded_fan_gates_dictionary: The dictionary containing any hard coded fan_gates not in the database, or a local gate perhaps
+        This function gets the fan_gates from the API and stores it in the AddressBook
         :return: The updated fan_gate dictionary is returned.
         """
         self.log.log("Updating Fan Gates from Database")
+
         if self.stargate.net_tools.has_internet_access():
-            for gate in self.database.get_fan_gates():
-                # Setup the variables
-                name = gate[0]
-                gate_address = literal_eval(gate[1])
-                ip_address = self.net_tools.get_ip(gate[2])
+            try:
+                # Retrieve the data from the API
+                request = requests.get(self.info_api_url + "/get_fan_gates.php")
+                data = json.loads(request.text)
 
-                # Add it to the datastore
-                self.address_book.set_fan_gate(name, gate_address, ip_address)
+                for gate_config in data:
+                    # Setup the variables
+                    name = gate_config['name']
+                    gate_address = literal_eval(gate_config['sg_address'])
+                    ip_address = self.net_tools.get_ip(gate_config['ip'])
 
-            self.cfg.set('last_fan_gate_update', str(datetime.now()))
+                    # Add it to the datastore
+                    self.address_book.set_fan_gate(name, gate_address, ip_address)
+
+                self.cfg.set('last_fan_gate_update', str(datetime.now()))
+            except: # pylint: disable=bare-except
+                pass
 
         return self.fan_gates
 

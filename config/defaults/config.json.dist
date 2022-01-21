@@ -88,5 +88,6 @@
   "fan_gate_refresh_interval": 30,
   "software_update_interval": 24,
   "web_debug_enable": false,
-  "enable_audio": true
+  "enable_audio": true,
+  "stargate_info_api_url": "https://api.thestargateproject.com"
 }
