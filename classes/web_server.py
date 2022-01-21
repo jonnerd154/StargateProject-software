@@ -27,83 +27,80 @@ class StargateWebServer(SimpleHTTPRequestHandler):
         try:
             request_path, get_vars = self.parse_get_vars()
 
-            if request_path == '/get':
-                entity = get_vars.get('entity')[0]
+            if request_path == "/is_alive":
+                data = { 'is_alive': True }
 
-                if entity == "standard_gates":
-                    content = json.dumps( self.stargate.addr_manager.get_book().get_standard_gates() )
-
-                elif entity == "fan_gates":
-                    content = json.dumps( self.stargate.addr_manager.get_book().get_fan_gates() )
-
-                elif entity == "all_gates":
+            elif request_path == "/get_address_book":
+                type = get_vars.get('type')[0]
+                if type == "standard":
+                    data = self.stargate.addr_manager.get_book().get_standard_gates()
+                elif type == "fan":
+                    data = self.stargate.addr_manager.get_book().get_fan_gates()
+                else:
                     all_addr = self.stargate.addr_manager.get_book().get_all_nonlocal_addresses()
-                    ordered_dict = collections.OrderedDict(sorted(all_addr.items()))
-                    content = json.dumps( ordered_dict )
+                    data = collections.OrderedDict(sorted(all_addr.items()))
 
-                elif entity == "local_address":
-                    content = json.dumps( self.stargate.addr_manager.get_book().get_local_address() )
+            elif request_path == "/get_local_address":
+                data = self.stargate.addr_manager.get_book().get_local_address()
 
-                elif entity == "is_alive":
-                    content = json.dumps( { 'is_alive': True })
+            elif request_path == "/get_dialing_status":
+                data = {
+                    "gate_name":                self.stargate.addr_manager.get_book().get_local_gate_name(),
+                    "local_address":            self.stargate.addr_manager.get_book().get_local_address(),
+                    "address_buffer_outgoing":  self.stargate.address_buffer_outgoing,
+                    "locked_chevrons_outgoing": self.stargate.locked_chevrons_outgoing,
+                    "address_buffer_incoming":  self.stargate.address_buffer_incoming,
+                    "locked_chevrons_incoming": self.stargate.locked_chevrons_incoming,
+                    "wormhole_active":          self.stargate.wormhole,
+                    "black_hole_connected":     self.stargate.black_hole,
+                    "connected_planet":         self.stargate.connected_planet_name,
+                    "wormhole_open_time":       self.stargate.wh_manager.open_time,
+                    "wormhole_max_time":        self.stargate.wh_manager.wormhole_max_time,
+                    "wormhole_time_till_close": self.stargate.wh_manager.get_time_remaining()
+                }
 
-                elif entity == "status":
-                    data = {
-                        "gate_name":                self.stargate.addr_manager.get_book().get_local_gate_name(),
-                        "local_address":            self.stargate.addr_manager.get_book().get_local_address(),
-                        "address_buffer_outgoing":  self.stargate.address_buffer_outgoing,
-                        "locked_chevrons_outgoing": self.stargate.locked_chevrons_outgoing,
-                        "address_buffer_incoming":  self.stargate.address_buffer_incoming,
-                        "locked_chevrons_incoming": self.stargate.locked_chevrons_incoming,
-                        "wormhole_active":          self.stargate.wormhole,
-                        "black_hole_connected":     self.stargate.black_hole,
-                        "connected_planet":         self.stargate.connected_planet_name,
-                        "wormhole_open_time":       self.stargate.wh_manager.open_time,
-                        "wormhole_max_time":        self.stargate.wh_manager.wormhole_max_time,
-                        "wormhole_time_till_close": self.stargate.wh_manager.get_time_remaining()
-                    }
-                    content = json.dumps( data )
+            elif request_path == "/get_system_info":
+                data = {
+                    "gate_name":                      self.stargate.addr_manager.get_book().get_local_gate_name(),
+                    "local_stargate_address":         self.stargate.addr_manager.get_book().get_local_address(),
+                    "local_stargate_address_string":  self.stargate.addr_manager.get_book().get_local_address_string(),
+                    "subspace_public_key":            self.stargate.subspace_client.get_public_key(),
+                    "subspace_ip_address_config":     self.stargate.subspace_client.get_configured_ip(),
+                    "subspace_ip_address_active":     self.stargate.subspace_client.get_subspace_ip(True),
+                    "lan_ip_address":                 self.stargate.subspace_client.get_ip_from_interface( 'wlan0' ),
+                    "software_version":               str(self.stargate.sw_updater.get_current_version()),
+                    "software_update_last_check":     self.stargate.cfg.get('software_update_last_check'),
+                    "software_update_status":         self.stargate.cfg.get('software_update_status'),
+                    "python_version":                 platform.python_version(),
+                    "internet_available":             self.stargate.net_tools.has_internet_access(),
+                    "subspace_available":             self.stargate.subspace_client.is_online(),
+                    "standard_gate_count":            len(self.stargate.addr_manager.get_book().get_standard_gates()),
+                    "fan_gate_count":                 len(self.stargate.addr_manager.get_book().get_fan_gates()),
+                    "last_fan_gate_update":           self.stargate.cfg.get('last_fan_gate_update'),
+                    "dialer_mode":                    self.stargate.dialer.type,
+                    "hardware_mode":                  self.stargate.electronics.name
+                }
 
-                elif entity == "info":
-                    data = {
-                        "gate_name":                      self.stargate.addr_manager.get_book().get_local_gate_name(),
-                        "local_stargate_address":         self.stargate.addr_manager.get_book().get_local_address(),
-                        "local_stargate_address_string":  self.stargate.addr_manager.get_book().get_local_address_string(),
-                        "subspace_public_key":            self.stargate.subspace_client.get_public_key(),
-                        "subspace_ip_address_config":     self.stargate.subspace_client.get_configured_ip(),
-                        "subspace_ip_address_active":     self.stargate.subspace_client.get_subspace_ip(True),
-                        "lan_ip_address":                 self.stargate.subspace_client.get_lan_ip(),
-                        "software_version":               str(self.stargate.sw_updater.get_current_version()),
-                        "software_update_last_check":     self.stargate.cfg.get('software_update_last_check'),
-                        "software_update_status":         self.stargate.cfg.get('software_update_status'),
-                        "python_version":                 platform.python_version(),
-                        "internet_available":             self.stargate.net_tools.has_internet_access(),
-                        "subspace_available":             self.stargate.subspace_client.is_online(),
-                        "standard_gate_count":            len(self.stargate.addr_manager.get_book().get_standard_gates()),
-                        "fan_gate_count":                 len(self.stargate.addr_manager.get_book().get_fan_gates()),
-                        "last_fan_gate_update":           self.stargate.cfg.get('last_fan_gate_update'),
-                        "dialer_mode":                    self.stargate.dialer.type,
-                        "hardware_mode":                  self.stargate.electronics.name
-                    }
-                    content = json.dumps( data )
-
-                elif entity == "symbols_ddslick":
-                    data = {
-                        "symbols": self.stargate.symbol_manager.get_all_ddslick()
-                    }
-                    content = json.dumps( data )
-
-                self.send_response(200)
-                self.send_header("Content-type", "text/json")
-                self.end_headers()
-                self.wfile.write(content.encode())
+            elif request_path == "get_symbols":
+                data = {
+                    "symbols": self.stargate.symbol_manager.get_all_ddslick()
+                }
 
             else:
-                # Unhandled request: send a 404
+                # Unhandled GET request: send a 404
                 self.send_response(404)
                 self.end_headers()
+                return
 
-            return
+            content = json.dumps( data )
+            self.send_response(200)
+            self.send_header("Content-type", "text/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Access-Control-Allow-Headers", 'Authorization, Content-Type')
+            self.send_header("Access-Control-Allow-Methods", 'GET')
+            self.end_headers()
+            self.wfile.write(content.encode())
+
         except: # pylint: disable=bare-except
             if self.debug:
                 raise
@@ -115,27 +112,30 @@ class StargateWebServer(SimpleHTTPRequestHandler):
     def do_POST(self): # pylint: disable=invalid-name
         try:
             #print('POST PATH: {}'.format(self.path))
-            if self.path == '/shutdown':
-                self.stargate.wormhole = False
-                sleep(5)
-                self.send_response(200, 'OK')
-                os.system('systemctl poweroff')
-                return
-
-            if self.path == '/reboot':
-                self.stargate.wormhole = False
-                sleep(5)
-                self.send_response(200, 'OK')
-                os.system('systemctl reboot')
-                return
 
             content_len = int(self.headers.get('content-length', 0))
             body = self.rfile.read(content_len)
             data = json.loads(body)
             #print('POST DATA: {}'.format(data))
 
-            if self.path == '/update':
-                if data['action'] == "chevron_cycle":
+            if self.path == '/do':
+
+                ##### DO ACTION HANDLERS BELOW ####
+                if data['action'] == '/shutdown':
+                    self.stargate.wormhole = False
+                    sleep(5)
+                    self.send_response(200, 'OK')
+                    os.system('systemctl poweroff')
+                    return
+
+                elif data['action'] == '/reboot':
+                    self.stargate.wormhole = False
+                    sleep(5)
+                    self.send_response(200, 'OK')
+                    os.system('systemctl reboot')
+                    return
+
+                elif data['action'] == "chevron_cycle":
                     self.stargate.chevrons.get(int(data['chevron_number'])).cycle_outgoing()
 
                 elif data['action'] == "all_leds_off":
@@ -174,7 +174,16 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                         self.stargate.address_buffer_incoming.append(7) # Point of origin
                         self.stargate.centre_button_incoming = True
 
-                elif data['action'] == "set_local_stargate_address":
+                elif data['action'] == "subspace_up":
+                    print("Subspace UP")
+
+                elif data['action'] == "subspace_down":
+                    print("Subspace DOWN")
+            elif self.path == '/update':
+
+                ##### UPDATE DATA HANDLERS BELOW ####
+
+                if data['action'] == "set_local_stargate_address":
                     continue_to_save = True
                     # Parse the address
                     try:
@@ -224,11 +233,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     self.send_json_response(data)
                     return
 
-                elif data['action'] == "subspace_up":
-                    print("Subspace UP")
 
-                elif data['action'] == "subspace_down":
-                    print("Subspace DOWN")
 
             elif self.path == '/dhd_press':
                 symbol_number = int(data['symbol'])
