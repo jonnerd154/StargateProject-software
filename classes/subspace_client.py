@@ -82,7 +82,7 @@ class SubspaceClient:
 
         # If we don't have an IP, don't try to send anything
         if server_ip is None:
-            return
+            return False, False
 
         if self.logging == "verbose":
             self.log.log(f"send_to_remote_stargate( {server_ip}, {message_string} )")
