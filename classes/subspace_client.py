@@ -121,6 +121,7 @@ class SubspaceClient:
         :param remote_ip: The IP address of the remote gate
         :return: True if a wormhole is already established and False if not.
         """
+        self.log.log("Checking gate status: {remote_ip}")
         status = self.send_to_remote_stargate(remote_ip, 'what_is_your_status')
         if status[1] == 'False':
             return False
@@ -147,36 +148,34 @@ class SubspaceClient:
             return subspace
 
         # Try to get the IP from wlan0
-        lan = self.get_lan_ip()
+        lan = self.get_ip_by_interface_list( [ 'wlan0', 'eth0', 'en0', 'en1' ] )
         if lan:
             return lan
 
         return None # If no IP found, return None
 
     # TODO: Move to NetTools
-    def get_lan_ip(self):
-
-        interfaces = [ 'wlan0', 'eth0', 'en0', 'en1' ]
-
-        # Try to get the IP from each of the interfaces
-        for interface in interfaces:
-            result = self.get_ip_address_by_interface(interface)
-            if result:
-                return result
-
-        return None
-
-    # TODO: Move to NetTools
     def get_subspace_ip(self, subspace_only = False):
         # Try to get the IP from subspace
-        subspace = self.get_ip_address_by_interface('subspace')
+        subspace = self.get_ip_by_interface_list( ['subspace'] )
         if subspace:
             return subspace
 
         if not subspace_only:
-            lan = self.get_lan_ip()
+            lan = self.get_ip_by_interface_list( [ 'wlan0', 'eth0', 'en0', 'en1' ] )
             if lan:
                 return lan
+
+        return None
+
+    # TODO: Move to NetTools
+    def get_ip_by_interface_list(self, interfaces):
+
+        # Try to get the IP from each of the interfaces, in order. Return the first one.
+        for interface in interfaces:
+            result = self.get_ip_address_by_interface(interface)
+            if result:
+                return result
 
         return None
 
@@ -195,11 +194,10 @@ class SubspaceClient:
             return False
 
     # TODO: Move to NetTools
-    def is_online(self):
-        return self.ping()
-
-    # TODO: Move to NetTools
     def ping(self):
         if ping(self.keep_alive_address, count=1, timeout=1).is_alive:
             return True
         return False
+
+    def is_online(self):
+        return self.ping()
