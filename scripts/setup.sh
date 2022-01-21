@@ -27,7 +27,8 @@ sudo raspi-config nonint do_spi 1
 # Enable I2C
 sudo raspi-config nonint do_i2c 1
 
-# TODO: Enable Boot/Autologin to Console Autologin
+# Enable Boot/Autologin to Console Autologin
+sudo raspi-config nonint do_boot_behaviour B2
 
 # Switch to the new sg1 user
 sudo su sg1

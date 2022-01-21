@@ -51,15 +51,39 @@ line="*/8 * * * * /home/sg1/sg1_venv_v4/bin/python3 /home/sg1/sg1_v4/scripts/spe
 ## Above exit 0 add:
 #  /sbin/iw wlan0 set power_save off
 
-# Disable the onboard adapter
-#sudo nano /boot/config.txt
-   # Change dtparam=audio=off
+# Disable the onboard audio adapter
+CONFIG="/boot/config.txt"
+SETTING="off"
+sed $CONFIG -i -r -e "s/^((device_tree_param|dtparam)=([^,]*,)*audio?)(=[^,]*)?/\1=$SETTING/"
+if ! grep -q -E "^(device_tree_param|dtparam)=([^,]*,)*audio?=[^,]*" $CONFIG; then
+  printf "dtparam=audio=$SETTING\n" >> $CONFIG
+fi
 
 # Configure ALSA to use the external audio adapter
-# sudo nano /usr/share/alsa/alsa.conf
-#    # Change to:
-#       defaults.ctl.card 1
-#       defaults.pcm.card 1
+CONFIG="/usr/share/alsa/alsa.conf" #
+SETTING="1"
+gsed -i -e "s/defaults\.ctl\.card [01]/defaults.ctl.card $SETTING/g" \
+-e "s/defaults\.ctl\.card [01]/defaults.ctl.card $SETTING/g" $CONFIG
+gsed -i -e "s/defaults\.ctl\.card [01]/defaults.ctl.card $SETTING/g" \
+-e "s/defaults\.pcm\.card [01]/defaults.pcm.card $SETTING/g" $CONFIG
 
 # Load the logrotated configs
-sudo cat /home/sg1/sg1_v4/logrotated.conf >> /etc/logrotate.d/stargate
+sudo cat <<EOF > /etc/logrotate.d/stargate
+/home/sg1/sg1/logs/sg1.log {
+    missingok
+    notifempty
+    size 30k
+    daily
+    rotate 30
+    create 0600 sg1 sg1
+}
+
+/home/sg1/sg1/logs/database.log {
+    missingok
+    notifempty
+    size 30k
+    daily
+    rotate 30
+    create 0600 sg1 sg1
+}
+EOF
