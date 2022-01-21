@@ -143,7 +143,7 @@ class ElectronicsOriginal:
 
     def adc_to_voltage( self, adc_value ):
         # Convert ADC value to voltage
-        return (self.adc_vref * adc_value) / (2^self.adc_resolution) #TODO: This should be minus one
+        return (self.adc_vref * adc_value) / (2^self.adc_resolution)-1
 
     def homing_enabled(self):
         # TODO: Move this to software config, default to disabled.

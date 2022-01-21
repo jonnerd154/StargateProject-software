@@ -22,7 +22,7 @@ class Database:
         self.log.log("Connecting")
         self.database = pymysql.connect(  host=self.cfg.get('db_host'),
                                     user=self.cfg.get('db_user'),
-                                    password=str( b64decode( self.cfg.get('db_pass') ), 'utf-8'), #TODO: password isn't secure.
+                                    password=str( b64decode( self.cfg.get('db_pass') ), 'utf-8'),
                                     database=self.cfg.get('db_name') )
 
     def disconnect(self):

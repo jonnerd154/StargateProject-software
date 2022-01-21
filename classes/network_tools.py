@@ -58,7 +58,7 @@ class NetworkTools:
                 # print('I found the IP:', ip)
             except ValueError:
                 pass
-        except Exception: # pylint: disable=broad-except # TODO: use specific Exception type
+        except Exception: # pylint: disable=broad-except
             self.log.log(f"Unable to determine IP address '{fqdn_or_ip}'")
             _ip_address = None
         return str(_ip_address)

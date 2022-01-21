@@ -86,13 +86,13 @@ class SubspaceClient:
 
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.settimeout(self.timeout) # set the timeout
-        connection_to_server = False # TODO: get rid of this var
+        connection_to_server = False
         remote_gate_status = None
 
         ## Try to establish a connection to the server.
         try:
             self.client.connect( (server_ip, self.port) )
-            connection_to_server = True # TODO: Move the if block below into the try block, get rid of this var
+            connection_to_server = True
         except socket.error as ex:
             self.log.log(f'Error sending to remote server -> {ex}')
             remote_gate_status = False

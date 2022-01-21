@@ -53,6 +53,5 @@ class StargateAddressBookMigration():
             if name == "P3W-451":
                 is_bh = True
 
-            _ip_address = None # TODO: Why is this here?
             self.address_book.set_standard_gate(name, gate_address, is_black_hole=is_bh )
         print("Done.")

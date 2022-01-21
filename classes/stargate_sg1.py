@@ -253,9 +253,7 @@ class StargateSG1:
         ## Outgoing wormhole##
         # If the centre_button_outgoing is active and all dialed symbols are locked.
         if self.centre_button_outgoing and (0 < len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing):
-            # If we dialed a non-networked Gate, set the IP to True. #TODO this should be removed
-            if self.addr_manager.get_book().get_fan_gate_by_address(self.address_buffer_outgoing):
-                self.fan_gate_incoming_ip = True
+
             # Try to send the centre button to the fan_gate:
             self.try_sending_centre_button()
             # Try to establish a wormhole
