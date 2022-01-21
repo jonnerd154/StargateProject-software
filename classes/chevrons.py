@@ -67,10 +67,10 @@ class Chevron:
         self.led = self.electronics.get_led(self.led_gpio)
 
     def cycle_outgoing(self):
-        self.down() # Motor down, light on
-        self.up() # Motor up, light unchanged
+        self.move_down() # Motor down, light on
+        self.move_up() # Motor up, light unchanged
 
-    def down(self):
+    def move_down(self):
         ### Chevron Down ###
         self.audio.sound_start('chevron_1') # chev down audio
         sleep(self.chevron_down_audio_head_start)
@@ -85,8 +85,7 @@ class Chevron:
         self.light_on()
         sleep(self.chevron_down_wait_time) # wait time without motion
 
-    #TODO: Consider renaming
-    def up(self): # pylint: disable=invalid-name
+    def move_up(self):
         ### Chevron Down ###
         self.audio.sound_start('chevron_2') # chev up audio
         self.motor.throttle = self.chevron_up_throttle # Start the motor
