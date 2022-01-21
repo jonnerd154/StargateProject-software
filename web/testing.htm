@@ -157,13 +157,13 @@
 
           function reboot() {
               $.post({
-                  url: 'stargate/reboot'
+                  url: 'stargate/do/reboot'
               });
           }
 
           function shutdown() {
               $.post({
-                  url: 'stargate/shutdown'
+                  url: 'stargate/do/shutdown'
               });
           }
 
@@ -172,7 +172,7 @@
                 const chevron_number = $(this).attr('chevron_number');
 
                 $.post({
-                    url: 'stargate/update',
+                    url: 'stargate/do',
                     data: JSON.stringify({
                         action: 'chevron_cycle',
                         chevron_number: chevron_number
@@ -188,7 +188,7 @@
                 const action = $(this).attr('action');
 
                 $.post({
-                    url: 'stargate/update',
+                    url: 'stargate/do',
                     data: JSON.stringify({
                         action: action,
                     })
@@ -201,7 +201,7 @@
           }
 
           function doPoll( singleShot = false ){
-            $.get('stargate/get?entity=is_alive')
+            $.get('stargate/get/is_alive')
               .done(function(data) {
 
                 // Hide the offline modal

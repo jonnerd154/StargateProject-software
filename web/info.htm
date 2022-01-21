@@ -145,7 +145,7 @@
               $.post({
                 url: 'stargate/update',
                 data: JSON.stringify({
-                  action: 'set_subspace_ip',
+                  action: 'subspace_ip',
                   ip: subspace_ip_input.val().toString()
                 })
               })
@@ -199,7 +199,7 @@
               $.post({
                 url: 'stargate/update',
                 data: JSON.stringify({
-                  action: 'set_local_stargate_address',
+                  action: 'local_stargate_address',
                   S1: parseInt(symbol_1.val()),
                   S2: parseInt(symbol_2.val()),
                   S3: parseInt(symbol_3.val()),
@@ -309,7 +309,7 @@
       } // End init_pulldowns
       var is_online = true
       function doPoll( singleShot = false ){
-        $.get('stargate/get?entity=is_alive')
+        $.get('stargate/get/is_alive')
           .done(function(data) {
             // Hide the offline modal
             hideOfflineModal()
@@ -344,7 +344,7 @@
       }
 
       function updateInfo(){
-        $.get('stargate/get?entity=info')
+        $.get('stargate/get/system_info')
           .done(function(data) {
 
             // Hide the offline modal
@@ -465,7 +465,7 @@
           })
 
           // Get the symbol configs for the dropdowns
-          $.get('stargate/get?entity=symbols_ddslick')
+          $.get('stargate/get/symbols')
             .done(function(data) {
               symbols = data.symbols
               init_pulldowns()

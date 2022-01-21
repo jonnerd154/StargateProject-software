@@ -27,10 +27,10 @@ class StargateWebServer(SimpleHTTPRequestHandler):
         try:
             request_path, get_vars = self.parse_get_vars()
 
-            if request_path == "/is_alive":
+            if request_path == "/get/is_alive":
                 data = { 'is_alive': True }
 
-            elif request_path == "/get_address_book":
+            elif request_path == "/get/address_book":
                 type = get_vars.get('type')[0]
                 if type == "standard":
                     data = self.stargate.addr_manager.get_book().get_standard_gates()
@@ -40,10 +40,10 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     all_addr = self.stargate.addr_manager.get_book().get_all_nonlocal_addresses()
                     data = collections.OrderedDict(sorted(all_addr.items()))
 
-            elif request_path == "/get_local_address":
+            elif request_path == "/get/local_address":
                 data = self.stargate.addr_manager.get_book().get_local_address()
 
-            elif request_path == "/get_dialing_status":
+            elif request_path == "/get/dialing_status":
                 data = {
                     "gate_name":                self.stargate.addr_manager.get_book().get_local_gate_name(),
                     "local_address":            self.stargate.addr_manager.get_book().get_local_address(),
@@ -59,7 +59,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "wormhole_time_till_close": self.stargate.wh_manager.get_time_remaining()
                 }
 
-            elif request_path == "/get_system_info":
+            elif request_path == "/get/system_info":
                 data = {
                     "gate_name":                      self.stargate.addr_manager.get_book().get_local_gate_name(),
                     "local_stargate_address":         self.stargate.addr_manager.get_book().get_local_address(),
@@ -67,7 +67,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "subspace_public_key":            self.stargate.subspace_client.get_public_key(),
                     "subspace_ip_address_config":     self.stargate.subspace_client.get_configured_ip(),
                     "subspace_ip_address_active":     self.stargate.subspace_client.get_subspace_ip(True),
-                    "lan_ip_address":                 self.stargate.subspace_client.get_ip_from_interface( 'wlan0' ),
+                    "lan_ip_address":                 self.stargate.subspace_client.get_ip_by_interface_list( [ 'wlan0' ] ),
                     "software_version":               str(self.stargate.sw_updater.get_current_version()),
                     "software_update_last_check":     self.stargate.cfg.get('software_update_last_check'),
                     "software_update_status":         self.stargate.cfg.get('software_update_status'),
@@ -81,7 +81,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "hardware_mode":                  self.stargate.electronics.name
                 }
 
-            elif request_path == "get_symbols":
+            elif request_path == "/get/symbols":
                 data = {
                     "symbols": self.stargate.symbol_manager.get_all_ddslick()
                 }
@@ -188,19 +188,19 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     elif symbol_number == 0:
                         self.stargate.keyboard.queue_center_button()
 
-                elif data['action'] == "incoming_press":
-                    symbol_number = int(data['symbol'])
-
-                    if symbol_number > 0:
-                        self.stargate.address_buffer_incoming.append(symbol_number)
-                    elif symbol_number == 0:
-                        self.stargate.centre_button_incoming = True
+                # elif data['action'] == "incoming_press":
+                #     symbol_number = int(data['symbol'])
+                #
+                #     if symbol_number > 0:
+                #         self.stargate.address_buffer_incoming.append(symbol_number)
+                #     elif symbol_number == 0:
+                #         self.stargate.centre_button_incoming = True
 
             elif self.path == '/update':
 
                 ##### UPDATE DATA HANDLERS BELOW ####
 
-                if data['action'] == "set_local_stargate_address":
+                if data['action'] == "local_stargate_address":
                     continue_to_save = True
                     # Parse the address
                     try:
@@ -238,7 +238,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     self.send_json_response(data)
                     return
 
-                elif data['action'] == "set_subspace_ip":
+                elif data['action'] == "subspace_ip":
                     # TODO: Validate the IP address again (client did it, but we should too)
                     success = self.stargate.subspace_client.set_ip_address(data['ip'])
 

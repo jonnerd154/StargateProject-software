@@ -45,7 +45,7 @@
         });
 
         function doPoll( singleShot = false ){
-            $.get('stargate/get?entity=status')
+            $.get('stargate/get_dialing_status')
                 .done(function(data) {
 
                     // Hide the offline modal
@@ -284,8 +284,9 @@
                 const symbol_number = $(this).attr('num');
 
                 $.post({
-                    url: '/stargate/dhd_press',
+                    url: '/stargate/do',
                     data: JSON.stringify({
+                        action: "dhd_press",
                         symbol: symbol_number
                     })
                 })
