@@ -179,6 +179,23 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
                 elif data['action'] == "subspace_down":
                     print("Subspace DOWN")
+
+                elif data['action'] == "dhd_press":
+                    symbol_number = int(data['symbol'])
+
+                    if symbol_number > 0:
+                        self.stargate.keyboard.queue_symbol(symbol_number)
+                    elif symbol_number == 0:
+                        self.stargate.keyboard.queue_center_button()
+
+                elif data['action'] == "incoming_press":
+                    symbol_number = int(data['symbol'])
+
+                    if symbol_number > 0:
+                        self.stargate.address_buffer_incoming.append(symbol_number)
+                    elif symbol_number == 0:
+                        self.stargate.centre_button_incoming = True
+
             elif self.path == '/update':
 
                 ##### UPDATE DATA HANDLERS BELOW ####
@@ -232,25 +249,6 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
                     self.send_json_response(data)
                     return
-
-
-
-            elif self.path == '/dhd_press':
-                symbol_number = int(data['symbol'])
-
-                if symbol_number > 0:
-                    self.stargate.keyboard.queue_symbol(symbol_number)
-                elif symbol_number == 0:
-                    self.stargate.keyboard.queue_center_button()
-
-            elif self.path == '/incoming_press':
-                symbol_number = int(data['symbol'])
-
-                if symbol_number > 0:
-                    self.stargate.address_buffer_incoming.append(symbol_number)
-                elif symbol_number == 0:
-                    self.stargate.centre_button_incoming = True
-
 
             self.send_response(200, 'OK')
             self.end_headers()
