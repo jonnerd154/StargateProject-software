@@ -143,9 +143,8 @@
           if ( checkIPAddress( subspace_ip_input, "Subspace IP" ) ) {
               // Save to API
               $.post({
-                url: 'stargate/update',
+                url: 'stargate/update/subspace_ip',
                 data: JSON.stringify({
-                  action: 'subspace_ip',
                   ip: subspace_ip_input.val().toString()
                 })
               })
@@ -197,9 +196,8 @@
           if ( valid ) {
               // Save to API
               $.post({
-                url: 'stargate/update',
+                url: 'stargate/update/local_stargate_address',
                 data: JSON.stringify({
-                  action: 'local_stargate_address',
                   S1: parseInt(symbol_1.val()),
                   S2: parseInt(symbol_2.val()),
                   S3: parseInt(symbol_3.val()),

@@ -196,59 +196,57 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 #     elif symbol_number == 0:
                 #         self.stargate.centre_button_incoming = True
 
-            elif self.path == '/update':
+            ##### UPDATE DATA HANDLERS BELOW ####
+            elif self.path == '/update/local_stargate_address':
 
-                ##### UPDATE DATA HANDLERS BELOW ####
+                continue_to_save = True
+                # Parse the address
+                try:
+                    address = [ data['S1'], data['S2'], data['S3'], data['S4'], data['S5'], data['S6'] ]
+                except KeyError:
+                    data = { "success": False, "error": "Required fields missing or invalid request" }
+                    continue_to_save = False
 
-                if data['action'] == "local_stargate_address":
-                    continue_to_save = True
-                    # Parse the address
-                    try:
-                        address = [ data['S1'], data['S2'], data['S3'], data['S4'], data['S5'], data['S6'] ]
-                    except KeyError:
-                        data = { "success": False, "error": "Required fields missing or invalid request" }
-                        continue_to_save = False
-
-                    # Validate that this is an acceptable address
-                    if continue_to_save:
-                        verify_avail, error, entry = self.stargate.addr_manager.verify_address_available(address) # pylint: disable=unused-variable
-                        if verify_avail == "VERIFY_OWNED":
-                            # This address is in use by a fan gate, but someone might be (re)configuring their own gate.
-                            try:
-                                if data['owner_confirmed']:
-                                    pass # Valid, continue to save
-                                else:
-                                    data = { "success": False, "error": error }
-                                    continue_to_save = False
-                            except KeyError:
-                                data = { "success": False, "extend": "owner_unconfirmed", "error": "This address is in use by a Fan Gate - \"{entry['name']}\"" }
+                # Validate that this is an acceptable address
+                if continue_to_save:
+                    verify_avail, error, entry = self.stargate.addr_manager.verify_address_available(address) # pylint: disable=unused-variable
+                    if verify_avail == "VERIFY_OWNED":
+                        # This address is in use by a fan gate, but someone might be (re)configuring their own gate.
+                        try:
+                            if data['owner_confirmed']:
+                                pass # Valid, continue to save
+                            else:
+                                data = { "success": False, "error": error }
                                 continue_to_save = False
-                        elif verify_avail is False:
-                            # This address is in use by a standard gate
-                            data = { "success": False, "error": error }
+                        except KeyError:
+                            data = { "success": False, "extend": "owner_unconfirmed", "error": "This address is in use by a Fan Gate - \"{entry['name']}\"" }
                             continue_to_save = False
-                        else:
-                            pass # Address not in use, clear to proceed
-
-                    # Store the address:
-                    if continue_to_save:
-                        self.stargate.addr_manager.get_book().set_local_address(address)
-                        data = { "success": True, "message": "There are no conflicts with your chosen address.<br><br>Local Address Saved." }
-
-                    self.send_json_response(data)
-                    return
-
-                elif data['action'] == "subspace_ip":
-                    # TODO: Validate the IP address again (client did it, but we should too)
-                    success = self.stargate.subspace_client.set_ip_address(data['ip'])
-
-                    if success:
-                        data = { "success": success, "message": "Subspace IP Address Saved." }
+                    elif verify_avail is False:
+                        # This address is in use by a standard gate
+                        data = { "success": False, "error": error }
+                        continue_to_save = False
                     else:
-                        data = { "success": success, "message": "There was an error while saving the IP Address." }
+                        pass # Address not in use, clear to proceed
 
-                    self.send_json_response(data)
-                    return
+                # Store the address:
+                if continue_to_save:
+                    self.stargate.addr_manager.get_book().set_local_address(address)
+                    data = { "success": True, "message": "There are no conflicts with your chosen address.<br><br>Local Address Saved." }
+
+                self.send_json_response(data)
+                return
+
+            elif self.path == '/update/subspace_ip':
+                # TODO: Validate the IP address again (client did it, but we should too)
+                success = self.stargate.subspace_client.set_ip_address(data['ip'])
+
+                if success:
+                    data = { "success": success, "message": "Subspace IP Address Saved." }
+                else:
+                    data = { "success": success, "message": "There was an error while saving the IP Address." }
+
+                self.send_json_response(data)
+                return
 
             self.send_response(200, 'OK')
             self.end_headers()
