@@ -225,7 +225,11 @@ class StargateSG1:
         This method is used in the establishing_wormhole method.
         :return: Nothing is returned.
         """
-        if self.fan_gate_online_status and self.centre_button_outgoing and len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing:
+        if  self.addr_manager.is_fan_made_stargate(self.address_buffer_outgoing) and \
+            self.fan_gate_online_status and \
+            self.centre_button_outgoing and \
+            len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing:
+
             _ip_address = self.addr_manager.get_ip_from_stargate_address(self.address_buffer_outgoing )
             result = self.subspace_client.send_to_remote_stargate( _ip_address, 'centre_button_incoming' )[0]
             if result:
