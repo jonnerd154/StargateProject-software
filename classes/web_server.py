@@ -130,14 +130,14 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 os.system('systemctl poweroff')
                 return
 
-            elif self.path == '/do/reboot':
+            if self.path == '/do/reboot':
                 self.stargate.wormhole = False
                 sleep(5)
                 self.send_response(200, 'OK')
                 os.system('systemctl reboot')
                 return
 
-            elif self.path == "/do/chevron_cycle":
+            if self.path == "/do/chevron_cycle":
                 self.stargate.chevrons.get(int(data['chevron_number'])).cycle_outgoing()
 
             elif self.path == "/do/all_chevron_leds_off":
@@ -254,7 +254,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             self.end_headers()
 
         except: # pylint: disable=bare-except
-            if self.debug:
+            if self.debug: # pylint: disable=no-member
                 raise
 
             # Encountered an exception: send a 500
