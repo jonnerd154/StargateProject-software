@@ -40,10 +40,10 @@
             -->
       <hr />
         <h2>Lighting control </h2>
-            <div class="button" action="chevron_led_on">
+            <div class="button" action="all_chevron_led_on">
                 Chevrons On
             </div>
-            <div class="button" action="all_leds_off">
+            <div class="button" action="all_chevron_leds_off">
                 All Off
             </div>
             <div class="button" action="wormhole_on">
@@ -101,7 +101,7 @@
 
         <hr />
         <h2>Simulate</h2>
-            <div class="button" action="sim_incoming">
+            <div class="button" action="simulate_incoming">
             Incoming Wormhole
             </div>
             <div class="button" action="wormhole_off">
@@ -172,9 +172,8 @@
                 const chevron_number = $(this).attr('chevron_number');
 
                 $.post({
-                    url: 'stargate/do',
+                    url: 'stargate/do/chevron_cycle',
                     data: JSON.stringify({
-                        action: 'chevron_cycle',
                         chevron_number: chevron_number
                     })
                 })
@@ -188,10 +187,7 @@
                 const action = $(this).attr('action');
 
                 $.post({
-                    url: 'stargate/do',
-                    data: JSON.stringify({
-                        action: action,
-                    })
+                    url: 'stargate/do/' + action,
                 })
                 .fail(function() {
                     console.log("Failed to communicate with Stargate")

@@ -284,9 +284,8 @@
                 const symbol_number = $(this).attr('num');
 
                 $.post({
-                    url: '/stargate/do',
+                    url: '/stargate/do/dhd_press',
                     data: JSON.stringify({
-                        action: "dhd_press",
                         symbol: symbol_number
                     })
                 })

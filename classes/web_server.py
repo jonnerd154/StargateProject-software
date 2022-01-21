@@ -115,7 +115,11 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
             content_len = int(self.headers.get('content-length', 0))
             body = self.rfile.read(content_len)
-            data = json.loads(body)
+            try:
+                data = json.loads(body)
+            except:
+                data = {}
+                pass
             #print('POST DATA: {}'.format(data))
 
             ##### DO ACTION HANDLERS BELOW ####
