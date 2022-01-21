@@ -29,20 +29,6 @@ class Database:
         self.log.log("Disconnecting")
         self.database.close()
 
-    def get_fan_gates(self):
-        self.log.log("Retrieving Fan Gates")
-
-        self.connect()
-
-        cursor = self.database.cursor()
-        sql = "SELECT * FROM `fan_gates`"
-        cursor.execute(sql)
-        result = cursor.fetchall()
-
-        self.disconnect()
-
-        return result
-
     def get_software_updates(self):
         self.log.log("Retrieving Software Updates")
 
