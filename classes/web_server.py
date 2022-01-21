@@ -31,10 +31,10 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 data = { 'is_alive': True }
 
             elif request_path == "/get/address_book":
-                type = get_vars.get('type')[0]
-                if type == "standard":
+                record_type = get_vars.get('type')[0]
+                if record_type == "standard":
                     data = self.stargate.addr_manager.get_book().get_standard_gates()
-                elif type == "fan":
+                elif record_type == "fan":
                     data = self.stargate.addr_manager.get_book().get_fan_gates()
                 else:
                     all_addr = self.stargate.addr_manager.get_book().get_all_nonlocal_addresses()
