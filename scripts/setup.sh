@@ -1,6 +1,8 @@
 #!/bin/bash
 
 clear
+echo
+echo
 echo "TheStargateProject: SG1 Version 4  -  Installer Script"
 echo
 echo
@@ -60,7 +62,7 @@ echo 'Initializing Python virtual environment'
 python3 -m venv sg1_venv_v4
 
 # Activate the venv and install some dependencies
-echo 'Installing pip setuptools'
+echo 'Installing pip setuptools into the virtual environment'
 source sg1_venv_v4/bin/activate
 export CFLAGS=-fcommon
 pip install setuptools
