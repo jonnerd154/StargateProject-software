@@ -1,6 +1,9 @@
+import os
 import subprocess
 from ipaddress import ip_address
 import socket
+from icmplib import ping
+import netifaces
 
 class NetworkTools:
 
@@ -71,3 +74,72 @@ class NetworkTools:
         finally:
             my_sock.close()
         return ret
+
+    def get_subspace_ip(self, subspace_only = False):
+        # Try to get the IP from subspace
+        subspace = self.get_ip_by_interface_list( ['subspace'] )
+        if subspace:
+            return subspace
+
+        if not subspace_only:
+            lan = self.get_ip_by_interface_list( [ 'wlan0', 'eth0', 'en0', 'en1' ] )
+            if lan:
+                return lan
+
+        return None
+
+    def get_ip_by_interface_list(self, interfaces):
+
+        # Try to get the IP from each of the interfaces, in order. Return the first one.
+        for interface in interfaces:
+            result = self.get_ip_address_by_interface(interface)
+            if result:
+                return result
+
+        return None
+
+    def get_ip_address_by_interface(self, interface_name, do_ping = False, ping_ip=False):
+        try:
+            server_ip = netifaces.ifaddresses(interface_name)[2][0]['addr']
+            if ip_address(server_ip):
+                if do_ping:
+                    self.ping(ping_ip)
+
+                return server_ip
+            return False
+        except (KeyError, ValueError) as _ex:
+            self.log.log('ERROR getting {interface_name} IP: {_ex}', True)
+            return False
+
+    @staticmethod
+    def ping(ping_ip):
+        if ping(ping_ip, count=1, timeout=1).is_alive:
+            return True
+        return False
+
+    def get_stargate_server_ip(self):
+        """
+        This method tries to get the IP address of the subspace network interface. It also tries to start the subspace
+        interface if it's not already present. If it can't get the subspace interface IP, it will try to get the wlan0 IP instead.
+        :return: The IP address is returned as a string.
+        """
+
+        ## If the subspace interface is not active, try to activate it.
+        if not 'subspace' in netifaces.interfaces():
+            try:
+                self.log.log('Subspace network interface was not found, attempting to bring up the interface.')
+                os.popen('wg-quick up subspace').read()
+            except (IndexError, KeyError) as ex:
+                self.log.log(f'subspace ERROR: {ex}')
+
+        # Try to get the IP from subspace
+        subspace = self.get_ip_address_by_interface('subspace')
+        if subspace:
+            return subspace
+
+        # Try to get the IP from wlan0
+        lan = self.get_ip_by_interface_list( [ 'wlan0', 'eth0', 'en0', 'en1' ] )
+        if lan:
+            return lan
+
+        return None # If no IP found, return None

@@ -1,9 +1,5 @@
-from ipaddress import ip_address
 import socket
 import subprocess
-import os
-import netifaces
-from icmplib import ping
 
 from database import Database
 
@@ -13,6 +9,7 @@ class SubspaceClient:
 
         self.log = stargate.log
         self.cfg = stargate.cfg
+        self.net_tools = stargate.net_tools
 
         self.database = Database(stargate.base_path)
 
@@ -127,77 +124,5 @@ class SubspaceClient:
             return False
         return True
 
-    def get_stargate_server_ip(self):
-        """
-        This method tries to get the IP address of the subspace network interface. It also tries to start the subspace
-        interface if it's not already present. If it can't get the subspace interface IP, it will try to get the wlan0 IP instead.
-        :return: The IP address is returned as a string.
-        """
-
-        ## If the subspace interface is not active, try to activate it.
-        if not 'subspace' in netifaces.interfaces():
-            try:
-                self.log.log('Subspace network interface was not found, attempting to bring up the interface.')
-                os.popen('wg-quick up subspace').read()
-            except (IndexError, KeyError) as ex:
-                self.log.log(f'subspace ERROR: {ex}')
-
-        # Try to get the IP from subspace
-        subspace = self.get_ip_address_by_interface('subspace')
-        if subspace:
-            return subspace
-
-        # Try to get the IP from wlan0
-        lan = self.get_ip_by_interface_list( [ 'wlan0', 'eth0', 'en0', 'en1' ] )
-        if lan:
-            return lan
-
-        return None # If no IP found, return None
-
-    # TODO: Move to NetTools
-    def get_subspace_ip(self, subspace_only = False):
-        # Try to get the IP from subspace
-        subspace = self.get_ip_by_interface_list( ['subspace'] )
-        if subspace:
-            return subspace
-
-        if not subspace_only:
-            lan = self.get_ip_by_interface_list( [ 'wlan0', 'eth0', 'en0', 'en1' ] )
-            if lan:
-                return lan
-
-        return None
-
-    # TODO: Move to NetTools
-    def get_ip_by_interface_list(self, interfaces):
-
-        # Try to get the IP from each of the interfaces, in order. Return the first one.
-        for interface in interfaces:
-            result = self.get_ip_address_by_interface(interface)
-            if result:
-                return result
-
-        return None
-
-    # TODO: Move to NetTools
-    def get_ip_address_by_interface(self, interface_name, do_ping = False):
-        try:
-            server_ip = netifaces.ifaddresses(interface_name)[2][0]['addr']
-            if ip_address(server_ip):
-                if do_ping:
-                    self.ping()
-
-                return server_ip
-            return False
-        except (KeyError, ValueError) as _ex:
-            self.log.log('ERROR getting {interface_name} IP: {_ex}', True)
-            return False
-
-    # TODO: Move to NetTools
-    def ping(self):
-        if ping(self.keep_alive_address, count=1, timeout=1).is_alive:
-            return True
-        return False
-
     def is_online(self):
-        return self.ping()
+        return self.net_tools.ping(self.keep_alive_address)
