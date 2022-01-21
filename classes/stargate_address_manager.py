@@ -44,10 +44,6 @@ class StargateAddressManager:
 
         return "Unknown Address"
 
-    def get_fan_gates(self):
-        #TODO: Remove
-        return self.address_book.get_fan_gates()
-
     def update_fan_gates_from_db(self):
         """
         This function gets the fan_gates from the database and merges it with the hard_coded fan_gates dictionary
@@ -110,7 +106,7 @@ class StargateAddressManager:
         :return: True if we are dialing a fan made address, False if not.
         """
         local_address = self.address_book.get_local_address()
-        for gate_name, gate_config in self.address_book.get_fan_gates().items():
+        for gate_config in self.address_book.get_fan_gates().values():
             try:
                 #If we dial our own local address:
                 if dialed_address[:2] == local_address[:2]:
