@@ -151,8 +151,8 @@ class Wormhole:
             off_pattern.append((0, 0, 0))
         return off_pattern
 
-    #@staticmethod
-    def set_wormhole_pattern(self, pixels, pattern):
+    @staticmethod
+    def set_wormhole_pattern(pixels, pattern):
         """
         This method sets the pattern on the led strip, and displays it. No fading!
         pixels: The pixel object where to set the pattern. eg self.pixels
@@ -247,44 +247,42 @@ class Wormhole:
         """
         pix = self.pixels  # these are the current pixels from the strip as neopixel object.
 
-        def create_tween_pattern(current, new):
+        def create_tween_pattern(current_pattern, new_pattern):
             """
             This function takes two pattern lists, and creates a tween pattern list one step faded towards the new list.
             :param current: the current_list as is on the led strip
             :param new: the new list to fade towards
             :return: a new tween list is returned.
             """
-            in_between_pattern = []
+            tween_pattern = []
 
-            for i in range(len(new)):  # For the length of the new pattern list
+            # For the length of the new pattern list
+            for index, new_led in enumerate(new_pattern):
 
-                # The two leds to gradually match.
-                current_led = current[i]
-                new_led = new[i]
-
-                # The current r,g and b's
+                # Get the current LED's color tuple, to gradually match.
+                current_led = current_pattern[index]
                 red = current_led[0]
                 green = current_led[1]
                 blue = current_led[2]
 
-                ## increment/decrement the r
+                ## increment/decrement the red
                 if current_led[0] > new_led[0]:
                     red = current_led[0] - 1
                 elif current_led[0] < new_led[0]:
                     red = current_led[0] + 1
-                ## increment/decrement the g
+                ## increment/decrement the green
                 if current_led[1] > new_led[1]:
                     green = current_led[1] - 1
                 elif current_led[1] < new_led[1]:
                     green = current_led[1] + 1
-                ## increment/decrement the b
+                ## increment/decrement the blue
                 if current_led[2] > new_led[2]:
                     blue = current_led[2] - 1
                 elif current_led[2] < new_led[2]:
                     blue = current_led[2] + 1
                 # print ((r,g,b))
-                in_between_pattern.append((red, green, blue))
-            return in_between_pattern
+                tween_pattern.append((red, green, blue))
+            return tween_pattern
 
         ## convert NeoPixel object to list ###
         current_pattern = []
