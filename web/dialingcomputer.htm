@@ -59,9 +59,9 @@
 				function update_address_book(){
 					$.ajax({
 							dataType: "json",
-							url: "/stargate/get",
+							url: "/stargate/get/address_book",
 							data: {
-									entity: "all_gates"
+									type: "all"
 							},
 							success: function( json ) {
 									addresses = json
@@ -93,7 +93,7 @@
         }
 
 				function doPoll( singleShot = false ){
-						$.get('stargate/get?entity=is_alive')
+						$.get('stargate/get/is_alive')
 								.done(function(data) {
 									  // If we're coming back from being offline, update the address book
 										if (!is_online){
