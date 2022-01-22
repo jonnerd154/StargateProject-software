@@ -50,7 +50,7 @@ network={
   ```
 
 ## Copying the Software bundle
-1. Connect to the Pi using an SCP file transfer client.
+1. Connect to the Pi using an SCP/SFTP file transfer client.
     - Windows: [WinSCP](https://winscp.net/eng/index.php) or [FileZilla](https://filezilla-project.org/download.php?type=client)
     - MacOS: [CyberDuck](https://cyberduck.io/) or [FileZilla](https://filezilla-project.org/download.php?type=client)
 2. Copy the software folder (Kristian's repo `/sg1_v4`) to the Raspi.
