@@ -57,11 +57,11 @@ function set_permissions() {
 function do_hardware_config() {
   # Enable SPI
   echo 'Enabling SPI'
-  sudo raspi-config nonint do_spi 1
+  sudo raspi-config nonint do_spi 0
 
   # Enable I2C
   echo 'Enabling I2C'
-  sudo raspi-config nonint do_i2c 1
+  sudo raspi-config nonint do_i2c 0
 
   # Enable Boot/Autologin to Console Autologin
   echo 'Configuring Auto Login via Console on Boot'
@@ -71,13 +71,12 @@ function do_hardware_config() {
 function apt_update_and_install() {
   # Update and Upgrade system packages
   echo 'Updating, upgrading system packages...this may take a while.'
-  sudo apt-get update -y
-  sudo apt-get upgrade -y
+  sudo apt-get update -y | sed 's/^/     /'
+  sudo apt-get upgrade -y | sed 's/^/     /'
 
   # Install system-level dependencies
   echo 'Installing system-level dependencies...this may take a while.'
-  sudo apt-get install -y clang python3-dev python3-venv libasound2-dev avahi-daemon apache2 wireguard
-
+  sudo apt-get install -y clang python3-dev python3-venv libasound2-dev avahi-daemon apache2 wireguard | sed 's/^/     /'
 }
 
 function init_venv() {
@@ -91,12 +90,12 @@ function init_venv() {
   echo 'Installing pip setuptools into the virtual environment'
   source sg1_venv_v4/bin/activate
   export CFLAGS=-fcommon
-  pip install setuptools
+  pip install setuptools | sed 's/^/     /'
 
   # Install requirements.txt pip packages
   echo 'Installing requirements.txt dependencies into the Virtual Environment'
   source sg1_venv_v4/bin/activate
-  pip install -r sg1_v4/requirements.txt
+  pip install -r sg1_v4/requirements.txt | sed 's/^/     /'
 
   echo "Deactivating the virtual environment"
   deactivate
@@ -150,18 +149,20 @@ function restart_apache() {
 
 function configure_crontab() {
   # Add the speaker-tickler to our crontab
-  # TODO: Make this pseudo-idempotent
-  echo 'Configuring crontab (user: sg1)'
-  line="*/8 * * * * /home/pi/sg1_venv_v4/bin/python3 /home/pi/sg1_v4/scripts/speaker_on.py"
-  (crontab -u $(whoami) -l; echo "$line" ) | crontab -u $(whoami) -
+  echo 'Configuring crontab (user: pi)'
+  (crontab -l; echo "*/8 * * * * /home/pi/sg1_venv_v4/bin/python3 /home/pi/sg1_v4/scripts/speaker_on.py")|awk '!x[$0]++'|crontab -
 }
 
 function disable_pwr_mgmt() {
   ## Disable power management/savings on the wifi adapter:
-  # TODO: Make this pseudo-idempotent
-  echo 'Disabling WiFi power management'
-  CONFIG="/etc/rc.local" #
-  sed -i -e '$i\\r\n/sbin\/iw wlan0 set power_save off\r\n' $CONFIG
+  CONFIG="/etc/rc.local"
+  if grep -Fq '/sbin/iw wlan0 set power_save off' $CONFIG
+  then
+      echo 'WiFi power management is already disabled'
+  else
+      echo 'Disabling WiFi power management'
+      sudo sed -i '$i\\r\n/sbin\/iw wlan0 set power_save off\r\n' $CONFIG
+  fi
 }
 
 function disable_onboard_audio() {
@@ -183,11 +184,11 @@ function configure_audio() {
   CONFIG="/usr/share/alsa/alsa.conf" #
   TEMP="alsa.temp"
   SETTING="1"
-  cp $CONFIG $TEMP
-  sed -i -e "s/defaults\.ctl\.card [01]/defaults.ctl.card $SETTING/g" \
+  sudo cp $CONFIG $TEMP
+  sudo sed -i -e "s/defaults\.ctl\.card [01]/defaults.ctl.card $SETTING/g" \
   -e "s/defaults\.ctl\.card [01]/defaults.ctl.card $SETTING/g" $TEMP
-  sed -i -e "s/defaults\.ctl\.card [01]/defaults.ctl.card $SETTING/g" \
-  -e "s/defaults\.pcm\.card [01]/defaults.pcm.card $SETTING/g" $TEMPs
+  sudo sed -i -e "s/defaults\.ctl\.card [01]/defaults.ctl.card $SETTING/g" \
+  -e "s/defaults\.pcm\.card [01]/defaults.pcm.card $SETTING/g" $TEMP
   sudo mv $TEMP $CONFIG
 }
 
