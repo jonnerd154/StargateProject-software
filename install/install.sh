@@ -9,9 +9,27 @@ echo
 
 source functions.sh
 
-verify_stargate_software
-echo 'Version 4.x Software installation detected'
+echo 'Starting...'
+verify_stargate_software_or_exit
 
+# enable_ssh
+# configure_hostname
+# copy_wpa_supplicant
+# config_users_and_passwords
+#
+# set_permissions
+# do_hardware_config
+# apt_update_and_install
+# init_venv
+
+
+
+#configure_apache
+# # configure_crontab # NOT idempotent
+# # diable_pwr_mgmt # NOT idempotent
+#disable_onboard_audio
+#configure_audio
+#configure_logrotate
 
 echo
 echo
