@@ -86,7 +86,7 @@ http://stargate.local
   ```
 
 # Upgrading from v3.x
-If you already have a Stargate built and running, you'll want to copy some configurations over from the old gate/SD card.
+If you already have a Stargate built and running, you'll want to copy some configurations over from the old gate/SD card. You'll need to do this via SCP while the old SD card is installed in your gate.
 1. Copy these files from your old gate, and keep them on a computer:
 ```
 /etc/wireguard/subspace.conf
