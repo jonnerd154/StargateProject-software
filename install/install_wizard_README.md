@@ -1,7 +1,9 @@
 # Configuring the SD Card from Scratch
 It is _highly_ recommended to build your gate by using the pre-built Disk Image (ISO) provided by Kristian. Instructions to download that are in the Archive Download.
 
-If you wish to set up your own image, these instructions should help. The majority of the installation is completed by a script at `sg1_v4/install/install.sh`.
+*If you like doing things the hard way*, you can setup your own image from scratch. These instructions should help. 
+
+The majority of the installation is completed by a script at `sg1_v4/install/install.sh`, but we need to get the basics configured first.
 
 ## Flash the SD Card with Raspbian
 1. Download the [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
