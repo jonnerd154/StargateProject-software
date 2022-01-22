@@ -37,10 +37,10 @@ network={
 
 ## Connecting to the Pi for the first time
 1. You need to find the Raspi's IP address. There are a few ways to do this:
+  - Connect a monitor and keyboard, then run `ifconfig wlan0` and look for the IPv4 address after `inet`
   - Check the "attached devices" list in your router's Admin Panel
-  - Use a network scanner app like Fing
-  - Connect a monitor and keyboard, then run `ifconfig` and look for the IP address under `wlan0`
-2. Once you know the IP address, connect to the Pi via SSH:
+  - Use a network scanner app like [Fing](https://www.fing.com/)
+2. Once you know the IP address, connect to the Pi via SSH and keep it open for later:
   - Windows: Use PuTTY
   - MacOS: Use Terminal `ssh pi@YOURIPADDRESS`
   Default login credentials (NOTE: password will change to `sg1` after installation):
