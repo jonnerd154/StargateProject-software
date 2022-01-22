@@ -11,6 +11,7 @@ A web interface is provided to allow testing of individual hardware components, 
 
 ## Web API
 There is a JSON API to interact with the Stargate via a web service. The documentation can be found in the repo, or https://app.swaggerhub.com/apis-docs/TheStargateProject/StargateWebAPI/1.0.0#/
+API Version 1.1.0 has been proposed: https://app.swaggerhub.com/apis-docs/TheStargateProject/StargateWebAPI/1.1.0
 
 ## Credits
 - Kristian Tysse designed and wrote all of the original code, most of which is still in use today's program.
