@@ -95,7 +95,7 @@ If you already have a Stargate built and running, you'll want to copy some confi
 /home/sg1/sg1/stargate_address.py
 /home/sg1/sg1/chevrons.py
 ```
-2. Upload the following files from your computer to the new Gate, into the same locations that you copied them from:
+2. With the new SD card installed in your Raspi, upload the following files from your computer to the new Gate, into the same locations that you copied them from:
 ```
 /etc/wireguard/subspace.conf
 /etc/wireguard/privatekey
