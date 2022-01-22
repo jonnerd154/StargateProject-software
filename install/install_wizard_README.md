@@ -1,7 +1,7 @@
 # Configuring the SD Card from Scratch
 It is _highly_ recommended to build your gate by using the pre-built Disk Image (ISO) provided by Kristian. Instructions to download that are in the Archive Download.
 
-*If you like doing things the hard way*, you can setup your own image from scratch. These instructions should help. 
+*If you like doing things the hard way*, you can setup your own image from scratch. These instructions should help.
 
 The majority of the installation is completed by a script at `sg1_v4/install/install.sh`, but we need to get the basics configured first.
 
@@ -19,7 +19,7 @@ The majority of the installation is completed by a script at `sg1_v4/install/ins
 2. Create a new file with the below contents (substituting your Wi-Fi credentials) and save it to the root directory of the SD card's `/boot` partition.
  - It must be named _exactly_ `wpa_supplicant.conf`
  - Adjust the `country=` line to match your country (use the [ISO 2-letter abbreviation]https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements, in lowercase. )
- - Replace `YOUR_NETWORK_SSID` and `YOUR_NETWORK_SSID` with your network's details. *These are case-sensitive, and spaces matter!*
+ - Replace `YOUR_NETWORK_SSID` and `YOUR_NETWORK_SSID` with your network's details. Your values should be enclosed in `"` (double quotes) *These are case-sensitive, and spaces matter!*
 ```
 country=us
 update_config=1
