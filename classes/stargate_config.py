@@ -21,7 +21,7 @@ class StargateConfig:
     def load(self):
         # Open the json file and load it into a python object
         try:
-            #print("Loading {}".format(self.file_name))
+            #print(f"Loading {self.file_name}")
             with open(self.get_full_file_path(), "r", encoding="utf8") as file:
                 self.config = json.load(file)
         except FileNotFoundError:
@@ -46,7 +46,7 @@ class StargateConfig:
             sys.exit(1)
             return
 
-        print("Loaded default configuration file for {self.file_name}.")
+        print(f"Loaded default configuration file for {self.file_name}.")
 
         # Call load() so we can use the newly loaded config
         self.load()

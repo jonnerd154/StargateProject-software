@@ -108,7 +108,7 @@ class NetworkTools:
                 return server_ip
             return False
         except (KeyError, ValueError) as _ex:
-            self.log.log('ERROR getting {interface_name} IP: {_ex}', True)
+            self.log.log(f'ERROR getting {interface_name} IP: {_ex}', True)
             return False
 
     @staticmethod
