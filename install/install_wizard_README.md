@@ -84,8 +84,8 @@ You'll need to type the whole `http://` part, or it will not work!
 ```
 http://stargate.local
 ```
-- FAQ: `What if I have multiple stargates on my network? Or want to call it something different?`
-  - You can change the hostname with a simple command. Replace YOURHOSTNAME with your new name (no symbols! Only A-z and 0-9). DO NOT include the `.local` part.:
+- *"What if I have multiple stargates on my network? Or want to call it something different?"*"
+  - You can change the hostname with a simple command. In the command below, replace `YOURHOSTNAME` with your desired name for this gate (no symbols! Only A-z and 0-9). DO NOT include the `.local` part.:
   ```
   sudo raspi-config nonint do_hostname YOURHOSTNAME
   ```
