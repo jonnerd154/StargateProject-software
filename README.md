@@ -1,8 +1,19 @@
 # [TheStargateProject.com](https://TheStargateProject.com)
 Software for Kristian's Fully Functional 3D Printed Stargate
 
-## Running the Stargate Software manually
-Log into the machine and type `sudo cd /home/sg1/sg1 && /home/sg1/sg1_venv/bin/python main.py`
+## Default SSH/SCP credentials
+```
+Username: pi
+Password: sg1
+```
+
+## Start/Stop/Restart the Stargate Software manually
+The Stargate Software will automatically start when the Raspi boots. It runs as a systemd daemon called `stargate.service`. If you want to manually start/stop/restart it, you can use these commands:
+```
+sudo systemctl start stargate.service
+sudo systemctl stop stargate.service
+sudo systemctl restart stargate.service
+```
 
 ## Web interface
 A web interface is provided to allow testing of individual hardware components, dialing, address book, and much more. Find it here:
@@ -10,8 +21,10 @@ A web interface is provided to allow testing of individual hardware components, 
 [http://stargate.local](http://stargate.local)
 
 ## Web API
-There is a JSON API to interact with the Stargate via a web service. The documentation can be found in the repo, or https://app.swaggerhub.com/apis-docs/TheStargateProject/StargateWebAPI/1.0.0#/
-API Version 1.1.0 has been proposed: https://app.swaggerhub.com/apis-docs/TheStargateProject/StargateWebAPI/1.1.0
+There is a JSON API to interact with the Stargate via a web service. The documentation can be found in the repo, or at one of the below links
+
+- v1.0.0 (Current): https://app.swaggerhub.com/apis-docs/TheStargateProject/StargateWebAPI/1.0.0#/
+- v1.1.0 (In development): https://app.swaggerhub.com/apis-docs/TheStargateProject/StargateWebAPI/1.1.0
 
 ## Credits
 - Kristian Tysse designed and wrote all of the original code, most of which is still in use today's program.
