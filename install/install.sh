@@ -43,3 +43,4 @@ echo ' Open the web interface `http://stargate.local`'
 echo
 echo
 sudo reboot
+exit 0
