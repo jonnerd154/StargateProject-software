@@ -1,3 +1,13 @@
+# Express Setup instructions
+Express setup: all the cool kids are doing it! Completely headless (no keyboard/monitor required), and now with extra Calcium for strong bones.
+
+It's a three step process:
+```
+1. Flash the SD card
+2. Configure Wi-Fi
+3. Kawoosh
+```
+
 ## Flash the SD Card with Raspbian for Stargates
 1. Download the ready-to-use Raspberry Pi Disk Image (.iso) file
 In your browser, visit [https://thestargateproject.com/stargate_images/sg1_v4.0.0.img.gz]
