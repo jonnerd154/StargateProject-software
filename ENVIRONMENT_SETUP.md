@@ -42,8 +42,9 @@ network={
   - Use a network scanner app like [Fing](https://www.fing.com/)
 2. Once you know the IP address, connect to the Pi via SSH and keep it open for later:
   - Windows: Use PuTTY
-  - MacOS: Use Terminal `ssh pi@YOURIPADDRESS`
-  Default login credentials (NOTE: password will change to `sg1` after installation):
+  - MacOS: Use Terminal: `ssh pi@YOURIPADDRESS`
+  
+Default login credentials (NOTE: password will change to `sg1` after installation):
   ```
   Username: pi
   Password: raspberry
