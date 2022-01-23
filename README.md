@@ -1,6 +1,11 @@
 # [TheStargateProject.com](https://TheStargateProject.com)
 Software for Kristian's Fully Functional 3D Printed Stargate
 
+## Setup Instructions:
+It is _highly_ recommended to build your gate by using the pre-built Disk Image (ISO) provided by Kristian. 
+ - EXPRESS SETUP process can be found in [EXPRESS_SETUP.md](EXPRESS_SETUP.md)
+ - A manual setup guide can be found in [ENVIRONMENT_SETUP.md](ENVIRONMENT_SETUP.md)
+
 ## Default SSH/SCP credentials
 ```
 Username: pi
