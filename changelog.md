@@ -15,7 +15,7 @@ This version is a major upgrade from the v3.x branch. Completely refactored and 
     - Turn off ALL of the LEDs on the Gate
     - Instantly open a wormhole
     - Close any open wormhole
-    - * * Simulate an incoming wormhole * *
+    - Simulate an incoming wormhole (most requested feature)
   - Administrative functions:
     - Volume up/down (+/-5%/click) Volume level is saved and persists between reboots
     - Reboot the Raspberry Pi
