@@ -29,6 +29,7 @@ disable_pwr_mgmt
 disable_onboard_audio
 configure_audio
 configure_logrotate
+configure_systemd_service
 
 echo
 echo

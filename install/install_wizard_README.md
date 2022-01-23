@@ -89,6 +89,12 @@ http://stargate.local
   ```
   sudo raspi-config nonint do_hostname YOURHOSTNAME
   ```
+- The Stargate Software will automatically start when the Raspi boots. It runs as a systemd daemon called `stargate.service`. If you want to manually start/stop/restart it, you can use these commands:
+```
+sudo systemctl start stargate.service
+sudo systemctl stop stargate.service
+sudo systemctl restart stargate.service
+```
 
 # Upgrading from v3.x
 If you already have a Stargate built and running, you'll want to copy some configurations over from the old gate/SD card. You'll need to do this via SCP while the old SD card is installed in your gate.
