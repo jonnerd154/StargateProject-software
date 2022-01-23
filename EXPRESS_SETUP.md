@@ -27,10 +27,9 @@ network={
  psk="YOUR_PASSWORD"
 }
 ```
-3. Create a blank file called `ssh` in `/boot/` (`/boot/ssh`) to enable SSH
-4. Eject the SD card, and reinstall it in your Raspberry Pi
-5. Power the Raspberry Pi and wait for it to boot (the green light will stop flickering)
-6. You'll hear a "we're ready to go"-type sound from the speaker when startup is complete. Comtrya!
+3. Eject the SD card, and reinstall it in your Raspberry Pi
+4. Power the Raspberry Pi and wait for it to boot (the green light will stop flickering)
+5. You'll hear a "we're ready to go"-type sound from the speaker when startup is complete. Comtrya!
 
 ## What's next?
 - The installer setup [https://www.avahi.org/](avahi) and changed the hostname. You'll now be able to communicate with the Stargate with `stargate.local`, instead of it's IP address. For example:
