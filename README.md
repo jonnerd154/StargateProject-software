@@ -27,7 +27,9 @@ A web interface is provided to allow testing of individual hardware components, 
 [http://stargate.local](http://stargate.local)
 
 ## Web API
-There is a JSON API to interact with the Stargate via a web service. The documentation can be found in the repo, or at one of the below links
+There is a JSON API to interact with the Stargate via a web service. This enables anyone to build software that can control the Stargate. We'd love to see someone build a Stargate Command computer-style controller, or a RPG game that interfaces with the 'Gate. Your imagination is the limit! 
+
+The documentation can be found in the repo, or at one of the below links
 
 - v1.0.0 (Current): https://app.swaggerhub.com/apis-docs/TheStargateProject/StargateWebAPI/1.0.0#/
 - v1.1.0 (In development): https://app.swaggerhub.com/apis-docs/TheStargateProject/StargateWebAPI/1.1.0
