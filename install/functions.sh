@@ -116,7 +116,7 @@ EOT
   sudo sed -i 's/export APACHE_RUN_GROUP=www-data/export APACHE_RUN_GROUP=pi/' /etc/apache2/envvars
 
   echo 'Configure the virtualhost DocumentRoot'
-  sudo sed -i 's|\("DocumentRoot" * *\).*|\1/home/pi/sg1_v4/web|' /etc/apache2/sites-available/000-default.conf
+  sudo sed -i "s|\("DocumentRoot" * *\).*|\1/home/pi/sg1_v4/web|" /etc/apache2/sites-available/000-default.conf
 
   # Enable ModProxy and ModProxyHTTP
   echo 'Apache Config: Enabling required modules.'
