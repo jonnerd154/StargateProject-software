@@ -69,7 +69,7 @@ cd /home/pi/sg1_v4/install && ./install.sh
 3. After the reboot, the Stargate software should start automatically. You'll hear a "we're ready to go"-type sound from the speaker when startup is complete. Comtrya!
 
 ## What's next?
-- The installer setup Bonjour and changed the hostname. You'll now be able to communicate with the Stargate with `stargate.local`, instead of it's IP address. For example:
+- The installer setup [https://www.avahi.org/](avahi) and changed the hostname. You'll now be able to communicate with the Stargate with `stargate.local`, instead of it's IP address. For example:
 ```
 ssh pi@stargate.local
 ```
