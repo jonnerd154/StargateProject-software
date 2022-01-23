@@ -1,20 +1,25 @@
 # Configuring the SD Card from Scratch
 It is _highly_ recommended to build your gate by using the pre-built Disk Image (ISO) provided by Kristian. Instructions to download that are in the Archive Download.
 
-If you wish to set up your own image, these instructions should help.
+*If you like doing things the hard way*, you can setup your own image from scratch. These instructions should help.
+
+The majority of the installation is completed by a script at `sg1_v4/install/install.sh`, but we need to get the basics configured first.
 
 ## Flash the SD Card with Raspbian
 1. Download the [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
 2. Open the Imager, and click "Choose OS."
 3. Click on "Raspberry Pi OS (Other)"
-4. Select _Raspberry Pi OS Lite (32-bit)_ (At the time of this writing: Debian v11/"Bullseye:)
+4. Select _Raspberry Pi OS Lite (32-bit)_ (At the time of this writing: Debian v11/"Bullseye")
 5. Click Choose Storage, and select your SD card.
 6. Click "Write." Accept any warnings, and you may need to enter an Admin password for the computer you're working on.
 7. When the process is complete, remove the SD card, and insert back *into the same computer*, _not_ the raspberry pi. We have one more thing to do before installing it in the Pi.
 
-## Configure Wi-Fi
+## Configure Wi-Fi & enable SSH
 1. After reinserting the SD card, it should appear on your computer as a drive. Browse to that drive.
-2. Create a new file with the below contents (substituting your Wi-Fi credentials) and save it to the root directory of the SD card. It must be named _exactly_ `wpa_supplicant.conf`:
+2. Create a new file with the below contents (substituting your Wi-Fi credentials) and save it to the root directory of the SD card's `/boot` partition.
+ - It must be named _exactly_ `wpa_supplicant.conf`
+ - Adjust the `country=` line to match your country (use the [ISO 2-letter abbreviation]https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements, in lowercase. )
+ - Replace `YOUR_NETWORK_SSID` and `YOUR_NETWORK_SSID` with your network's details. Your values should be enclosed in `"` (double quotes) *These are case-sensitive, and spaces matter!*
 ```
 country=us
 update_config=1
@@ -22,216 +27,71 @@ ctrl_interface=/var/run/wpa_supplicant
 
 network={
  scan_ssid=1
- ssid="NETWORK_SSID"
- psk="PASSWORD"
+ ssid="YOUR_NETWORK_SSID"
+ psk="YOUR_PASSWORD"
 }
 ```
-3. Eject the SD card, and reinstall it in your Raspberry Pi.
+3. Create a blank file called `ssh` in `/boot/` (`/boot/ssh`) to enable SSH
+4. Eject the SD card, and reinstall it in your Raspberry Pi
+5. Power the Raspberry Pi and wait for it to boot (the green light will stop flickering)
 
-## Setup the Raspberry Pi Basics: Hardware, Users, SSH
-1. Connect a keyboard and monitor to your Raspi. We will only need this to find the IP address, and enable SSH.
-2. Power the Raspberry Pi and wait for it to boot (the green light will stop flickering).
-3. At the login prompt, enter:
+## Connecting to the Pi for the first time
+1. You need to find the Raspi's IP address. There are a few ways to do this:
+  - Connect a monitor and keyboard, then run `ifconfig wlan0` and look for the IPv4 address after `inet`
+  - Check the "attached devices" list in your router's Admin Panel
+  - Use a network scanner app like [Fing](https://www.fing.com/)
+2. Once you know the IP address, connect to the Pi via SSH and keep it open for later:
+  - Windows: Use PuTTY
+  - MacOS: Use Terminal `ssh pi@YOURIPADDRESS`
+  Default login credentials (NOTE: password will change to `sg1` after installation):
+  ```
+  Username: pi
+  Password: raspberry
+  ```
+
+## Copying the Software bundle
+1. Connect to the Pi using an SCP/SFTP file transfer client.
+    - Windows: [WinSCP](https://winscp.net/eng/index.php) or [FileZilla](https://filezilla-project.org/download.php?type=client)
+    - MacOS: [CyberDuck](https://cyberduck.io/) or [FileZilla](https://filezilla-project.org/download.php?type=client)
+2. Copy the software folder (Kristian's repo `/sg1_v4`) to the Raspi.
+    - Copy it to `/home/pi/sg1_v4`
+    - To be clear, the main readme file should be at `/home/pi/sg1_v4/README.md`
+
+## Prepare & Run the Installer
+1. Go back to your SSH client and configure the Install Script's permissions:
+```
+sudo chmod u+x /home/pi/sg1_v4/install/*.sh
+```
+2. Run the installer and wait for it to complete. This could take up to XX minutes. When it is complete, the Pi will reboot.
+```
+cd /home/pi/sg1_v4/install && ./install.sh
+```
+3. After the reboot, the Stargate software should start automatically. You'll hear a "we're ready to go"-type sound from the speaker when startup is complete. Comtrya!
+
+## What's next?
+- The installer setup Bonjour and changed the hostname. You'll now be able to communicate with the Stargate with `stargate.local`, instead of it's IP address. For example:
+```
+ssh pi@stargate.local
+```
+- The installer changed the `pi` user's password. Your login credentials are now:
 ```
 Username: pi
-Password: raspberry
-```
-4. Determine the IP address and write it down.
-```
-ifconfig en0 | grep "inet "
-```
-5. Enable SSH:
- - Run `raspi-config`
- -    Select #3 (Interface Options) -> #2 SSH -> Enable
-6. Enable SPI: `
- -    Select #3 (Interface Options) -> #4 SPI -> Enable
-7. Enable I2C:
- -    Select #3 (Interface Options) -> #5 I2C -> Enable
-8. Select "Finish" in the bottom-right corner to save.
-9. Type `passwd` enter the current password (`raspberry`) and set the new password to "thestargateproject")
-10. `sudo adduser sg1` Set the password to `sg1` and leave all misc questions (name, address, etc) blank.
-11. Create a new file: `sudo nano /etc/sudoers.d/010_sg1-nopasswd`
-   Paste this into it:
-```
-sg1 ALL=(ALL) NOPASSWD: ALL
-```
-11. Enable auto-login: `raspi-config` -> System Options -> S5 Boot / Auto Login -> B2 Console Autologin
-12. Select "Finish" in the bottom-right corner to save. *The system will reboot!*
-13. From your main computer, login to the Raspberry Pi via SSH:
-```
-IP Address: [as discovered above]
-Username: sg1
 Password: sg1
 ```
-14. You should be connected via SSH! If so, you can disconnect the monitor and keyboard - we won't need them again.
+- There is a web server running on the Stargate. You can access it in your favorite browser.
 
-## Update Software and Install System Dependencies
-1. Update system packages:
+You'll need to type the whole `http://` part, or it will not work!
 ```
-sudo apt-get update -y
-sudo apt-get upgrade -y
+http://stargate.local
 ```
-2. Install some packages
+- *"What if I have multiple stargates on my network? Or want to call it something different?"*"
+  - You can change the hostname with a simple command. In the command below, replace `YOURHOSTNAME` with your desired name for this gate (no symbols! Only A-z and 0-9). DO NOT include the `.local` part.:
+  ```
+  sudo raspi-config nonint do_hostname YOURHOSTNAME
+  ```
+- The Stargate Software will automatically start when the Raspi boots. It runs as a systemd daemon called `stargate.service`. If you want to manually start/stop/restart it, you can use these commands:
 ```
-sudo apt-get install -y clang python3-dev python3-venv libasound2-dev avahi-daemon apache2 wireguard
+sudo systemctl start stargate.service
+sudo systemctl stop stargate.service
+sudo systemctl restart stargate.service
 ```
-
-## Create the virtual environment and install the basics
-1. Create the virtual environment (do NOT use sudo!!):
-```
-python3 -m venv sg1_venv
-```
-2. Activate the virtual environment and install some dependencies
-```
-source sg1_venv/bin/activate
-export CFLAGS=-fcommon
-pip install setuptools
-deactivate
-```
-
-## Upload the Stargate Software
-1. Upload the software from the `/sg1` folder in Kristian's Archive Download to `/home/sg1/sg1`
-2. If you're working from GitHub, be sure to upload the `soundfx` directory to `/home/sg1/sg1/soundfx`
-3. Set execute permissions on the bash scripts:
-```
-chmod 774 /home/sg1/sg1/util/*
-chmod 774 /home/sg1/sg1/scripts/*
-```
-
-## Install pip dependencies into the virtual environment:
-Activate the virtual environment and install from `requirements.txt`
-```
-source sg1_venv/bin/activate
-pip install -r sg1/requirements.txt
-```
-
-## Configure hostname / Bonjour
-1. Update the `hosts` file to use "stargate" as a hostname.
-```
-sudo nano /etc/hosts
-## Modify the `127.0.1.1` entry as below, then save the file:
-  127.0.1.1 [tab] stargate
-```
-2. Update the OS' hostname config
-`sudo nano /etc/hostname`
- - Modify the file to contain only `stargate` (no ticks), then save the file.
-
-3. One more place to set the host name:
-```
-sudo hostname stargate
-```
-4. And reboot to take effect:
-```
-sudo reboot
-```
-5. When the Raspi comes back up you should be able to SSH to it via `stargate.local` instead of it's IP address.
-
-## Configure Apache Web Server
-1. Add Directory block and ModProxy config to `/etc/apache2/apache2.conf`:
-`sudo nano `/etc/apache2/apache2.conf`
-Add the below text after the other <Directory> blocks
-```
-<Directory /home/sg1/sg1/web>
-        Options Indexes FollowSymLinks
-        AllowOverride None
-        Require all granted
-</Directory>
-ProxyPass     /stargate/     http://localhost:8080/
-```
-2. Configure Apache to run the server as user and group `sg1`
-`sudo nano /etc/apache2/envvars`
-```
-export APACHE_RUN_USER=sg1
-export APACHE_RUN_GROUP=sg1
-```
-3. Configure the virtualhost DocumentRoot
-`sudo nano /etc/apache2/sites-available/000-default.conf`
-Update the existing `DocumentRoot` directive to read:
-```
-DocumentRoot /home/sg1/sg1/web
-```
-4. Enable ModProxy and ModProxyHTTP
-```
-cd /etc/apache2/mods-enabled
-sudo ln -s ../mods-available/proxy.conf proxy.conf
-sudo ln -s ../mods-available/proxy.load proxy.load
-sudo ln -s ../mods-available/proxy_http.load proxy_http.load
-```
-5. Restart apache to load the new configs
-```
-sudo service apache2 restart
-```
-If there are no errors reported, congrats! It's probably working.
-6. Test: In your browser, to go `http://stargate.local` (you MUST include the `http://`!!)
-7. The page should load, and tell you that the Stargate is offline. That is okay - this shows that the Apache server is running, but the Stargate Software is not.
-
-## Add a crontab entry to keep the speaker from turning off:
-Edit `sg1`'s crontab:
-`crontab -e` and add the following to the bottom of the file:
-```
-*/8 * * * * /home/sg1/sg1_venv/bin/python3 /home/sg1/sg1/scripts/speaker_on.py
-```
-
-## Disable power management/savings on the wifi adapter:
-```
-sudo nano /etc/rc.local
-## Above exit 0 add:
-  /sbin/iw wlan0 set power_save off
-```
-
-## Disable the onboard audio adapter and configure the external audio adapter
-1. Disable the onboard adapter
-```
-sudo nano /boot/config.txt
-   # Change dtparam=audio=off
-```
-2. Configure ALSA to use the external audio adapter (OPTIONAL??)
-```
-sudo nano /usr/share/alsa/alsa.conf
-   # Change to:
-      defaults.ctl.card 1
-      defaults.pcm.card 1
-```
-
-## Setup logrotated to rotate log files for better performance
-1. Create a new file:
-`sudo nano /etc/logrotate.d/stargate`
-
-And copy this into it:
-```
-/home/sg1/sg1/logs/sg1.log {
-    missingok
-    notifempty
-    size 30k
-    daily
-    rotate 30
-    create 0600 sg1 sg1
-}
-
-/home/sg1/sg1/logs/database.log {
-    missingok
-    notifempty
-    size 30k
-    daily
-    rotate 30
-    create 0600 sg1 sg1
-}
-```
-2. Force the logs to rotate now, to test:
-`sudo logrotate --force /etc/logrotate.conf`
-
-## Run the software (manually, to test)
-1. `cd /home/sg1/sg1/ && sudo /home/sg1/sg1_venv/bin/python /home/sg1/sg1/main.py`
-2. Check the web interface. Is it working? Go to the info page - do the details load in? Hooray!
-
-## Enable on-boot auto-run:
-1. `sudo nano ~/.bashrc` Add to the end of the file:
-```
-myt=$(tty | sed -e "s:/dev/::")
-if [ $myt = tty1 ]; then
-  cd /home/sg1/sg1
-  sudo /home/sg1/sg1_venv/bin/python /home/sg1/sg1/main.py
-fi
-```
-`sudo reboot`
-2. When the raspi reboots, the software should automatically start.
