@@ -1,1 +1,1 @@
-VERSION = 3.7 # The current Program version as type float.
+VERSION = 4.0 # The current Program version as type float.
