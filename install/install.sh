@@ -7,6 +7,9 @@ echo 'TheStargateProject: SG1 Version 4  -  Installer Script'
 echo
 echo
 
+set -e # Tells bash to exit the script if there is an error
+trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
+
 source functions.sh
 #set -o xtrace
 
