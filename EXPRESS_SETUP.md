@@ -10,7 +10,7 @@ It's a three step process:
 
 ## Flash the SD Card with Raspbian for Stargates
 1. Download the ready-to-use Raspberry Pi Disk Image (.iso) file
-In your browser, visit [https://thestargateproject.com/stargate_images/sg1_v4.0.0.img.gz]
+In your browser, visit https://thestargateproject.com/stargate_images/sg1_v4.0.0.img.gz
 2. Plug your SD card (8GB or larger) into your computer (MacOS or Windows)
 3. Download the [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
 4. Open the Raspberry Pi Imager, and click "Choose OS"
@@ -24,7 +24,7 @@ In your browser, visit [https://thestargateproject.com/stargate_images/sg1_v4.0.
 1. After reinserting the SD card, it should appear on your computer as a drive. Browse to that drive.
 2. Inside, you'll find a file called `wpa_supplicant.conf.dist`. Make a copy of it, save it to the same folder, and call it `wpa_supplicant.conf`
  - It must be named _exactly_ `wpa_supplicant.conf`
- - Adjust the `country=` line to match your country (use the [ISO 2-letter abbreviation]https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements, in lowercase. )
+ - Adjust the `country=` line to match your country (use the [ISO 2-letter abbreviation](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements), in lowercase. )
  - Replace `YOUR_NETWORK_SSID` and `YOUR_NETWORK_SSID` with your network's details. Your values should be enclosed in `"` (double quotes) *These are case-sensitive, and spaces matter!*
 ```
 country=us
