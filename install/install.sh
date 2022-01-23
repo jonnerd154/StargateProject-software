@@ -8,7 +8,7 @@ echo
 echo
 
 set -e # Tells bash to exit the script if there is an error
-trap 'echo "\"${last_command}\" command failed with exit code $?."' EXIT
+trap 'sudo echo "\"$BASH_COMMAND\" command failed with exit code $?."' EXIT
 
 source functions.sh
 #set -o xtrace
