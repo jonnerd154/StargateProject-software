@@ -3,6 +3,7 @@ Software for Kristian's Fully Functional 3D Printed Stargate
 
 ## Setup Instructions:
 It is _highly_ recommended to build your gate by using the pre-built Disk Image (ISO) provided by Kristian. 
+ - If you are **upgrading an existing gate** read this first: [UPGRADING_FROM_V3.X.md](UPGRADING_FROM_V3.X.md)
  - EXPRESS SETUP process can be found in [EXPRESS_SETUP.md](EXPRESS_SETUP.md)
  - A manual setup guide can be found in [ENVIRONMENT_SETUP.md](ENVIRONMENT_SETUP.md)
 
@@ -26,7 +27,9 @@ A web interface is provided to allow testing of individual hardware components, 
 [http://stargate.local](http://stargate.local)
 
 ## Web API
-There is a JSON API to interact with the Stargate via a web service. The documentation can be found in the repo, or at one of the below links
+There is a JSON API to interact with the Stargate via a web service. This enables anyone to build software that can control the Stargate. We'd love to see someone build a Stargate Command computer-style controller, or a RPG game that interfaces with the 'Gate. Your imagination is the limit! 
+
+The documentation can be found in the repo, or at one of the below links
 
 - v1.0.0 (Current): https://app.swaggerhub.com/apis-docs/TheStargateProject/StargateWebAPI/1.0.0#/
 - v1.1.0 (In development): https://app.swaggerhub.com/apis-docs/TheStargateProject/StargateWebAPI/1.1.0

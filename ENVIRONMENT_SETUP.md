@@ -63,7 +63,7 @@ Default login credentials (NOTE: password will change to `sg1` after installatio
 ```
 sudo chmod u+x /home/pi/sg1_v4/install/*.sh
 ```
-2. Run the installer and wait for it to complete. This could take up to XX minutes. When it is complete, the Pi will reboot.
+2. Run the installer and wait for it to complete. This could take up to 10 minutes. When it is complete, the Pi will reboot.
 ```
 cd /home/pi/sg1_v4/install && ./install.sh
 ```

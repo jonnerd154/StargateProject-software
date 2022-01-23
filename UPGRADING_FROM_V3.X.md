@@ -1,5 +1,7 @@
 # Upgrading from v3.x
-If you already have a Stargate built and running, you'll want to copy some configurations over from the old gate/SD card. You'll need to do this via SCP while the old SD card is still installed in your gate. ** *DO NOT REFLASH YOUR SD CARD UNTIL FOLLOWING THESE INSTRUCTIONS!*
+If you already have a Stargate built and running, you'll want to copy some configurations over from the old gate/SD card. You'll need to do this via SCP while the old SD card is still installed in your gate. If you have a second SD card, it would be a good idea to flash the spare card, so you don't destroy your known-good card.
+
+** **DO NOT REFLASH YOUR EXISTING SD CARD UNTIL FOLLOWING THESE INSTRUCTIONS!** **
 
 1. Using SCP, copy these files from your old gate, and keep them on a computer. You will need them to configure the new Stargate software.
 ```
