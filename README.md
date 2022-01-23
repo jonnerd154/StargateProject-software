@@ -3,6 +3,7 @@ Software for Kristian's Fully Functional 3D Printed Stargate
 
 ## Setup Instructions:
 It is _highly_ recommended to build your gate by using the pre-built Disk Image (ISO) provided by Kristian. 
+ - If you are **upgrading an existing gate** read this first: [UPGRADING_FROM_V3.X.md](UPGRADING_FROM_V3.X.md)
  - EXPRESS SETUP process can be found in [EXPRESS_SETUP.md](EXPRESS_SETUP.md)
  - A manual setup guide can be found in [ENVIRONMENT_SETUP.md](ENVIRONMENT_SETUP.md)
 
