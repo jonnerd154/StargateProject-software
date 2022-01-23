@@ -42,20 +42,15 @@ network={
 5. You'll hear a "we're ready to go"-type sound from the speaker when startup is complete. Comtrya!
 
 ## What's next?
-- The installer setup [https://www.avahi.org/](avahi) and changed the hostname. You'll now be able to communicate with the Stargate with `stargate.local`, instead of it's IP address. For example:
-```
-ssh pi@stargate.local
-```
+- There is a web server running on the Stargate. You can access it in your favorite browser. You'll need to type the whole `http://` part, or it will not work!
+
+       [http://stargate.local](http://stargate.local)
+
 - Your SSH login credentials are now:
 ```
+Host: stargate.local
 Username: pi
 Password: sg1
-```
-- There is a web server running on the Stargate. You can access it in your favorite browser.
-
-You'll need to type the whole `http://` part, or it will not work!
-```
-http://stargate.local
 ```
 - *"What if I have multiple stargates on my network? Or want to call it something different?"*"
   - You can change the hostname with a simple command. In the command below, replace `YOURHOSTNAME` with your desired name for this gate (no symbols! Only A-z and 0-9). DO NOT include the `.local` part.:
