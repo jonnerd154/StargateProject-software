@@ -1,0 +1,641 @@
+---
+swagger: "2.0"
+info:
+  description: This API provides access for webservices to interface with the Stargate hardware - TheStargateProject.com
+  version: 1.0.0
+  title: Stargate Control API
+  contact:
+    name: Jonathan Moyes
+    email: jon@buildastargate.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+host: localhost
+basePath: /stargate
+tags:
+- name: Get Data
+  description: Operations to get data from the Stargate
+- name: Update Data
+  description: Operations to modify data on the Stargate
+- name: Dialing Actions
+  description: Operations to execute DHD Dialing actions on the Stargate
+- name: Testing Actions
+  description: Operations to test hardware features on the Stargate
+- name: Administrative Actions
+  description: Operations to execute Administrative actions on the Stargate
+schemes:
+- http
+paths:
+  /get/address_book:
+    get:
+      tags:
+      - Get Data
+      summary: Returns the address book entries
+      description: |
+        Returns a dictionary containing all of the Standard / Movie Gate addresses with names, addresses, etc.
+      operationId: get_address_book
+      produces:
+      - application/json
+      parameters:
+      - name: type
+        in: query
+        description: Numeric ID of the user to get
+        required: true
+        type: string
+        enum:
+        - fan
+        - standard
+      responses:
+        "200":
+          description: Address Book Entries
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AddressBookRecord'
+        "500":
+          description: Server-side error
+  /get/local_address:
+    get:
+      tags:
+      - Get Data
+      summary: Returns configured local Stargate address
+      description: |
+        Returns a list representing the 6-symbol local Stargate address
+      operationId: get_local_address
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Local Stargate Address
+          schema:
+            $ref: '#/definitions/StargateAddress'
+        "500":
+          description: Server-side error
+  /get/symbols:
+    get:
+      tags:
+      - Get Data
+      summary: Returns the list of symbols
+      description: |
+        Returns a list of symbols ready to be used in a pulldown menu
+      operationId: get_symbols
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Stargate Symbols
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/StargateSymbol'
+        "500":
+          description: Server-side error
+  /get/dialing_status:
+    get:
+      tags:
+      - Get Data
+      summary: Returns a dictionary of various dialing status information
+      description: |
+        Returns a dictionary of various dialing status information
+      operationId: get_status
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Dialing status information
+          schema:
+            $ref: '#/definitions/inline_response_200'
+        "500":
+          description: Server-side error
+  /get/system_info:
+    get:
+      tags:
+      - Get Data
+      summary: Returns a dictionary of various system status, config, and state information
+      description: |
+        Returns a dictionary of various system status, config, and state information
+      operationId: get_system_info
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: System Info
+          schema:
+            $ref: '#/definitions/inline_response_200_1'
+        "500":
+          description: Server-side error
+  /get/is_alive:
+    get:
+      tags:
+      - Get Data
+      summary: Checks if the Stargate is running
+      description: |
+        Returns an indication of Stargate readiness
+      operationId: is_alive
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Is Alive?
+          schema:
+            $ref: '#/definitions/inline_response_200_2'
+        "500":
+          description: Server-side error
+  /update/local_stargate_address:
+    post:
+      tags:
+      - Update Data
+      summary: Validates and Updates the Local Stargate Address
+      description: Validates and Updates the Local Stargate Address
+      operationId: updateLocalAddress
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: S1
+        in: header
+        description: Symbol index for position 1
+        required: true
+        type: number
+      - name: S2
+        in: header
+        description: Symbol index for position 2
+        required: true
+        type: number
+      - name: S3
+        in: header
+        description: Symbol index for position 3
+        required: true
+        type: number
+      - name: S4
+        in: header
+        description: Symbol index for position 4
+        required: true
+        type: number
+      - name: S5
+        in: header
+        description: Symbol index for position 5
+        required: true
+        type: number
+      - name: S6
+        in: header
+        description: Symbol index for position 6
+        required: true
+        type: number
+      - name: owner_confirmed
+        in: header
+        description: Set `true` to override duplicate address check
+        required: true
+        type: number
+      responses:
+        "200":
+          description: Update successful
+        "500":
+          description: server-side error
+  /update/subspace_ip:
+    post:
+      tags:
+      - Update Data
+      summary: Validates and Updates the Subspace IP Address
+      description: Validates and Updates the Subspace IP Address
+      operationId: updateSubspaceIPAddress
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: ip
+        in: header
+        description: Subspace IP address to assign to the VPN interface
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Update successful
+        "500":
+          description: server-side error
+  /do/chevron_cycle:
+    post:
+      tags:
+      - Testing Actions
+      summary: Commands the Stargate to run the Cycle process (unlock+lock) on the specified Chevron
+      description: Commands the Stargate to run the Cycle process (unlock+lock) on the specified Chevron
+      operationId: chevron_cycle
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: chevron_number
+        in: header
+        description: The Chevron number to cycle
+        required: true
+        type: number
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+  /do/all_chevron_leds_off:
+    post:
+      tags:
+      - Testing Actions
+      summary: Commands the Stargate to turn off all Chevron LEDs. Also closes any open wormhole.
+      description: Commands the Stargate to turn off all Chevron LEDs. Also closes any open wormhole.
+      operationId: all_leds_off
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+  /do/all_chevron_leds_on:
+    post:
+      tags:
+      - Testing Actions
+      summary: Commands the Stargate to turn ON all Chevron LEDs.
+      description: Commands the Stargate to turn ON all Chevron LEDs.
+      operationId: all_chevron_leds_on
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+  /do/wormhole_on:
+    post:
+      tags:
+      - Testing Actions
+      summary: Commands the Stargate to open a wormhole immediately
+      description: Commands the Stargate to open a wormhole immediately
+      operationId: wormhole_on
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+  /do/wormhole_off:
+    post:
+      tags:
+      - Testing Actions
+      summary: Commands the Stargate to close any established wormholes immediately
+      description: Commands the Stargate to close any established wormholes immediately
+      operationId: wormhole_off
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+  /do/symbol_forward:
+    post:
+      tags:
+      - Testing Actions
+      summary: Commands the Stargate to move the glyph ring 1 symbol clockwise (33 steps)
+      description: Commands the Stargate to move the glyph ring 1 symbol clockwise (33 steps)
+      operationId: symbol_forward
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+  /do/symbol_backward:
+    post:
+      tags:
+      - Testing Actions
+      summary: Commands the Stargate to move the glyph ring 1 symbol anticlockwise (33 steps)
+      description: Commands the Stargate to move the glyph ring 1 symbol anticlockwise (33 steps)
+      operationId: symbol_backward
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+  /do/volume_up:
+    post:
+      tags:
+      - Administrative Actions
+      summary: Commands the Stargate to move increment the volume
+      description: Commands the Stargate to move increment the volume
+      operationId: volume_up
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+  /do/volume_down:
+    post:
+      tags:
+      - Administrative Actions
+      summary: Commands the Stargate to move decrement the volume
+      description: Commands the Stargate to move decrement the volume
+      operationId: volume_down
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+  /do/simulate_incoming:
+    post:
+      tags:
+      - Testing Actions
+      summary: Commands the Stargate to simulate an incoming dialing attempt/wormhole
+      description: Commands the Stargate to simulate an incoming dialing attempt/wormhole
+      operationId: simulate_incoming
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+  /do/subspace_up:
+    post:
+      tags:
+      - Administrative Actions
+      summary: Commands the Stargate to bring up/connect to the Subspace VPN network
+      description: Commands the Stargate to bring up/connect to the Subspace VPN network
+      operationId: subspace_up
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+  /do/subspace_down:
+    post:
+      tags:
+      - Administrative Actions
+      summary: Commands the Stargate to shutdown/disconnect from the Subspace VPN network
+      description: Commands the Stargate to shutdown/disconnect from the Subspace VPN network
+      operationId: subspace_down
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+  /do/dhd_press:
+    post:
+      tags:
+      - Dialing Actions
+      summary: Sends a DHD keypress to the Stargate, which appends it to the outgoing_address_buffer
+      description: Sends a DHD keypress to the Stargate, which appends it to the outgoing_address_buffer
+      operationId: dhd_press
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - name: symbol
+        in: header
+        description: The symbol index to append
+        required: true
+        type: number
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+  /do/shutdown:
+    post:
+      tags:
+      - Administrative Actions
+      summary: Commands the Stargate to shutdown
+      description: Commands the Stargate to shutdown
+      operationId: shutdown
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+  /do/reboot:
+    post:
+      tags:
+      - Administrative Actions
+      summary: Commands the Stargate to reboot
+      description: Commands the Stargate to reboot
+      operationId: reboot
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        "200":
+          description: Success
+        "500":
+          description: Server-side error
+definitions:
+  StargateSymbol:
+    type: object
+    properties:
+      text:
+        type: string
+        example: ""
+      value:
+        type: number
+        example: 1.0
+      selected:
+        type: boolean
+        example: false
+      description:
+        type: string
+        example: Earth
+      imageSrc:
+        type: string
+        example: /chevrons/001.svg
+  StargateAddress:
+    type: array
+    items:
+      type: number
+    example:
+    - 7
+    - 5
+    - 20
+    - 27
+    - 32
+  AddressBookRecord:
+    type: object
+    required:
+    - gate_address
+    - is_black_hole
+    - name
+    - type
+    properties:
+      name:
+        type: string
+        example: P3W-451
+      gate_address:
+        type: string
+        example: ""
+      is_black_hole:
+        type: boolean
+        example: true
+      type:
+        type: string
+        enum:
+        - fan_gate
+        - standard_gate
+      ip_address:
+        type: string
+        example: 172.30.0.2
+  inline_response_200:
+    type: object
+    properties:
+      gate_name:
+        type: string
+        example: Kristian Tysse
+      local_address:
+        $ref: '#/definitions/StargateAddress'
+      address_buffer_outgoing:
+        $ref: '#/definitions/StargateAddress'
+      locked_chevrons_outgoing:
+        type: number
+        example: 1.0
+      locked_chevrons_incoming:
+        type: number
+        example: 1.0
+      address_buffer_incoming:
+        $ref: '#/definitions/StargateAddress'
+      wormhole_active:
+        type: boolean
+        example: false
+      black_hole_connected:
+        type: boolean
+        example: false
+      connected_planet:
+        type: string
+        example: Jon Moyes
+      wormhole_open_time:
+        type: number
+        example: 16.0
+      wormhole_max_time:
+        type: number
+        example: 2280.0
+      wormhole_time_till_close:
+        type: number
+        example: 2264.0
+  inline_response_200_1:
+    type: object
+    properties:
+      gate_name:
+        type: string
+        example: Kristian Tysse
+      local_stargate_address:
+        $ref: '#/definitions/StargateAddress'
+      local_stargate_address_string:
+        type: string
+        example: '[ 7, 5, 20, 27, 32 ]'
+      subspace_public_key:
+        type: string
+        example: (Y*&HIUJIN#FBIH&*OI@
+      subspace_ip_address_config:
+        type: string
+        example: 172.0.0.5
+      subspace_ip_address_active:
+        type: string
+        example: 172.0.0.5
+      lan_ip_address:
+        type: string
+        example: 192.168.1.105
+      software_version:
+        type: string
+        example: 4.0.0
+      software_update_last_check:
+        type: string
+        example: 2022-01-19 22:48:12
+      software_update_status:
+        type: string
+        example: up-to-date
+      python_version:
+        type: string
+        example: 3.9.9
+      internet_available:
+        type: boolean
+        example: true
+      subspace_available:
+        type: boolean
+        example: true
+      standard_gate_count:
+        type: number
+        example: 20.0
+      fan_gate_count:
+        type: number
+        example: 26.0
+      last_fan_gate_update:
+        type: string
+        example: 2022-01-19 22:50:28
+      dialer_mode:
+        type: string
+        enum:
+        - DHD
+        - Keyboard
+      hardware_mode:
+        type: string
+        example: Kristian's Original 3-Shield Stack w/Optional Homing
+  inline_response_200_2:
+    type: object
+    properties:
+      is_alive:
+        type: boolean
+        example: true

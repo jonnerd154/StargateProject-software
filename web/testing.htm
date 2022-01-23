@@ -1,0 +1,234 @@
+<!--
+*******************************************************************
+***   Kristian's Stargate Project - TheStargateProject.com      ***
+*******************************************************************
+***                                                             ***
+***   Original Software written by Kristian Tysse               ***
+***   Restructuring and Development by Jonathan Moyes           ***
+***   Web Interface adapted from Dan Clarke:                    ***
+***      https://github.com/danclarke/WorkingStargateMk2Raspi   ***
+***                                                             ***
+*******************************************************************
+-->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Stargate Command</title>
+        <link rel="stylesheet" href="lib/jquery-ui-1.13.0.custom/jquery-ui.css">
+        <link rel="stylesheet" href="main.css" />
+        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+
+        <style>
+        .button, .cycleChevronButton {margin:10px;}
+        </style>
+    </head>
+    <body>
+        <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
+
+        <div class="button_container">
+        <h2>Symbol Ring</h2>
+            <div class="button" action="symbol_forward">
+                Forward
+            </div>
+              <div class="button" action="symbol_backward">
+                Backward
+            </div>
+          <!--<div class="animation" action="goHome">
+                Home Stargate
+            </div>
+            -->
+      <hr />
+        <h2>Lighting control </h2>
+            <div class="button" action="all_chevron_led_on">
+                Chevrons On
+            </div>
+            <div class="button" action="all_chevron_leds_off">
+                All Off
+            </div>
+            <div class="button" action="wormhole_on">
+                Wormhole On
+            </div>
+            <div class="button" action="wormhole_off">
+                Wormhole Off
+            </div>
+        <!--
+            <div class="buttonClass" action="homingToggle">
+                Homing LED
+            </div>
+         -->
+        <hr />
+        <h2>Cycle Chevrons (Motors, Lights, Sound)</h2>
+        <div class="cycleChevronButton" chevron_number='1'>
+            Chevron 1
+        </div>
+        <div class="cycleChevronButton" chevron_number='2'>
+            Chevron 2
+        </div>
+        <div class="cycleChevronButton" chevron_number='3'>
+            Chevron 3
+        </div>
+        <div class="cycleChevronButton" chevron_number='4'>
+            Chevron 4
+        </div>
+        <div class="cycleChevronButton" chevron_number='5'>
+            Chevron 5
+        </div>
+        <div class="cycleChevronButton" chevron_number='6'>
+            Chevron 6
+        </div>
+        <div class="cycleChevronButton" chevron_number='7'>
+            Chevron 7
+        </div>
+        <div class="cycleChevronButton" chevron_number='8'>
+            Chevron 8
+        </div>
+        <div class="cycleChevronButton" chevron_number='9'>
+            Chevron 9
+        </div>
+        <hr />
+        <h2>Sound</h2>
+          <div class="button" action="volume_down">
+              Volume Down
+          </div>
+        	<div class="button" action="volume_up">
+              Volume Up
+          </div>
+        <hr />
+        <h2>Simulate</h2>
+            <div class="button" action="simulate_incoming">
+            Incoming Wormhole
+            </div>
+            <div class="button" action="wormhole_off">
+            Disconnect<br>&nbsp;
+            </div>
+        </div>
+
+        <!--
+        <hr />
+        <h2>Iris Control (Iris is OPEN)</h2>
+            <div class="cycleChevronButton" chevron_number='1'>
+            Close Iris
+            </div>
+        </div>
+        -->
+        </div>
+
+        	<hr />
+        <div class="controls">
+        	<div class="control" onclick="window.location = 'index.htm';">
+                Dialing page
+            </div>
+            <div class="control" onclick="window.location = 'info.htm';">
+                System Info
+            </div>
+            <div class="control" onclick="reboot();">
+                Reboot
+            </div>
+            <div class="control" onclick="shutdown();">
+                Shutdown
+            </div>
+        </div>
+
+        <script type="text/javascript">
+          // Configuration
+          var poll_delay_default = 5000
+          var poll_delay_offline = 500
+
+          // State variables
+          var poll_delay = poll_delay_default
+
+          var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
+            offline_modal.dialog({
+            autoOpen: false,
+            modal: true,
+            dialogClass: "no-close",
+          });
+
+          $( function() {
+            initialize_button_handlers()
+            doPoll();
+          })
+
+          function reboot() {
+              $.post({
+                  url: 'stargate/do/reboot'
+              });
+          }
+
+          function shutdown() {
+              $.post({
+                  url: 'stargate/do/shutdown'
+              });
+          }
+
+          function initialize_button_handlers(){
+            $('div.button_container div.cycleChevronButton').click(function() {
+                const chevron_number = $(this).attr('chevron_number');
+
+                $.post({
+                    url: 'stargate/do/chevron_cycle',
+                    data: JSON.stringify({
+                        chevron_number: chevron_number
+                    })
+                })
+                .fail(function() {
+                    console.log("Failed to communicate with Stargate")
+                    $("<div>Failed to communicate with Stargate</div>").dialog();
+                });
+            });
+
+            $('div.button_container div.button').click(function() {
+                const action = $(this).attr('action');
+
+                $.post({
+                    url: 'stargate/do/' + action,
+                })
+                .fail(function() {
+                    console.log("Failed to communicate with Stargate")
+                    $("<div>Failed to communicate with Stargate</div>").dialog();
+                });
+            });
+          }
+
+          function doPoll( singleShot = false ){
+            $.get('stargate/get/is_alive')
+              .done(function(data) {
+
+                // Hide the offline modal
+                hideOfflineModal()
+
+                poll_delay = poll_delay_default
+
+                // Schedule the next polling
+                if ( !singleShot ){
+                  setTimeout(function(){doPoll( false ); }, poll_delay);
+                }
+              })
+              .fail(function(jqXHR, textStatus, errorThrown) {
+                  // Show the "we're offline modal"
+                  showOfflineModal()
+
+                  // Slow the polling rate to default
+                  poll_delay = poll_delay_offline
+
+                  // Schedule the next polling
+                  if ( !singleShot ){
+                    setTimeout(function(){doPoll( false ); }, poll_delay);
+                  }
+              }
+            );
+
+          }
+
+          function showOfflineModal(){
+            offline_modal.dialog("open");
+          }
+
+          function hideOfflineModal(){
+            offline_modal.dialog("close");
+          }
+
+        </script>
+    </body>
+</html>
