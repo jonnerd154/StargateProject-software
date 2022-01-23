@@ -18,7 +18,7 @@ The majority of the installation is completed by a script at `sg1_v4/install/ins
 1. After reinserting the SD card, it should appear on your computer as a drive. Browse to that drive.
 2. Create a new file with the below contents (substituting your Wi-Fi credentials) and save it to the root directory of the SD card's `/boot` partition.
  - It must be named _exactly_ `wpa_supplicant.conf`
- - Adjust the `country=` line to match your country (use the [ISO 2-letter abbreviation]https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements, in lowercase. )
+ - Adjust the `country=` line to match your country (use the [ISO 2-letter abbreviation](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements), in lowercase. )
  - Replace `YOUR_NETWORK_SSID` and `YOUR_NETWORK_SSID` with your network's details. Your values should be enclosed in `"` (double quotes) *These are case-sensitive, and spaces matter!*
 ```
 country=us
