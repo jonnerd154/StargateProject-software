@@ -92,6 +92,7 @@ function configure_hostname() {
   else
       echo 'Configuring hosts file'
       sudo sed -i '$i\\r\n127.0.1.1    stargate\r\n' $CONFIG > /dev/null
+      sudo sort -u /etc/hosts > /tmp/hosts.new && sudo mv /tmp/hosts.new /etc/hosts
   fi
 }
 
@@ -99,13 +100,14 @@ function configure_apache() {
 
   echo 'Apache Web Server Config: Start'
   echo 'Adding Stargate API Apache Configuration'
+  sudo rm /etc/apache2/conf-available/stargate_api.conf
   sudo tee -a /etc/apache2/conf-available/stargate_api.conf > /dev/null <<EOT
 <Directory /home/pi/sg1_v4/web>
     Options Indexes FollowSymLinks
     AllowOverride None
     Require all granted
 </Directory>
-ProxyPass     /stargate/     http://localhost:8080/
+ProxyPass     /stargate/     http://localhost:8080/ retry=0
 EOT
 
   echo 'Enabling Stargate API Apache Configuration'
