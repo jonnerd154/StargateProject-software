@@ -32,19 +32,6 @@ function config_users_and_passwords() {
   # Change the `pi` user password to "sg1"
   echo 'Setting pi user password'
   sudo usermod --password $(echo sg1 | openssl passwd -1 -stdin) pi
-
-  # # Add the `sg1` user and
-  # echo 'Creating sg1 user'
-  # sudo adduser sg1
-  #
-  # # Set password to "sg1"
-  # echo 'Setting sg1 user password'
-  # sudo adduser --disabled-password --gecos "" sg1
-  # sudo usermod --password $(echo sg1 | openssl passwd -1 -stdin) sg1
-
-  # Add sg1 to the no-password sudoers group
-  # echo 'Adding sg1 user to password-less sudoers'
-  # echo "sg1 ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/010_sg1-nopasswd
 }
 
 function set_permissions() {
