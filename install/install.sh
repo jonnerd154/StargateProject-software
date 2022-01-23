@@ -3,7 +3,7 @@
 clear
 echo
 echo
-echo "TheStargateProject: SG1 Version 4  -  Installer Script"
+echo 'TheStargateProject: SG1 Version 4  -  Installer Script'
 echo
 echo
 
@@ -33,10 +33,10 @@ configure_systemd_service
 
 echo
 echo
-echo "Setup complete. The machine will now reboot."
+echo 'Setup complete. The machine will now reboot.'
 echo
-echo " Connect via SSH: `ssh pi@stargate.local`"
-echo " Open the web interface `http://stargate.local`"
+echo ' Connect via SSH: `ssh pi@stargate.local`'
+echo ' Open the web interface `http://stargate.local`'
 echo
 echo
 sudo reboot

@@ -1,17 +1,7 @@
 
-function wait_for_enter () {
-  echo "Done. Press any key to continue"
-  while [ true ] ; do
-  read -t 3 -n 1
-  if [ $? = 0 ] ; then
-  exit
-  fi
-  done
-}
-
 function verify_stargate_software_or_exit() {
-  [ ! -d '../classes' ] && echo "Upload the Software /home/pi/sg1_v4/ before continuing" && exit 1
-  [ ! -d '../soundfx' ] && echo "Upload the Audio clips /home/pi/sg1_v4/soundfx before continuing" && exit 1
+  [ ! -d '../classes' ] && echo 'Upload the Software /home/pi/sg1_v4/ before continuing' && exit 1
+  [ ! -d '../soundfx' ] && echo 'Upload the Audio clips /home/pi/sg1_v4/soundfx before continuing' && exit 1
   echo 'Version 4.x Software installation detected'
 }
 
@@ -84,15 +74,25 @@ function init_venv() {
   source sg1_venv_v4/bin/activate
   pip install -r sg1_v4/requirements.txt | sed 's/^/     /'
 
-  echo "Deactivating the virtual environment"
+  echo 'Deactivating the virtual environment'
   deactivate
 }
 
 function configure_hostname() {
   # Update the hostname to "stargate" so we can use "stargate.local" via Bonjour
   echo 'Configuring hostname for stargate.local Bonjour'
-  sudo hostnamectl set-hostname stargate # Sets hostname temporarily and for the current session
-  sudo raspi-config nonint do_hostname stargate # Sets hostname permanently
+  sudo raspi-config nonint do_hostname stargate > /dev/null # Sets hostname permanently
+  sudo hostnamectl set-hostname stargate > /dev/null # Sets hostname for the current session
+
+  ## Add an entry for 127.0.1.1 stargate
+  CONFIG='/etc/hosts'
+  if grep -Fq '127.0.1.1    stargate' $CONFIG > /dev/null
+  then
+      echo 'hosts file already configured'
+  else
+      echo 'Configuring hosts file'
+      sudo sed -i '$i\\r\n127.0.1.1    stargate\r\n' $CONFIG > /dev/null
+  fi
 }
 
 function configure_apache() {
@@ -112,11 +112,11 @@ EOT
   sudo ln -sf /etc/apache2/conf-available/stargate_api.conf /etc/apache2/conf-enabled/stargate_api.conf
 
   echo 'Configuring Apache to run the server as user and group ''sg1'''
-  sudo sed -i "s/export APACHE_RUN_USER=www-data/export APACHE_RUN_USER=pi/" /etc/apache2/envvars
-  sudo sed -i "s/export APACHE_RUN_GROUP=www-data/export APACHE_RUN_GROUP=pi/" /etc/apache2/envvars
+  sudo sed -i 's/export APACHE_RUN_USER=www-data/export APACHE_RUN_USER=pi/' /etc/apache2/envvars
+  sudo sed -i 's/export APACHE_RUN_GROUP=www-data/export APACHE_RUN_GROUP=pi/' /etc/apache2/envvars
 
   echo 'Configure the virtualhost DocumentRoot'
-  sudo sed -i "s|\("DocumentRoot" * *\).*|\1/home/pi/sg1_v4/web|" /etc/apache2/sites-available/000-default.conf
+  sudo sed -i 's|\("DocumentRoot" * *\).*|\1/home/pi/sg1_v4/web|' /etc/apache2/sites-available/000-default.conf
 
   # Enable ModProxy and ModProxyHTTP
   echo 'Apache Config: Enabling required modules.'
@@ -137,12 +137,12 @@ function restart_apache() {
 function configure_crontab() {
   # Add the speaker-tickler to our crontab
   echo 'Configuring crontab (user: pi)'
-  (crontab -l; echo "*/8 * * * * /home/pi/sg1_venv_v4/bin/python3 /home/pi/sg1_v4/scripts/speaker_on.py")|awk '!x[$0]++'|crontab -
+  (crontab -l; echo '*/8 * * * * /home/pi/sg1_venv_v4/bin/python3 /home/pi/sg1_v4/scripts/speaker_on.py')|awk '!x[$0]++'|crontab -
 }
 
 function disable_pwr_mgmt() {
   ## Disable power management/savings on the wifi adapter:
-  CONFIG="/etc/rc.local"
+  CONFIG='/etc/rc.local'
   if grep -Fq '/sbin/iw wlan0 set power_save off' $CONFIG
   then
       echo 'WiFi power management is already disabled'
@@ -156,11 +156,11 @@ function disable_onboard_audio() {
   # Disable the onboard audio adapter
   sudo cp /boot/config.txt /boot/config.bak
   echo 'Disabling RaspberryPi on-board audio adapter'
-  CONFIG="/boot/config.txt"
-  SETTING="off"
+  CONFIG='/boot/config.txt'
+  SETTING='off'
   sudo sed $CONFIG -i -r -e "s/^((device_tree_param|dtparam)=([^,]*,)*audio?)(=[^,]*)?/\1=$SETTING/"
-  if ! grep -q -E "^(device_tree_param|dtparam)=([^,]*,)*audio?=[^,]*" $CONFIG; then
-    echo "pattern not found, creating"
+  if ! grep -q -E '^(device_tree_param|dtparam)=([^,]*,)*audio?=[^,]*' $CONFIG; then
+    echo 'pattern not found, creating'
     printf "dtparam=audio=$SETTING\n" >> $CONFIG
   fi
 }
@@ -168,9 +168,9 @@ function disable_onboard_audio() {
 function configure_audio() {
   # Configure ALSA to use the external audio adapter
   echo 'Configuring ALSA to use external USB audio adapter'
-  CONFIG="/usr/share/alsa/alsa.conf" #
-  TEMP="alsa.temp"
-  SETTING="1"
+  CONFIG='/usr/share/alsa/alsa.conf'
+  TEMP='alsa.temp'
+  SETTING='1'
   sudo cp $CONFIG $TEMP
   sudo sed -i -e "s/defaults\.ctl\.card [01]/defaults.ctl.card $SETTING/g" \
   -e "s/defaults\.ctl\.card [01]/defaults.ctl.card $SETTING/g" $TEMP
