@@ -233,6 +233,8 @@ EOT
 }
 
 function configure_firewall_ufw() {
+  echo 'Configuring firewall'
+
   sudo ufw deny in on any
   sudo ufw allow OpenSSH # Allow SSH
   sudo ufw allow http # Allow HTTP
@@ -240,5 +242,7 @@ function configure_firewall_ufw() {
 
   sudo ufw deny in on subspace
   sudo ufw allow in on subspace to any port 3838 proto tcp # Allow Subspace Stargate traffic
+
+  echo 'Enabling firewall'
   echo "y" | sudo ufw enable
 }
