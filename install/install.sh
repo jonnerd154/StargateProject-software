@@ -35,6 +35,8 @@ echo
 echo
 echo "Setup complete. The machine will now reboot."
 echo
+echo " Connect via SSH: `ssh pi@stargate.local`"
+echo " Open the web interface `http://stargate.local`"
 echo
-
+echo
 sudo reboot
