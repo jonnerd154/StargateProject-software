@@ -53,13 +53,16 @@ function apt_update_and_install() {
 
   # Install system-level dependencies
   echo 'Installing system-level dependencies...this may take a while.'
-  sudo apt-get install -y clang python3-dev python3-venv libasound2-dev avahi-daemon apache2 wireguard | sed 's/^/     /'
+  sudo apt-get install -y clang python3-dev python3-venv libasound2-dev avahi-daemon apache2 wireguard ufw | sed 's/^/     /'
 }
 
 function init_venv() {
   # Create the virtual environment
   cd /home/pi
-  rm -Rf /home/pi/sg1_venv_v4
+
+  # Remove the env if it already exists
+  [ ! -d './sg1_venv_v4' ] && rm -Rf /home/pi/sg1_venv_v4
+
   echo 'Initializing Python virtual environment'
   python3 -m venv sg1_venv_v4
 
@@ -100,8 +103,9 @@ function configure_apache() {
 
   echo 'Apache Web Server Config: Start'
   echo 'Adding Stargate API Apache Configuration'
-  sudo rm /etc/apache2/conf-available/stargate_api.conf
-  sudo tee -a /etc/apache2/conf-available/stargate_api.conf > /dev/null <<EOT
+
+  # Add the new config
+  sudo tee /etc/apache2/conf-available/stargate_api.conf > /dev/null <<EOT
 <Directory /home/pi/sg1_v4/web>
     Options Indexes FollowSymLinks
     AllowOverride None
@@ -226,4 +230,15 @@ EOT
 
   echo 'Enabling stargate.service in the normal runlevels'
   sudo systemctl enable stargate.service
+}
+
+function configure_firewall_ufw() {
+  sudo ufw deny in on any
+  sudo ufw allow OpenSSH # Allow SSH
+  sudo ufw allow http # Allow HTTP
+  sudo ufw allow 8080/tcp # Allow StargateWebAPI
+
+  sudo ufw deny in on subspace
+  sudo ufw allow in on subspace to any port 3838 proto tcp # Allow Subspace Stargate traffic
+  echo "y" | sudo ufw enable
 }

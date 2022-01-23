@@ -33,6 +33,7 @@ disable_onboard_audio
 configure_audio
 configure_logrotate
 configure_systemd_service
+configure_firewall_ufw
 
 echo
 echo
