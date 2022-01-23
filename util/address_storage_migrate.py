@@ -5,4 +5,4 @@ sys.path.append('config')
 
 from stargate_address_book_migration import StargateAddressBookMigration # pylint: disable=wrong-import-position
 
-migration = StargateAddressBookMigration("/home/sg1/sg1/")
+migration = StargateAddressBookMigration("/home/sg1/sg1_v4/tmp")
