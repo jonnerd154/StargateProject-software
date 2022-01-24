@@ -9,7 +9,7 @@ from keyboard_manager import KeyboardManager
 from symbol_ring import SymbolRing
 from stargate_address_manager import StargateAddressManager
 from subspace_client import SubspaceClient
-from wormhole import Wormhole
+from wormhole_manager import WormholeManager
 from subspace_server import SubspaceServer
 
 class StargateSG1:
@@ -54,7 +54,7 @@ class StargateSG1:
         self.chevrons = ChevronManager(self)
         self.ring = SymbolRing(self)
         self.dialer = Dialer(self) # A "Dialer" is either a Keyboard or DHDv2
-        self.wh_manager = Wormhole(self)
+        self.wh_manager = WormholeManager(self)
         self.wh_manager.initialize_animation_manager()
 
         ## Create a background thread that runs in parallel and asks for user inputs from the DHD or keyboard.

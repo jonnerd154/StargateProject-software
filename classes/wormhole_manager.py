@@ -5,7 +5,7 @@ import math
 
 from wormhole_animation_manager import WormholeAnimationManager
 
-class Wormhole:
+class WormholeManager:
     """
     This class handles all things wormhole. It takes the stargate object as input.
     """
