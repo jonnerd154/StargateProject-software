@@ -346,8 +346,8 @@ class StargateSG1:
         # TODO: Some of this belongs in Subspace.
 
         # If the dialed address is valid
-        if len(self.address_buffer_outgoing) > 0 and self.addr_manager.valid_planet(self.address_buffer_outgoing) or \
-            len(self.address_buffer_incoming) > 0 and self.addr_manager.valid_planet(self.address_buffer_incoming):
+        if self.fan_gate_online_status and ( len(self.address_buffer_outgoing) > 0 and self.addr_manager.valid_planet(self.address_buffer_outgoing) or \
+            len(self.address_buffer_incoming) > 0 and self.addr_manager.valid_planet(self.address_buffer_incoming) ):
             # If we dialed a fan_gate
             if self.addr_manager.valid_planet(self.address_buffer_outgoing) == 'fan_gate':
                 # If the dialed fan_gate is not online
