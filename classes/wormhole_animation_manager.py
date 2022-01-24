@@ -4,12 +4,22 @@ from wormhole_pattern_manager import WormholePatternManager
 
 class WormholeAnimationManager:
 
-    def __init__(self, wormhole):
-        self.wormhole = wormhole
-        self.tot_leds = wormhole.tot_leds
-        self.pixels = wormhole.pixels
+    def __init__(self, stargate):
+        self.stargate = stargate
 
+        # We'll need to call WormholeAnimationManager.after_init() after the Wormhole object is initialized
+        # But initialize the class variables here
+        self.wh_manager = None
+        self.tot_leds = None
+        self.pixels = None
+        self.pattern_manager = None
+
+    def after_init(self, wh_manager):
+        self.wh_manager = wh_manager
+        self.tot_leds = self.wh_manager.tot_leds
+        self.pixels = self.wh_manager.pixels
         self.pattern_manager = WormholePatternManager(self.tot_leds)
+        self.clear_wormhole() # Turn off all the LEDs
 
     def animate_kawoosh(self):
         for i in range(20):
@@ -70,7 +80,7 @@ class WormholeAnimationManager:
         ### Rotate the pattern ###
         for revolution in range(revolutions): # pylint: disable=unused-variable
             for rotate in range(len(current_pattern)): # pylint: disable=unused-variable
-                if not self.wormhole:  # if the wormhole is cancelled
+                if not self.stargate.wormhole_active:  # if the wormhole is cancelled
                     return  # this exits the whole for loop, even if nested.
                 current_pattern = [current_pattern[(i + rot_direction) % len(current_pattern)]
                                    for i, x in enumerate(current_pattern)]
@@ -129,7 +139,7 @@ class WormholeAnimationManager:
         ## These are the two lists we are working with.
         # print(current_pattern)
         # print(new_pattern)
-        while current_pattern != new_pattern and self.wormhole:
+        while current_pattern != new_pattern and self.stargate.wormhole_active:
             tween_pattern = create_tween_pattern(current_pattern, new_pattern)
             current_pattern = tween_pattern
             self.set_wormhole_pattern(tween_pattern)

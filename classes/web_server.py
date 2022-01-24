@@ -49,7 +49,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "locked_chevrons_outgoing": self.stargate.locked_chevrons_outgoing,
                     "address_buffer_incoming":  self.stargate.address_buffer_incoming,
                     "locked_chevrons_incoming": self.stargate.locked_chevrons_incoming,
-                    "wormhole_active":          self.stargate.wormhole,
+                    "wormhole_active":          self.stargate.wormhole_active,
                     "black_hole_connected":     self.stargate.black_hole,
                     "connected_planet":         self.stargate.connected_planet_name,
                     "wormhole_open_time":       self.stargate.wh_manager.open_time,
@@ -123,14 +123,14 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
             ##### DO ACTION HANDLERS BELOW ####
             if self.path == '/do/shutdown':
-                self.stargate.wormhole = False
+                self.stargate.wormhole_active = False
                 sleep(5)
                 self.send_response(200, 'OK')
                 os.system('systemctl poweroff')
                 return
 
             if self.path == '/do/reboot':
-                self.stargate.wormhole = False
+                self.stargate.wormhole_active = False
                 sleep(5)
                 self.send_response(200, 'OK')
                 os.system('systemctl reboot')
@@ -141,16 +141,16 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
             elif self.path == "/do/all_chevron_leds_off":
                 self.stargate.chevrons.all_off()
-                self.stargate.wormhole = False
+                self.stargate.wormhole_active = False
 
             elif self.path == "/do/all_chevron_leds_on":
                 self.stargate.chevrons.all_lights_on()
 
             elif self.path == "/do/wormhole_on":
-                self.stargate.wormhole = True
+                self.stargate.wormhole_active = True
 
             elif self.path == "/do/wormhole_off":
-                self.stargate.wormhole = False
+                self.stargate.wormhole_active = False
 
             elif self.path == "/do/symbol_forward":
                 self.stargate.ring.move( 33, self.stargate.ring.forward_direction ) # Steps, Direction
@@ -167,7 +167,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 self.stargate.audio.volume_up()
 
             elif self.path == "/do/simulate_incoming":
-                if not self.stargate.wormhole: # If we don't already have an established wormhole
+                if not self.stargate.wormhole_active: # If we don't already have an established wormhole
                     # Get the loopback address and dial it
                     for symbol_number in self.stargate.addr_manager.get_book().get_local_loopback_address():
                         self.stargate.address_buffer_incoming.append(symbol_number)

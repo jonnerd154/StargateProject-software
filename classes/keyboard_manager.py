@@ -67,7 +67,7 @@ class KeyboardManager:
             ## If the user inputs the - key to abort. Not possible from the DHD.
             if key in abort_characters:
                 self.log.log("Abort Requested: Shutting down any active wormholes, stopping the gate.")
-                self.stargate.wormhole = False # Shutdown any open wormholes (particularly if turned on via web interface)
+                self.stargate.wormhole_active = False # Shutdown any open wormholes (particularly if turned on via web interface)
                 self.stargate.running = False  # Stop the stargate object from running.
 
                 break # This will break us out of the while loop and end the function.
@@ -94,14 +94,14 @@ class KeyboardManager:
     def queue_center_button(self):
         self.audio.play_random_clip("DHD")
         # If we are dialing
-        if len(self.stargate.address_buffer_outgoing) > 0 and not self.stargate.wormhole:
+        if len(self.stargate.address_buffer_outgoing) > 0 and not self.stargate.wormhole_active:
             self.stargate.centre_button_outgoing = True
             self.stargate.dialer.hardware.set_center_on() # Activate the centre_button_outgoing light
         # If an outgoing wormhole is established
-        if self.stargate.wormhole == 'outgoing':
+        if self.stargate.wormhole_active == 'outgoing':
             # TODO: We shouldn't be doing subspace-y stuff in the keyboard manager
             if self.addr_manager.is_fan_made_stargate(self.stargate.address_buffer_outgoing) \
              and self.stargate.fan_gate_online_status: # If we are connected to a fan_gate
                 self.stargate.subspace_client.send_to_remote_stargate(self.addr_manager.get_ip_from_stargate_address(self.stargate.address_buffer_outgoing), 'centre_button_incoming')
             if not self.stargate.black_hole: # If we did not dial the black hole.
-                self.stargate.wormhole = False # cancel outgoing wormhole
+                self.stargate.wormhole_active = False # cancel outgoing wormhole

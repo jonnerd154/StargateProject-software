@@ -112,9 +112,9 @@ class SubspaceServer:
                         return
 
                     # If a wormhole is already established, and we are receiving the centre_button_incoming from the same gate.
-                    if self.stargate.wormhole and addr[0] == self.stargate.fan_gate_incoming_ip:
+                    if self.stargate.wormhole_active and addr[0] == self.stargate.fan_gate_incoming_ip:
                         self.stargate.centre_button_incoming = False
-                        self.stargate.wormhole = False
+                        self.stargate.wormhole_active = False
                     # If we are dialling (no wormhole established)
                     else:
                         self.log.log("Received Center Button Incoming")
@@ -132,7 +132,7 @@ class SubspaceServer:
                 elif msg == 'what_is_your_status':
                     self.log.log(f'Received what_is_your_status from {addr} -> {msg}')
                     # It the wormhole is already established, or if we are dialing out.
-                    if self.stargate.wormhole or len(self.stargate.address_buffer_outgoing) > 0:
+                    if self.stargate.wormhole_active or len(self.stargate.address_buffer_outgoing) > 0:
                         # If the established wormhole is from the remote gate
                         if addr[0] == self.stargate.fan_gate_incoming_ip:
                             status = False

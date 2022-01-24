@@ -40,7 +40,7 @@ class StargateSG1:
         self.centre_button_incoming = False #A variable for the state of the centre button, incoming.
         self.locked_chevrons_outgoing = 0 # The current number of locked outgoing chevrons
         self.locked_chevrons_incoming = 0 # The current number of locked outgoing chevrons
-        self.wormhole = False # The state of the wormhole.
+        self.wormhole_active = False # The state of the wormhole.
         self.black_hole = False # Did we dial the black hole?
         self.fan_gate_online_status = True # To keep track of the dialed fan_gate status. Assume it's online until proven otherwise
         self.fan_gate_incoming_ip = None # To keep track of the IP address for the remote gate that establishes a wormhole
@@ -55,6 +55,7 @@ class StargateSG1:
         self.ring = SymbolRing(self)
         self.dialer = Dialer(self) # A "Dialer" is either a Keyboard or DHDv2
         self.wh_manager = Wormhole(self)
+        self.wh_manager.initialize_animation_manager()
 
         ## Create a background thread that runs in parallel and asks for user inputs from the DHD or keyboard.
         self.ask_for_input_thread = Thread(target=self.keyboard.ask_for_input, args=())
@@ -87,7 +88,7 @@ class StargateSG1:
         self.centre_button_incoming = False #A variable for the state of the centre button, incoming.
         self.locked_chevrons_outgoing = 0 # The current number of locked outgoing chevrons
         self.locked_chevrons_incoming = 0 # The current number of locked outgoing chevrons
-        self.wormhole = False # The state of the wormhole.
+        self.wormhole_active = False # The state of the wormhole.
         self.black_hole = False # Did we dial the black hole?
         self.fan_gate_online_status = True # To keep track of the dialed fan_gate status. Assume it's online until proven otherwise
         self.fan_gate_incoming_ip = None # To keep track of the IP address for the remote gate that establishes a wormhole
@@ -103,7 +104,7 @@ class StargateSG1:
         while self.running: # If we have not aborted
 
             ### The Dialing phase###
-            if not self.wormhole and self.running: # If we are in the dialing phase
+            if not self.wormhole_active and self.running: # If we are in the dialing phase
 
                 ## Outgoing dialing ##
                 self.outgoing_dialing()
@@ -122,9 +123,9 @@ class StargateSG1:
                     self.shutdown()
 
             ### The wormhole phase ###
-            elif self.wormhole: # If wormhole
+            elif self.wormhole_active: # If wormhole
                 self.ring.release() # Release the stepper motor.
-                self.wh_manager.establish_wormhole() # This will establish the wormhole and keep it running until self.wormhole is False
+                self.wh_manager.establish_wormhole() # This will establish the wormhole and keep it running until self.wormhole_active is False
                 #When the wormhole is no longer running
                 self.shutdown(cancel_sound=False)
 
@@ -237,9 +238,9 @@ class StargateSG1:
 
     def get_connected_planet_name(self):
 
-        if self.wormhole == 'outgoing':
+        if self.wormhole_active == 'outgoing':
             return self.addr_manager.get_planet_name_by_address(self.address_buffer_outgoing)
-        if self.wormhole == 'incoming':
+        if self.wormhole_active == 'incoming':
             return self.addr_manager.get_planet_name_by_address(self.address_buffer_incoming)
         # Not connected
         return False
@@ -247,7 +248,7 @@ class StargateSG1:
     def establishing_wormhole(self):
         """
         This is the method that decides if we are to establish a wormhole or not
-        :return: Nothing is returned, But the self.wormhole variable is changed if we can establish a wormhole.
+        :return: Nothing is returned, But the self.wormhole_active variable is changed if we can establish a wormhole.
         """
         ### Establishing wormhole ###
         ## Outgoing wormhole##
@@ -262,7 +263,7 @@ class StargateSG1:
                 self.ring.release() # Release the stepper to prevent overheating
 
                 # Update the state variables
-                self.wormhole = 'outgoing'
+                self.wormhole_active = 'outgoing'
                 self.connected_planet_name = self.get_connected_planet_name()
 
                 # Log some stuff
@@ -284,7 +285,7 @@ class StargateSG1:
             if self.address_buffer_incoming[0:-1] == self.addr_manager.get_book().get_local_address() or \
                 self.address_buffer_incoming[0:-1] == self.addr_manager.get_book().get_local_loopback_address():
                 # Update some state variables
-                self.wormhole = 'incoming'  # Set the wormhole state to activate the wormhole.
+                self.wormhole_active = 'incoming'  # Set the wormhole state to activate the wormhole.
                 self.connected_planet_name = self.get_connected_planet_name()
 
                 self.log.log('Incoming address is a match!')
@@ -333,7 +334,7 @@ class StargateSG1:
 
         # TODO: Use schedule
 
-        if not self.wormhole: #If we are in the dialing phase
+        if not self.wormhole_active: #If we are in the dialing phase
             if self.last_activity_time: #If the variable is not None
                 if (len(self.address_buffer_incoming) > 0) or (len(self.address_buffer_outgoing) > 0): # If there are something in the buffers
                     if (time() - self.last_activity_time) > seconds:
