@@ -314,11 +314,15 @@
             if($_GET.address) {
                 var chevrons = $_GET.address.split("-");
 
-                // Add the home symbol
-                chevrons.push("1");
+                // Set this to true to enable complete auto-dialing, with Origin and center button
+                // TODO: move this to a config file
+                if ( false ){
+                  // Add the home symbol
+                  chevrons.push("1");
 
-                // Add the center button
-                chevrons.push("0");
+                  // Add the center button
+                  chevrons.push("0");
+                }
 
                 // Configure some variable delays between presses to make it more realistic
                 var timeouts = [];
