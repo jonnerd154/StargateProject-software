@@ -246,3 +246,8 @@ function configure_firewall_ufw() {
   echo 'Enabling firewall'
   echo "y" | sudo ufw enable
 }
+
+function configure_subspace_wireguard() {
+  WGROOT=/etc/wireguard/
+  sudo su root -c "cd "$WGROOT"; wget https://thestargateproject.com/subspace.conf; chmod 600 subspace.conf"
+}

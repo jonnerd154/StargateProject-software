@@ -33,6 +33,7 @@ disable_onboard_audio
 configure_audio
 configure_logrotate
 configure_systemd_service
+configure_subspace_wireguard
 # configure_firewall_ufw # Requires a reboot to complete w/o error.
 
 echo
