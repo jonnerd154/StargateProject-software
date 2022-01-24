@@ -206,13 +206,6 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 elif symbol_number == 0:
                     self.stargate.keyboard.queue_center_button()
 
-                # elif data['action'] == "incoming_press":
-                #     symbol_number = int(data['symbol'])
-                #
-                #     if symbol_number > 0:
-                #         self.stargate.address_buffer_incoming.append(symbol_number)
-                #     elif symbol_number == 0:
-                #         self.stargate.centre_button_incoming = True
                 data = { "success": True }
 
             ##### UPDATE DATA HANDLERS BELOW ####
