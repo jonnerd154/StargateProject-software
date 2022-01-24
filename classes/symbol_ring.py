@@ -167,7 +167,6 @@ class SymbolRing:
 
             self.set_position() # Update the volatile position variable, we'll save it later.
 
-        self.release() # Release the stepper to prevent overheating
         self.audio.sound_stop('rolling_ring')  # stop the audio
 
     def calculate_steps(self, chevron_number, symbol_number):

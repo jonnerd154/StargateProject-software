@@ -258,6 +258,9 @@ class StargateSG1:
             self.try_sending_centre_button()
             # Try to establish a wormhole
             if self.possible_to_establish_wormhole():
+
+                self.ring.release() # Release the stepper to prevent overheating
+
                 # Update the state variables
                 self.wormhole = 'outgoing'
                 self.connected_planet_name = self.get_connected_planet_name()
