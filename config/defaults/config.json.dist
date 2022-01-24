@@ -19,7 +19,7 @@
     },
     "5": {
       "ledPin": 6,
-      "motorNumber": 6
+      "motorNumber": 7
     },
     "6": {
       "ledPin": 13,
