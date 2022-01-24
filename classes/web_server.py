@@ -138,33 +138,45 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
             if self.path == "/do/chevron_cycle":
                 self.stargate.chevrons.get(int(data['chevron_number'])).cycle_outgoing()
+                data = { "success": True }
 
             elif self.path == "/do/all_chevron_leds_off":
                 self.stargate.chevrons.all_off()
                 self.stargate.wormhole_active = False
+                data = { "success": True }
 
             elif self.path == "/do/all_chevron_leds_on":
                 self.stargate.chevrons.all_lights_on()
+                data = { "success": True }
 
             elif self.path == "/do/wormhole_on":
-                self.stargate.wormhole_active = True
+                if not self.stargate.wormhole_active:
+                    self.stargate.wormhole_active = True
+                    data = { "success": True }
+                else:
+                    data = { "success": False, "message": "A wormhole is already established." }
 
             elif self.path == "/do/wormhole_off":
                 self.stargate.wormhole_active = False
+                data = { "success": True }
 
             elif self.path == "/do/symbol_forward":
                 self.stargate.ring.move( 33, self.stargate.ring.forward_direction ) # Steps, Direction
                 self.stargate.ring.release()
+                data = { "success": True }
 
             elif self.path == "/do/symbol_backward":
                 self.stargate.ring.move( 33, self.stargate.ring.backward_direction ) # Steps, Direction
                 self.stargate.ring.release()
+                data = { "success": True }
 
             elif self.path == "/do/volume_down":
                 self.stargate.audio.volume_down()
+                data = { "success": True }
 
             elif self.path == "/do/volume_up":
                 self.stargate.audio.volume_up()
+                data = { "success": True }
 
             elif self.path == "/do/simulate_incoming":
                 if not self.stargate.wormhole_active: # If we don't already have an established wormhole
@@ -174,12 +186,17 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
                     self.stargate.address_buffer_incoming.append(7) # Point of origin
                     self.stargate.centre_button_incoming = True
+                    data = { "success": True }
+                else:
+                    data = { "success": False, "message": "A wormhole is already established." }
 
             elif self.path == "/do/subspace_up":
                 print("Subspace UP")
+                data = { "success": False, "message": "API NOT IMPLEMENTED" }
 
             elif self.path == "/do/subspace_down":
                 print("Subspace DOWN")
+                data = { "success": False, "message": "API NOT IMPLEMENTED" }
 
             elif self.path == "/do/dhd_press":
                 symbol_number = int(data['symbol'])
@@ -196,6 +213,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 #         self.stargate.address_buffer_incoming.append(symbol_number)
                 #     elif symbol_number == 0:
                 #         self.stargate.centre_button_incoming = True
+                data = { "success": True }
 
             ##### UPDATE DATA HANDLERS BELOW ####
             elif self.path == '/update/local_stargate_address':
@@ -234,9 +252,6 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     self.stargate.addr_manager.get_book().set_local_address(address)
                     data = { "success": True, "message": "There are no conflicts with your chosen address.<br><br>Local Address Saved." }
 
-                self.send_json_response(data)
-                return
-
             elif self.path == '/update/subspace_ip':
                 # TODO: Validate the IP address again (client did it, but we should too)
                 success = self.stargate.subspace_client.set_ip_address(data['ip'])
@@ -246,11 +261,20 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 else:
                     data = { "success": success, "message": "There was an error while saving the IP Address." }
 
-                self.send_json_response(data)
+            else:
+                # Unknown path, send 404
+                self.send_response(404, 'OK')
+                self.end_headers()
                 return
 
-            self.send_response(200, 'OK')
-            self.end_headers()
+            # If we have data, send it, else send a bare 200 OK
+            if data:
+                self.send_json_response(data)
+            else:
+                self.send_response(200, 'OK')
+                self.end_headers()
+
+            return
 
         except: # pylint: disable=bare-except
             if self.debug: # pylint: disable=no-member
