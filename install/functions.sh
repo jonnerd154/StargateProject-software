@@ -212,17 +212,44 @@ EOT
 function configure_systemd_service() {
   # Load the logrotated configs
   echo 'Adding systemd service'
+#   sudo tee /etc/systemd/system/stargate.service > /dev/null <<EOT
+# [Unit]
+# Description=BuildAStargate.com Stargate Daemon (SG1)
+# After=multi-user.target
+# [Service]
+# Type=simple
+# Restart=always
+# WorkingDirectory=/home/pi/sg1_v4
+# ExecStart=/home/pi/sg1_venv_v4/bin/python /home/pi/sg1_v4/main.py
+# [Install]
+# WantedBy=multi-user.target
+# EOT
   sudo tee /etc/systemd/system/stargate.service > /dev/null <<EOT
 [Unit]
 Description=BuildAStargate.com Stargate Daemon (SG1)
-After=multi-user.target
+Requires=multi-user.target
+After=multi-user.target rc-local.service
+AllowIsolate=yes
+
 [Service]
 Type=simple
-Restart=always
 WorkingDirectory=/home/pi/sg1_v4
 ExecStart=/home/pi/sg1_venv_v4/bin/python /home/pi/sg1_v4/main.py
+StandardInput=tty-force
+StandardOutput=null
+StandardError=null
+TTYPath=/dev/console
+TTYReset=yes
+IOSchedulingPriority=0
+IOSchedulingClass=realtime
+CPUSchedulingPolicy=fifo
+CPUSchedulingPriority=100
+Nice=20
+CPUSchedulingResetOnFork=yes
+
 [Install]
 WantedBy=multi-user.target
+
 EOT
 
   echo 'Reloading systemd daemon configs'
@@ -230,6 +257,12 @@ EOT
 
   echo 'Enabling stargate.service in the normal runlevels'
   sudo systemctl enable stargate.service
+
+  sudo systemctl stop stargate.service
+  sudo systemctl start stargate.service
+
+}
+
 }
 
 function configure_firewall_ufw() {
