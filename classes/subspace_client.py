@@ -118,7 +118,7 @@ class SubspaceClient:
         :param remote_ip: The IP address of the remote gate
         :return: True if a wormhole is already established and False if not.
         """
-        self.log.log("Checking gate status: {remote_ip}")
+        self.log.log(f"Checking gate status: {remote_ip}")
         status = self.send_to_remote_stargate(remote_ip, 'what_is_your_status')
         if status[1] == 'False':
             return False
