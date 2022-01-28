@@ -214,7 +214,7 @@ class StargateSG1:
                 except KeyError:  # If we dialed more chevrons than the stargate can handle.
                     pass  # Just pass without activating a chevron.
 
-                # Play the audio clip for incoming wormhole
+                # Play the audio clip for incoming wormhole for the first chevron
                 if self.locked_chevrons_incoming == 1:
                     self.audio.play_random_clip("IncomingWormhole")
 
