@@ -165,6 +165,7 @@ class StargateSG1:
                 # If the gate is presumed to be online, send it.
                 if self.fan_gate_online_status:
                     # send the locked symbols to the remote gate.
+
                     this_gate_ip = self.addr_manager.get_ip_from_stargate_address(self.address_buffer_outgoing )
                     this_message = str( self.address_buffer_outgoing[0:self.locked_chevrons_outgoing] )
                     has_connection = self.subspace_client.send_to_remote_stargate( this_gate_ip, this_message)[0] # Attempt to send
@@ -172,6 +173,12 @@ class StargateSG1:
                     # Check for success
                     if has_connection:
                         self.log.log(f'Subspace Sent: {self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]}')
+
+                        is_busy = self.subspace_client.get_status_of_remote_gate()
+                        if is_busy:
+                            self.log.log("The dialed Stargate is busy, can't establish a wormhole.")
+                        self.fan_gate_online_status = not is_busy
+
                     else:
                         self.log.log('This Gate is offline. Skipping Subspace sends for remainder of this dialing attempt.')
                         self.fan_gate_online_status = False # Gate is offline, don't keep sending messages during this dialing attempt
