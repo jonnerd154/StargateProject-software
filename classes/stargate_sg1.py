@@ -58,7 +58,7 @@ class StargateSG1:
         self.wh_manager.initialize_animation_manager()
 
         ## Create a background thread that runs in parallel and asks for user inputs from the DHD or keyboard.
-        self.ask_for_input_thread = Thread(target=self.keyboard.ask_for_input, args=())
+        self.ask_for_input_thread = Thread(target=self.keyboard.wait_for_keypress_stdin, args=())
         self.ask_for_input_thread.start()  # start
 
         ### Run the stargate server if we have an internet connection ###
