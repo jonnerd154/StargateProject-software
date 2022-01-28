@@ -174,6 +174,7 @@ class StargateSG1:
                     if has_connection:
                         self.log.log(f'Subspace Sent: {self.address_buffer_outgoing[0:self.locked_chevrons_outgoing]}')
 
+                        # Check if the recipient is busy. If so, stop sending subspace messages to it.
                         is_busy = self.subspace_client.get_status_of_remote_gate(this_gate_ip)
                         if is_busy:
                             self.log.log("The dialed Stargate is busy, can't establish a wormhole.")
