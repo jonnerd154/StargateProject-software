@@ -295,6 +295,7 @@ class StargateSG1:
                 # Update some state variables
                 self.wormhole_active = 'incoming'  # Set the wormhole state to activate the wormhole.
                 self.connected_planet_name = self.get_connected_planet_name()
+                self.stargate.dialer.hardware.set_center_on() # Activate the centre_button light
 
                 self.log.log('Incoming address is a match!')
                 self.log.log(f'INCOMING Wormhole from {self.connected_planet_name} established')

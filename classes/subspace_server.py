@@ -122,7 +122,6 @@ class SubspaceServer:
                         # If there are not already a saved IP, or if we dialed an none fan_gate
                         if not self.stargate.fan_gate_incoming_ip:
                             self.stargate.fan_gate_incoming_ip = addr[0] # Save the IO address when establishing a wormhole.
-                            self.stargate.dialer.hardware.set_center_on()# Activate the centre_button_outgoing light
 
                     planet_name = self.addr_manager.get_planet_name_from_ip(addr[0])
                     if self.logging == "verbose":
