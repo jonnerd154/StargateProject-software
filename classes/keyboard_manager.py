@@ -1,7 +1,6 @@
 import sys
 import tty
 import termios
-import keyboard
 
 class KeyboardManager:
 
@@ -15,8 +14,12 @@ class KeyboardManager:
         self.address_book = stargate.addr_manager.get_book()
 
         self.shift_pressed = False
-        keyboard.on_press(self.handle_keyboard_keypress)
-        keyboard.on_release_key("shift", self.handle_keyboard_release_shift)
+
+        if sys.platform != "darwin":
+            import keyboard # pylint: disable=import-outside-toplevel
+            keyboard.on_press(self.handle_keyboard_keypress)
+            keyboard.on_release_key("shift", self.handle_keyboard_release_shift)
+
         self.log.log("Listening for input from the DHD. You can abort with the '-' key.")
 
     @staticmethod
@@ -49,7 +52,8 @@ class KeyboardManager:
             char = sys.stdin.read(1)
         finally:
             termios.tcsetattr(file_desc, termios.TCSADRAIN, old_settings)
-        return char
+
+        self.handle_keypress_char(char)
 
     def service_stdin(self):
         """
@@ -58,9 +62,6 @@ class KeyboardManager:
         This function is run in parallel in its own thread.
         :return: Nothing is returned, but the stargate is manipulated.
         """
-
-        ## the dictionary containing the key to symbol-number relations.
-        key_symbol_map = self.get_key_map()
 
         self.log.log("Listening for input from the Dialer. You can abort with the '-' key.")
         while self.stargate.running: # Keep running and ask for user input
@@ -72,16 +73,16 @@ class KeyboardManager:
 # ++++ START: raw keyboard handling (for DHD)+++++++
 
     def handle_keyboard_keypress(self, key):
-      if key.name == 'shift':
-        self.shift_pressed = True
-      else:
-        if self.shift_pressed:
-          key.name = key.name.upper()
+        if key.name == 'shift':
+            self.shift_pressed = True
+        else:
+            if self.shift_pressed:
+                key.name = key.name.upper()
 
         self.handle_keypress_char(key.name)
 
-    def handle_keyboard_release_shift(self, event):
-      self.shift_pressed = False
+    def handle_keyboard_release_shift(self, event): # pylint: disable=unused-argument
+        self.shift_pressed = False
 
 # ++++ END: raw keyboard handling (for DHD)+++++++
 
