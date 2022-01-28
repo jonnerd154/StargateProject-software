@@ -1,7 +1,7 @@
 from ast import literal_eval
 from datetime import datetime
-import requests
 import json
+import requests
 
 from database import Database
 from stargate_address_book import StargateAddressBook
