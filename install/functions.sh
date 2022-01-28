@@ -271,6 +271,8 @@ function configure_wireguard(){
 function configure_firewall_ufw() {
   echo 'Configuring firewall'
 
+
+  sudo ufw reload
   sudo ufw deny in on any
   sudo ufw allow OpenSSH # Allow SSH
   sudo ufw allow http # Allow HTTP
