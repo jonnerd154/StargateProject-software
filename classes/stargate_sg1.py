@@ -241,7 +241,7 @@ class StargateSG1:
         if self.wormhole_active == 'outgoing':
             return self.addr_manager.get_planet_name_by_address(self.address_buffer_outgoing)
         if self.wormhole_active == 'incoming':
-            return self.addr_manager.get_planet_name_by_address(self.address_buffer_incoming)
+            return self.addr_manager.get_planet_name_from_ip(self.fan_gate_incoming_ip)
         # Not connected
         return False
 

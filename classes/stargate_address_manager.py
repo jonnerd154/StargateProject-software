@@ -180,8 +180,8 @@ class StargateAddressManager:
         :param IP: the IP address as a string
         :return: The planet/stargate name is returned as a string.
         """
-        for config in enumerate(self.address_book.get_fan_gates().values()):
-            if config['ip_address'] == remote_ip:
+        for gate_name, config in self.address_book.get_fan_gates().items(): # pylint: disable=unused-variable
+            if config['ip_address'] == str(remote_ip):
                 return config['name']
         return 'Unknown'
 
