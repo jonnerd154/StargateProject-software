@@ -263,6 +263,9 @@ EOT
 
 }
 
+function configure_wireguard(){
+  echo 'Configuring wireguard VPN / Subspace Interface'
+  sudo su root -c "cd /etc/wireguard/; wget https://thestargateproject.com/subspace.conf; chmod 600 subspace.conf"
 }
 
 function configure_firewall_ufw() {
