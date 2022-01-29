@@ -22,7 +22,7 @@ class SymbolRing:
         # Retrieve the configurations
         self.stepper_drive_mode = self.cfg.get("stepper_drive_mode")
         self.total_steps = self.cfg.get("stepper_one_revolution_steps") # Old value: 1251
-        # self.micro_steps = self.cfg.get("stepper_micro_steps")
+        # self.micro_steps = self.cfg.get("stepper_micro_steps") # TODO: Remove from config file
         self.normal_speed = self.cfg.get("stepper_normal_speed")
         self.slow_speed = self.cfg.get("stepper_slow_speed")
         self.initial_speed = self.cfg.get("stepper_initial_speed")
