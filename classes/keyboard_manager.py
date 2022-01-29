@@ -2,6 +2,7 @@ import sys
 from threading import Thread
 import tty
 import termios
+import evdev
 
 class KeyboardManager:
 
@@ -16,7 +17,7 @@ class KeyboardManager:
         self.address_book = stargate.addr_manager.get_book()
 
         if is_daemon:
-            pass
+            self.keyboard_direct_thread_start()
         else:
             self.stdin_thread_start()
 
@@ -65,6 +66,46 @@ class KeyboardManager:
         stargate.log.log("Listening for input from the DHD/Keyboard on STDIN. You can abort with the '-' key.")
         while stargate.running:
             self.keypress_handler( self.block_for_stdin() ) # Blocks the thread until a character is subspace_client_server_thread
+
+    def keyboard_direct_thread_start(self):
+        ## Create a background thread that runs in parallel and asks for user inputs from the DHD or keyboard.
+        self.ask_for_input_thread = Thread(target=self.thread_keyboard_direct, args=([self.stargate]))
+        self.ask_for_input_thread.start()  # start
+
+    def thread_keyboard_direct(self, stargate):
+        """
+        This function takes the stargate as input and listens for user input (from the DHD or keyboard).
+        This function is run in parallel in its own thread.
+        :return: Nothing is returned, but the stargate is manipulated.
+        """
+
+        stargate.log.log("Listening for input from the DHD/Keyboard via direct input. You can abort with the '-' key.")
+        while stargate.running:
+            device = evdev.InputDevice('/dev/input/event1')
+            stargate.log.log(device)
+
+            self.block_for_keyboard_direct(device)
+            
+            #self.keypress_handler( self.block_for_keyboard_direct(device) ) # Blocks the thread until a character is subspace_client_server_thread
+
+    @staticmethod
+    def block_for_keyboard_direct(log, device):
+        """
+        This helper function stops the program (thread) and waits for a single keypress via direct keyboard input.
+        :return: The pressed key is returned.
+        """
+        for event in device.read_loop():
+            if event.type == evdev.ecodes.EV_KEY:
+                log.log(evdev.categorize(event))
+
+
+
+
+
+
+
+
+
 
     def keypress_handler( self, key ):
         """
