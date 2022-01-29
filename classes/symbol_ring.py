@@ -121,28 +121,32 @@ class SymbolRing:
             return max_steps - position
         return 0
 
-    def move(self, steps, direction=False):
+    def move(self, steps, direction):
         """
         This method moves the stepper motor the desired number of steps in the desired direction and updates the
         saved position with the new value. This method does NOT release the stepper. Do this with the release method.
-        :param steps: the number of steps to move as int. Negative is backward(ccw) and positive is forward (cw)
+        :param steps: the number of steps to move as int.
+        :param direction: the direction to move. Must be either self.forward_direction or self.backward_direction
         :return: Nothing is returned
         """
 
-        ## Set the direction, if it wasn't specified ##
-        if not direction:
-            if steps >= 0:  # If steps is positive move forward
-                direction = self.forward_direction
-            else:  # if steps is negative move backward
-                steps = abs(steps)
-                direction = self.backward_direction
+        # Check that `direction` is valid
+        if direction not in [ self.forward_direction, self.backward_direction ]:
+            self.log.log("move() called with invalid direction")
+            raise ValueError
 
+        # Check that `steps` is valid/non-negative
+        if steps < 0:
+            self.log.log("move() called with negative steps")
+            raise ValueError
+
+        # Set the initial speed, will vary in the loop to accel/decel
         current_speed = self.initial_speed
 
         # Start the rolling ring sound
         self.audio.sound_start('rolling_ring')
 
-        # Move the ring
+        # Move the ring one step at at time
         for i in range(steps):
             # Check if the gate is still running, if not, break out of the loop.
             if not self.stargate.running:
@@ -204,14 +208,25 @@ class SymbolRing:
         if self.ring_direction_mode_longest is False:
             ## Option one. This will move the symbol the shortest direction, cc or ccw.
             if calc_steps: # If not None
-                self.move(calc_steps) # move the ring the calc_steps steps.
+                ## Determine the direction
+                if calc_steps >= 0:  # If steps is positive move forward
+                    direction = self.forward_direction
+                else:  # if steps is negative move backward
+                    calc_steps = abs(steps)
+                    direction = self.backward_direction
+
+                self.move(calc_steps, direction) # move the ring the calc_steps steps.
         else:
             ## Option two. This will move the symbol the longest direction, cc or ccw.
             if calc_steps: # If not None
                 if calc_steps >= 0:
-                    self.move((self.total_steps - calc_steps) * -1)  # move the ring, but the long way in the opposite direction.
+                    steps = (self.total_steps - calc_steps)
+                    direction = self.backward_direction
+                    self.move(steps, direction)  # move the ring, but the long way in the opposite direction.
                 else:
-                    self.move((self.total_steps - abs(calc_steps)))  # move the ring, but the long way in the opposite direction.
+                    steps = self.total_steps - abs(calc_steps)
+                    direction = self.forward_direction
+                    self.move(steps, direction)  # move the ring, but the long way in the opposite direction.
 
     def get_position(self):
         return self.position_store.get('ring_position')
