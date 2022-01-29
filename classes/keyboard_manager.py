@@ -2,7 +2,6 @@ import sys
 from threading import Thread
 import tty
 import termios
-import keyboard
 
 class KeyboardManager:
 
@@ -80,11 +79,15 @@ class KeyboardManager:
         """
 
         stargate.log.log("Initializing Keyboard listeners")
-        for char_in, symbol_number in self.get_symbol_key_map().items():
+
+        # pylint: disable-next=import-outside-toplevel
+        import keyboard # importing this on MacOS causes a seg fault
+
+        for char_in in self.get_symbol_key_map():
             # Transform upper case presses
             char = char_in
             if char_in != char_in.lower():
-              char = f"shift+{char.lower()}"
+                char = f"shift+{char.lower()}"
 
             # Add the hotkey
             keyboard.add_hotkey(char, lambda char_in=char_in: self.keypress_handler(char_in))
@@ -94,16 +97,6 @@ class KeyboardManager:
 
         stargate.log.log("Listening for input from the DHD/Keyboard via direct input. You can abort with the '-' key.")
         keyboard.wait()
-
-    @staticmethod
-    def block_for_keyboard_direct(log, device):
-        """
-        This helper function stops the program (thread) and waits for a single keypress via direct keyboard input.
-        :return: The pressed key is returned.
-        """
-        for event in device.read_loop():
-            if event.type == evdev.ecodes.EV_KEY:
-                log.log(evdev.categorize(event))
 
     def keypress_handler( self, key ):
         """
