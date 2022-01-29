@@ -28,8 +28,8 @@ from network_tools import NetworkTools
 class GateApplication:
 
     @staticmethod
-    def is_daemon():
-        for i, arg in enumerate(sys.argv):
+    def check_is_daemon():
+        for arg in enumerate(sys.argv):
             if arg == "--daemon":
                 return True
         return False
@@ -43,7 +43,7 @@ class GateApplication:
             sys.exit(1)
 
         # Check if we're running in systemd, some functionality will change if so.
-        self.is_daemon = self.is_daemon()
+        self.is_daemon = self.check_is_daemon()
 
         # Get the base path of execution - this is used in various places when working with files
         self.base_path = os.path.split(os.path.abspath(__file__))[0]
