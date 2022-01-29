@@ -96,9 +96,6 @@ class SymbolRing:
         self.position_store.set_log(self.log)
         self.position_store.load()
 
-        self.position_store.set_non_persistent('ring_position', 0)
-        self.save_position()
-
         ## Initialize the Homing Manager
         self.homing_manager = SymbolRingHomingManager(stargate, self)
 
