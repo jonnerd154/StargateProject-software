@@ -6,8 +6,6 @@ from homing import SymbolRingHomingManager
 class SymbolRing:
     """
     The dialing sequence.
-    One iteration is 16 micro steps (as printed from the onestep function when stepper.DOUBLE. But for unknown reasons
-    the first step is 8 micro steps..) This is set in the self.micro_steps variable.
     1251 is the normal steps needed for one revolutions of the gate as set in self.total_steps.
     # A range of 32 is approximately one symbol movement.
     """
@@ -24,7 +22,7 @@ class SymbolRing:
         # Retrieve the configurations
         self.stepper_drive_mode = self.cfg.get("stepper_drive_mode")
         self.total_steps = self.cfg.get("stepper_one_revolution_steps") # Old value: 1251
-        self.micro_steps = self.cfg.get("stepper_micro_steps")
+        # self.micro_steps = self.cfg.get("stepper_micro_steps")
         self.normal_speed = self.cfg.get("stepper_normal_speed")
         self.slow_speed = self.cfg.get("stepper_slow_speed")
         self.initial_speed = self.cfg.get("stepper_initial_speed")
@@ -94,10 +92,12 @@ class SymbolRing:
         self.stepper_drive_mode = stargate.electronics.get_stepper_drive_mode(self.stepper_drive_mode)
 
         # Load the last known ring position
-        self.stepper_pos = 0
         self.position_store = StargateConfig(self.base_path, "ring_position.json", { "ring_position": 0 })
         self.position_store.set_log(self.log)
         self.position_store.load()
+
+        self.position_store.set_non_persistent('ring_position', 0)
+        self.save_position()
 
         ## Initialize the Homing Manager
         self.homing_manager = SymbolRingHomingManager(stargate, self)
@@ -124,12 +124,12 @@ class SymbolRing:
     def move(self, steps, direction=False):
         """
         This method moves the stepper motor the desired number of steps in the desired direction and updates the
-        self.stepper_pos with the new value. This method does NOT release the stepper. Do this with the release method.
-        Nor does this method update the "ring_position". Do this with the ring_position method.
+        saved position with the new value. This method does NOT release the stepper. Do this with the release method.
         :param steps: the number of steps to move as int. Negative is backward(ccw) and positive is forward (cw)
         :return: Nothing is returned
         """
-        ## Set the direction ##
+
+        ## Set the direction, if it wasn't specified ##
         if not direction:
             if steps >= 0:  # If steps is positive move forward
                 direction = self.forward_direction
@@ -139,18 +139,17 @@ class SymbolRing:
 
         current_speed = self.initial_speed
 
-        # Move the ring
-        self.audio.sound_start('rolling_ring')  # play the audio movement
-        stepper_micro_pos = 0
-        for i in range(steps):
+        # Start the rolling ring sound
+        self.audio.sound_start('rolling_ring')
 
+        # Move the ring
+        for i in range(steps):
             # Check if the gate is still running, if not, break out of the loop.
             if not self.stargate.running:
                 break
 
+            # Move the stepper one step
             self.stepper.onestep(direction=direction, style=self.stepper_drive_mode)
-            stepper_micro_pos += 8
-            self.stepper_pos = (stepper_micro_pos // self.micro_steps) % self.total_steps # Update the self.stepper_pos value as the ring moves. Will have a value from 0 till self.total_steps = 1250.
 
             ## acceleration
             if i < self.acceleration_length:
@@ -165,7 +164,11 @@ class SymbolRing:
                 current_speed = self.normal_speed
                 sleep(current_speed)
 
-            self.set_position() # Update the volatile position variable, we'll save it later.
+            # Update the position in non-persistent memory
+            self.update_position(1, direction)
+
+        # After this move() is complete, save the position to persistent memory
+        self.save_position()
 
         self.audio.sound_stop('rolling_ring')  # stop the audio
 
@@ -195,7 +198,6 @@ class SymbolRing:
         :param chevron: the number of the chevron
         :return: nothing is returned
         """
-
         calc_steps = self.calculate_steps(chevron_number, symbol_number) # calculate the steps
 
         # Choose which ring direction mode to use
@@ -211,16 +213,17 @@ class SymbolRing:
                 else:
                     self.move((self.total_steps - abs(calc_steps)))  # move the ring, but the long way in the opposite direction.
 
-        # Update and save the ring position.
-        self.set_position()
-        self.save_position()
-
     def get_position(self):
         return self.position_store.get('ring_position')
 
-    def set_position(self):
-        calculated_position = ( (self.stepper_pos + self.get_position() ) % self.total_steps) + self.homing_manager.offset
-        self.position_store.set_non_persistent('ring_position', calculated_position)
+    def update_position(self, steps, direction):
+        if direction == self.forward_direction:
+            offset = steps
+        else: # Backward
+            offset = steps * -1
+
+        new_position = (self.get_position() + offset) % self.total_steps
+        self.position_store.set_non_persistent('ring_position', new_position)
 
     def save_position(self):
         self.position_store.save()
