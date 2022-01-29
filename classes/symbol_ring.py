@@ -240,6 +240,10 @@ class SymbolRing:
     def save_position(self):
         self.position_store.save()
 
+    def zero_position(self):
+        self.position_store.set_non_persistent('ring_position', 0)
+        self.save_position()
+
     def release(self):
 
         """

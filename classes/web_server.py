@@ -54,7 +54,8 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "connected_planet":         self.stargate.connected_planet_name,
                     "wormhole_open_time":       self.stargate.wh_manager.open_time,
                     "wormhole_max_time":        self.stargate.wh_manager.wormhole_max_time,
-                    "wormhole_time_till_close": self.stargate.wh_manager.get_time_remaining()
+                    "wormhole_time_till_close": self.stargate.wh_manager.get_time_remaining(),
+                    "ring_position":            self.stargate.ring.get_position()
                 }
 
             elif request_path == "/get/system_info":
@@ -210,6 +211,10 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
             elif self.path == "/do/clear_outgoing_buffer":
                 self.stargate.shutdown(cancel_sound=False, wormhole_fail_sound=False)
+                data = { "success": True }
+
+            elif self.path == "/do/set_glyph_ring_zero":
+                self.stargate.ring.zero_position()
                 data = { "success": True }
 
             ##### UPDATE DATA HANDLERS BELOW ####
