@@ -2,7 +2,7 @@ import sys
 from threading import Thread
 import tty
 import termios
-import evdev
+import keyboard
 
 class KeyboardManager:
 
@@ -79,13 +79,21 @@ class KeyboardManager:
         :return: Nothing is returned, but the stargate is manipulated.
         """
 
-        stargate.log.log("Listening for input from the DHD/Keyboard via direct input. You can abort with the '-' key.")
-        while stargate.running:
-            device = evdev.InputDevice('/dev/input/event1')
-            stargate.log.log(device)
+        stargate.log.log("Initializing Keyboard listeners")
+        for char_in, symbol_number in self.get_symbol_key_map().items():
+            # Transform upper case presses
+            char = char_in
+            if char_in != char_in.lower():
+              char = f"shift+{char.lower()}"
 
-            self.block_for_keyboard_direct(stargate.log, device)
-            #self.keypress_handler( self.block_for_keyboard_direct(device) ) # Blocks the thread until a character is subspace_client_server_thread
+            # Add the hotkey
+            keyboard.add_hotkey(char, lambda char_in=char_in: self.keypress_handler(char_in))
+
+        # Add one for the center button ("A")
+        keyboard.add_hotkey("shift+a", lambda: self.keypress_handler("A"))
+
+        stargate.log.log("Listening for input from the DHD/Keyboard via direct input. You can abort with the '-' key.")
+        keyboard.wait()
 
     @staticmethod
     def block_for_keyboard_direct(log, device):
