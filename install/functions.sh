@@ -79,6 +79,9 @@ function init_venv() {
 
   echo 'Deactivating the virtual environment'
   deactivate
+
+  echo 'Adding "py4sg" symbolic link in /usr/bin'
+  sudo ln -s /home/pi/venv_v4/bin/python /usr/bin/py4sg
 }
 
 function configure_hostname() {
