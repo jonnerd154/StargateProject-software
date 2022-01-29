@@ -234,7 +234,7 @@ AllowIsolate=yes
 [Service]
 Type=simple
 WorkingDirectory=/home/pi/sg1_v4
-ExecStart=/home/pi/sg1_venv_v4/bin/python /home/pi/sg1_v4/main.py
+ExecStart=/home/pi/sg1_venv_v4/bin/python /home/pi/sg1_v4/main.py --daemon
 StandardInput=tty-force
 StandardOutput=null
 StandardError=null

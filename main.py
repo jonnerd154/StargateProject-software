@@ -7,6 +7,7 @@ This main.py file is run automatically on boot. It is executed in the .bashrc fi
 
 import sys
 import os
+import psutil
 from http.server import HTTPServer
 import threading
 import atexit
@@ -27,6 +28,13 @@ from network_tools import NetworkTools
 
 class GateApplication:
 
+    @staticmethod
+    def is_daemon():
+        for i, arg in enumerate(sys.argv):
+            if arg == "--daemon":
+                return True
+        return False
+
     def __init__(self):
 
         # Check that we're running with root-like permissions (sudo)
@@ -35,13 +43,17 @@ class GateApplication:
             print("Stopping startup.")
             sys.exit(1)
 
+        # Check if we're running in systemd, some functionality will change if so.
+        self.is_daemon = self.is_daemon()
+
+        # Get the base path of execution - this is used in various places when working with files
         self.base_path = os.path.split(os.path.abspath(__file__))[0]
 
-        ### Load our config file
+        ### Load our config file.
         self.cfg = StargateConfig(self.base_path, "config.json")
 
-        ### Setup the logger
-        self.log = AncientsLogBook(self.base_path, "sg1.log")
+        ### Setup the logger. If we're in systemd, don't print to the console.
+        self.log = AncientsLogBook(self.base_path, "sg1.log", print_to_console = not self.is_daemon )
         self.cfg.set_log(self.log)
         self.cfg.load()
 
