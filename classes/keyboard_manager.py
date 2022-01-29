@@ -124,7 +124,7 @@ class KeyboardManager:
             return
         except KeyError:
             # The key pressed is not a symbol
-            self.log.log(f'Unknown key: {key} -> symbol: {symbol_number} SYMBOL')
+            self.log.log(f'Unknown key: {key}')
 
     def queue_symbol(self, symbol_number):
         self.audio.play_random_clip("DHD")
