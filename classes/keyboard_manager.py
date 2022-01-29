@@ -42,7 +42,7 @@ class KeyboardManager:
     @staticmethod
     def block_for_stdin():
         """
-        This helper function stops the program (thread) and waits for a single keypress.
+        This helper function stops the program (thread) and waits for a single keypress on STDIN.
         :return: The pressed key is returned.
         """
 
@@ -62,7 +62,7 @@ class KeyboardManager:
         :return: Nothing is returned, but the stargate is manipulated.
         """
 
-        stargate.log.log("Listening for input from the DHD/Keyboard. You can abort with the '-' key.")
+        stargate.log.log("Listening for input from the DHD/Keyboard on STDIN. You can abort with the '-' key.")
         while stargate.running:
             self.keypress_handler( self.block_for_stdin() ) # Blocks the thread until a character is subspace_client_server_thread
 
