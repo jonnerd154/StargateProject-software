@@ -3,7 +3,7 @@ from hardware_detection import HardwareDetector
 class Electronics: # pylint: disable=too-few-public-methods
 
     def __init__(self, app):
-        detector = HardwareDetector()
+        detector = HardwareDetector(app)
 
         self.motor_hardware_mode = detector.get_motor_hardware_mode()
 
