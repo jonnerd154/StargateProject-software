@@ -208,6 +208,10 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
                 data = { "success": True }
 
+            elif self.path == "/do/clear_outgoing_buffer":
+                self.stargate.shutdown(cancel_sound=False, wormhole_fail_sound=False)
+                data = { "success": True }
+
             ##### UPDATE DATA HANDLERS BELOW ####
             elif self.path == '/update/local_stargate_address':
 
