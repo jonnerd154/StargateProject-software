@@ -84,8 +84,7 @@ class KeyboardManager:
             device = evdev.InputDevice('/dev/input/event1')
             stargate.log.log(device)
 
-            self.block_for_keyboard_direct(device)
-            
+            self.block_for_keyboard_direct(stargate.log, device)
             #self.keypress_handler( self.block_for_keyboard_direct(device) ) # Blocks the thread until a character is subspace_client_server_thread
 
     @staticmethod
@@ -97,15 +96,6 @@ class KeyboardManager:
         for event in device.read_loop():
             if event.type == evdev.ecodes.EV_KEY:
                 log.log(evdev.categorize(event))
-
-
-
-
-
-
-
-
-
 
     def keypress_handler( self, key ):
         """
