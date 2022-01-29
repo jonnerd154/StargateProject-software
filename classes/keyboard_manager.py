@@ -16,7 +16,7 @@ class KeyboardManager:
         self.address_book = stargate.addr_manager.get_book()
 
         if is_daemon:
-            pass
+            self.keyboard_direct_thread_start()
         else:
             self.stdin_thread_start()
 
@@ -66,6 +66,38 @@ class KeyboardManager:
         while stargate.running:
             self.keypress_handler( self.block_for_stdin() ) # Blocks the thread until a character is subspace_client_server_thread
 
+    def keyboard_direct_thread_start(self):
+        ## Create a background thread that runs in parallel and asks for user inputs from the DHD or keyboard.
+        self.ask_for_input_thread = Thread(target=self.thread_keyboard_direct, args=([self.stargate]))
+        self.ask_for_input_thread.start()  # start
+
+    def thread_keyboard_direct(self, stargate):
+        """
+        This function takes the stargate as input and listens for user input (from the DHD or keyboard).
+        This function is run in parallel in its own thread.
+        :return: Nothing is returned, but the stargate is manipulated.
+        """
+
+        stargate.log.log("Initializing Keyboard listeners")
+
+        # pylint: disable-next=import-outside-toplevel
+        import keyboard # importing this on MacOS causes a seg fault
+
+        for char_in in self.get_symbol_key_map():
+            # Transform upper case presses
+            char = char_in
+            if char_in != char_in.lower():
+                char = f"shift+{char.lower()}"
+
+            # Add the hotkey
+            keyboard.add_hotkey(char, lambda char_in=char_in: self.keypress_handler(char_in))
+
+        # Add one for the center button ("A")
+        keyboard.add_hotkey("shift+a", lambda: self.keypress_handler("A"))
+
+        stargate.log.log("Listening for input from the DHD/Keyboard via direct input. You can abort with the '-' key.")
+        keyboard.wait()
+
     def keypress_handler( self, key ):
         """
         This function takes a keypress and interprets it's meaning for the Stargate.
@@ -93,7 +125,7 @@ class KeyboardManager:
             return
         except KeyError:
             # The key pressed is not a symbol
-            self.log.log(f'Unknown key: {key} -> symbol: {symbol_number} SYMBOL')
+            self.log.log(f'Unknown key: {key}')
 
     def queue_symbol(self, symbol_number):
         self.audio.play_random_clip("DHD")

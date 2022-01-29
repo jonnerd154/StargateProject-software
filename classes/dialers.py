@@ -45,11 +45,11 @@ class Dialer: # pylint: disable=too-few-public-methods
         try:
             # Get a Semaphore lock on the parent process so when the PyCmdMessenger class
             # prints to STDOUT, it doesn't step on STDOUT from other threads
-            self.thread_lock.acquire()
+            self.thread_lock.acquire() # pylint: disable=consider-using-with
             ### Connect to the DHD object. Will throw exception if not present
             dhd = DHDv2(self.dhd_port, self.dhd_baud_rate)
             self.log.log('DHDv2 Found. Connected.')
-        except SerialException:
+        except SerialException: # pylint: disable=try-except-raise
             raise
         finally:
             # Always release the Semaphore lock

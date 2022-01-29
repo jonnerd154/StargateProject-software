@@ -212,7 +212,7 @@ class SymbolRing:
                 if calc_steps >= 0:  # If steps is positive move forward
                     direction = self.forward_direction
                 else:  # if steps is negative move backward
-                    calc_steps = abs(steps)
+                    calc_steps = abs(calc_steps)
                     direction = self.backward_direction
 
                 self.move(calc_steps, direction) # move the ring the calc_steps steps.
@@ -220,13 +220,13 @@ class SymbolRing:
             ## Option two. This will move the symbol the longest direction, cc or ccw.
             if calc_steps: # If not None
                 if calc_steps >= 0:
-                    steps = (self.total_steps - calc_steps)
+                    calc_steps = (self.total_steps - calc_steps)
                     direction = self.backward_direction
-                    self.move(steps, direction)  # move the ring, but the long way in the opposite direction.
+                    self.move(calc_steps, direction)  # move the ring, but the long way in the opposite direction.
                 else:
-                    steps = self.total_steps - abs(calc_steps)
+                    calc_steps = self.total_steps - abs(calc_steps)
                     direction = self.forward_direction
-                    self.move(steps, direction)  # move the ring, but the long way in the opposite direction.
+                    self.move(calc_steps, direction)  # move the ring, but the long way in the opposite direction.
 
     def get_position(self):
         return self.position_store.get('ring_position')
