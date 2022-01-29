@@ -11,13 +11,13 @@ class Dialer: # pylint: disable=too-few-public-methods
         self.cfg = stargate.cfg
 
         # Retrieve the configurations
-        self.dhd_port = self.cfg.get("DHD_serial_port")
-        self.dhd_baud_rate = self.cfg.get("DHD_baud_rate")
-        self.dhd_brightness_center = self.cfg.get("DHD_brightness_center")
-        self.dhd_brightness_symbols = self.cfg.get("DHD_brightness_symbols")
-        self.dhd_color_center = self.cfg.get("DHD_color_center")
-        self.dhd_color_symbols = self.cfg.get("DHD_color_symbols")
-        self.dhd_enable = self.cfg.get("DHD_enable")
+        self.dhd_port = self.cfg.get("dhd_serial_port")
+        self.dhd_baud_rate = self.cfg.get("dhd_baud_rate")
+        self.dhd_brightness_center = self.cfg.get("dhd_brightness_center")
+        self.dhd_brightness_symbols = self.cfg.get("dhd_brightness_symbols")
+        self.dhd_color_center = self.cfg.get("dhd_color_center")
+        self.dhd_color_symbols = self.cfg.get("dhd_color_symbols")
+        self.dhd_enable = self.cfg.get("dhd_enable")
 
         self.hardware = None
         self.type = None

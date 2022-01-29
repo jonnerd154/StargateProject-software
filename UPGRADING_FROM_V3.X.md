@@ -25,7 +25,7 @@ If you already have a Stargate built and running, you'll want to copy some confi
 You can modify them to match your custom configuration. You'll find them in:
 _Be careful when editing!_ If the file doesn't contain valid JSON, the software won't start.
 - `/home/pi/sg1_v4/config/addresses.json` - adjust `local_stargate_address` (from old /home/sg1/sg1/stargate_address.py)
-- `/home/pi/sg1_v4/config/config.json` - adjust `chevronMapping` (from old /home/sg1/sg1/chevrons.py)
+- `/home/pi/sg1_v4/config/config.json` - adjust `chevron_mapping` (from old /home/sg1/sg1/chevrons.py)
 5. After changing these configurations, restart the Stargate software to load the new values:
 ```
 sudo systemctl restart stargate.service

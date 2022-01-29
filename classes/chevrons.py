@@ -15,8 +15,8 @@ class ChevronManager:
     def load_from_config(self):
         # Retrieve the Chevron config and initialize the Chevron objects
         self.chevrons = {}
-        for key, value in self.cfg.get("chevronMapping").items():
-            self.chevrons[int(key)] = Chevron( self.electronics, value['ledPin'], value['motorNumber'], self.audio, self.cfg )
+        for key, value in self.cfg.get("chevron_mapping").items():
+            self.chevrons[int(key)] = Chevron( self.electronics, value['led_pin'], value['motor_number'], self.audio, self.cfg )
 
     def get( self, chevron_number ):
         return self.chevrons[int(chevron_number)]
@@ -53,12 +53,12 @@ class Chevron:
         self.electronics = electronics
 
         # Retrieve Configurations
-        self.chevron_down_audio_head_start = self.cfg.get("chevronDownAudioHeadStart") #0.2
-        self.chevron_down_throttle = self.cfg.get("chevronDownThrottle") #-0.65 # negative
-        self.chevron_down_time = self.cfg.get("chevronDownTime") #0.1
-        self.chevron_down_wait_time = self.cfg.get("chevronDownWaitTime") #0.35
-        self.chevron_up_throttle = self.cfg.get("chevronUpThrottle") #0.65 # positive
-        self.chevron_up_time = self.cfg.get("chevronUpTime") #0.2
+        self.chevron_down_audio_head_start = self.cfg.get("chevron_down_audio_head_start") #0.2
+        self.chevron_down_throttle = self.cfg.get("chevron_down_throttle") #-0.65 # negative
+        self.chevron_down_time = self.cfg.get("chevron_down_time") #0.1
+        self.chevron_down_wait_time = self.cfg.get("chevron_down_wait_time") #0.35
+        self.chevron_up_throttle = self.cfg.get("chevron_up_throttle") #0.65 # positive
+        self.chevron_up_time = self.cfg.get("chevron_up_time") #0.2
 
         self.motor_number = motor_number
         self.motor = self.electronics.get_chevron_motor(self.motor_number)

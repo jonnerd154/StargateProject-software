@@ -1,66 +1,66 @@
 {
-  "enableUpdates": true,
-  "chevronMapping": {
+  "enable_software_updates": true,
+  "chevron_mapping": {
     "1": {
-      "ledPin": 21,
-      "motorNumber": 3
+      "led_pin": 21,
+      "motor_number": 3
     },
     "2": {
-      "ledPin": 16,
-      "motorNumber": 4
+      "led_pin": 16,
+      "motor_number": 4
     },
     "3": {
-      "ledPin": 20,
-      "motorNumber": 5
+      "led_pin": 20,
+      "motor_number": 5
     },
     "4": {
-      "ledPin": 26,
-      "motorNumber": 6
+      "led_pin": 26,
+      "motor_number": 6
     },
     "5": {
-      "ledPin": 6,
-      "motorNumber": 7
+      "led_pin": 6,
+      "motor_number": 7
     },
     "6": {
-      "ledPin": 13,
-      "motorNumber": 8
+      "led_pin": 13,
+      "motor_number": 8
     },
     "7": {
-      "ledPin": 19,
-      "motorNumber": 9
+      "led_pin": 19,
+      "motor_number": 9
     },
     "8": {
-      "ledPin": null,
-      "motorNumber": 10
+      "led_pin": null,
+      "motor_number": 10
     },
     "9": {
-      "ledPin": null,
-      "motorNumber": 11
+      "led_pin": null,
+      "motor_number": 11
     }
   },
   "volume_as_percent": 50,
-  "httpServerPort": 8080,
-  "chevronDownAudioHeadStart": 0.2,
-  "chevronDownThrottle": -0.65,
-  "chevronDownTime": 0.1,
-  "chevronDownWaitTime": 0.35,
-  "chevronUpThrottle": 0.65,
-  "chevronUpTime": 0.2,
-  "DHD_serial_port": "/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00",
-  "DHD_baud_rate": 115200,
-  "DHD_brightness_center": 100,
-  "DHD_brightness_symbols": 3,
-  "DHD_color_center": [
+  "http_server_port": 8080,
+  "chevron_down_audio_head_start": 0.2,
+  "chevron_down_throttle": -0.65,
+  "chevron_down_time": 0.1,
+  "chevron_down_wait_time": 0.35,
+  "chevron_up_throttle": 0.65,
+  "chevron_up_time": 0.2,
+  "dhd_serial_port": "/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00",
+  "dhd_baud_rate": 115200,
+  "dhd_brightness_center": 100,
+  "dhd_brightness_symbols": 3,
+  "dhd_color_center": [
     255,
     0,
     0
   ],
-  "DHD_color_symbols": [
+  "dhd_color_symbols": [
     250,
     117,
     0
   ],
-  "DHD_enable": true,
+  "dhd_enable": true,
   "enable_stepper_motor": true,
   "enable_chevron_motors": true,
   "software_updates_url": "https://thestargateproject.com/stargate_software_updates/",

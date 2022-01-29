@@ -69,7 +69,7 @@ class GateApplication:
 
         ### Check for new software updates ###
         self.sw_updater = SoftwareUpdate(self)
-        if self.cfg.get("enableUpdates"):
+        if self.cfg.get("enable_software_updates"):
             self.sw_updater.check_and_install()
 
         ### Create the Stargate object
@@ -82,11 +82,11 @@ class GateApplication:
         try:
             StargateWebServer.stargate = self.stargate
             StargateWebServer.debug = self.cfg.get("web_debug_enable")
-            self.httpd_server = HTTPServer(('', self.cfg.get("httpServerPort")), StargateWebServer)
+            self.httpd_server = HTTPServer(('', self.cfg.get("http_server_port")), StargateWebServer)
             self.httpd_thread = threading.Thread(name="stargate-http", target=self.httpd_server.serve_forever)
             self.httpd_thread.daemon = True
             self.httpd_thread.start()
-            self.log.log(f'Web Services API running on: {self.net_tools.get_local_ip()}:{self.cfg.get("httpServerPort")}')
+            self.log.log(f'Web Services API running on: {self.net_tools.get_local_ip()}:{self.cfg.get("http_server_port")}')
         except:
             self.log.log("Failed to start webserver. Is the port in use?")
             raise
