@@ -52,15 +52,15 @@ class ElectronicsNone:
 
     @staticmethod
     def get_stepper_forward():
-        return 0
+        return 1 # Forward
 
     @staticmethod
     def get_stepper_backward():
-        return 0
+        return 2 # Backward
 
     @staticmethod
     def get_stepper_drive_mode(drive_mode): # pylint: disable=unused-argument
-        return 0
+        return 2 # Double
 
     @staticmethod
     def init_spi_for_adc():
