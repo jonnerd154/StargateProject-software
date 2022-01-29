@@ -1,4 +1,5 @@
 import os
+from threading import Semaphore
 from time import sleep
 from serial.serialutil import SerialException
 import PyCmdMessenger
@@ -22,14 +23,17 @@ class Dialer: # pylint: disable=too-few-public-methods
         self.hardware = None
         self.type = None
 
+        self.thread_lock = Semaphore(value=1)
+
         self._connect_dialer()
 
     def _connect_dialer(self):
         # Detect if we have a DHD connected, else use the keyboard
         try:
-            # If The DHD is disabled, raise an exception to use KeyboardMode
+            # If The DHD is disabled, raise an exception to jump to the except block and use KeyboardMode
             if not self.dhd_enable:
                 raise AttributeError
+
             self.hardware = self._connect_dhd()
             self.type = "DHDv2"
         except SerialException:
@@ -38,9 +42,18 @@ class Dialer: # pylint: disable=too-few-public-methods
             self.type = "Keyboard"
 
     def _connect_dhd(self):
-        ### Connect to the DHD object. Will throw exception if not present
-        dhd = DHDv2(self.dhd_port, self.dhd_baud_rate)
-        self.log.log('DHDv2 Found. Connected.')
+        try:
+            # Get a Semaphore lock on the parent process so when the PyCmdMessenger class
+            # prints to STDOUT, it doesn't step on STDOUT from other threads
+            self.thread_lock.acquire()
+            ### Connect to the DHD object. Will throw exception if not present
+            dhd = DHDv2(self.dhd_port, self.dhd_baud_rate)
+            self.log.log('DHDv2 Found. Connected.')
+        except SerialException:
+            raise
+        finally:
+            # Always release the Semaphore lock
+            self.thread_lock.release()
 
         # Configure the DHD
         dhd.set_brightness_center(self.dhd_brightness_center)
