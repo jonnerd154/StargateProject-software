@@ -50,19 +50,17 @@ class StargateSG1:
         self.symbol_manager = StargateSG1SymbolManager()
         self.subspace_client = SubspaceClient(self)
         self.addr_manager = StargateAddressManager(self)
-        self.keyboard = KeyboardManager(self)
+        self.keyboard = KeyboardManager(self, app.is_daemon)
         self.chevrons = ChevronManager(self)
         self.ring = SymbolRing(self)
         self.dialer = Dialer(self) # A "Dialer" is either a Keyboard or DHDv2
         self.wh_manager = WormholeManager(self)
         self.wh_manager.initialize_animation_manager()
 
-        ## Create a background thread that runs in parallel and asks for user inputs from the DHD or keyboard.
-        self.ask_for_input_thread = Thread(target=self.keyboard.ask_for_input, args=())
-        self.ask_for_input_thread.start()  # start
-
         ### Run the stargate server if we have an internet connection ###
         # The stargate_server runs in it's own thread listening for incoming wormholes
+
+        # TODO move this into subspace client __init__
         if self.net_tools.has_internet_access():
             try:
                 self.subspace_client_server_thread = Thread(target=SubspaceServer(self).start, daemon=True, args=())

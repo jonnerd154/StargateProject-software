@@ -1,17 +1,29 @@
 import sys
+from threading import Thread
 import tty
 import termios
 
 class KeyboardManager:
 
-    def __init__(self, stargate):
+    def __init__(self, stargate, is_daemon):
 
         self.stargate = stargate
+        self.is_daemon = is_daemon
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.audio = stargate.audio
         self.addr_manager = stargate.addr_manager
         self.address_book = stargate.addr_manager.get_book()
+
+        if is_daemon:
+            pass
+        else:
+            self.stdin_thread_start()
+
+    def stdin_thread_start(self):
+        ## Create a background thread that runs in parallel and asks for user inputs from the DHD or keyboard.
+        self.ask_for_input_thread = Thread(target=self.wait_for_stdin, args=())
+        self.ask_for_input_thread.start()  # start
 
     @staticmethod
     def key_press():
@@ -30,7 +42,7 @@ class KeyboardManager:
         return char
 
 
-    def ask_for_input(self):
+    def wait_for_stdin(self):
         """
         This function takes the stargate as input and listens for user input (from the DHD or keyboard). The pressed key
         is converted to a stargate symbol number as seen in this document: https://www.rdanderson.com/stargate/glyphs/index.htm
