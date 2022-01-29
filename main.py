@@ -7,7 +7,6 @@ This main.py file is run automatically on boot. It is executed in the .bashrc fi
 
 import sys
 import os
-import psutil
 from http.server import HTTPServer
 import threading
 import atexit
