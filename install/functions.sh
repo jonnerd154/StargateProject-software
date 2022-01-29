@@ -61,20 +61,20 @@ function init_venv() {
   cd /home/pi
 
   # Remove the env if it already exists
-  [ ! -d './sg1_venv_v4' ] && rm -Rf /home/pi/sg1_venv_v4
+  [ ! -d './venv_v4' ] && rm -Rf /home/pi/venv_v4
 
   echo 'Initializing Python virtual environment'
-  python3 -m venv sg1_venv_v4
+  python3 -m venv venv_v4
 
   # Activate the venv and install some dependencies
   echo 'Installing pip setuptools into the virtual environment'
-  source sg1_venv_v4/bin/activate
+  source venv_v4/bin/activate
   export CFLAGS=-fcommon
   pip install setuptools | sed 's/^/     /'
 
   # Install requirements.txt pip packages
   echo 'Installing requirements.txt dependencies into the Virtual Environment'
-  source sg1_venv_v4/bin/activate
+  source venv_v4/bin/activate
   pip install -r sg1_v4/requirements.txt | sed 's/^/     /'
 
   echo 'Deactivating the virtual environment'
@@ -143,7 +143,7 @@ function restart_apache() {
 function configure_crontab() {
   # Add the speaker-tickler to our crontab
   echo 'Configuring crontab (user: pi)'
-  (crontab -l; echo '*/8 * * * * /home/pi/sg1_venv_v4/bin/python3 /home/pi/sg1_v4/scripts/speaker_on.py')|awk '!x[$0]++'|crontab -
+  (crontab -l; echo '*/8 * * * * /home/pi/venv_v4/bin/python3 /home/pi/sg1_v4/scripts/speaker_on.py')|awk '!x[$0]++'|crontab -
 }
 
 function disable_pwr_mgmt() {
@@ -220,7 +220,7 @@ function configure_systemd_service() {
 # Type=simple
 # Restart=always
 # WorkingDirectory=/home/pi/sg1_v4
-# ExecStart=/home/pi/sg1_venv_v4/bin/python /home/pi/sg1_v4/main.py
+# ExecStart=/home/pi/venv_v4/bin/python /home/pi/sg1_v4/main.py
 # [Install]
 # WantedBy=multi-user.target
 # EOT
@@ -234,18 +234,7 @@ AllowIsolate=yes
 [Service]
 Type=simple
 WorkingDirectory=/home/pi/sg1_v4
-ExecStart=/home/pi/sg1_venv_v4/bin/python /home/pi/sg1_v4/main.py --daemon
-StandardInput=tty-force
-StandardOutput=null
-StandardError=null
-TTYPath=/dev/console
-TTYReset=yes
-IOSchedulingPriority=0
-IOSchedulingClass=realtime
-CPUSchedulingPolicy=fifo
-CPUSchedulingPriority=100
-Nice=20
-CPUSchedulingResetOnFork=yes
+ExecStart=/home/pi/venv_v4/bin/python /home/pi/sg1_v4/main.py --daemon
 
 [Install]
 WantedBy=multi-user.target
