@@ -85,6 +85,9 @@ class StargateConfig:
         finally:
             return config_record
 
+    def get_all_configs(self):
+        return self.config
+
     def set(self, key, value):
         try:
             old = self.get_full_config_by_key(key)

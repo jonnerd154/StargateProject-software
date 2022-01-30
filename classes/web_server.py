@@ -86,6 +86,10 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "chevrons":                       self.stargate.chevrons.get_status(),
                     "glyph_ring":                     self.stargate.ring.get_status()
                 }
+
+            elif request_path == "/get/config":
+                data = collections.OrderedDict(sorted(self.stargate.cfg.get_all_configs().items()))
+
             elif request_path == "/get/symbols":
                 data = {
                     "symbols": self.stargate.symbol_manager.get_all_ddslick()
