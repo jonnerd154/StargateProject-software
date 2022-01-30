@@ -98,8 +98,8 @@ class StargateConfig:
             if old['type'] != "":
                 if old['type'].lower() == "boolean" and not isinstance(value, bool ):
                         raise ValueError("Must be type `bool`")
-                if old['type'].lower() == "string" and not isinstance(value, string ):
-                    raise ValueError("Must be type `string`")
+                if old['type'].lower() == "string" and not isinstance(value, str ):
+                    raise ValueError("Must be type `str`")
                 if old['type'].lower() == "int":
                     if not isinstance(value, int ):
                         raise ValueError("Must be type `int`")
