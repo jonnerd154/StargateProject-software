@@ -111,6 +111,12 @@ class StargateConfig:
                         raise ValueError("Must be type `str`")
                     if not self.is_valid_datetime(value):
                         raise ValueError("Value is not a valid datetime")
+                        
+                if old['type'].lower() == "string-enum":
+                    if not isinstance(value, str ):
+                        raise ValueError("Must be type `str`")
+                    if value not in old['enum_values']:
+                        raise ValueError("Value is not one of the allowed values")
 
                 if old['type'].lower() == "int":
                     if not isinstance(value, int ):

@@ -143,6 +143,8 @@
             return getHTMLString( paramName, data )
           case "string-datetime":
               return getHTMLDateTime( paramName, data )
+          case "string-enum":
+              return getHTMLStringEnum( paramName, data )
           default:
             // If a type isn't specified, just print the raw value without a field
             return data.value
@@ -181,6 +183,18 @@
       function getHTMLString( paramName, data ){
         if ( data.protected ) return data.value
         return "<input type='text' name='" + paramName + "' value='" + data.value + "'>"
+      }
+
+      function getHTMLStringEnum( paramName, data ){
+        if ( data.protected ) return data.value
+        html = "<select name='" + paramName + "'>"
+        $.each(data.enum_values, function (index, value) {
+          selected = ""
+          if( value == data.value ) selected = " SELECTED"
+          html += "<option value='" + value + "'" + selected + ">" + toProperCase(value) + "</option>"
+        })
+        html += "</select>"
+        return html
       }
 
       function getHTMLDateTime( paramName, data ){

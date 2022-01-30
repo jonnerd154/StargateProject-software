@@ -250,8 +250,8 @@
   "stepper_drive_mode": {
     "value": "double",
     "desc": "How many steps constitutes one revolution of the glyph ring?",
-    "type": "string",
-    "emum_values": [
+    "type": "string-enum",
+    "enum_values": [
       "double",
       "single",
       "microstep"
@@ -274,21 +274,21 @@
   "stepper_normal_speed": {
     "value": 0.002,
     "desc": "In seconds, delay time between steps in 'normal' speed. Larger values->slower",
-    "type": "int",
+    "type": "float",
     "min_value": 0,
     "max_value": false
   },
   "stepper_slow_speed": {
     "value": 0.01,
     "desc": "In seconds, delay time between steps in 'slow' speed. Larger values->slower",
-    "type": "int",
+    "type": "float",
     "min_value": 0,
     "max_value": false
   },
   "stepper_initial_speed": {
     "value": 0.01,
     "desc": "TODO: IS THIS REQUIRED?",
-    "type": "int",
+    "type": "float",
     "min_value": 0,
     "max_value": false
   },
@@ -307,21 +307,21 @@
   "wormhole_max_time_minutes": {
     "value": 38,
     "desc": "In minutes, how long can a normal wormhole be sustained? (Hint, it's 38 minutes)",
-    "type": "int",
+    "type": "float",
     "min_value": 0,
     "max_value": false
   },
   "wormhole_max_time_blackhole": {
     "value": 5259488,
     "desc": "In minutes, how long can a wormhole to a blackhole planet be sustained? FOREVER.",
-    "type": "int",
+    "type": "float",
     "min_value": 0,
     "max_value": false
   },
   "wormhole_open_random_sound_interval_seconds": {
     "value": 17,
     "desc": "In seconds, how long should we wait between playing random clips when a NORMAL wormhole is established?",
-    "type": "int",
+    "type": "float",
     "min_value": 0,
     "max_value": false
   },
@@ -335,7 +335,7 @@
   "audio_clip_wait_time_blackhole": {
     "value": 1,
     "desc": "In seconds, how long should we wait between playing random clips when a BLACKHOLE wormhole is established?",
-    "type": "int",
+    "type": "float",
     "min_value": 0,
     "max_value": 7
   },
