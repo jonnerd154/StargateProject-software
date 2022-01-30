@@ -55,7 +55,8 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "wormhole_open_time":       self.stargate.wh_manager.open_time,
                     "wormhole_max_time":        self.stargate.wh_manager.wormhole_max_time,
                     "wormhole_time_till_close": self.stargate.wh_manager.get_time_remaining(),
-                    "ring_position":            self.stargate.ring.get_position()
+                    "ring_position":            self.stargate.ring.get_position(),
+                    "speed_dial_full_address":  self.stargate.cfg.get('dialing_address_book_dials_full_address')
                 }
 
             elif request_path == "/get/system_info":

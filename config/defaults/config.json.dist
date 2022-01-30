@@ -239,6 +239,11 @@
     "desc": "True: move from one symbol to the next, going the long way everytime. False: always use the shortest direction",
     "type": "bool"
   },
+  "dialing_address_book_dials_full_address": {
+    "value": true,
+    "desc": "True: Speed Dial the full address with origin and center button. False: Dial only the 6-7 symbol address.",
+    "type": "bool"
+  },
   "dialing_incoming_allowed": {
     "value": true,
     "desc": "True allow incoming dialing attempts",
