@@ -116,7 +116,39 @@
                   }
                   else{
                     // Single-value parameter
-                    trHTML += '<tr><td>' + toProperCase(paramName) + '</td><td>' + item.type + '</td><td>' + item.value + '</td><td>' + item.desc + '</td></tr>';
+                    switch( item.type ){
+                      case "bool":
+                        if ( item.value ){
+                          valueTrue = " SELECTED"
+                          valueFalse = ""
+                        }
+                        else{
+                          valueTrue = ""
+                          valueFalse = " SELECTED"
+                        }
+                        field = "\
+                            <select name='" + paramName + "'>\
+                              <option value='true' " + valueTrue + ">True</option>\
+                              <option value='false' " + valueFalse + ">False</option>\
+                            </select>"
+                        break
+                      case "int":
+                          field = "\
+                              <input type='number' name='" + paramName + "' value='" + item.value + "' step='1'>"
+                          break
+                      case "float":
+                          field = "\
+                              <input type='number' name='" + paramName + "' value='" + item.value + "' step='0.05'>"
+                          break
+                      case "string":
+                          field = "\
+                              <input type='text' name='" + paramName + "' value='" + item.value + "'>"
+                          break
+                      default:
+                        field = item.value
+                    }
+
+                    trHTML += '<tr><td>' + toProperCase(paramName) + '</td><td>' + item.type + '</td><td>' + field + '</td><td>' + item.desc + '</td></tr>';
                   }
               });
               $('#records_table').append(trHTML);
