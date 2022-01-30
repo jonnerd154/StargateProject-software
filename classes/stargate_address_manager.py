@@ -53,7 +53,7 @@ class StargateAddressManager:
         This function gets the fan_gates from the API and stores it in the AddressBook
         :return: The updated fan_gate dictionary is returned.
         """
-        self.log.log("Updating Fan Gates from Database")
+        self.log.log("Updating Fan Gates from API")
 
         if self.stargate.net_tools.has_internet_access():
             try:
