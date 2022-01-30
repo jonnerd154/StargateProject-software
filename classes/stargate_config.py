@@ -72,15 +72,6 @@ class StargateConfig:
             self.log.log(f"*** ERROR: Key '{key}' not found in {self.file_name}!")
             raise
 
-
-# "item_config": {
-# "led_pin": {
-# "desc": "The GPIO Pin for this Chevron",
-# "type": "int",
-# "max_value": 40,
-# "min_value": 0
-# },
-        from pprint import pprint
         try:
             if config_record['type'] == 'dict':
 
