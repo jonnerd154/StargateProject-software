@@ -1,7 +1,7 @@
 {
   "enable_software_updates": {
     "value": true,
-    "desc": "This Variable does something important",
+    "desc": "True to enable automatic software updates",
     "type": "bool"
   },
   "dhd_color_symbols": {
@@ -61,11 +61,11 @@
     }
   },
   "chevron_mapping": {
-    "desc": "This Variable does something important",
+    "desc": "These configurations setup the mapping of hardware outputs to their positions around the Stargate",
     "type": "dict",
     "item_config": {
       "led_pin": {
-        "desc": "The GPIO Pin for this Chevron",
+        "desc": "The GPIO Pin for this Chevron's LEDs. Active HIGH",
         "type": "int",
         "max_value": 40,
         "min_value": 0
@@ -157,7 +157,8 @@
     "desc": "Volume as a %",
     "type": "int",
     "min_value": 0,
-    "max_value": 100
+    "max_value": 100,
+    "protected": true
   },
   "enable_audio": {
     "value": true,
@@ -171,7 +172,7 @@
   },
   "enable_stepper_motor": {
     "value": true,
-    "desc": "True to enable Glyph Ring Stepper Motor",
+    "desc": "True to enable the Glyph Ring Stepper Motor",
     "type": "bool"
   },
   "enable_chevron_motors": {
@@ -191,7 +192,7 @@
   },
   "stargate_info_api_url": {
     "value": "https://api.thestargateproject.com",
-    "desc": "The API Endpoint URL for the Subspace Information service",
+    "desc": "The API Endpoint URL for the Subspace Information Service",
     "type": "string"
   },
   "software_updates_username": {
@@ -208,14 +209,14 @@
     "value": 30,
     "desc": "In minutes, how often should we check for new Fan Gates on the Subspace Network?",
     "type": "int",
-    "min_value": 0,
+    "min_value": 1,
     "max_value": false
   },
   "software_update_interval": {
     "value": 24,
     "desc": "In hours, how often should we check for Software Updates?",
     "type": "int",
-    "min_value": 0,
+    "min_value": 1,
     "max_value": false
   },
   "subspace_port": {
@@ -227,21 +228,21 @@
   },
   "subspace_keep_alive_interval": {
     "value": 24,
-    "desc": "How often to send a ping on the subspace network to ensure the VPN stays alive",
+    "desc": "How often to send a ping on the subspace network to ensure the VPN stays connected",
     "type": "int",
-    "min_value": 1025,
-    "max_value": 65535
+    "min_value": 10,
+    "max_value": 50
   },
   "subspace_timeout": {
     "value": 10,
-    "desc": "In seconds time to wait for a remote stargate to respond before assuming it's offline",
+    "desc": "In seconds, time to wait for a remote stargate to respond to a communication before assuming it's offline",
     "type": "int",
     "min_value": 1,
     "max_value": 30
   },
   "dialing_timeout": {
     "value": 60,
-    "desc": "In seconds, how long to to sit partially-dialed before resetting.",
+    "desc": "In seconds, how long to sit partially-dialed before resetting.",
     "type": "int",
     "min_value": 0,
     "max_value": false
@@ -265,42 +266,42 @@
   },
   "stepper_micro_steps": {
     "value": 16,
-    "desc": "TODO: REMOVE NOT subspace_keep_alive_address",
+    "desc": "TODO: REMOVE NOT USED",
     "type": "int",
     "min_value": 0,
     "max_value": false
   },
   "stepper_normal_speed": {
     "value": 0.002,
-    "desc": "Delay time in 'normal' speed. Larger values->slower",
+    "desc": "In seconds, delay time between steps in 'normal' speed. Larger values->slower",
     "type": "int",
     "min_value": 0,
     "max_value": false
   },
   "stepper_slow_speed": {
     "value": 0.01,
-    "desc": "Delay time in 'slow' speed. Larger values->slower",
+    "desc": "In seconds, delay time between steps in 'slow' speed. Larger values->slower",
     "type": "int",
     "min_value": 0,
     "max_value": false
   },
   "stepper_initial_speed": {
     "value": 0.01,
-    "desc": "TODO: IS THIS REQUIRED? Initial delay time in 'normal' speed. Larger values->slower",
+    "desc": "TODO: IS THIS REQUIRED?",
     "type": "int",
     "min_value": 0,
     "max_value": false
   },
   "stepper_acceleration_length": {
     "value": 40,
-    "desc": "Over how many steps should they symbol ring accelerate/decelerate?",
+    "desc": "Over how many steps should the symbol ring accelerate/decelerate?",
     "type": "int",
     "min_value": 0,
     "max_value": false
   },
   "stepper_ring_direction_mode_longest": {
     "value": true,
-    "desc": "How does the symbol dial into Chevrons? True: move from one symbol to the next, going the long way. False: always use the shortest direction",
+    "desc": "True: move from one symbol to the next, going the long way everytime. False: always use the shortest direction",
     "type": "bool"
   },
   "wormhole_max_time_minutes": {
@@ -319,21 +320,21 @@
   },
   "wormhole_open_random_sound_interval_seconds": {
     "value": 17,
-    "desc": "In seconds, how long should we wait between playing random clips when a normal wormhole is established?",
+    "desc": "In seconds, how long should we wait between playing random clips when a NORMAL wormhole is established?",
     "type": "int",
     "min_value": 0,
     "max_value": false
   },
   "wormhole_close_audio_headstart": {
     "value": 1,
-    "desc": "In seconds, how long should we wait to give the audio some time to start, when closing a WH? ",
+    "desc": "In seconds, how much of a head start should audio get when closing a Wormhole? ",
     "type": "float",
     "min_value": 0,
     "max_value": 5
   },
   "audio_clip_wait_time_blackhole": {
     "value": 1,
-    "desc": "In seconds, how long should we wait between playing random clips when a blackhole wormhole is established?",
+    "desc": "In seconds, how long should we wait between playing random clips when a BLACKHOLE wormhole is established?",
     "type": "int",
     "min_value": 0,
     "max_value": 7
@@ -345,7 +346,7 @@
   },
   "subspace_keep_alive_address": {
     "value": "172.30.0.1",
-    "desc": "What IP address should we ping for Subspace Keepalives?",
+    "desc": "What IP address should we ping for Subspace VPN Keepalives?",
     "type": "string"
   },
   "dhd_serial_port": {
@@ -362,35 +363,35 @@
   },
   "dhd_brightness_center": {
     "value": 100,
-    "desc": "From 0-255, how bright should the DHD Center Button be? Higher values->Brighter",
+    "desc": "From 0-255, how bright should the DHD CENTER BUTTON be? Higher values->Brighter",
     "type": "int",
     "min_value": 0,
     "max_value": 255
   },
   "dhd_brightness_symbols": {
     "value": 3,
-    "desc": "From 0-255, how bright should the DHD symbols be? Higher values->Brighter",
+    "desc": "From 0-255, how bright should the DHD SYMBOLS be? Higher values->Brighter",
     "type": "int",
     "min_value": 0,
     "max_value": 255
   },
   "chevron_down_wait_time": {
     "value": 0.35,
-    "desc": "How long to leave the chevron unlocked, before locking it.",
+    "desc": "In seconds, how long to leave the chevron unlocked, before locking it.",
     "type": "float",
     "min_value": 0,
     "max_value": 0.7
   },
   "chevron_up_time": {
     "value": 0.2,
-    "desc": "How long to energize the motor when moving a chevron up",
+    "desc": "In seconds, how long to energize the motor when moving a chevron up",
     "type": "float",
     "min_value": 0,
     "max_value": 0.7
   },
   "chevron_down_time": {
     "value": 0.1,
-    "desc": "How long to energize the motor when moving a chevron down",
+    "desc": "In seconds, how long to energize the motor when moving a chevron down",
     "type": "float",
     "min_value": 0,
     "max_value": 0.5
@@ -425,27 +426,31 @@
   },
   "last_fan_gate_update": {
     "value": "2022-01-29 20:07:27.695364",
-    "desc": "Timestamp of the last attempt to update Fan Gates on the subspace network",
-    "type": "string"
+    "desc": "Timestamp of the last attempt to update the list of Fan Gates on the Subspace Network",
+    "type": "string",
+    "protected": true
   },
   "software_update_last_check": {
     "value": "2022-01-29 20:07:26.745736",
     "desc": "Timestamp of the last attempt to check for Software Updates",
-    "type": "string"
+    "type": "string",
+    "protected": true
   },
   "software_update_status": {
     "value": "up-to-date",
     "desc": "Status of Software Updates",
-    "type": "string"
+    "type": "string",
+    "protected": true
   },
   "subspace_ip_address": {
     "value": "",
-    "desc": "IP Address configured for Subspace VPN",
+    "desc": "IP Address configured for Subspace Network VPN",
     "type": "string"
   },
   "software_update_exception": {
     "value": false,
-    "desc": "Last Exception Encountered during Software Update attempts",
-    "type": "bool"
+    "desc": "Was an exception encountered during Software Update attempt?",
+    "type": "bool",
+    "protected": true
   }
 }
