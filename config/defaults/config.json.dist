@@ -449,7 +449,7 @@
   },
   "software_update_exception": {
     "value": false,
-    "desc": "Was an exception encountered during Software Update attempt?",
+    "desc": "Was an exception encountered during the last Software Update attempt?",
     "type": "bool",
     "protected": true
   }
