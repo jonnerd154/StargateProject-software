@@ -116,7 +116,8 @@
                   }
                   else{
                     // Single-value parameter
-                    trHTML += getHTMLTableRow(paramName, paramName, item)
+                    paramPrettyName = toProperCase(paramName)
+                    trHTML += getHTMLTableRow(paramName, paramPrettyName, item)
                   }
               });
               $('#records_table').append(trHTML);
