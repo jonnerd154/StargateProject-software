@@ -222,6 +222,14 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 self.stargate.ring.zero_position()
                 data = { "success": True }
 
+            elif self.path == "/do/dhd_test_enable":
+                self.stargate.dhd_test = True
+                data = { "success": True }
+
+            elif self.path == "/do/dhd_test_disable":
+                self.stargate.dhd_test = False
+                data = { "success": True }
+
             ##### UPDATE DATA HANDLERS BELOW ####
             elif self.path == '/update/local_stargate_address':
 

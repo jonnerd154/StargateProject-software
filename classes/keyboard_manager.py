@@ -14,6 +14,7 @@ class KeyboardManager:
         self.audio = stargate.audio
         self.addr_manager = stargate.addr_manager
         self.address_book = stargate.addr_manager.get_book()
+        self.active_buttons = []
 
         if is_daemon:
             self.keyboard_direct_thread_start()
@@ -98,11 +99,34 @@ class KeyboardManager:
         stargate.log.log("Listening for input from the DHD/Keyboard via direct input. You can abort with the '-' key.")
         keyboard.wait()
 
+    def handle_dhd_test (self, char):
+        # Handle test mode here
+        while(self.stargate.dhd_test): # Toggle the light for the pressed key
+          try:
+              symbol_number = self.get_symbol_key_map()[key]
+          except KeyError:
+              pass
+          if symbol_number not in active:
+              self.active_buttons.append(symbol_number)
+              if symbol_number == 0:
+                  dhd.setPixel(symbol_number, 255, 0, 0)
+                  dhd.latch()
+              else:
+                  dhd.setPixel(symbol_number, 250, 117, 0)
+                  dhd.latch()
+          else:
+              self.active_buttons.remove(symbol_number)
+              dhd.setPixel(symbol_number, 0, 0, 0)
+              dhd.latch()
+        self.active_buttons = []
+
     def keypress_handler( self, key ):
         """
         This function takes a keypress and interprets it's meaning for the Stargate.
         :return: Nothing is returned, but the stargate is manipulated.
         """
+
+        self.handle_dhd_test()
 
         ## If the user inputs one of the abort characters, stop the software. Not possible from the DHD.
         if key in self.get_abort_characters():

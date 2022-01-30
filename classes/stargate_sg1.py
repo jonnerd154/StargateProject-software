@@ -45,6 +45,7 @@ class StargateSG1:
         self.fan_gate_online_status = True # To keep track of the dialed fan_gate status. Assume it's online until proven otherwise
         self.fan_gate_incoming_ip = None # To keep track of the IP address for the remote gate that establishes a wormhole
         self.connected_planet_name = None
+        self.dhd_test = False
 
         ### Set up the needed classes and make them ready to use ###
         self.symbol_manager = StargateSG1SymbolManager()
