@@ -126,7 +126,8 @@ class KeyboardManager:
         :return: Nothing is returned, but the stargate is manipulated.
         """
 
-        self.handle_dhd_test()
+        if self.stargate.dhd_test:
+            self.handle_dhd_test( char )
 
         ## If the user inputs one of the abort characters, stop the software. Not possible from the DHD.
         if key in self.get_abort_characters():
