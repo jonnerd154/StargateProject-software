@@ -43,7 +43,6 @@ class HardwareDetector:
                 self.motor_hardware_mode = 1
             else:
                 self.motor_hardware_mode_name = False
-                self.log.log("WARNING: No supported motor control hardware detected")
                 self.motor_hardware_mode = 0
 
         return self.motor_hardware_mode
