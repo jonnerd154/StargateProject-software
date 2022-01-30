@@ -7,6 +7,7 @@ from ast import literal_eval
 from pathlib import Path
 from datetime import datetime
 import requests
+from packaging import version
 
 from network_tools import NetworkTools
 from database import Database
@@ -67,7 +68,7 @@ class SoftwareUpdate:
             for entry in sw_update:
 
                 ## if there is a newer version:
-                if entry[1] > self.current_version:
+                if version.parse(str(self.current_version)) < version.parse(str(entry[1])):
                     update_audio = self.audio.play_random_audio_clip("update")
                     update_found = True
                     self.log.log(f"Newer version {entry[1]} detected!")
