@@ -10,6 +10,7 @@ class ChevronManager:
         self.audio = app.audio
         self.electronics = app.electronics
 
+        self.chevrons = {}
         self.load_from_config()
 
     def load_from_config(self):
@@ -20,6 +21,15 @@ class ChevronManager:
 
     def get( self, chevron_number ):
         return self.chevrons[int(chevron_number)]
+
+    def get_status( self ):
+        output = {}
+        for index, chevron in self.chevrons.items():
+            row = {}
+            row['position'] = chevron.position
+            row['led_state'] = chevron.led_state
+            output[index] = row
+        return output
 
     def all_off(self, sound_on=None):
         """
@@ -66,6 +76,9 @@ class Chevron:
         self.led_gpio = led_gpio
         self.led = self.electronics.get_led(self.led_gpio)
 
+        self.position = "unknown"
+        self.led_state = False
+
     def cycle_outgoing(self):
         self.move_down() # Motor down, light on
         self.move_up() # Motor up, light unchanged
@@ -78,6 +91,7 @@ class Chevron:
         self.motor.throttle = self.chevron_down_throttle # Start the motor
         sleep(self.chevron_down_time) # Motor movement time
         self.motor.throttle = None # Stop the motor
+        self.position = "unlocked"
 
         ### Turn on the LED ###
         sleep(self.chevron_down_wait_time) # wait time without motion
@@ -91,10 +105,12 @@ class Chevron:
         self.motor.throttle = self.chevron_up_throttle # Start the motor
         sleep(self.chevron_up_time) # motor movement time
         self.motor.throttle = None # Stop the motor
+        self.position = "locked"
 
     def light_on(self):
         if self.led:
             self.led.on()
+        self.led_state = True
 
     def incoming_on(self):
         if self.led:
@@ -107,3 +123,4 @@ class Chevron:
             choice(self.audio.incoming_chevron_sounds).play()
         if self.led:
             self.led.off()
+        self.led_state = False

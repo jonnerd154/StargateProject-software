@@ -99,9 +99,22 @@ class SymbolRing:
         ## Initialize the Homing Manager
         self.homing_manager = SymbolRingHomingManager(stargate, self)
 
+        self.direction = False
+        self.steps_remaining = 0
+        self.current_speed = False
+        self.drive_status = "Stopped"
+
         # Release the ring for safety
         self.release()
 
+    def get_status(self):
+        return {
+            "ring_position": self.get_position(),
+            "direction": self.direction,
+            "steps_remaining": self.steps_remaining,
+            "current_speed": self.current_speed,
+            "drive_status": self.drive_status
+        }
 
     @staticmethod
     def find_offset(position, max_steps):
@@ -137,12 +150,12 @@ class SymbolRing:
             self.log.log("move() called with negative steps")
             raise ValueError
 
-        # Set the initial speed, will vary in the loop to accel/decel
-        current_speed = self.initial_speed
-
         # Start the rolling ring sound
         self.audio.sound_start('rolling_ring')
 
+        self.direction = direction
+        self.steps_remaining = steps
+        self.current_speed = self.initial_speed
         # Move the ring one step at at time
         for i in range(steps):
             # Check if the gate is still running, if not, break out of the loop.
@@ -151,24 +164,32 @@ class SymbolRing:
 
             # Move the stepper one step
             self.stepper.onestep(direction=direction, style=self.stepper_drive_mode)
+            self.steps_remaining -= 1
 
             ## acceleration
             if i < self.acceleration_length:
-                current_speed -= (self.slow_speed - self.normal_speed) / self.acceleration_length
-                sleep(current_speed)
+                self.current_speed -= (self.slow_speed - self.normal_speed) / self.acceleration_length
+                self.drive_status = "Accelerating"
+                sleep(self.current_speed)
             ## deceleration
             elif i > (steps - self.acceleration_length):
-                current_speed += (self.slow_speed - self.normal_speed) / self.acceleration_length
-                sleep(current_speed)
+                self.current_speed += (self.slow_speed - self.normal_speed) / self.acceleration_length
+                self.drive_status = "Decelerating"
+                sleep(self.current_speed)
             ## slow without acceleration when short distance
             elif steps < self.acceleration_length:
-                current_speed = self.normal_speed
-                sleep(current_speed)
-
+                self.current_speed = self.normal_speed
+                self.drive_status = "Constant Speed: Slow"
+                sleep(self.current_speed)
+            else:
+                self.drive_status = "Constant Speed: Normal"
             # Update the position in non-persistent memory
             self.update_position(1, direction)
 
         # After this move() is complete, save the position to persistent memory
+        self.current_speed = False
+        self.direction = False
+        self.drive_status = "Stopped"
         self.save_position()
 
         self.audio.sound_stop('rolling_ring')  # stop the audio

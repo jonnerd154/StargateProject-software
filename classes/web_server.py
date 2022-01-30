@@ -81,6 +81,11 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "volume_as_percent":              self.stargate.audio.volume
                 }
 
+            elif request_path == "/get/hardware_status":
+                data = {
+                    "chevrons":                       self.stargate.chevrons.get_status(),
+                    "glyph_ring":                     self.stargate.ring.get_status()
+                }
             elif request_path == "/get/symbols":
                 data = {
                     "symbols": self.stargate.symbol_manager.get_all_ddslick()
