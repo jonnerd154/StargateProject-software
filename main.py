@@ -27,12 +27,7 @@ from network_tools import NetworkTools
 
 class GateApplication:
 
-    @staticmethod
-    def check_is_daemon():
-        for arg in enumerate(sys.argv):
-            if arg == "--daemon":
-                return True
-        return False
+
 
     def __init__(self):
 
@@ -67,6 +62,8 @@ class GateApplication:
         self.log.log('***      https://github.com/danclarke/WorkingStargateMk2Raspi   ***')
         self.log.log("***                                                             ***")
         self.log.log('*******************************************************************\r\n')
+        self.log.log('')
+        self.log.log(f'Running as Daemon: {self.is_daemon}')
 
         ### Detect our electronics and initialize the hardware
         self.electronics = Electronics(self).hardware
@@ -114,6 +111,12 @@ class GateApplication:
 
         self.log.log('The Stargate program is no longer running\r\n\r\n')
         sys.exit(0)
+
+    def check_is_daemon(self):
+        for index, arg in enumerate(sys.argv):
+            if arg == '--daemon':
+                return True
+        return False
 
 # Run the stargate application
 app = GateApplication()
