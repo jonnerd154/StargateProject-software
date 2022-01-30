@@ -354,15 +354,11 @@
                     // This will create a new entry in the browser's history, without reloading, so refreshing won't start dialing again.
                     window.history.pushState({}, "", '/index.htm');
 
-
-                                function clickChevron(chevrons, i) {
-                                    setTimeout(function() { $("#chevron"+chevrons[i]).click() }, timeouts[i]);
-                                }
+                    function clickChevron(chevrons, i) {
+                        setTimeout(function() { $("#chevron"+chevrons[i]).click() }, timeouts[i]);
+                    }
                 });
-
-
             }
-
 
         </script>
     </body>
