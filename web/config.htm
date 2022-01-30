@@ -104,10 +104,17 @@
       function toProperCase(str){
         str = str.replace(/_/g, " "); // Replace underscores with spaces
 
+        const abbrv = [ "DHD", "HTTP", "API", "IP", "URL"]
         // Capitalize first letter of each word
         const words = str.split(" ");
         for (let i = 0; i < words.length; i++) {
-            words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+            // If this is a common abbreviation, Capitalize the whole thing
+            if ( abbrv.includes(words[i].toUpperCase()) ){
+                words[i] = words[i].toUpperCase()
+            }
+            else{
+              words[i] = words[i][0].toUpperCase() + words[i].substr(1);
+            }
         }
         return words.join(" ");
       }
@@ -130,7 +137,7 @@
             <th>Description</th>
         </tr>
     </table>
-    
+
     <hr />
 
     <div class="controls">
