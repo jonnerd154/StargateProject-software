@@ -25,9 +25,9 @@ class SoftwareUpdate:
         self.database = Database(app.base_path)
 
         # Retrieve the configurations
-        self.base_url = self.cfg.get("software_updates_url")
-        self.file_download_username = self.cfg.get("software_updates_username")
-        self.file_download_password = self.cfg.get("software_updates_password")
+        self.base_url = self.cfg.get("software_update_url")
+        self.file_download_username = self.cfg.get("software_update_username")
+        self.file_download_password = self.cfg.get("software_update_password")
 
         # Update the fan gates from the DB every x hours
         interval = self.cfg.get("software_update_interval")

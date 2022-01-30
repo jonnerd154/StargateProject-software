@@ -107,7 +107,7 @@ class SubspaceServer:
                     if self.logging == "verbose":
                         self.log.log('centre_button_incoming')
                     # Check if incoming wormholes are allowed
-                    if not self.cfg.get("allow_incoming_dialing"):
+                    if not self.cfg.get("dialing_incoming_allowed"):
                         conn.close()  # close the connection.
                         return
 
@@ -146,7 +146,7 @@ class SubspaceServer:
                 elif self.addr_manager.is_valid(msg):
 
                     # Check if incoming wormholes are allowed
-                    if not self.cfg.get("allow_incoming_dialing"):
+                    if not self.cfg.get("dialing_incoming_allowed"):
                         conn.close()  # close the connection.
                         return
 

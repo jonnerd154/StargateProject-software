@@ -3,8 +3,8 @@ from time import sleep
 
 # Initiate the DHD object.
 dhd_port = "/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00"
-dhd_baud_rate = 115200
-dhd = DHDv2(dhd_port, dhd_baud_rate)
+dhd_serial_baud_rate = 115200
+dhd = DHDv2(dhd_port, dhd_serial_baud_rate)
 dhd.setBrightnessCenter(100)
 dhd.setBrightnessSymbols(3)
 dhd.setAllPixelsToColor(0, 0, 0)

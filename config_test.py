@@ -20,36 +20,36 @@ cfg.set_log(log)
 cfg.load()
 
 
-# pprint(cfg.set("enable_software_updates", True))
-# pprint(cfg.get_full_config_by_key("enable_software_updates"))
-# pprint(cfg.set("enable_software_updates", False))
-# pprint(cfg.get_full_config_by_key("enable_software_updates"))
+# pprint(cfg.set("software_update_enabled", True))
+# pprint(cfg.get_full_config_by_key("software_update_enabled"))
+# pprint(cfg.set("software_update_enabled", False))
+# pprint(cfg.get_full_config_by_key("software_update_enabled"))
 #
 # # Test type match
 # try:
-#     pprint(cfg.set("enable_software_updates", "500"))
-#     pprint(cfg.get_full_config_by_key("enable_software_updates"))
+#     pprint(cfg.set("software_update_enabled", "500"))
+#     pprint(cfg.get_full_config_by_key("software_update_enabled"))
 # except ValueError as ex:
 #     print(f"Exception: {ex}")
 #
-# old = cfg.get("chevron_mapping")
+# old = cfg.get("chevron_config")
 # pprint(old)
-# pprint(cfg.get_full_config_by_key("chevron_mapping"))
+# pprint(cfg.get_full_config_by_key("chevron_config"))
 #
-# volume_as_percent = cfg.get("volume_as_percent")
-# pprint(volume_as_percent)
+# audio_volume = cfg.get("audio_volume")
+# pprint(audio_volume)
 #
-# volume_as_percent = cfg.set("volume_as_percent", 55)
+# audio_volume = cfg.set("audio_volume", 55)
 #
-# volume_as_percent = cfg.get("volume_as_percent")
-# pprint(volume_as_percent)
+# audio_volume = cfg.get("audio_volume")
+# pprint(audio_volume)
 #
-# volume_as_percent = cfg.set("volume_as_percent", 50)
+# audio_volume = cfg.set("audio_volume", 50)
 #
-# volume_as_percent = cfg.get("volume_as_percent")
-# pprint(volume_as_percent)
+# audio_volume = cfg.get("audio_volume")
+# pprint(audio_volume)
 # try:
-#     cfg.set("volume_as_percent", -1)
-#     pprint(cfg.get("volume_as_percent"))
+#     cfg.set("audio_volume", -1)
+#     pprint(cfg.get("audio_volume"))
 # except ValueError as ex:
 #     print(f"Exception: {ex}")

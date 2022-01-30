@@ -15,8 +15,8 @@ class ElectronicsOriginal:
 
         self.name = "Kristian's Original 3-Shield Stack w/Optional Homing"
 
-        self.enable_stepper_motor = self.cfg.get("enable_stepper_motor")
-        self.enable_chevron_motors = self.cfg.get("enable_chevron_motors")
+        self.stepper_motor_enable = self.cfg.get("stepper_motor_enable")
+        self.chevron_motors_enable = self.cfg.get("chevron_motors_enable")
 
         self.motor_shield_address_1 = 0x60
         self.motor_shield_address_2 = 0x61
@@ -52,7 +52,7 @@ class ElectronicsOriginal:
     def init_motor_shields(self):
         # Initialize all of the shields as DC motors
 
-        if self.enable_chevron_motors:
+        if self.chevron_motors_enable:
             self.shield_config =  {
             #1: MotorKit(address=self.motor_shield_address_1).motor1, # Used for Stepper
             #2: MotorKit(address=self.motor_shield_address_1).motor2, # Used for Stepper
@@ -81,7 +81,7 @@ class ElectronicsOriginal:
             12: DCMotorSim(),
         }
         # Initialize the Stepper
-        if self.enable_stepper_motor:
+        if self.stepper_motor_enable:
             self.stepper = MotorKit(address=self.motor_shield_address_1).stepper1
         else:
             self.stepper = StepperSim()

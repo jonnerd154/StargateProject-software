@@ -392,12 +392,12 @@
             $('#softwareUpdateTime').html(data.software_update_last_check)
             $('#softwareUpdateStatus').html(data.software_update_status)
             $('#pythonVersion').html(data.python_version)
-            $('#fanGateLastUpdate').html(data.last_fan_gate_update)
+            $('#fanGateLastUpdate').html(data.fan_gate_last_update)
             $('#fanGateCount').html(data.fan_gate_count)
             $('#standardGateCount').html(data.standard_gate_count)
             $('#dialerMode').html(data.dialer_mode)
             $('#hardwareMode').html(data.hardware_mode)
-            $('#volumeAsPercent').html(data.volume_as_percent)
+            $('#volumeAsPercent').html(data.audio_volume)
 
             if (data.subspace_public_key){
               $('#publicKey').html(data.subspace_public_key)

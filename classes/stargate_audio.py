@@ -37,23 +37,23 @@ class StargateAudio:
         # Check/set the correct USB audio adapter. This is necessary because different raspberries detects the USB audio adapter differently.
         self.set_correct_audio_output_device()
 
-        self.volume = self.cfg.get('volume_as_percent')
+        self.volume = self.cfg.get('audio_volume')
         self.set_volume(self.volume)
 
-        self.enable_audio = self.cfg.get('enable_audio')
+        self.audio_enable = self.cfg.get('audio_enable')
 
 
 
     def sound_start(self, clip_name):
-        if self.enable_audio:
+        if self.audio_enable:
             self.sounds[clip_name]['obj'] = self.sounds[clip_name]['file'].play()
 
     def sound_stop(self, clip_name):
-        if self.enable_audio:
+        if self.audio_enable:
             self.sounds[clip_name]['obj'].stop()
 
     def is_playing(self, clip_name):
-        if self.enable_audio:
+        if self.audio_enable:
             return self.sounds[clip_name]['obj'].is_playing()
         return False
 
@@ -61,7 +61,7 @@ class StargateAudio:
         return sa.WaveObject.from_wave_file(str(self.sound_fx_root + "/" + file_path))
 
     def incoming_chevron(self):
-        if self.enable_audio:
+        if self.audio_enable:
             choice(self.incoming_chevron_sounds)['file'].play()
 
     def play_random_clip(self, directory):
@@ -72,7 +72,7 @@ class StargateAudio:
         :return: the play object is returned.
         """
 
-        if not self.enable_audio:
+        if not self.audio_enable:
             return
 
         # Don't start playing another clip if one is already playing
@@ -92,7 +92,7 @@ class StargateAudio:
         return
 
     def random_clip_is_playing(self):
-        if not self.enable_audio:
+        if not self.audio_enable:
             return False
 
         try:
@@ -166,7 +166,7 @@ class StargateAudio:
 
         # Update the config
         self.volume = percent_value
-        self.cfg.set("volume_as_percent", self.volume)
+        self.cfg.set("audio_volume", self.volume)
 
         try:
             subprocess.run(['amixer', '-M', 'set', 'Headphone', f'{str(self.volume)}%'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False) #TODO: Check should be true

@@ -28,9 +28,9 @@ class WormholeManager:
         # Retrieve the configurations
         self.wormhole_max_time_default = self.cfg.get("wormhole_max_time_minutes") * 60  # A wormhole can only be maintained for about 38 minutes without tremendous amounts of power. (Black hole)
         self.wormhole_max_time_blackhole = self.cfg.get("wormhole_max_time_blackhole") * 60   # Make it 10 years...
-        self.audio_clip_wait_time_default = self.cfg.get("wormhole_open_random_sound_interval_seconds")  # The frequency of the random audio clips.
+        self.audio_clip_wait_time_default = self.cfg.get("audio_wormhole_active_quotes_interval")  # The frequency of the random audio clips.
         self.audio_clip_wait_time_blackhole = self.cfg.get("audio_clip_wait_time_blackhole")
-        self.wormhole_close_audio_headstart = self.cfg.get("wormhole_close_audio_headstart") # How early should we start playing the "wormhole close" sound clip before running the hardware close procedure
+        self.audio_wormhole_close_headstart = self.cfg.get("audio_wormhole_close_headstart") # How early should we start playing the "wormhole close" sound clip before running the hardware close procedure
 
         # Load some state variables
         self.audio_clip_wait_time = self.audio_clip_wait_time_default
@@ -66,7 +66,7 @@ class WormholeManager:
         self.stargate.wormhole_active = True  # temporarily to be able to use the fade_transition function
         self.animation_manager.fade_transition(pattern_blue(self.tot_leds))
         self.audio.sound_start('wormhole_close')  # Play the close wormhole audio
-        sleep(self.wormhole_close_audio_headstart)
+        sleep(self.audio_wormhole_close_headstart)
         self.animation_manager.fade_transition(no_pattern)
 
         # Reset some state variables

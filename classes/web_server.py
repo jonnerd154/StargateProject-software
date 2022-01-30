@@ -75,10 +75,10 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "subspace_available":             self.stargate.subspace_client.is_online(),
                     "standard_gate_count":            len(self.stargate.addr_manager.get_book().get_standard_gates()),
                     "fan_gate_count":                 len(self.stargate.addr_manager.get_book().get_fan_gates()),
-                    "last_fan_gate_update":           self.stargate.cfg.get('last_fan_gate_update'),
+                    "fan_gate_last_update":           self.stargate.cfg.get('fan_gate_last_update'),
                     "dialer_mode":                    self.stargate.dialer.type,
                     "hardware_mode":                  self.stargate.electronics.name,
-                    "volume_as_percent":              self.stargate.audio.volume
+                    "audio_volume":              self.stargate.audio.volume
                 }
 
             elif request_path == "/get/hardware_status":

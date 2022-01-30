@@ -102,7 +102,7 @@
                     //   our use only needs 2 layers deep....we'll do it the ugly way.
 
                     $.each(item['value'], function (nestedParamName, nestedItem) {
-                      if (paramName == "chevron_mapping"){
+                      if (paramName == "chevron_config"){
                         paramName_f = "Chevron"
                         $.each(nestedItem, function (nestedParamName2, nestedItem2) {
                           paramPrettyName = toProperCase(paramName_f + " " + nestedParamName + " " + nestedParamName2)
@@ -128,7 +128,8 @@
 
       function getHTMLTableRow(paramName, paramPrettyName, data){
         inputField = getHTMLField( paramName, data )
-        return '<tr><td>' + paramPrettyName + '</td><td>' + data.type + '</td><td>' + inputField + '</td><td>' + data.desc + '</td></tr>';
+        if (!data.units) data.units = ""
+        return '<tr><td>' + paramPrettyName + '</td><td>' + inputField + '</td><td>' + data.units + '</td><td>' + data.desc + '</td></tr>';
       }
 
       function getHTMLField( paramName, data ){
@@ -234,8 +235,8 @@
     <table id="records_table" border='1'>
         <tr>
             <th>Name</th>
-            <th>Type</th>
             <th>Value</th>
+            <th>Units</th>
             <th>Description</th>
         </tr>
     </table>

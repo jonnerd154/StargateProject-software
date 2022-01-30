@@ -23,11 +23,11 @@ class SymbolRing:
         self.stepper_drive_mode = self.cfg.get("stepper_drive_mode")
         self.total_steps = self.cfg.get("stepper_one_revolution_steps") # Old value: 1251
         # self.micro_steps = self.cfg.get("stepper_micro_steps") # TODO: Remove from config file
-        self.normal_speed = self.cfg.get("stepper_normal_speed")
-        self.slow_speed = self.cfg.get("stepper_slow_speed")
-        self.initial_speed = self.cfg.get("stepper_initial_speed")
-        self.acceleration_length = self.cfg.get("stepper_acceleration_length")  # the number of steps used for acceleration
-        self.ring_direction_mode_longest = self.cfg.get("stepper_ring_direction_mode_longest")
+        self.normal_speed = self.cfg.get("stepper_speed_normal")
+        self.slow_speed = self.cfg.get("stepper_speed_slow")
+        self.initial_speed = self.cfg.get("stepper_speed_initial")
+        self.acceleration_length = self.cfg.get("stepper_acceleration_steps")  # the number of steps used for acceleration
+        self.ring_direction_mode_longest = self.cfg.get("dialing_ring_direction_mode")
 
         # The symbol positions on the symbol ring
         self.symbol_step_positions = {

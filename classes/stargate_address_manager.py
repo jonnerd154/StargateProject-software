@@ -26,7 +26,7 @@ class StargateAddressManager:
 
         self.validator = StargateAddressValidator()
 
-        self.info_api_url = self.cfg.get("stargate_info_api_url")
+        self.info_api_url = self.cfg.get("subspace_public_api_url")
 
         # Update the fan gates from the DB every x minutes
         update_interval = self.cfg.get("fan_gate_refresh_interval")
@@ -70,7 +70,7 @@ class StargateAddressManager:
                     # Add it to the datastore
                     self.address_book.set_fan_gate(name, gate_address, ip_address)
 
-                self.cfg.set('last_fan_gate_update', str(datetime.now()))
+                self.cfg.set('fan_gate_last_update', str(datetime.now()))
             except: # pylint: disable=bare-except
                 pass
 

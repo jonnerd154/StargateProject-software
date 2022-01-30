@@ -1,5 +1,5 @@
 {
-  "enable_software_updates": {
+  "software_update_enabled": {
     "value": true,
     "desc": "True to enable automatic software updates",
     "type": "bool"
@@ -60,7 +60,7 @@
       }
     }
   },
-  "chevron_mapping": {
+  "chevron_config": {
     "desc": "These configurations setup the mapping of hardware outputs to their positions around the Stargate",
     "type": "dict",
     "item_config": {
@@ -152,15 +152,16 @@
       }
     }
   },
-  "volume_as_percent": {
+  "audio_volume": {
     "value": 0,
     "desc": "Volume as a %",
     "type": "int",
     "min_value": 0,
     "max_value": 100,
-    "protected": true
+    "protected": true,
+    "units": "%"
   },
-  "enable_audio": {
+  "audio_enable": {
     "value": true,
     "desc": "True to enable audio output",
     "type": "bool"
@@ -170,82 +171,10 @@
     "desc": "True to enable DHD handling",
     "type": "bool"
   },
-  "enable_stepper_motor": {
+  "stepper_motor_enable": {
     "value": true,
     "desc": "True to enable the Glyph Ring Stepper Motor",
     "type": "bool"
-  },
-  "enable_chevron_motors": {
-    "value": true,
-    "desc": "True to enable Chevron DC Motors",
-    "type": "bool"
-  },
-  "allow_incoming_dialing": {
-    "value": true,
-    "desc": "True allow incoming dialing attempts",
-    "type": "bool"
-  },
-  "software_updates_url": {
-    "value": "https://thestargateproject.com/stargate_software_updates/",
-    "desc": "The API Endpoint URL for the Software Update service",
-    "type": "string"
-  },
-  "stargate_info_api_url": {
-    "value": "https://api.thestargateproject.com",
-    "desc": "The API Endpoint URL for the Subspace Information Service",
-    "type": "string"
-  },
-  "software_updates_username": {
-    "value": "Samantha",
-    "desc": "The BasicAuth Username to use to authenticate for downloads on the Software Update service",
-    "type": "string"
-  },
-  "software_updates_password": {
-    "value": "CarterSG1!",
-    "desc": "The BasicAuth Password to use to authenticate for downloads on the Software Update service",
-    "type": "string"
-  },
-  "fan_gate_refresh_interval": {
-    "value": 30,
-    "desc": "In minutes, how often should we check for new Fan Gates on the Subspace Network?",
-    "type": "int",
-    "min_value": 1,
-    "max_value": false
-  },
-  "software_update_interval": {
-    "value": 24,
-    "desc": "In hours, how often should we check for Software Updates?",
-    "type": "int",
-    "min_value": 1,
-    "max_value": false
-  },
-  "subspace_port": {
-    "value": 3838,
-    "desc": "What TCP port should Subspace communications happen on? (1025-65535)",
-    "type": "int",
-    "min_value": 1025,
-    "max_value": 65535
-  },
-  "subspace_keep_alive_interval": {
-    "value": 24,
-    "desc": "How often to send a ping on the subspace network to ensure the VPN stays connected",
-    "type": "int",
-    "min_value": 10,
-    "max_value": 50
-  },
-  "subspace_timeout": {
-    "value": 10,
-    "desc": "In seconds, time to wait for a remote stargate to respond to a communication before assuming it's offline",
-    "type": "int",
-    "min_value": 1,
-    "max_value": 30
-  },
-  "dialing_timeout": {
-    "value": 60,
-    "desc": "In seconds, how long to sit partially-dialed before resetting.",
-    "type": "int",
-    "min_value": 0,
-    "max_value": false
   },
   "stepper_drive_mode": {
     "value": "double",
@@ -262,84 +191,167 @@
     "desc": "How many steps constitutes one revolution of the glyph ring?",
     "type": "int",
     "min_value": 0,
-    "max_value": false
+    "max_value": false,
+    "units": "Steps"
   },
   "stepper_micro_steps": {
     "value": 16,
     "desc": "TODO: REMOVE NOT USED",
     "type": "int",
     "min_value": 0,
-    "max_value": false
+    "max_value": false,
+    "units": "Steps"
   },
-  "stepper_normal_speed": {
+  "stepper_speed_normal": {
     "value": 0.002,
-    "desc": "In seconds, delay time between steps in 'normal' speed. Larger values->slower",
+    "desc": "Delay between steps in 'normal' speed. Larger values->slower",
     "type": "float",
     "min_value": 0,
-    "max_value": false
+    "max_value": false,
+    "units": "Seconds"
   },
-  "stepper_slow_speed": {
+  "stepper_speed_slow": {
     "value": 0.01,
-    "desc": "In seconds, delay time between steps in 'slow' speed. Larger values->slower",
+    "desc": "Delay between steps in 'slow' speed. Larger values->slower",
     "type": "float",
     "min_value": 0,
-    "max_value": false
+    "max_value": false,
+    "units": "Seconds"
   },
-  "stepper_initial_speed": {
+  "stepper_speed_initial": {
     "value": 0.01,
     "desc": "TODO: IS THIS REQUIRED?",
     "type": "float",
     "min_value": 0,
-    "max_value": false
+    "max_value": false,
+    "units": "Seconds"
   },
-  "stepper_acceleration_length": {
+  "stepper_acceleration_steps": {
     "value": 40,
     "desc": "Over how many steps should the symbol ring accelerate/decelerate?",
     "type": "int",
     "min_value": 0,
-    "max_value": false
+    "max_value": false,
+    "units": "Steps"
   },
-  "stepper_ring_direction_mode_longest": {
+  "dialing_ring_direction_mode": {
     "value": true,
     "desc": "True: move from one symbol to the next, going the long way everytime. False: always use the shortest direction",
     "type": "bool"
   },
+  "dialing_incoming_allowed": {
+    "value": true,
+    "desc": "True allow incoming dialing attempts",
+    "type": "bool"
+  },
+  "dialing_timeout": {
+    "value": 60,
+    "desc": "How long to sit partially-dialed before resetting.",
+    "type": "int",
+    "min_value": 0,
+    "max_value": false,
+    "units": "Seconds"
+  },
+  "subspace_public_api_url": {
+    "value": "https://api.thestargateproject.com",
+    "desc": "The API Endpoint URL for the Subspace Information Service",
+    "type": "string"
+  },
+  "software_update_url": {
+    "value": "https://thestargateproject.com/stargate_software_updates/",
+    "desc": "The API Endpoint URL for the Software Update service",
+    "type": "string"
+  },
+  "software_update_username": {
+    "value": "Samantha",
+    "desc": "The BasicAuth Username to use to authenticate for downloads on the Software Update service",
+    "type": "string"
+  },
+  "software_update_password": {
+    "value": "CarterSG1!",
+    "desc": "The BasicAuth Password to use to authenticate for downloads on the Software Update service",
+    "type": "string"
+  },
+  "software_update_interval": {
+    "value": 24,
+    "desc": "How often should we check for Software Updates?",
+    "type": "int",
+    "min_value": 1,
+    "max_value": false,
+    "units": "Hours"
+  },
+  "fan_gate_refresh_interval": {
+    "value": 30,
+    "desc": "How often should we check for new Fan Gates on the Subspace Network?",
+    "type": "int",
+    "min_value": 1,
+    "max_value": false,
+    "units": "Minutes"
+  },
+  "subspace_port": {
+    "value": 3838,
+    "desc": "What TCP port should Subspace communications happen on? (1025-65535)",
+    "type": "int",
+    "min_value": 1025,
+    "max_value": 65535
+  },
+  "subspace_keep_alive_interval": {
+    "value": 24,
+    "desc": "How often to send a ping on the subspace network to ensure the VPN stays connected",
+    "type": "int",
+    "min_value": 10,
+    "max_value": 50,
+    "units": "Seconds"
+  },
+  "subspace_timeout": {
+    "value": 10,
+    "desc": "Time to wait for a remote stargate to respond to a communication before assuming it's offline",
+    "type": "int",
+    "min_value": 1,
+    "max_value": 30,
+    "units": "Seconds"
+  },
   "wormhole_max_time_minutes": {
     "value": 38,
-    "desc": "In minutes, how long can a normal wormhole be sustained? (Hint, it's 38 minutes)",
+    "desc": "How long can a normal wormhole be sustained? (Hint, it's 38 minutes!)",
     "type": "float",
     "min_value": 0,
-    "max_value": false
+    "max_value": false,
+    "units": "Minutes"
   },
   "wormhole_max_time_blackhole": {
     "value": 5259488,
-    "desc": "In minutes, how long can a wormhole to a blackhole planet be sustained? FOREVER.",
+    "desc": "How long can a wormhole to a blackhole planet be sustained? FOREVER.",
     "type": "float",
     "min_value": 0,
-    "max_value": false
+    "max_value": false,
+    "units": "Minutes"
   },
-  "wormhole_open_random_sound_interval_seconds": {
+  "audio_wormhole_active_quotes_interval": {
     "value": 17,
-    "desc": "In seconds, how long should we wait between playing random clips when a NORMAL wormhole is established?",
+    "desc": "How long should we wait between playing random clips when a NORMAL wormhole is established?",
     "type": "float",
     "min_value": 0,
-    "max_value": false
-  },
-  "wormhole_close_audio_headstart": {
-    "value": 1,
-    "desc": "In seconds, how much of a head start should audio get when closing a Wormhole? ",
-    "type": "float",
-    "min_value": 0,
-    "max_value": 5
+    "max_value": false,
+    "units": "Seconds"
   },
   "audio_clip_wait_time_blackhole": {
     "value": 1,
-    "desc": "In seconds, how long should we wait between playing random clips when a BLACKHOLE wormhole is established?",
+    "desc": "How long should we wait between playing random clips when a BLACKHOLE wormhole is established?",
     "type": "float",
     "min_value": 0,
-    "max_value": 7
+    "max_value": 7,
+    "units": "Seconds"
   },
-  "web_debug_enable": {
+  "audio_wormhole_close_headstart": {
+    "value": 1,
+    "desc": "How much of a headstart should we give the audio before closing a Wormhole?",
+    "type": "float",
+    "min_value": 0,
+    "max_value": 5,
+    "units": "Seconds"
+  },
+  "control_api_debug_enable": {
     "value": false,
     "desc": "True to enable Web API Debug output",
     "type": "bool"
@@ -354,7 +366,7 @@
     "desc": "The USB Serial Device path for the DHD",
     "type": "string"
   },
-  "dhd_baud_rate": {
+  "dhd_serial_baud_rate": {
     "value": 115200,
     "desc": "Baud Rate for use in DHD Serial communications",
     "type": "int",
@@ -377,24 +389,27 @@
   },
   "chevron_down_wait_time": {
     "value": 0.35,
-    "desc": "In seconds, how long to leave the chevron unlocked, before locking it.",
+    "desc": "How long to leave the chevron unlocked, before locking it.",
     "type": "float",
     "min_value": 0,
-    "max_value": 0.7
+    "max_value": 0.7,
+    "units": "Seconds"
   },
   "chevron_up_time": {
     "value": 0.2,
-    "desc": "In seconds, how long to energize the motor when moving a chevron up",
+    "desc": "How long to energize the motor when moving a chevron up",
     "type": "float",
     "min_value": 0,
-    "max_value": 0.7
+    "max_value": 0.7,
+    "units": "Seconds"
   },
   "chevron_down_time": {
     "value": 0.1,
-    "desc": "In seconds, how long to energize the motor when moving a chevron down",
+    "desc": "How long to energize the motor when moving a chevron down",
     "type": "float",
     "min_value": 0,
-    "max_value": 0.5
+    "max_value": 0.5,
+    "units": "Seconds"
   },
   "chevron_down_throttle": {
     "value": -0.65,
@@ -410,21 +425,27 @@
     "min_value": -1,
     "max_value": 1
   },
-  "chevron_down_audio_head_start": {
+  "audio_chevron_down_headstart": {
     "value": 0.2,
-    "desc": "In seconds, how much of a head start should audio get when moving the chevron down?",
+    "desc": "How much of a headstart should we give the audio before unlocking a chevron?",
     "type": "float",
     "min_value": 0,
-    "max_value": 5
+    "max_value": 5,
+    "units": "Seconds"
   },
-  "http_server_port": {
+  "chevron_motors_enable": {
+    "value": true,
+    "desc": "True to enable Chevron DC Motors",
+    "type": "bool"
+  },
+  "control_api_server_port": {
     "value": 8080,
     "desc": "What TCP port should the Stargate Control API run on? (1025-65535)",
     "type": "int",
     "min_value": 1025,
     "max_value": 65535
   },
-  "last_fan_gate_update": {
+  "fan_gate_last_update": {
     "value": "2022-01-29 20:07:27.695364",
     "desc": "Timestamp of the last attempt to update the list of Fan Gates on the Subspace Network",
     "type": "string-datetime",
