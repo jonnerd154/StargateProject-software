@@ -25,6 +25,7 @@
 
         <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
+        <script type="text/javascript" src="lib/moment.js"></script>
     </head>
     <body>
 
@@ -131,27 +132,27 @@
       }
 
       function getHTMLField( paramName, data ){
-
-        if ( data.protected ){
-          return data.value
-        }
         switch( data.type ){
           case "bool":
-            return getHTMLBool( paramName, data.value )
+            return getHTMLBool( paramName, data )
           case "int":
-            return getHTMLInt( paramName, data.value )
+            return getHTMLInt( paramName, data )
           case "float":
-            return getHTMLFloat( paramName, data.value )
+            return getHTMLFloat( paramName, data )
           case "string":
-            return getHTMLString( paramName, data.value )
+            return getHTMLString( paramName, data )
+          case "string-datetime":
+              return getHTMLDateTime( paramName, data )
           default:
             // If a type isn't specified, just print the raw value without a field
             return data.value
         }
       }
 
-      function getHTMLBool( paramName, value ){
-        if ( value ){
+      function getHTMLBool( paramName, data ){
+        if ( data.protected ) return data.value
+
+        if ( data.value ){
           valueTrue = " SELECTED"
           valueFalse = ""
         }
@@ -167,16 +168,25 @@
 
       }
 
-      function getHTMLInt( paramName, value ){
-        return "<input type='number' name='" + paramName + "' value='" + value + "' step='1'>"
+      function getHTMLInt( paramName, data ){
+        if ( data.protected ) return data.value
+        return "<input type='number' name='" + paramName + "' value='" + data.value + "' step='1'>"
       }
 
-      function getHTMLFloat( paramName, value ){
-        return "<input type='number' name='" + paramName + "' value='" + value + "' step='0.05'>"
+      function getHTMLFloat( paramName, data ){
+        if ( data.protected ) return data.value
+        return "<input type='number' name='" + paramName + "' value='" + data.value + "' step='0.05'>"
       }
 
-      function getHTMLString( paramName, value ){
-        return "<input type='text' name='" + paramName + "' value='" + value + "'>"
+      function getHTMLString( paramName, data ){
+        if ( data.protected ) return data.value
+        return "<input type='text' name='" + paramName + "' value='" + data.value + "'>"
+      }
+
+      function getHTMLDateTime( paramName, data ){
+        now = moment()
+        then = moment(data.value)
+        return then.from(now);
       }
 
       function toProperCase(str){

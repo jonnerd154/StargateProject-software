@@ -2,6 +2,7 @@ import sys
 import json
 import shutil
 import os
+from dateutil.parser import parse as parse_date
 
 sys.path.append('config')
 
@@ -101,8 +102,16 @@ class StargateConfig:
             if old['type'] != "":
                 if old['type'].lower() == "boolean" and not isinstance(value, bool ):
                         raise ValueError("Must be type `bool`")
+
                 if old['type'].lower() == "string" and not isinstance(value, str ):
                     raise ValueError("Must be type `str`")
+
+                if old['type'].lower() == "string-datetime":
+                    if not isinstance(value, str ):
+                        raise ValueError("Must be type `str`")
+                    if not self.is_valid_datetime(value):
+                        raise ValueError("Value is not a valid datetime")
+
                 if old['type'].lower() == "int":
                     if not isinstance(value, int ):
                         raise ValueError("Must be type `int`")
@@ -110,6 +119,7 @@ class StargateConfig:
                         raise ValueError(f"Maximum value: {old['max_value']}")
                     if old['max_value'] and value < old['min_value']:
                         raise ValueError(f"Minimum value: {old['min_value']}")
+
                 if old['type'].lower() == "float":
                     if not isinstance(value, float ):
                         raise ValueError("Must be type `float`")
@@ -122,6 +132,13 @@ class StargateConfig:
 
         self.set_non_persistent(key, value)
         self.save()
+
+    def is_valid_datetime( self, value ):
+        try:
+            parse_date(value)
+            return True
+        except ValueError:
+            return False
 
     def set_non_persistent(self, key, value):
         self.config[key]['value'] = value

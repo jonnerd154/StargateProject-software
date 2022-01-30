@@ -427,13 +427,13 @@
   "last_fan_gate_update": {
     "value": "2022-01-29 20:07:27.695364",
     "desc": "Timestamp of the last attempt to update the list of Fan Gates on the Subspace Network",
-    "type": "string",
+    "type": "string-datetime",
     "protected": true
   },
   "software_update_last_check": {
     "value": "2022-01-29 20:07:26.745736",
     "desc": "Timestamp of the last attempt to check for Software Updates",
-    "type": "string",
+    "type": "string-datetime",
     "protected": true
   },
   "software_update_status": {
