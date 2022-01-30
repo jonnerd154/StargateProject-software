@@ -1,6 +1,6 @@
 {
   "enable_software_updates": {
-    "value": false,
+    "value": true,
     "desc": "This Variable does something important",
     "type": "boolean"
   },
@@ -422,5 +422,30 @@
     "type": "int",
     "min_value": 1025,
     "max_value": 65535
+  },
+  "last_fan_gate_update": {
+    "value": "2022-01-29 20:07:27.695364",
+    "desc": "Timestamp of the last attempt to update Fan Gates on the subspace network",
+    "type": "string"
+  },
+  "software_update_last_check": {
+    "value": "2022-01-29 20:07:26.745736",
+    "desc": "Timestamp of the last attempt to check for Software Updates",
+    "type": "string"
+  },
+  "software_update_status": {
+    "value": "up-to-date",
+    "desc": "Status of Software Updates",
+    "type": "string"
+  },
+  "subspace_ip_address": {
+    "value": "",
+    "desc": "IP Address configured for Subspace VPN",
+    "type": "string"
+  },
+  "software_update_exception": {
+    "value": false,
+    "desc": "Last Exception Encountered during Software Update attempts",
+    "type": "boolean"
   }
 }
