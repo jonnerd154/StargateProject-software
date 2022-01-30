@@ -131,6 +131,10 @@
       }
 
       function getHTMLField( paramName, data ){
+
+        if ( data.protected ){
+          return data.value
+        }
         switch( data.type ){
           case "bool":
             return getHTMLBool( paramName, data.value )
