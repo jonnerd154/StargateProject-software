@@ -103,16 +103,16 @@ class StargateConfig:
                 if old['type'].lower() == "int":
                     if not isinstance(value, int ):
                         raise ValueError("Must be type `int`")
-                    if value > old['max_value']:
+                    if old['max_value'] and value > old['max_value']:
                         raise ValueError(f"Maximum value: {old['max_value']}")
-                    if value < old['min_value']:
+                    if old['max_value'] and value < old['min_value']:
                         raise ValueError(f"Minimum value: {old['min_value']}")
                 if old['type'].lower() == "float":
                     if not isinstance(value, float ):
                         raise ValueError("Must be type `float`")
-                    if value > old['max_value']:
+                    if old['max_value'] and value > old['max_value']:
                         raise ValueError(f"Maximum value: {old['max_value']}")
-                    if value < old['min_value']:
+                    if old['max_value'] and value < old['min_value']:
                         raise ValueError(f"Minimum value: {old['min_value']}")
                 if old['type'].lower() == "dict" and not isinstance(value, dict ):
                     raise ValueError("Must be type `dict`")
