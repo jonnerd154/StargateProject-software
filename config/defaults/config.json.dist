@@ -2,7 +2,7 @@
   "enable_software_updates": {
     "value": true,
     "desc": "This Variable does something important",
-    "type": "boolean"
+    "type": "bool"
   },
   "dhd_color_symbols": {
     "desc": "Controls the color of the LEDs that illuminate the DHD's symbol buttons",
@@ -446,6 +446,6 @@
   "software_update_exception": {
     "value": false,
     "desc": "Last Exception Encountered during Software Update attempts",
-    "type": "boolean"
+    "type": "bool"
   }
 }
