@@ -16,7 +16,7 @@ class ChevronManager:
         # Retrieve the Chevron config and initialize the Chevron objects
         self.chevrons = {}
         for key, value in self.cfg.get("chevron_mapping").items():
-            self.chevrons[int(key)] = Chevron( self.electronics, value['led_pin'], value['motor_number'], self.audio, self.cfg )
+            self.chevrons[int(key)] = Chevron( self.electronics, value['led_pin']['value'], value['motor_number']['value'], self.audio, self.cfg )
 
     def get( self, chevron_number ):
         return self.chevrons[int(chevron_number)]

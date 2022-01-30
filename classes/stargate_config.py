@@ -63,18 +63,75 @@ class StargateConfig:
         return self.conf_dir+"/"+self.file_name
 
     def get(self, key):
+        return self.get_full_config_by_key( key )['value']
+
+    def get_full_config_by_key(self, key):
         try:
-            return self.config.get(key)
+            config_record = self.config.get(key)
         except json.decoder.JSONDecodeError:
             self.log.log(f"*** ERROR: Key '{key}' not found in {self.file_name}!")
             raise
 
+
+# "item_config": {
+# "led_pin": {
+# "desc": "The GPIO Pin for this Chevron",
+# "type": "int",
+# "max_value": 40,
+# "min_value": 0
+# },
+        from pprint import pprint
+        try:
+            if config_record['type'] == 'dict':
+
+                # Expand the values to include metadata
+                for parent_key, parent_value in config_record['value'].items():
+                    for config_param, param_values in parent_value.items():
+                        param_values = param_values | config_record['item_config'][config_param]
+                        config_record['value'][parent_key][config_param] = param_values
+        except TypeError:
+            # We don't have extended metadata on this config key, that's okay.
+            pass
+        finally:
+            return config_record
+
     def set(self, key, value):
+        try:
+            old = self.get_full_config_by_key(key)
+        except json.decoder.JSONDecodeError:
+            self.log.log("Creating config key: {key}")
+            old = None
+            pass
+
+        if old is not None:
+            # Check for validity
+            if old['type'] != "":
+                if old['type'].lower() == "boolean" and not isinstance(value, bool ):
+                        raise ValueError("Must be type `bool`")
+                if old['type'].lower() == "string" and not isinstance(value, string ):
+                    raise ValueError("Must be type `string`")
+                if old['type'].lower() == "int":
+                    if not isinstance(value, int ):
+                        raise ValueError("Must be type `int`")
+                    if value > old['max_value']:
+                        raise ValueError(f"Maximum value: {old['max_value']}")
+                    if value < old['min_value']:
+                        raise ValueError(f"Minimum value: {old['min_value']}")
+                if old['type'].lower() == "float":
+                    if not isinstance(value, float ):
+                        raise ValueError("Must be type `float`")
+                    if value > old['max_value']:
+                        raise ValueError(f"Maximum value: {old['max_value']}")
+                    if value < old['min_value']:
+                        raise ValueError(f"Minimum value: {old['min_value']}")
+                if old['type'].lower() == "dict" and not isinstance(value, dict ):
+                    raise ValueError("Must be type `dict`")
+
         self.set_non_persistent(key, value)
         self.save()
 
     def set_non_persistent(self, key, value):
-        self.config[key] = value
+        self.config[key]['value'] = value
 
     def save(self):
         with open(self.get_full_file_path(), 'w+', encoding="utf8") as file:
