@@ -166,6 +166,11 @@
     "desc": "True to enable audio output",
     "type": "bool"
   },
+  "audio_play_random_clips": {
+    "value": true,
+    "desc": "True to play random movie clips while the wormhole is established",
+    "type": "bool"
+  },
   "dhd_enable": {
     "value": true,
     "desc": "True to enable DHD handling",

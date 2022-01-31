@@ -28,6 +28,7 @@ class WormholeManager:
         # Retrieve the configurations
         self.wormhole_max_time_default = self.cfg.get("wormhole_max_time_minutes") * 60  # A wormhole can only be maintained for about 38 minutes without tremendous amounts of power. (Black hole)
         self.wormhole_max_time_blackhole = self.cfg.get("wormhole_max_time_blackhole") * 60   # Make it 10 years...
+        self.audio_play_random_clips = self.cfg.get("audio_play_random_clips")  # True to play random clips while WH established
         self.audio_clip_wait_time_default = self.cfg.get("audio_wormhole_active_quotes_interval")  # The frequency of the random audio clips.
         self.audio_clip_wait_time_blackhole = self.cfg.get("audio_clip_wait_time_blackhole")
         self.audio_wormhole_close_headstart = self.cfg.get("audio_wormhole_close_headstart") # How early should we start playing the "wormhole close" sound clip before running the hardware close procedure
@@ -116,7 +117,7 @@ class WormholeManager:
             self.animation_manager.do_random_transitions(self.stargate)
 
             # Play random audio clips if wormhole not closing
-            if self.stargate.wormhole_active and (time() - random_audio_start_time) > self.audio_clip_wait_time:  # If there has been "silence" for more than audio_clip_wait_time
+            if self.audio_play_random_clips and self.stargate.wormhole_active and (time() - random_audio_start_time) > self.audio_clip_wait_time:  # If there has been "silence" for more than audio_clip_wait_time
                 self.audio.play_random_clip(audio_group) # Won't play if a clip is already playing
                 random_audio_start_time = time()
 
