@@ -35,3 +35,4 @@ pip-upgrader~=1.4.15
 psutil~=5.9.0
 packaging~=21.3
 python-dateutil~=2.8.2
+ipaddress~=1.0.23

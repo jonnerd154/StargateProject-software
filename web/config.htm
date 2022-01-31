@@ -146,6 +146,8 @@
               return getHTMLDateTime( paramName, data )
           case "string-enum":
               return getHTMLStringEnum( paramName, data )
+          case "string-ip":
+              return getHTMLStringIPAddress( paramName, data )
           default:
             // If a type isn't specified, just print the raw value without a field
             return data.value
@@ -182,6 +184,11 @@
       }
 
       function getHTMLString( paramName, data ){
+        if ( data.protected ) return data.value
+        return "<input type='text' name='" + paramName + "' value='" + data.value + "'>"
+      }
+
+      function getHTMLStringIPAddress( paramName, data ){
         if ( data.protected ) return data.value
         return "<input type='text' name='" + paramName + "' value='" + data.value + "'>"
       }

@@ -375,7 +375,7 @@
   "subspace_keep_alive_address": {
     "value": "172.30.0.1",
     "desc": "What IP address should we ping for Subspace VPN Keepalives?",
-    "type": "string"
+    "type": "string-ip"
   },
   "dhd_serial_port": {
     "value": "/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00",
@@ -495,7 +495,7 @@
   "subspace_ip_address": {
     "value": "",
     "desc": "IP Address configured for Subspace Network VPN",
-    "type": "string"
+    "type": "string-ip"
   },
   "software_update_exception": {
     "value": false,

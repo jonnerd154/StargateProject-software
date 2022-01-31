@@ -3,6 +3,7 @@ import json
 import shutil
 import os
 from dateutil.parser import parse as parse_date
+import ipaddress
 
 sys.path.append('config')
 
@@ -120,6 +121,12 @@ class StargateConfig:
                     if value not in old['enum_values']:
                         raise ValueError("Value is not one of the allowed values")
 
+                if old['type'].lower() == "string-ip":
+                    if not isinstance(value, str ):
+                        raise ValueError("Must be type `str`")
+                    if value != "" and not self.is_valid_ip_address(value): # Allow blanks
+                        raise ValueError("Not a valid IP Address")
+
                 if old['type'].lower() == "int":
                     if not isinstance(value, int ):
                         raise ValueError("Must be type `int`")
@@ -140,6 +147,14 @@ class StargateConfig:
 
         self.set_non_persistent(key, value)
         self.save()
+
+    @staticmethod
+    def is_valid_ip_address(address):
+        try:
+            ip = ipaddress.ip_address(address)
+            return True
+        except ValueError:
+            return False
 
     @staticmethod
     def is_valid_datetime( value ):
