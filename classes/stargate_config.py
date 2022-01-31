@@ -79,8 +79,12 @@ class StargateConfig:
                 # Expand the values to include metadata
                 for parent_key, parent_value in config_record['value'].items():
                     for config_param, param_values in parent_value.items():
-                        param_values = param_values | config_record['item_config'][config_param]
-                        config_record['value'][parent_key][config_param] = param_values
+                        try:
+                            param_values = param_values | config_record['item_config'][config_param]
+                            config_record['value'][parent_key][config_param] = param_values
+                        except KeyError:
+                            pass
+
         except ValueError:
             self.log.log(f"!!!!!!! config key {key} is missing metadata")
 
