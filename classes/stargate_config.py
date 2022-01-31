@@ -83,8 +83,8 @@ class StargateConfig:
                         config_record['value'][parent_key][config_param] = param_values
         except ValueError:
             self.log.log(f"!!!!!!! config key {key} is missing metadata")
-        finally:
-            return config_record
+
+        return config_record
 
     def get_all_configs(self):
         return self.config
@@ -95,13 +95,12 @@ class StargateConfig:
         except json.decoder.JSONDecodeError:
             self.log.log("Creating config key: {key}")
             old = None
-            pass
 
         if old is not None:
             # Check for validity
             if old['type'] != "":
                 if old['type'].lower() == "boolean" and not isinstance(value, bool ):
-                        raise ValueError("Must be type `bool`")
+                    raise ValueError("Must be type `bool`")
 
                 if old['type'].lower() == "string" and not isinstance(value, str ):
                     raise ValueError("Must be type `str`")
@@ -111,7 +110,7 @@ class StargateConfig:
                         raise ValueError("Must be type `str`")
                     if not self.is_valid_datetime(value):
                         raise ValueError("Value is not a valid datetime")
-                        
+
                 if old['type'].lower() == "string-enum":
                     if not isinstance(value, str ):
                         raise ValueError("Must be type `str`")
@@ -139,7 +138,8 @@ class StargateConfig:
         self.set_non_persistent(key, value)
         self.save()
 
-    def is_valid_datetime( self, value ):
+    @staticmethod
+    def is_valid_datetime( value ):
         try:
             parse_date(value)
             return True

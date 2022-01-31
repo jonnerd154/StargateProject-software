@@ -99,25 +99,25 @@ class KeyboardManager:
         stargate.log.log("Listening for input from the DHD/Keyboard via direct input. You can abort with the '-' key.")
         keyboard.wait()
 
-    def handle_dhd_test (self, char):
+    def handle_dhd_test (self, key):
         # Handle test mode here
-        while(self.stargate.dhd_test): # Toggle the light for the pressed key
-          try:
-              symbol_number = self.get_symbol_key_map()[key]
-          except KeyError:
-              pass
-          if symbol_number not in active:
-              self.active_buttons.append(symbol_number)
-              if symbol_number == 0:
-                  dhd.setPixel(symbol_number, 255, 0, 0)
-                  dhd.latch()
-              else:
-                  dhd.setPixel(symbol_number, 250, 117, 0)
-                  dhd.latch()
-          else:
-              self.active_buttons.remove(symbol_number)
-              dhd.setPixel(symbol_number, 0, 0, 0)
-              dhd.latch()
+        while self.stargate.dhd_test:
+            try:
+                symbol_number = self.get_symbol_key_map()[key]
+            except KeyError:
+                pass
+            if symbol_number not in self.active_buttons:
+                self.active_buttons.append(symbol_number)
+                if symbol_number == 0:
+                    self.stargate.dialer.setPixel(symbol_number, 255, 0, 0)
+                    self.stargate.dialer.latch()
+                else:
+                    self.stargate.dialer.setPixel(symbol_number, 250, 117, 0)
+                    self.stargate.dialer.latch()
+            else:
+                self.active_buttons.remove(symbol_number)
+                self.stargate.dialer.setPixel(symbol_number, 0, 0, 0)
+                self.stargate.dialer.latch()
         self.active_buttons = []
 
     def keypress_handler( self, key ):
@@ -127,7 +127,7 @@ class KeyboardManager:
         """
 
         if self.stargate.dhd_test:
-            self.handle_dhd_test( char )
+            self.handle_dhd_test( key )
 
         ## If the user inputs one of the abort characters, stop the software. Not possible from the DHD.
         if key in self.get_abort_characters():

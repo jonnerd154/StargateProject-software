@@ -1,4 +1,3 @@
-from random import random
 
 class SymbolRingHomingManager:
 
@@ -24,18 +23,15 @@ class SymbolRingHomingManager:
             self.log.log(f'HOME detected! Expected:           {expected}')
             self.log.log(f'               Actual:             {actual}')
             self.log.log(f'               Accumulated Error : {error}')
-            self.log.log(f'Setting Zero-Position.')
+            self.log.log('Setting Zero-Position.')
             self.ring.zero_position()
 
     def is_at_home(self):
-        try:
-            if self.electronics.homing_supported():
-                sensor_voltage = self.electronics.get_homing_sensor_voltage()
-                if sensor_voltage < self.auto_homing_threshold:  # if the ring is in the "home position"
-                    return True
-                return False
-        except:
-            return False
+        if self.stargate.electronics.homing_supported():
+            sensor_voltage = self.stargate.electronics.get_homing_sensor_voltage()
+            if sensor_voltage < self.auto_homing_threshold:  # if the ring is in the "home position"
+                return True
+        return False
 
     # def find_home(self):
     #     self.audio.sound_start('rolling_ring')  # play the audio movement

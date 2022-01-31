@@ -110,8 +110,9 @@ class GateApplication:
         self.log.log('The Stargate program is no longer running\r\n\r\n')
         sys.exit(0)
 
-    def check_is_daemon(self):
-        for index, arg in enumerate(sys.argv):
+    @staticmethod
+    def check_is_daemon():
+        for index, arg in enumerate(sys.argv): # pylint: disable=unused-variable
             if arg == '--daemon':
                 return True
         return False
