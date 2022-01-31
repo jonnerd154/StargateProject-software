@@ -181,6 +181,19 @@
     "desc": "True to enable the Glyph Ring Stepper Motor",
     "type": "bool"
   },
+  "stepper_auto_homing_enabled": {
+    "value": true,
+    "desc": "True to use the light sensor to calibrate the position of the ring",
+    "type": "bool"
+  },
+  "stepper_auto_homing_threshold": {
+    "value": 0.15,
+    "desc": "The voltage threshold below which we'll determine the ring is in the Home Position.",
+    "type": "float",
+    "min_value": 0,
+    "max_value": 3.3,
+    "units": "Volts"
+  },
   "stepper_drive_mode": {
     "value": "double",
     "desc": "How many steps constitutes one revolution of the glyph ring?",

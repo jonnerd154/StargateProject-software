@@ -1,7 +1,7 @@
 from time import sleep
 
 from stargate_config import StargateConfig
-from homing import SymbolRingHomingManager
+from symbol_ring_homing_manager import SymbolRingHomingManager
 
 class SymbolRing:
     """
@@ -86,6 +86,7 @@ class SymbolRing:
         }
         ## --------------------------
 
+        # Inititialize some hardware
         self.stepper = stargate.electronics.get_stepper()
         self.forward_direction = stargate.electronics.get_stepper_forward()
         self.backward_direction = stargate.electronics.get_stepper_backward()
@@ -97,8 +98,9 @@ class SymbolRing:
         self.position_store.load()
 
         ## Initialize the Homing Manager
-        self.homing_manager = SymbolRingHomingManager(stargate, self)
+        self.homing_manager = SymbolRingHomingManager( self )
 
+        # Initialize some state variables for Web UI
         self.direction = False
         self.steps_remaining = 0
         self.current_speed = False
@@ -183,8 +185,12 @@ class SymbolRing:
                 sleep(self.current_speed)
             else:
                 self.drive_status = "Constant Speed: Normal"
+
             # Update the position in non-persistent memory
             self.update_position(1, direction)
+
+            # Checks if the ring is in the home position, and zeros the cached value if so
+            self.homing_manager.in_move_calibrate()
 
         # After this move() is complete, save the position to persistent memory
         self.current_speed = False

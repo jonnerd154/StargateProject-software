@@ -145,8 +145,8 @@ class ElectronicsOriginal:
         # Convert ADC value to voltage
         return (self.adc_vref * adc_value) / (2^self.adc_resolution)-1
 
-    def homing_enabled(self):
-        # TODO: Move this to software config, default to disabled.
+    def homing_supported(self):
+        # Tie ADC CH1 HIGH to enable homing
         if 0.000 < self.adc_to_voltage( self.get_adc_by_channel(1) ) < 1:
             return True
         return False

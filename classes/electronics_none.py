@@ -71,7 +71,7 @@ class ElectronicsNone:
         return 0
 
     @staticmethod
-    def homing_enabled():
+    def homing_supported():
         return False
 
     @staticmethod
