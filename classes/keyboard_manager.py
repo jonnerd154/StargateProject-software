@@ -15,6 +15,7 @@ class KeyboardManager:
         self.addr_manager = stargate.addr_manager
         self.address_book = stargate.addr_manager.get_book()
         self.active_buttons = []
+        self.center_button_key = "A"
 
         if is_daemon:
             self.keyboard_direct_thread_start()
@@ -95,6 +96,7 @@ class KeyboardManager:
 
         # Add one for the center button ("A")
         keyboard.add_hotkey("shift+a", lambda: self.keypress_handler("A"))
+        keyboard.add_hotkey("shift+a", lambda: self.keypress_handler(self.center_button_key))
 
         stargate.log.log("Listening for input from the DHD/Keyboard via direct input. You can abort with the '-' key.")
         keyboard.wait()
@@ -138,6 +140,7 @@ class KeyboardManager:
 
         # Center Button
         if key == 'A':
+        if key == self.center_button_key:
             symbol_number = 'centre_button_outgoing'
             self.log.log(f'key: {key} -> symbol: {symbol_number} CENTER')
             self.queue_center_button()
