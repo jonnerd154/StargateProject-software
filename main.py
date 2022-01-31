@@ -27,8 +27,6 @@ from network_tools import NetworkTools
 
 class GateApplication:
 
-
-
     def __init__(self):
 
         # Check that we're running with root-like permissions (sudo)
