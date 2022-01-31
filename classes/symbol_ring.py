@@ -98,7 +98,7 @@ class SymbolRing:
         self.position_store.load()
 
         ## Initialize the Homing Manager
-        self.homing_manager = SymbolRingHomingManager( self )
+        self.homing_manager = SymbolRingHomingManager( self.stargate )
 
         # Initialize some state variables for Web UI
         self.direction = False
@@ -268,6 +268,7 @@ class SymbolRing:
         self.position_store.save()
 
     def zero_position(self):
+        self.log.log("Setting Ring Position: 0")
         self.position_store.set_non_persistent('ring_position', 0)
         self.save_position()
 

@@ -1,11 +1,11 @@
 
 class SymbolRingHomingManager:
 
-    def __init__(self, ring):
+    def __init__(self, stargate):
 
-        self.ring = ring
-        self.log = ring.log
-        self.cfg = ring.cfg
+        self.stargate = stargate
+        self.log = stargate.log
+        self.cfg = stargate.cfg
 
         # Retrieve the configurations
         self.auto_homing_enabled = self.cfg.get("stepper_auto_homing_enabled")
@@ -14,11 +14,11 @@ class SymbolRingHomingManager:
     def in_move_calibrate( self ):
         if self.auto_homing_enabled and self.is_at_home():
             actual = 0
-            expected = self.ring.get_position()
+            expected = self.stargate.ring.get_position()
             error = actual - expected
 
-            if error > self.ring.total_steps // 2:
-                error = (self.ring.total_steps - error)*-1
+            if error > self.stargate.ring.total_steps // 2:
+                error = (self.stargate.ring.total_steps - error)*-1
 
             self.log.log(f'HOME detected! Expected:           {expected}')
             self.log.log(f'               Actual:             {actual}')
