@@ -285,14 +285,7 @@
     "max_value": false,
     "units": "Hours"
   },
-  "fan_gate_refresh_interval": {
-    "value": 30,
-    "desc": "How often should we check for new Fan Gates on the Subspace Network?",
-    "type": "int",
-    "min_value": 1,
-    "max_value": false,
-    "units": "Minutes"
-  },
+
   "subspace_port": {
     "value": 3838,
     "desc": "What TCP port should Subspace communications happen on? (1025-65535)",
@@ -455,6 +448,19 @@
     "desc": "Timestamp of the last attempt to update the list of Fan Gates on the Subspace Network",
     "type": "string-datetime",
     "protected": true
+  },
+  "fan_gate_refresh_enable": {
+    "value": true,
+    "desc": "True to enable periodic checks to retrieve new Fan-Built Stargates",
+    "type": "bool"
+  },
+  "fan_gate_refresh_interval": {
+    "value": 30,
+    "desc": "How often should we check for new Fan Gates on the Subspace Network?",
+    "type": "int",
+    "min_value": 1,
+    "max_value": false,
+    "units": "Minutes"
   },
   "software_update_last_check": {
     "value": "2022-01-29 20:07:26.745736",

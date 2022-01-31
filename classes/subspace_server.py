@@ -50,8 +50,8 @@ class SubspaceServer:
         thread_keep_alive.start()
 
         # Update fan_gates from the subspace server
-        self.stargate.addr_manager.update_fan_gates_from_api()
-
+        if self.cfg.get("fan_gate_refresh_enable"):
+            self.stargate.addr_manager.update_fan_gates_from_api()
 
     def open_socket(self):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

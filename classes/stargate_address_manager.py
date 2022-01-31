@@ -29,8 +29,9 @@ class StargateAddressManager:
         self.info_api_url = self.cfg.get("subspace_public_api_url")
 
         # Update the fan gates from the DB every x minutes
-        update_interval = self.cfg.get("fan_gate_refresh_interval")
-        stargate.app.schedule.every(update_interval).minutes.do( self.update_fan_gates_from_api )
+        if self.cfg.get("fan_gate_refresh_enable"):
+            update_interval = self.cfg.get("fan_gate_refresh_interval")
+            stargate.app.schedule.every(update_interval).minutes.do( self.update_fan_gates_from_api )
 
     def get_book(self):
         return self.address_book
