@@ -75,7 +75,6 @@ class StargateConfig:
 
         try:
             if config_record['type'] == 'dict':
-
                 # Expand the values to include metadata
                 for parent_key, parent_value in config_record['value'].items():
                     for config_param, param_values in parent_value.items():
