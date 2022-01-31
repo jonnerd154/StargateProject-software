@@ -6,7 +6,7 @@
   },
   "dhd_color_symbols": {
     "desc": "Controls the color of the LEDs that illuminate the DHD's symbol buttons",
-    "type": "dict",
+    "type": "list-with-meta",
     "item_config": {},
     "value": {
       "red": {
@@ -34,7 +34,7 @@
   },
   "dhd_color_center": {
     "desc": "Controls the color of the LED that illuminates the DHD's Center Button",
-    "type": "dict",
+    "type": "list-with-meta",
     "item_config": {},
     "value": {
       "red": {

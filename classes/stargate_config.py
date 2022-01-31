@@ -65,7 +65,13 @@ class StargateConfig:
         return self.conf_dir+"/"+self.file_name
 
     def get(self, key):
-        return self.get_full_config_by_key( key )['value']
+        config = self.get_full_config_by_key( key )
+        ret_val = []
+        if config['type'] == "list-with-meta":
+            for nested_attr in config['value'].values():
+                ret_val.append(nested_attr['value'])
+            return ret_val
+        return config['value']
 
     def get_full_config_by_key(self, key):
         try:
