@@ -173,12 +173,12 @@
 
       function getHTMLInt( paramName, data ){
         if ( data.protected ) return data.value
-        return "<input type='number' name='" + paramName + "' value='" + data.value + "' step='1'>"
+        return "<input type='number' name='" + paramName + "' value='" + data.value + "' step='1' min='" + data.min_value + "' max='" + data.max_value + "'>"
       }
 
       function getHTMLFloat( paramName, data ){
         if ( data.protected ) return data.value
-        return "<input type='number' name='" + paramName + "' value='" + data.value + "' step='0.001'>"
+        return "<input type='number' name='" + paramName + "' value='" + data.value + "' step='0.001' min='" + data.min_value + "' max='" + data.max_value + "'>"
       }
 
       function getHTMLString( paramName, data ){
