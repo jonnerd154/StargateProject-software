@@ -273,13 +273,11 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     data = { "success": True, "message": "There are no conflicts with your chosen address.<br><br>Local Address Saved." }
 
             elif self.path == '/update/subspace_ip':
-                # TODO: Validate the IP address again (client did it, but we should too)
-                success = self.stargate.subspace_client.set_ip_address(data['ip'])
-
-                if success:
-                    data = { "success": success, "message": "Subspace IP Address Saved." }
-                else:
-                    data = { "success": success, "message": "There was an error while saving the IP Address." }
+                try:
+                    self.stargate.subspace_client.set_ip_address(data['ip'])
+                    data = { "success": True, "message": "Subspace IP Address Saved." }
+                except ValueError as ex:
+                    data = { "success": False, "message": str(ex) }
 
             else:
                 # Unknown path, send 404
