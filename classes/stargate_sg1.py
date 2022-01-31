@@ -130,6 +130,8 @@ class StargateSG1:
 
             self.schedule.run_pending() # Run any scheduled items
 
+            sleep(0.1) # Give the CPU a break (and yield to other threads)
+
         # When the stargate is no longer running.
         self.shutdown(cancel_sound=False)
 
