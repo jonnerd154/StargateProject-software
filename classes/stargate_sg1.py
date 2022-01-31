@@ -51,10 +51,10 @@ class StargateSG1:
         self.symbol_manager = StargateSG1SymbolManager()
         self.subspace_client = SubspaceClient(self)
         self.addr_manager = StargateAddressManager(self)
-        self.keyboard = KeyboardManager(self, app.is_daemon)
         self.chevrons = ChevronManager(self)
         self.ring = SymbolRing(self)
         self.dialer = Dialer(self) # A "Dialer" is either a Keyboard or DHDv2
+        self.keyboard = KeyboardManager(self, app.is_daemon)
         self.wh_manager = WormholeManager(self)
         self.wh_manager.initialize_animation_manager()
 

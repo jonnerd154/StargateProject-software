@@ -14,7 +14,9 @@ class KeyboardManager:
         self.audio = stargate.audio
         self.addr_manager = stargate.addr_manager
         self.address_book = stargate.addr_manager.get_book()
-        self.active_buttons = []
+
+        self.dhd_test_enable = False
+        self.dhd_test_active_buttons = []
         self.center_button_key = "A"
 
         if is_daemon:
@@ -95,32 +97,45 @@ class KeyboardManager:
             keyboard.add_hotkey(char, lambda char_in=char_in: self.keypress_handler(char_in))
 
         # Add one for the center button ("A")
-        keyboard.add_hotkey("shift+a", lambda: self.keypress_handler("A"))
         keyboard.add_hotkey("shift+a", lambda: self.keypress_handler(self.center_button_key))
 
         stargate.log.log("Listening for input from the DHD/Keyboard via direct input. You can abort with the '-' key.")
         keyboard.wait()
 
-    def handle_dhd_test (self, key):
+    def enable_dhd_test( self, enable ):
+      if enable:
+          self.stargate.shutdown()
+          self.dhd_test_enable = True
+      else:
+          self.dhd_test_enable = False
+          self.stargate.dialer.hardware.clear_lights()
+
+      self.dhd_test_active_buttons = []
+
+    def handle_dhd_test(self, key):
         # Handle test mode here
-        while self.stargate.dhd_test:
-            try:
-                symbol_number = self.get_symbol_key_map()[key]
-            except KeyError:
-                pass
-            if symbol_number not in self.active_buttons:
-                self.active_buttons.append(symbol_number)
-                if symbol_number == 0:
-                    self.stargate.dialer.setPixel(symbol_number, 255, 0, 0)
-                    self.stargate.dialer.latch()
-                else:
-                    self.stargate.dialer.setPixel(symbol_number, 250, 117, 0)
-                    self.stargate.dialer.latch()
+        try:
+            symbol_number = self.get_symbol_key_map()[key]
+            self.log.log(f'DHD Test: Pressed Key {key} --> Symbol {symbol_number}')
+        except KeyError:
+            if (key == self.center_button_key):
+                self.log.log(f'DHD Test: Pressed Center Button {key} --> Symbol {symbol_number}')
+                symbol_number = 0
             else:
-                self.active_buttons.remove(symbol_number)
-                self.stargate.dialer.setPixel(symbol_number, 0, 0, 0)
-                self.stargate.dialer.latch()
-        self.active_buttons = []
+                self.log.log(f'DHD Test: Key NOT RECOGNIZED {key}')
+
+        if symbol_number not in self.dhd_test_active_buttons:
+            self.dhd_test_active_buttons.append(symbol_number)
+            if symbol_number == 0:
+                self.stargate.dialer.hardware.set_pixel(symbol_number, 255, 0, 0) # TODO: Use colors in config
+                self.stargate.dialer.hardware.latch()
+            else:
+                self.stargate.dialer.hardware.set_pixel(symbol_number, 250, 117, 0) # TODO: Use colors in config
+                self.stargate.dialer.hardware.latch()
+        else:
+            self.dhd_test_active_buttons.remove(symbol_number)
+            self.stargate.dialer.hardware.clear_pixel(symbol_number)
+            self.stargate.dialer.hardware.latch()
 
     def keypress_handler( self, key ):
         """
@@ -128,8 +143,9 @@ class KeyboardManager:
         :return: Nothing is returned, but the stargate is manipulated.
         """
 
-        if self.stargate.dhd_test:
+        if self.dhd_test_enable:
             self.handle_dhd_test( key )
+            return
 
         ## If the user inputs one of the abort characters, stop the software. Not possible from the DHD.
         if key in self.get_abort_characters():
@@ -139,7 +155,6 @@ class KeyboardManager:
             return
 
         # Center Button
-        if key == 'A':
         if key == self.center_button_key:
             symbol_number = 'centre_button_outgoing'
             self.log.log(f'key: {key} -> symbol: {symbol_number} CENTER')

@@ -228,11 +228,11 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 data = { "success": True }
 
             elif self.path == "/do/dhd_test_enable":
-                self.stargate.dhd_test = True
+                self.stargate.keyboard.enable_dhd_test(True)
                 data = { "success": True }
 
             elif self.path == "/do/dhd_test_disable":
-                self.stargate.dhd_test = False
+                self.stargate.keyboard.enable_dhd_test(False)
                 data = { "success": True }
 
             ##### UPDATE DATA HANDLERS BELOW ####
