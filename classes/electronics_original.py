@@ -48,6 +48,7 @@ class ElectronicsOriginal:
         self.init_neopixels()
 
         self.spi = None
+        self.init_spi_for_adc()
 
     def init_motor_shields(self):
         # Initialize all of the shields as DC motors
@@ -86,8 +87,6 @@ class ElectronicsOriginal:
         else:
             self.stepper = StepperSim()
 
-
-
     def get_chevron_motor(self, chevron_number):
         return self.shield_config[chevron_number]
 
@@ -118,8 +117,6 @@ class ElectronicsOriginal:
 
     def get_adc_by_channel(self, adc_ch):
         # CREDIT: https://learn.sparkfun.com/tutorials/python-programming-tutorial-getting-started-with-the-raspberry-pi/experiment-3-spi-and-analog-input
-
-        self.init_spi_for_adc()
 
         # Make sure ADC channel is 0 or 1
         if adc_ch not in [0,1]:
