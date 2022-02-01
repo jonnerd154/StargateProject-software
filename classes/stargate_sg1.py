@@ -8,6 +8,7 @@ from dialers import Dialer
 from keyboard_manager import KeyboardManager
 from symbol_ring import SymbolRing
 from stargate_address_manager import StargateAddressManager
+import subspace_messages
 from subspace_client import SubspaceClient
 from wormhole_manager import WormholeManager
 from subspace_server import SubspaceServer
@@ -241,7 +242,7 @@ class StargateSG1:
             len(self.address_buffer_outgoing) == self.locked_chevrons_outgoing:
 
             _ip_address = self.addr_manager.get_ip_from_stargate_address(self.address_buffer_outgoing )
-            result = self.subspace_client.send_to_remote_stargate( _ip_address, 'centre_button_incoming' )[0]
+            result = self.subspace_client.send_to_remote_stargate( _ip_address, subspace_messages.DIAL_CENTER_INCOMING )[0]
             if result:
                 self.log.log('Sent: Center Button')
 
