@@ -129,8 +129,7 @@ class SubspaceServer:
 
                 # If we are asked about the status (wormhole already active from a different gate or actively dialing out)
                 elif msg == subspace_messages.CHECK_STATUS:
-                    self.log.log(f'Received CHECK_STATUS from {addr} -> {msg}')
-                    # It the wormhole is already established, or if we are dialing out.
+                    # If the wormhole is already established, or if we are dialing out.
                     if self.stargate.wormhole_active or len(self.stargate.address_buffer_outgoing) > 0:
                         # If the established wormhole is from the remote gate
                         if addr[0] == self.stargate.fan_gate_incoming_ip:
@@ -139,6 +138,9 @@ class SubspaceServer:
                             status = True
                     else:
                         status = False
+
+                    self.log.log(f'Received CHECK_STATUS from {addr} is_busy -> {status}')
+
                     # Send the status to the client stargate
                     conn.send(str(status).encode(self.encoding_format))
 
