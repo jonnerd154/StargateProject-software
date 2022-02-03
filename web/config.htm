@@ -132,7 +132,10 @@
                       data: form.serialize(), // serializes the form's elements.
                       success: function(data)
                       {
-                        alert("SUCCESS: " + data); // show response from the php script.
+                        if( !data.success ){
+                          console.log(data)
+                          alert("Failed to save changes: " + data.message); // show response from the php script.
+                        }
                       },
                       error: function(data)
                       {

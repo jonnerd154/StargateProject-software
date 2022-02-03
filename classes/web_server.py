@@ -280,6 +280,15 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 except ValueError as ex:
                     data = { "success": False, "message": str(ex) }
 
+            elif self.path == '/update/config':
+                try:
+                    # TODO: Implement me!
+                    raise ValueError("Not Implemented")
+
+                    data = { "success": True, "message": "Configuration Saved." }
+                except ValueError as ex:
+                    data = { "success": False, "message": str(ex) }
+
             else:
                 # Unknown path, send 404
                 self.send_response(404, 'Not Found')
