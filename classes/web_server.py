@@ -99,12 +99,12 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
             else:
                 # Unhandled GET request: send a 404
-                self.send_response(404)
+                self.send_response(404, 'Not Found')
                 self.end_headers()
                 return
 
             content = json.dumps( data )
-            self.send_response(200)
+            self.send_response(200, 'OK')
             self.send_header("Content-type", "text/json")
             self.send_header("Access-Control-Allow-Origin", "*")
             self.send_header("Access-Control-Allow-Headers", 'Authorization, Content-Type')
@@ -282,7 +282,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
             else:
                 # Unknown path, send 404
-                self.send_response(404, 'OK')
+                self.send_response(404, 'Not Found')
                 self.end_headers()
                 return
 
@@ -300,12 +300,12 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 raise
 
             # Encountered an exception: send a 500
-            self.send_response(500)
+            self.send_response(500, "Exception")
             self.end_headers()
 
     def send_json_response(self, data):
         content = json.dumps( data )
-        self.send_response(200)
+        self.send_response(200, 'OK')
         self.send_header("Content-type", "text/json")
         self.end_headers()
         self.wfile.write(content.encode())
