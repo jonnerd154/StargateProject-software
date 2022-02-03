@@ -103,13 +103,15 @@
                       if (paramName == "chevron_config"){
                         paramName_f = "Chevron"
                         $.each(nestedItem, function (nestedParamName2, nestedItem2) {
+                          paramName_u = paramName + "_" + nestedParamName + "_" + nestedParamName2
                           paramPrettyName = toProperCase(paramName_f + " " + nestedParamName + " " + nestedParamName2)
-                          trHTML += getHTMLTableRow(paramName, paramPrettyName, nestedItem2)
+                          trHTML += getHTMLTableRow(paramName_u, paramPrettyName, nestedItem2)
                         })
                       }
                       else if ( paramName == "dhd_color_center" || paramName == "dhd_color_symbols"){
+                        paramName_u = paramName + "_" + nestedParamName
                         paramPrettyName = toProperCase(paramName + " " + nestedParamName)
-                        trHTML += getHTMLTableRow(paramName, paramPrettyName, nestedItem)
+                        trHTML += getHTMLTableRow(paramName_u, paramPrettyName, nestedItem)
                       }
                     })
                   }
