@@ -85,8 +85,18 @@
                 address = address_raw.join("");
 
                 fan_gate_string = ""
-                if (value.ip_address){
-                    fan_gate_string = "(FAN)"
+                switch (value.type){
+                    case "fan":
+                      fan_gate_string = "(FAN)"
+                      break
+                    case "lan":
+                      fan_gate_string = "(LAN)"
+                      break
+                    case "standard":
+                      fan_gate_string = ""
+                      break
+                    default:
+                      fan_gate_string = "(Unknown)"
                 }
                 $("#presets").append('<div class="presetAddress" onclick="window.location = \'index.htm?address=' + address_string + '\';"><div class="name">' + value.name + ' ' + fan_gate_string + '</div><div class="glyphs">' + address +  '</div></div>' );
             });

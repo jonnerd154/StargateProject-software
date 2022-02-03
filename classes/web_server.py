@@ -33,7 +33,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 if record_type == "standard":
                     data = self.stargate.addr_manager.get_book().get_standard_gates()
                 elif record_type == "fan":
-                    data = self.stargate.addr_manager.get_book().get_fan_gates()
+                    data = self.stargate.addr_manager.get_book().get_fan_and_lan_addresses()
                 else:
                     all_addr = self.stargate.addr_manager.get_book().get_all_nonlocal_addresses()
                     data = collections.OrderedDict(sorted(all_addr.items()))
@@ -76,6 +76,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "subspace_available":             self.stargate.subspace_client.is_online(),
                     "standard_gate_count":            len(self.stargate.addr_manager.get_book().get_standard_gates()),
                     "fan_gate_count":                 len(self.stargate.addr_manager.get_book().get_fan_gates()),
+                    "lan_gate_count":                 len(self.stargate.addr_manager.get_book().get_lan_gates()),
                     "fan_gate_last_update":           self.stargate.cfg.get('fan_gate_last_update'),
                     "dialer_mode":                    self.stargate.dialer.type,
                     "hardware_mode":                  self.stargate.electronics.name,

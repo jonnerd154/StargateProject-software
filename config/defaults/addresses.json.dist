@@ -16,10 +16,31 @@
     "desc": "The Local Stargate LOOPBACK Address",
     "type": "list"
   },
+  "lan_gates": {
+    "value": {},
+    "desc": "A Dictionary of LAN Gates. These allow inter-Stargate communication without an internet connection, or Subspace Network configuration.",
+    "type": "dict",
+    "value": {
+      "My LAN Gate": {
+        "name": "My LAN Gate",
+        "gate_address": [
+          27,
+          7,
+          15,
+          1,
+          2,
+          3
+        ],
+        "ip_address": "127.0.0.1"
+        "is_black_hole": false
+      }
+    }
+  },
   "fan_gates": {
     "value": {},
     "desc": "A Dictionary of Fan Gates, updated by automatic Subspace communications",
-    "type": "dict"
+    "type": "dict",
+    "value": {}
   },
   "standard_gates": {
     "desc": "A Dictionary of Movie/Show gates.",

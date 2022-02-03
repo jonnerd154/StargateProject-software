@@ -22,7 +22,7 @@ class StargateAddressManager:
         self.known_planets = self.address_book.get_standard_gates()
 
         ### Retrieve and merge all fan gates, local and in-DB
-        self.fan_gates = self.address_book.get_fan_gates() ### Stargate fan-made gate addresses
+        self.fan_gates = self.address_book.get_fan_and_lan_addresses() ### Stargate fan-made gate addresses
 
         self.validator = StargateAddressValidator()
 
@@ -118,7 +118,7 @@ class StargateAddressManager:
         :return: True if we are dialing a fan made address, False if not.
         """
         local_address = self.address_book.get_local_address()
-        for gate_config in self.address_book.get_fan_gates().values():
+        for gate_config in self.address_book.get_fan_and_lan_addresses().values():
             try:
                 #If we dial our own local address:
                 if dialed_address[:2] == local_address[:2]:
@@ -154,7 +154,7 @@ class StargateAddressManager:
         :return: The stargate's IP address is returned as a string, or "Unknown" if not found
         """
         stargate_ip = 'Unknown'
-        for stargate_config in self.address_book.get_fan_gates().values():
+        for stargate_config in self.address_book.get_fan_and_lan_addresses().values():
             if stargate_config['ip_address'] == remote_ip:
                 return stargate_config['name'] # TODO: Should this return `gate_address`?
         return str(stargate_ip) # If the gate address of the IP was not found
@@ -167,7 +167,7 @@ class StargateAddressManager:
         :param known_fan_made_stargates: This is the dictionary of the known stargates
         :return: The IP address is returned as a string.
         """
-        for stargate_config in self.address_book.get_fan_gates().values():
+        for stargate_config in self.address_book.get_fan_and_lan_addresses().values():
             if len(stargate_address) > 1 and stargate_address[0:2] == stargate_config['gate_address'][0:2]:
                 return stargate_config['ip_address']
 
@@ -181,7 +181,7 @@ class StargateAddressManager:
         :param IP: the IP address as a string
         :return: The planet/stargate name is returned as a string.
         """
-        for gate_name, config in self.address_book.get_fan_gates().items(): # pylint: disable=unused-variable
+        for gate_name, config in self.address_book.get_fan_and_lan_addresses().items(): # pylint: disable=unused-variable
             if config['ip_address'] == str(remote_ip):
                 return config['name']
         return 'Unknown'
