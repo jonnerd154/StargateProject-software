@@ -117,7 +117,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 raise
 
             # Encountered an exception: send a 500
-            self.send_response(500)
+            self.send_response(500, "Exception")
             self.end_headers()
 
     def do_POST(self): # pylint: disable=invalid-name
