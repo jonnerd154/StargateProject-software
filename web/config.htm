@@ -48,8 +48,6 @@
       $( function() {
         doPoll();
         updateInfo();
-
-
       }); // End of on-ready function
 
       var is_online = true
@@ -122,6 +120,28 @@
                   }
               });
               $('#records_table').append(trHTML);
+              $("#config").submit(function(e) {
+
+                  e.preventDefault(); // avoid to execute the actual submit of the form.
+
+                  var form = $(this);
+
+                  $.ajax({
+                      type: "POST",
+                      url: 'stargate/update/config',
+                      data: form.serialize(), // serializes the form's elements.
+                      success: function(data)
+                      {
+                        alert("SUCCESS: " + data); // show response from the php script.
+                      },
+                      error: function(data)
+                      {
+                        console.log(data); // show response from the php script.
+                        alert("There was an error. Try again.")
+                      },
+                  });
+
+              });
             }
         });
       }
@@ -237,17 +257,20 @@
         offline_modal.dialog("close");
       }
 
+
+
     </script>
-
-    <table id="records_table" border='1'>
-        <tr>
-            <th>Name</th>
-            <th>Value</th>
-            <th>Units</th>
-            <th>Description</th>
-        </tr>
-    </table>
-
+    <form id='config'>
+      <table id="records_table" border='1'>
+          <tr>
+              <th>Name</th>
+              <th>Value</th>
+              <th>Units</th>
+              <th>Description</th>
+          </tr>
+      </table>
+      <input type="submit" value="Save Changes">
+    </form>
     <hr />
 
     <div class="controls">
