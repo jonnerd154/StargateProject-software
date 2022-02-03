@@ -159,7 +159,7 @@ class SubspaceServer:
 
                     planet_name = self.addr_manager.get_planet_name_from_ip(addr[0])
                     if self.logging == "verbose":
-                        self.log.log(f'LINE 154 Received from {planet_name} - {stargate_address} -> {msg}')
+                        self.log.log(f'Received Address Components from {planet_name} - {stargate_address} -> {msg}')
 
                 # For unknown messages
                 else:
