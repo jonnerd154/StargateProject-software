@@ -107,20 +107,18 @@ class StargateConfig:
         '''
         from pprint import pformat
 
-        ignore_list = []
+        data_out = {}
         for attr_key, attr_value in data.items():
             # Validate all of the inputs before modifying anything
             try:
                 attr_value = self.is_valid_value(attr_key, attr_value) # raises ValueError if not valid
                 self.log.log(f"           {attr_key} changed: Will update with validated value {attr_value}")
-                #self.set(attr_key, attr_value)
+                data_out[attr_key] = attr_value
             except ValueUnchanged: # It's okay if the value wasn't changed
-                ignore_list.append(attr_key)
+                pass
 
         # We get here if there were no validation problems. Update the CHANGED values
-        for attr_key in ignore_list:
-            data.pop(attr_key) # Remove it from the list of values to update
-        self.__set_raw_bulk(data)
+        self.__set_raw_bulk(data_out)
 
     def __set_raw_bulk(self, data):
         '''
@@ -242,14 +240,12 @@ class StargateConfig:
         if test_value == param_config['value']:
             raise ValueUnchanged()
 
-        new_type = type(test_value)
-
         return test_value
 
     @staticmethod
     def is_valid_ip_address(address):
         try:
-            ip = ipaddress.ip_address(address)
+            ipaddress.ip_address(address)
             return True
         except ValueError:
             return False
