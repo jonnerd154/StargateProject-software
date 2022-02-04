@@ -163,7 +163,8 @@
     "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 8 (1-indexed). Active HIGH",
     "type": "int",
     "max_value": 40,
-    "min_value": 0
+    "min_value": 0,
+    "nullable": true
   },
   "chevron_config_8_motor_number": {
     "value": 10,
@@ -177,7 +178,8 @@
     "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 9 (1-indexed). Active HIGH",
     "type": "int",
     "max_value": 40,
-    "min_value": 0
+    "min_value": 0,
+    "nullable": true
   },
   "chevron_config_9_motor_number": {
     "value": 11,

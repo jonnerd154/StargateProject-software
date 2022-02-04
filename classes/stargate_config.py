@@ -160,6 +160,10 @@ class StargateConfig:
         try:
             param_config = self.get_full_config_by_key(key)
             required_type = param_config['type'].lower()
+            try:
+                nullable = param_config['nullable']
+            except KeyError:
+                nullable = False
 
         except (TypeError, json.decoder.JSONDecodeError):
             raise NameError(f"Config key {key} not found.")
@@ -211,15 +215,18 @@ class StargateConfig:
                 raise ValueError(f"{key} Minimum value: {param_config['min_value']}")
 
         elif required_type == "int":
-            try:
-                test_value = int(test_value)
-            except ValueError:
-                raise ValueError(f"{key} must be type `int`")
+            if test_value == "" and nullable:
+                pass
+            else:
+                try:
+                    test_value = int(test_value)
+                except ValueError:
+                    raise ValueError(f"{key} must be type `int` got {test_value}")
 
-            if param_config['max_value'] and test_value > param_config['max_value']:
-                raise ValueError(f"{key} Maximum value: {param_config['max_value']}")
-            if param_config['max_value'] and test_value < param_config['min_value']:
-                raise ValueError(f"{key} Minimum value: {param_config['min_value']}")
+                if param_config['max_value'] and test_value > param_config['max_value']:
+                    raise ValueError(f"{key} Maximum value: {param_config['max_value']}")
+                if param_config['max_value'] and test_value < param_config['min_value']:
+                    raise ValueError(f"{key} Minimum value: {param_config['min_value']}")
 
 
         elif required_type == "dict":
@@ -233,9 +240,12 @@ class StargateConfig:
         # Double check that our transformations yielded the correct type
         base_type = required_type.split("-", 1)[0]
         test_type = test_value.__class__.__name__
-        if test_type != base_type:
+        if not nullable and test_type != base_type:
             raise ValueError(f"Validation yielded invalid type for field {key}. Requires {base_type}, yielded {test_type}")
 
+        if nullable and test_value == "":
+            test_value = None
+            
         # Check if the existing value is the same as the test_value. If so, raise ValueUnchanged
         if test_value == param_config['value']:
             raise ValueUnchanged()
