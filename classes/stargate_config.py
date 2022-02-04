@@ -171,29 +171,29 @@ class StargateConfig:
                 elif test_value.lower() == "false":
                     test_value = False
                 else:
-                    raise ValueError("Must be type `bool`")
+                    raise ValueError(f"{key} must be type `bool`")
 
         elif required_type == "str":
             if not isinstance(test_value, str ):
-                raise ValueError("Must be type `str`")
+                raise ValueError(f"{key} must be type `str`")
 
         elif required_type == "str-datetime":
             if not isinstance(test_value, str ):
-                raise ValueError("Must be type `str`")
+                raise ValueError(f"{key} must be type `str`")
             if not self.is_valid_datetime(test_value):
-                raise ValueError("Value is not a valid datetime")
+                raise ValueError(f"{key} requires a valid datetime")
 
         elif required_type == "str-enum":
             if not isinstance(test_value, str ):
-                raise ValueError("Must be type `str`")
+                raise ValueError(f"{key} must be type `str`")
             if test_value not in param_config['enum_values']:
-                raise ValueError("Value is not one of the allowed values")
+                raise ValueError(f"{key} must be one of {param_config['enum_values']}" )
 
         elif required_type == "str-ip":
             if not isinstance(test_value, str ):
-                raise ValueError("Must be type `str`")
+                raise ValueError(f"{key} must be type `str`")
             if test_value != "" and not self.is_valid_ip_address(test_value): # Allow blanks
-                raise ValueError("Not a valid IP Address")
+                raise ValueError(f"{key} must be a valid IP Address")
 
         elif required_type == "float":
             try:
@@ -203,28 +203,28 @@ class StargateConfig:
                 if test_value == float(test_value):
                     test_value = float(test_value)
                 else:
-                    raise ValueError("Must be type `float`")
+                    raise ValueError(f"{key} must be type `float`")
 
             if param_config['max_value'] and test_value > param_config['max_value']:
-                raise ValueError(f"Maximum value: {param_config['max_value']}")
+                raise ValueError(f"{key} Maximum value: {param_config['max_value']}")
             if param_config['max_value'] and test_value < param_config['min_value']:
-                raise ValueError(f"Minimum value: {param_config['min_value']}")
+                raise ValueError(f"{key} Minimum value: {param_config['min_value']}")
 
         elif required_type == "int":
             try:
                 test_value = int(test_value)
             except ValueError:
-                raise ValueError("Must be type `int`")
+                raise ValueError(f"{key} must be type `int`")
 
             if param_config['max_value'] and test_value > param_config['max_value']:
-                raise ValueError(f"Maximum value: {param_config['max_value']}")
+                raise ValueError(f"{key} Maximum value: {param_config['max_value']}")
             if param_config['max_value'] and test_value < param_config['min_value']:
-                raise ValueError(f"Minimum value: {param_config['min_value']}")
+                raise ValueError(f"{key} Minimum value: {param_config['min_value']}")
 
 
         elif required_type == "dict":
             if not isinstance(test_value, dict ):
-                raise ValueError("Must be type `dict`")
+                raise ValueError(f"{key} must be type `dict`")
 
         else:
             test_type = test_value.__class__.__name__
