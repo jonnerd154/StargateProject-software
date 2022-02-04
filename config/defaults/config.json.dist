@@ -397,14 +397,14 @@
   },
   "dhd_brightness_center": {
     "value": 100,
-    "desc": "From 0-255, how bright should the DHD CENTER BUTTON be? Higher values->Brighter",
+    "desc": "How bright should the DHD CENTER BUTTON be? Higher values->Brighter",
     "type": "int",
     "min_value": 0,
     "max_value": 255
   },
   "dhd_brightness_symbols": {
     "value": 3,
-    "desc": "From 0-255, how bright should the DHD SYMBOLS be? Higher values->Brighter",
+    "desc": "How bright should the DHD SYMBOLS be? Higher values->Brighter",
     "type": "int",
     "min_value": 0,
     "max_value": 255
