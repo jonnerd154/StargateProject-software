@@ -146,7 +146,7 @@ class SymbolRing:
 
         self.direction = direction
         self.steps_remaining = steps
-        self.current_speed = self.cfg.get("stepper_speed_initial")
+        self.current_speed = self.cfg.get("stepper_speed_slow")
 
         #TODO: Consider caching the configs here?
 

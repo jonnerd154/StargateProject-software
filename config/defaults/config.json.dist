@@ -228,14 +228,6 @@
     "max_value": false,
     "units": "Seconds"
   },
-  "stepper_speed_initial": {
-    "value": 0.01,
-    "desc": "TODO: IS THIS REQUIRED?",
-    "type": "float",
-    "min_value": 0,
-    "max_value": false,
-    "units": "Seconds"
-  },
   "stepper_acceleration_steps": {
     "value": 40,
     "desc": "Over how many steps should the symbol ring accelerate/decelerate?",
