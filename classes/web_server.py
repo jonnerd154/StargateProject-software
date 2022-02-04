@@ -282,11 +282,9 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
             elif self.path == '/update/config':
                 try:
-                    # TODO: Implement me!
-                    raise ValueError("Not Implemented")
-
-                    data = { "success": True, "message": "Configuration Saved." }
-                except ValueError as ex:
+                    message = self.stargate.cfg.set_bulk(data)
+                    data = { "success": True, "message": message }
+                except (NameError, ValueError) as ex:
                     data = { "success": False, "message": str(ex) }
 
             else:
