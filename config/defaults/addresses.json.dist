@@ -31,7 +31,7 @@
           2,
           3
         ],
-        "ip_address": "127.0.0.1"
+        "ip_address": "127.0.0.1",
         "is_black_hole": false
       }
     }
