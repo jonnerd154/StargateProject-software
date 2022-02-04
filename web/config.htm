@@ -232,37 +232,41 @@
         offline_modal.dialog("close");
       }
 
+      var form_is_init = false
       function initFormSubmitHandler(){
-        $("#config").submit(function(e) {
+        if( !form_is_init ){
+          form_is_init = true
+          $("#config").submit(function(e) {
 
-            // Execution of the normal/non-jquery form submission.
-            e.preventDefault();
-            e.stopPropagation();
+              // Execution of the normal/non-jquery form submission.
+              e.preventDefault();
+              e.stopPropagation();
 
-            var form = $(this);
+              var form = $(this);
 
-            // TODO: We need to re-pack the dict-type values
-            data = getFormDataJson(form)
+              // TODO: We need to re-pack the dict-type values
+              data = getFormDataJson(form)
 
-            $.ajax({
-                type: "POST",
-                url: 'stargate/update/config',
-                dataType : 'json',
-                data: data, // serializes and JSON encodes the form's elements.
-                success: function(data)
-                {
-                  if( !data.success ){
-                    console.log(data)
-                    alert("Failed to save changes: " + data.message);
-                  }
-                },
-                error: function(data)
-                {
-                  console.log(data);
-                  alert("There was an error. Try again.")
-                },
-            });
-        });
+              $.ajax({
+                  type: "POST",
+                  url: 'stargate/update/config',
+                  dataType : 'json',
+                  data: data, // serializes and JSON encodes the form's elements.
+                  success: function(data)
+                  {
+                    if( !data.success ){
+                      console.log(data)
+                      alert("Failed to save changes: " + data.message);
+                    }
+                  },
+                  error: function(data)
+                  {
+                    console.log(data);
+                    alert("There was an error. Try again.")
+                  },
+              });
+          });
+        }
       }
 
       function getFormDataJson(form){
