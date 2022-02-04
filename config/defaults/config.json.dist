@@ -278,22 +278,22 @@
   "subspace_public_api_url": {
     "value": "https://api.thestargateproject.com",
     "desc": "The API Endpoint URL for the Subspace Information Service",
-    "type": "string"
+    "type": "str"
   },
   "software_update_url": {
     "value": "https://thestargateproject.com/stargate_software_updates/",
     "desc": "The API Endpoint URL for the Software Update service",
-    "type": "string"
+    "type": "str"
   },
   "software_update_username": {
     "value": "Samantha",
     "desc": "The BasicAuth Username to use to authenticate for downloads on the Software Update service",
-    "type": "string"
+    "type": "str"
   },
   "software_update_password": {
     "value": "CarterSG1!",
     "desc": "The BasicAuth Password to use to authenticate for downloads on the Software Update service",
-    "type": "string"
+    "type": "str"
   },
   "software_update_interval": {
     "value": 24,
@@ -328,7 +328,7 @@
     "units": "Seconds"
   },
   "wormhole_max_time_minutes": {
-    "value": 38,
+    "value": 38.0,
     "desc": "How long can a normal wormhole be sustained? (Hint, it's 38 minutes!)",
     "type": "float",
     "min_value": 0,
@@ -336,7 +336,7 @@
     "units": "Minutes"
   },
   "wormhole_max_time_blackhole": {
-    "value": 5259488,
+    "value": 5259488.0,
     "desc": "How long can a wormhole to a blackhole planet be sustained? FOREVER.",
     "type": "float",
     "min_value": 0,
@@ -344,7 +344,7 @@
     "units": "Minutes"
   },
   "audio_wormhole_active_quotes_interval": {
-    "value": 17,
+    "value": 17.0,
     "desc": "How long should we wait between playing random clips when a NORMAL wormhole is established?",
     "type": "float",
     "min_value": 0,
@@ -352,7 +352,7 @@
     "units": "Seconds"
   },
   "audio_clip_wait_time_blackhole": {
-    "value": 1,
+    "value": 1.0,
     "desc": "How long should we wait between playing random clips when a BLACKHOLE wormhole is established?",
     "type": "float",
     "min_value": 0,
@@ -360,7 +360,7 @@
     "units": "Seconds"
   },
   "audio_wormhole_close_headstart": {
-    "value": 1,
+    "value": 1.0,
     "desc": "How much of a headstart should we give the audio before closing a Wormhole?",
     "type": "float",
     "min_value": 0,
@@ -375,12 +375,12 @@
   "subspace_keep_alive_address": {
     "value": "172.30.0.1",
     "desc": "What IP address should we ping for Subspace VPN Keepalives?",
-    "type": "string-ip"
+    "type": "str-ip"
   },
   "dhd_serial_port": {
     "value": "/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00",
     "desc": "The USB Serial Device path for the DHD",
-    "type": "string"
+    "type": "str"
   },
   "dhd_serial_baud_rate": {
     "value": 115200,
@@ -464,7 +464,7 @@
   "fan_gate_last_update": {
     "value": "2022-01-29 20:07:27.695364",
     "desc": "Timestamp of the last attempt to update the list of Fan Gates on the Subspace Network",
-    "type": "string-datetime",
+    "type": "str-datetime",
     "protected": true
   },
   "fan_gate_refresh_enable": {
@@ -483,19 +483,19 @@
   "software_update_last_check": {
     "value": "2022-01-29 20:07:26.745736",
     "desc": "Timestamp of the last attempt to check for Software Updates",
-    "type": "string-datetime",
+    "type": "str-datetime",
     "protected": true
   },
   "software_update_status": {
     "value": "up-to-date",
     "desc": "Status of Software Updates",
-    "type": "string",
+    "type": "str",
     "protected": true
   },
   "subspace_ip_address": {
     "value": "",
     "desc": "IP Address configured for Subspace Network VPN",
-    "type": "string-ip"
+    "type": "str-ip"
   },
   "software_update_exception": {
     "value": false,

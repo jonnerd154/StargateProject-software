@@ -78,7 +78,7 @@ class StargateConfig:
             config_record = self.config.get(key)
         except json.decoder.JSONDecodeError:
             self.log.log(f"*** ERROR: Key '{key}' not found in {self.file_name}!")
-            raise
+            raise NameError(f"Key {key} not found.")
 
         try:
             if config_record['type'] == 'dict':
@@ -91,87 +91,160 @@ class StargateConfig:
                         except KeyError:
                             pass
 
-        except ValueError:
+        except TypeError:
             # We should never hit this case in production.
             self.log.log(f"!!!!!!! config key {key} is missing metadata")
-
+            raise TypeError(f"Config key {key} not found")
         return config_record
 
     def get_all_configs(self):
         return self.config
 
+    def set_bulk(self, data):
+        '''
+        Accepts a dict containing configurations to update.
+        Validates all inputs, raises ValueError on invalid input values
+        '''
+        from pprint import pformat
+
+        ignore_list = []
+        for attr_key, attr_value in data.items():
+            # Validate all of the inputs before modifying anything
+            try:
+                attr_value = self.is_valid_value(attr_key, attr_value) # raises ValueError if not valid
+                self.log.log(f"           {attr_key} changed: Will update with validated value {attr_value}")
+                #self.set(attr_key, attr_value)
+            except ValueUnchanged: # It's okay if the value wasn't changed
+                self.log.log(f"UNCHANGED {attr_key}: Skipping.")
+                ignore_list.append(attr_key)
+
+        # We get here if there were no validation problems. Update the CHANGED values
+        for attr_key in ignore_list:
+            data.pop(attr_key) # Remove it from the list of values to update
+        self.__set_raw_bulk(data)
+
+    def __set_raw_bulk(self, data):
+        '''
+        Without validation, sets and persists a dictionary of key/value pairs
+        '''
+        for attr_key, attr_value in data.items():
+            self.__set_raw( attr_key, attr_value )
+
     def __set_raw(self, key, value):
+        '''
+        Without validation, sets and persists a single key/value pair
+        '''
         self.set_non_persistent(key, value)
         self.save()
 
     def set(self, key, value):
+        '''
+        Validates, sets, and persists the key/value pair.
+        If the input is invalid, ValueError is raised.
+        '''
         try:
-            param_config = self.get_full_config_by_key(key)
-        except json.decoder.JSONDecodeError:
-            # Note: If we're creating this config key, it won't have
-            #   metadata, and won't be available to edit in the Web UI. *** AVOID THIS! ***
-            self.log.log("Creating config key: {key}")
-            param_config = None
-
-        if param_config is not None:
-            # Check for validity
-            if param_config['type'] != "":
-                self.is_valid_value(param_config, value) # raises ValueError if not valid
+            value = self.is_valid_value(key, value) # raises ValueError if not valid
+        except ValueUnchanged:
+            pass # It's okay if the value wasn't changed
 
         # If we get here without exception, the value is valid and ready to store.
         self.__set_raw(key, value) # Sets and saves new value.
 
-    def is_valid_value( self, param_config, test_value ):
-        if param_config['type'].lower() == "boolean" and not isinstance(test_value, bool ):
-            raise ValueError("Must be type `bool`")
+    def is_valid_value( self, key, test_value ):
+        '''
+        Validates a configuration key/value pair
+        Returns: validated/typed value
+        Raises:
+            - NameError (Key not found in store)
+            - ValueUnchanged (passed test_value is the same as stored value)
+            - ValueError (Value failed type-specific validation)
+        '''
+        # Check if this key exists, if not, raise NameError
+        try:
+            param_config = self.get_full_config_by_key(key)
+            required_type = param_config['type'].lower()
+            base_type = required_type.split("-", 1)[0]
+            self.log.log(f"OLD Value: {required_type} {base_type} {param_config['value']}")
 
-        if param_config['type'].lower() == "string" and not isinstance(test_value, str ):
+        except (TypeError, json.decoder.JSONDecodeError):
+            raise NameError(f"Config key {key} not found.")
+
+        if required_type == "bool":
+            if not isinstance(test_value, bool ):
+                if test_value.lower() == "true":
+                    test_value = True
+                elif test_value.lower() == "false":
+                    test_value = False
+                else:
+                    raise ValueError("Must be type `bool`")
+
+        elif required_type == "str" and not isinstance(test_value, str ):
             raise ValueError("Must be type `str`")
 
-        if param_config['type'].lower() == "string-datetime":
+        elif required_type == "str-datetime":
             if not isinstance(test_value, str ):
                 raise ValueError("Must be type `str`")
             if not self.is_valid_datetime(test_value):
                 raise ValueError("Value is not a valid datetime")
 
-        if param_config['type'].lower() == "string-enum":
+        elif required_type == "str-enum":
             if not isinstance(test_value, str ):
                 raise ValueError("Must be type `str`")
             if test_value not in param_config['enum_values']:
                 raise ValueError("Value is not one of the allowed values")
 
-        if param_config['type'].lower() == "string-ip":
+        elif required_type == "str-ip":
             if not isinstance(test_value, str ):
                 raise ValueError("Must be type `str`")
             if test_value != "" and not self.is_valid_ip_address(test_value): # Allow blanks
                 raise ValueError("Not a valid IP Address")
 
-        if param_config['type'].lower() == "int":
+        elif required_type == "float":
+            try:
+                test_value = float(test_value)
+            except ValueError:
+                # if the float can be an int without loss of precision, that's okay
+                if test_value == float(test_value):
+                    test_value = float(test_value)
+                else:
+                    raise ValueError("Must be type `float`")
+
+            if param_config['max_value'] and test_value > param_config['max_value']:
+                raise ValueError(f"Maximum value: {param_config['max_value']}")
+            if param_config['max_value'] and test_value < param_config['min_value']:
+                raise ValueError(f"Minimum value: {param_config['min_value']}")
+
+        elif required_type == "int":
             try:
                 test_value = int(test_value)
             except ValueError:
                 raise ValueError("Must be type `int`")
-                
-            if param_config['max_value'] and test_value > param_config['max_value']:
-                raise ValueError(f"Maximum value: {param_config['max_value']}")
-            if param_config['max_value'] and test_value < param_config['min_value']:
-                raise ValueError(f"Minimum value: {param_config['min_value']}")
-
-        if param_config['type'].lower() == "float":
-            try:
-                test_value = float(test_value)
-            except ValueError:
-                raise ValueError("Must be type `float`")
 
             if param_config['max_value'] and test_value > param_config['max_value']:
                 raise ValueError(f"Maximum value: {param_config['max_value']}")
             if param_config['max_value'] and test_value < param_config['min_value']:
                 raise ValueError(f"Minimum value: {param_config['min_value']}")
 
-        if param_config['type'].lower() == "dict" and not isinstance(test_value, dict ):
+
+        elif required_type == "dict" and not isinstance(test_value, dict ):
             raise ValueError("Must be type `dict`")
 
-        return True
+        else:
+            raise ValueError(f"Unknown record type. {required_type}")
+
+        # Double check that our transformations yielded the correct type
+        new_type = test_value.__class__.__name__
+        if new_type != base_type:
+            raise ValueError(f"Validation yielded invalid type for field {key}. Requires {base_type}, yielded {new_type}")
+
+        # Check if the existing value is the same as the test_value, raise ValueUnchanged
+        if test_value == param_config['value']:
+            raise ValueUnchanged()
+
+        new_type = type(test_value)
+        self.log.log(f"New Value: {new_type} {test_value}")
+
+        return test_value
 
     @staticmethod
     def is_valid_ip_address(address):
@@ -199,3 +272,6 @@ class StargateConfig:
     def remove_all(self):
         self.config = {}
         self.save()
+
+class ValueUnchanged(Exception):
+    pass

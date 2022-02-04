@@ -124,7 +124,7 @@
               $('#records_table').append(trHTML);
 
               initFormSubmitHandler()
-              
+
             }
         });
       }
@@ -143,13 +143,13 @@
             return getHTMLInt( paramName, data )
           case "float":
             return getHTMLFloat( paramName, data )
-          case "string":
+          case "str":
             return getHTMLString( paramName, data )
-          case "string-datetime":
+          case "str-datetime":
               return getHTMLDateTime( paramName, data )
-          case "string-enum":
+          case "str-enum":
               return getHTMLStringEnum( paramName, data )
-          case "string-ip":
+          case "str-ip":
               return getHTMLStringIPAddress( paramName, data )
           default:
             // If a type isn't specified, just print the raw value without a field
