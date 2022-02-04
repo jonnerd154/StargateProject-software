@@ -161,6 +161,7 @@ class StargateConfig:
                 raise ValueError(f"Maximum value: {param_config['max_value']}")
             if param_config['max_value'] and test_value < param_config['min_value']:
                 raise ValueError(f"Minimum value: {param_config['min_value']}")
+                
         if param_config['type'].lower() == "dict" and not isinstance(test_value, dict ):
             raise ValueError("Must be type `dict`")
 
