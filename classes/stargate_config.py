@@ -115,7 +115,6 @@ class StargateConfig:
                 self.log.log(f"           {attr_key} changed: Will update with validated value {attr_value}")
                 #self.set(attr_key, attr_value)
             except ValueUnchanged: # It's okay if the value wasn't changed
-                self.log.log(f"UNCHANGED {attr_key}: Skipping.")
                 ignore_list.append(attr_key)
 
         # We get here if there were no validation problems. Update the CHANGED values
@@ -163,8 +162,6 @@ class StargateConfig:
         try:
             param_config = self.get_full_config_by_key(key)
             required_type = param_config['type'].lower()
-            base_type = required_type.split("-", 1)[0]
-            self.log.log(f"OLD Value: {required_type} {base_type} {param_config['value']}")
 
         except (TypeError, json.decoder.JSONDecodeError):
             raise NameError(f"Config key {key} not found.")
@@ -178,8 +175,9 @@ class StargateConfig:
                 else:
                     raise ValueError("Must be type `bool`")
 
-        elif required_type == "str" and not isinstance(test_value, str ):
-            raise ValueError("Must be type `str`")
+        elif required_type == "str":
+            if not isinstance(test_value, str ):
+                raise ValueError("Must be type `str`")
 
         elif required_type == "str-datetime":
             if not isinstance(test_value, str ):
@@ -226,23 +224,25 @@ class StargateConfig:
                 raise ValueError(f"Minimum value: {param_config['min_value']}")
 
 
-        elif required_type == "dict" and not isinstance(test_value, dict ):
-            raise ValueError("Must be type `dict`")
+        elif required_type == "dict":
+            if not isinstance(test_value, dict ):
+                raise ValueError("Must be type `dict`")
 
         else:
-            raise ValueError(f"Unknown record type. {required_type}")
+            test_type = test_value.__class__.__name__
+            raise ValueError(f"Unknown record type. {key} requires {required_type} received {test_type}")
 
         # Double check that our transformations yielded the correct type
-        new_type = test_value.__class__.__name__
-        if new_type != base_type:
-            raise ValueError(f"Validation yielded invalid type for field {key}. Requires {base_type}, yielded {new_type}")
+        base_type = required_type.split("-", 1)[0]
+        test_type = test_value.__class__.__name__
+        if test_type != base_type:
+            raise ValueError(f"Validation yielded invalid type for field {key}. Requires {base_type}, yielded {test_type}")
 
-        # Check if the existing value is the same as the test_value, raise ValueUnchanged
+        # Check if the existing value is the same as the test_value. If so, raise ValueUnchanged
         if test_value == param_config['value']:
             raise ValueUnchanged()
 
         new_type = type(test_value)
-        self.log.log(f"New Value: {new_type} {test_value}")
 
         return test_value
 
