@@ -92,6 +92,7 @@ class StargateConfig:
                             pass
 
         except ValueError:
+            # We should never hit this case in production.
             self.log.log(f"!!!!!!! config key {key} is missing metadata")
 
         return config_record
@@ -103,6 +104,8 @@ class StargateConfig:
         try:
             old = self.get_full_config_by_key(key)
         except json.decoder.JSONDecodeError:
+            # Note: If we're creating this config key, it won't have
+            #   metadata, and won't be available to edit in the Web UI. *** AVOID THIS! ***
             self.log.log("Creating config key: {key}")
             old = None
 
