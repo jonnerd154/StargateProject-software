@@ -245,15 +245,53 @@
                   data: data, // serializes and JSON encodes the form's elements.
                   success: function(data)
                   {
+                    dialogConfig = {
+                      modal: true,
+                      title: "",
+                      buttons: [
+                        {
+                          text: "Ok",
+                          click: function() {
+                            $( this ).dialog( "close" );
+                          }
+                        }
+                      ],
+                      position: {
+                        my: "center",
+                        at: "center",
+                        of: window,
+                        collision: "none"
+                      }
+                    }
                     if( !data.success ){
-                      console.log(data)
-                      alert("Failed to save changes: " + data.message);
+                      dialogConfig['title'] = "Failed to Save Changes"
+                      $("<div>" + data.message + "</div>").dialog(dialogConfig);
+                    }
+                    else{
+                      dialogConfig['title'] = "Comtrya!"
+                      $("<div>" + data.message + "</div>").dialog(dialogConfig);
                     }
                   },
                   error: function(data)
                   {
-                    console.log(data);
-                    alert("There was an error. Try again.")
+                    $("<div>An unknown error occurred</div>").dialog({
+                          modal: true,
+                          title: "ERROR",
+                          buttons: [
+                            {
+                              text: "Ok",
+                              click: function() {
+                                $( this ).dialog( "close" );
+                              }
+                            }
+                          ],
+                          position: {
+                            my: "center",
+                            at: "center",
+                            of: window,
+                            collision: "none"
+                          }
+                        });
                   },
               });
           });
