@@ -10,7 +10,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
 
     #Overload SimpleHTTPRequestHandler.log_message() to suppress logs from printing to console
     def log_message(self, format, *args): # pylint: disable=redefined-builtin
-        if self.debug: # pylint: disable=no-member
+        if self.stargate.cfg.get("control_api_debug_enable"):
             self.stargate.log.log(f'{self.client_address[0]} {str(args[0])}')
 
     def parse_get_vars(self):
@@ -113,7 +113,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             self.wfile.write(content.encode())
 
         except: # pylint: disable=bare-except
-            if self.debug: # pylint: disable=no-member
+            if self.stargate.cfg.get("control_api_debug_enable"):
                 raise
 
             # Encountered an exception: send a 500
@@ -303,7 +303,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             return
 
         except: # pylint: disable=bare-except
-            if self.debug: # pylint: disable=no-member
+            if self.stargate.cfg.get("control_api_debug_enable"): # pylint: disable=no-member
                 raise
 
             # Encountered an exception: send a 500
