@@ -19,9 +19,6 @@ class SymbolRing:
         self.chevrons = stargate.chevrons
         self.base_path = stargate.base_path
 
-        # Retrieve the configurations
-        # self.micro_steps = self.cfg.get("stepper_micro_steps") # TODO: Remove from config file
-
         # The symbol positions on the symbol ring
         self.symbol_step_positions = {
             1: 0,
@@ -152,7 +149,7 @@ class SymbolRing:
         self.current_speed = self.cfg.get("stepper_speed_initial")
 
         #TODO: Consider caching the configs here?
-        
+
         # Move the ring one step at at time
         for i in range(steps):
             # Check if the gate is still running, if not, break out of the loop.

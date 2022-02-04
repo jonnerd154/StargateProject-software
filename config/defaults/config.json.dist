@@ -212,14 +212,6 @@
     "max_value": false,
     "units": "Steps"
   },
-  "stepper_micro_steps": {
-    "value": 16,
-    "desc": "TODO: REMOVE NOT USED",
-    "type": "int",
-    "min_value": 0,
-    "max_value": false,
-    "units": "Steps"
-  },
   "stepper_speed_normal": {
     "value": 0.002,
     "desc": "Delay between steps in 'normal' speed. Larger values->slower",
