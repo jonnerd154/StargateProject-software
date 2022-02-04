@@ -114,7 +114,7 @@ class StargateConfig:
             # Validate all of the inputs before modifying anything
             try:
                 attr_value = self.is_valid_value(attr_key, attr_value) # raises ValueError if not valid
-                self.log.log(f"Config:: {attr_key} = {attr_value}")
+                self.log.log(f"Web Config:: {attr_key} = {attr_value}")
                 data_out[attr_key] = attr_value
             except ValueUnchanged: # It's okay if the value wasn't changed
                 pass
