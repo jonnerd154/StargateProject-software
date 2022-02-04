@@ -112,7 +112,7 @@ class StargateConfig:
             # Validate all of the inputs before modifying anything
             try:
                 attr_value = self.is_valid_value(attr_key, attr_value) # raises ValueError if not valid
-                self.log.log(f"           {attr_key} changed: Will update with validated value {attr_value}")
+                self.log.log(f"Config:: {attr_key} = {attr_value}")
                 data_out[attr_key] = attr_value
             except ValueUnchanged: # It's okay if the value wasn't changed
                 pass
@@ -245,7 +245,7 @@ class StargateConfig:
 
         if nullable and test_value == "":
             test_value = None
-            
+
         # Check if the existing value is the same as the test_value. If so, raise ValueUnchanged
         if test_value == param_config['value']:
             raise ValueUnchanged()
