@@ -1,8 +1,7 @@
 import os
-from threading import Semaphore
 from time import sleep
 from serial.serialutil import SerialException
-import PyCmdMessenger
+import StargateCmdMessenger
 
 class Dialer: # pylint: disable=too-few-public-methods
 
@@ -32,8 +31,6 @@ class Dialer: # pylint: disable=too-few-public-methods
         self.hardware = None
         self.type = None
 
-        self.thread_lock = Semaphore(value=1)
-
         self._connect_dialer()
 
     def _connect_dialer(self):
@@ -54,15 +51,11 @@ class Dialer: # pylint: disable=too-few-public-methods
         try:
             # Get a Semaphore lock on the parent process so when the PyCmdMessenger class
             # prints to STDOUT, it doesn't step on STDOUT from other threads
-            self.thread_lock.acquire() # pylint: disable=consider-using-with
             ### Connect to the DHD object. Will throw exception if not present
-            dhd = DHDv2(self.dhd_port, self.dhd_serial_baud_rate)
+            dhd = DHDv2(self.dhd_port, self.dhd_serial_baud_rate, self.log)
             self.log.log('DHDv2 Found. Connected.')
         except SerialException: # pylint: disable=try-except-raise
             raise
-        finally:
-            # Always release the Semaphore lock
-            self.thread_lock.release()
 
         # Configure the DHD
         dhd.set_brightness_center(self.dhd_brightness_center)
@@ -82,9 +75,9 @@ class Dialer: # pylint: disable=too-few-public-methods
 
 class DHDv2:
 
-    def __init__(self, port, baud_rate):
+    def __init__(self, port, baud_rate, log):
         # Initialize an ArduinoBoard instance.
-        self.board = PyCmdMessenger.ArduinoBoard(port, baud_rate=baud_rate)
+        self.board = StargateCmdMessenger.ArduinoBoard(port, baud_rate=baud_rate, log=log)
 
         # List of command names (and formats for their associated arguments). These must
         # be in the same order as in the sketch.

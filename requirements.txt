@@ -15,7 +15,6 @@ gpiozero~=1.5.1
 icmplib~=2.1.1
 idna~=2.10
 netifaces~=0.10.9
-PyCmdMessenger~=0.2.4
 pyftdi~=0.42.2
 PyMySQL~=1.0.2
 pyserial~=3.4
