@@ -2,6 +2,7 @@ import sys
 import json
 import shutil
 import os
+import collections
 from dateutil.parser import parse as parse_date
 import ipaddress
 
@@ -271,7 +272,10 @@ class StargateConfig:
     def set_non_persistent(self, key, value):
         self.config[key]['value'] = value
 
-    def save(self):
+    def save(self, sort=False):
+        if sort:
+            self.config = collections.OrderedDict(sorted(self.config.items()))
+
         with open(self.get_full_file_path(), 'w+', encoding="utf8") as file:
             json.dump(self.config, file, indent=2)
 
