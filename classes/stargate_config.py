@@ -100,62 +100,71 @@ class StargateConfig:
     def get_all_configs(self):
         return self.config
 
+    def __set_raw(self, key, value):
+        self.set_non_persistent(key, value)
+        self.save()
+
     def set(self, key, value):
         try:
-            old = self.get_full_config_by_key(key)
+            param_config = self.get_full_config_by_key(key)
         except json.decoder.JSONDecodeError:
             # Note: If we're creating this config key, it won't have
             #   metadata, and won't be available to edit in the Web UI. *** AVOID THIS! ***
             self.log.log("Creating config key: {key}")
-            old = None
+            param_config = None
 
-        if old is not None:
+        if param_config is not None:
             # Check for validity
-            if old['type'] != "":
-                if old['type'].lower() == "boolean" and not isinstance(value, bool ):
-                    raise ValueError("Must be type `bool`")
+            if param_config['type'] != "":
+                self.is_valid_value(param_config, value) # raises ValueError if not valid
 
-                if old['type'].lower() == "string" and not isinstance(value, str ):
-                    raise ValueError("Must be type `str`")
+        # If we get here without exception, the value is valid and ready to store.
+        self.__set_raw(key, value) # Sets and saves new value.
 
-                if old['type'].lower() == "string-datetime":
-                    if not isinstance(value, str ):
-                        raise ValueError("Must be type `str`")
-                    if not self.is_valid_datetime(value):
-                        raise ValueError("Value is not a valid datetime")
+    def is_valid_value( self, param_config, test_value ):
+        if param_config['type'].lower() == "boolean" and not isinstance(test_value, bool ):
+            raise ValueError("Must be type `bool`")
 
-                if old['type'].lower() == "string-enum":
-                    if not isinstance(value, str ):
-                        raise ValueError("Must be type `str`")
-                    if value not in old['enum_values']:
-                        raise ValueError("Value is not one of the allowed values")
+        if param_config['type'].lower() == "string" and not isinstance(test_value, str ):
+            raise ValueError("Must be type `str`")
 
-                if old['type'].lower() == "string-ip":
-                    if not isinstance(value, str ):
-                        raise ValueError("Must be type `str`")
-                    if value != "" and not self.is_valid_ip_address(value): # Allow blanks
-                        raise ValueError("Not a valid IP Address")
+        if param_config['type'].lower() == "string-datetime":
+            if not isinstance(test_value, str ):
+                raise ValueError("Must be type `str`")
+            if not self.is_valid_datetime(test_value):
+                raise ValueError("Value is not a valid datetime")
 
-                if old['type'].lower() == "int":
-                    if not isinstance(value, int ):
-                        raise ValueError("Must be type `int`")
-                    if old['max_value'] and value > old['max_value']:
-                        raise ValueError(f"Maximum value: {old['max_value']}")
-                    if old['max_value'] and value < old['min_value']:
-                        raise ValueError(f"Minimum value: {old['min_value']}")
+        if param_config['type'].lower() == "string-enum":
+            if not isinstance(test_value, str ):
+                raise ValueError("Must be type `str`")
+            if test_value not in param_config['enum_values']:
+                raise ValueError("Value is not one of the allowed values")
 
-                if old['type'].lower() == "float":
-                    if not isinstance(value, float ):
-                        raise ValueError("Must be type `float`")
-                    if old['max_value'] and value > old['max_value']:
-                        raise ValueError(f"Maximum value: {old['max_value']}")
-                    if old['max_value'] and value < old['min_value']:
-                        raise ValueError(f"Minimum value: {old['min_value']}")
-                if old['type'].lower() == "dict" and not isinstance(value, dict ):
-                    raise ValueError("Must be type `dict`")
+        if param_config['type'].lower() == "string-ip":
+            if not isinstance(test_value, str ):
+                raise ValueError("Must be type `str`")
+            if test_value != "" and not self.is_valid_ip_address(test_value): # Allow blanks
+                raise ValueError("Not a valid IP Address")
 
-        self.set_non_persistent(key, value)
-        self.save()
+        if param_config['type'].lower() == "int":
+            if not isinstance(test_value, int ):
+                raise ValueError("Must be type `int`")
+            if param_config['max_value'] and test_value > param_config['max_value']:
+                raise ValueError(f"Maximum value: {param_config['max_value']}")
+            if param_config['max_value'] and test_value < param_config['min_value']:
+                raise ValueError(f"Minimum value: {param_config['min_value']}")
+
+        if param_config['type'].lower() == "float":
+            if not isinstance(test_value, float ):
+                raise ValueError("Must be type `float`")
+            if param_config['max_value'] and test_value > param_config['max_value']:
+                raise ValueError(f"Maximum value: {param_config['max_value']}")
+            if param_config['max_value'] and test_value < param_config['min_value']:
+                raise ValueError(f"Minimum value: {param_config['min_value']}")
+        if param_config['type'].lower() == "dict" and not isinstance(test_value, dict ):
+            raise ValueError("Must be type `dict`")
+
+        return True
 
     @staticmethod
     def is_valid_ip_address(address):
