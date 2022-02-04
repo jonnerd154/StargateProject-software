@@ -162,22 +162,26 @@ class SymbolRing:
             self.steps_remaining -= 1
 
             ## acceleration
-            if i < self.cfg.get("stepper_acceleration_steps"):
-                self.current_speed -= (self.cfg.get("stepper_speed_slow") - self.cfg.get("stepper_speed_normal")) / self.cfg.get("stepper_acceleration_steps")
-                self.drive_status = "Accelerating"
-                sleep(self.current_speed)
-            ## deceleration
-            elif i > (steps - self.cfg.get("stepper_acceleration_steps")):
-                self.current_speed += (self.cfg.get("stepper_speed_slow") - self.cfg.get("stepper_speed_normal")) / self.cfg.get("stepper_acceleration_steps")
-                self.drive_status = "Decelerating"
-                sleep(self.current_speed)
-            ## slow without acceleration when short distance
-            elif steps < self.cfg.get("stepper_acceleration_steps"):
-                self.current_speed = self.cfg.get("stepper_speed_normal")
-                self.drive_status = "Constant Speed: Slow"
-                sleep(self.current_speed)
-            else:
-                self.drive_status = "Constant Speed: Normal"
+            try:
+                if i < self.cfg.get("stepper_acceleration_steps"):
+                    self.current_speed -= (self.cfg.get("stepper_speed_slow") - self.cfg.get("stepper_speed_normal")) / self.cfg.get("stepper_acceleration_steps")
+                    self.drive_status = "Accelerating"
+                    sleep(self.current_speed)
+                ## deceleration
+                elif i > (steps - self.cfg.get("stepper_acceleration_steps")):
+                    self.current_speed += (self.cfg.get("stepper_speed_slow") - self.cfg.get("stepper_speed_normal")) / self.cfg.get("stepper_acceleration_steps")
+                    self.drive_status = "Decelerating"
+                    sleep(self.current_speed)
+                ## slow without acceleration when short distance
+                elif steps < self.cfg.get("stepper_acceleration_steps"):
+                    self.current_speed = self.cfg.get("stepper_speed_normal")
+                    self.drive_status = "Constant Speed: Slow"
+                    sleep(self.current_speed)
+                else:
+                    self.drive_status = "Constant Speed: Normal"
+            except ValueError:
+                # If we've tried to sleep for negative time
+                pass
 
             # Update the position in non-persistent memory
             self.update_position(1, direction)
