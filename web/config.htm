@@ -122,32 +122,9 @@
                   }
               });
               $('#records_table').append(trHTML);
-              $("#config").submit(function(e) {
 
-                  e.preventDefault(); // avoid to execute the actual submit of the form.
-                  e.stopPropagation();
-
-                  var form = $(this);
-
-                  $.ajax({
-                      type: "POST",
-                      url: 'stargate/update/config',
-                      data: form.serialize(), // serializes the form's elements.
-                      success: function(data)
-                      {
-                        if( !data.success ){
-                          console.log(data)
-                          alert("Failed to save changes: " + data.message); // show response from the php script.
-                        }
-                      },
-                      error: function(data)
-                      {
-                        console.log(data); // show response from the php script.
-                        alert("There was an error. Try again.")
-                      },
-                  });
-
-              });
+              initFormSubmitHandler()
+              
             }
         });
       }
@@ -263,7 +240,43 @@
         offline_modal.dialog("close");
       }
 
+      function initFormSubmitHandler(){
+        $("#config").submit(function(e) {
 
+            // Execution of the normal/non-jquery form submission.
+            e.preventDefault();
+            e.stopPropagation();
+
+            var form = $(this);
+            $.ajax({
+                type: "POST",
+                url: 'stargate/update/config',
+                dataType : 'json',
+                data: getFormDataJson(form), // serializes and JSON encodes the form's elements.
+                success: function(data)
+                {
+                  if( !data.success ){
+                    console.log(data)
+                    alert("Failed to save changes: " + data.message);
+                  }
+                },
+                error: function(data)
+                {
+                  console.log(data);
+                  alert("There was an error. Try again.")
+                },
+            });
+        });
+      }
+
+      function getFormDataJson(form){
+        form = form.serializeArray();
+        var data = {};
+        $(form).each(function(index, obj){
+          data[obj.name] = obj.value;
+        });
+        return JSON.stringify(data);
+      }
 
     </script>
     <form id='config'>
