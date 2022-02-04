@@ -96,6 +96,14 @@
                   paramPrettyName = toProperCase(paramName)
                   trHTML += getHTMLTableRow(paramName, paramPrettyName, item)
               });
+              $('#records_table').html("\
+                  <tr>\
+                      <th>Name</th>\
+                      <th>Value</th>\
+                      <th>Units</th>\
+                      <th>Description</th>\
+                  </tr>");
+
               $('#records_table').append(trHTML);
 
               initFormSubmitHandler()
@@ -263,14 +271,7 @@
 
     </script>
     <form id='config'>
-      <table id="records_table" border='1'>
-          <tr>
-              <th>Name</th>
-              <th>Value</th>
-              <th>Units</th>
-              <th>Description</th>
-          </tr>
-      </table>
+      <table id="records_table" border='1'></table>
       <input type="submit" value="Save Changes">
     </form>
     <hr />
