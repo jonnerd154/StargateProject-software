@@ -93,25 +93,8 @@
             success: function (response) {
               var trHTML = '';
               $.each(response, function (paramName, item) {
-                  if (item.type == "dict"){
-                    //Contains an array, special handling
-
-                    // This should probably be done recursively, but
-                    //   our use only needs 2 layers deep....we'll do it the ugly way.
-
-                    $.each(item['value'], function (nestedParamName, nestedItem) {
-                      if ( paramName == "dhd_color_center" || paramName == "dhd_color_symbols"){
-                        paramName_u = paramName + "||" + nestedParamName
-                        paramPrettyName = toProperCase(paramName + " " + nestedParamName)
-                        trHTML += getHTMLTableRow(paramName_u, paramPrettyName, nestedItem)
-                      }
-                    })
-                  }
-                  else{
-                    // Single-value parameter
-                    paramPrettyName = toProperCase(paramName)
-                    trHTML += getHTMLTableRow(paramName, paramPrettyName, item)
-                  }
+                  paramPrettyName = toProperCase(paramName)
+                  trHTML += getHTMLTableRow(paramName, paramPrettyName, item)
               });
               $('#records_table').append(trHTML);
 

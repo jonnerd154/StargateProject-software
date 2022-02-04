@@ -4,61 +4,47 @@
     "desc": "True to enable automatic software updates",
     "type": "bool"
   },
-  "dhd_color_symbols": {
-    "desc": "Controls the color of the LEDs that illuminate the DHD's symbol buttons",
-    "type": "list-with-meta",
-    "item_config": {},
-    "value": {
-      "red": {
-        "value": 250,
-        "desc": "Red: 0-255",
-        "type": "int",
-        "max_value": 255,
-        "min_value": 0
-      },
-      "green": {
-        "value": 117,
-        "desc": "Green: 0-255",
-        "type": "int",
-        "max_value": 255,
-        "min_value": 0
-      },
-      "blue": {
-        "value": 0,
-        "desc": "Blue: 0-255",
-        "type": "int",
-        "max_value": 255,
-        "min_value": 0
-      }
-    }
+  "dhd_color_symbols_red": {
+    "value": 250,
+    "desc": "Controls the RED color component of the LEDs that illuminate the DHD's symbol buttons",
+    "type": "int",
+    "max_value": 255,
+    "min_value": 0
   },
-  "dhd_color_center": {
-    "desc": "Controls the color of the LED that illuminates the DHD's Center Button",
-    "type": "list-with-meta",
-    "item_config": {},
-    "value": {
-      "red": {
-        "value": 255,
-        "desc": "Red: 0-255",
-        "type": "int",
-        "max_value": 255,
-        "min_value": 0
-      },
-      "green": {
-        "value": 0,
-        "desc": "Green: 0-255",
-        "type": "int",
-        "max_value": 255,
-        "min_value": 0
-      },
-      "blue": {
-        "value": 0,
-        "desc": "Blue: 0-255",
-        "type": "int",
-        "max_value": 255,
-        "min_value": 0
-      }
-    }
+  "dhd_color_symbols_green": {
+    "value": 117,
+    "desc": "Controls the GREEN color component of the LEDs that illuminate the DHD's symbol buttons",
+    "type": "int",
+    "max_value": 255,
+    "min_value": 0
+  },
+  "dhd_color_symbols_blue": {
+    "value": 0,
+    "desc": "Controls the BLUE color component of the LEDs that illuminate the DHD's symbol buttons",
+    "type": "int",
+    "max_value": 255,
+    "min_value": 0
+  },
+  "dhd_color_center_red": {
+    "value": 255,
+    "desc": "Controls the RED color component of the LED that illuminates the DHD's Center Button",
+    "type": "int",
+    "max_value": 255,
+    "min_value": 0
+  },
+  "dhd_color_center_green": {
+    "value": 0,
+    "desc": "Controls the GREEN color component of the LED that illuminates the DHD's Center Button",
+    "type": "int",
+    "max_value": 255,
+    "min_value": 0
+  },
+  "dhd_color_center_blue": {
+    "value": 0,
+    "desc": "Controls the BLUE color component of the LED that illuminates the DHD's Center Button",
+    "type": "int",
+    "max_value": 255,
+    "min_value": 0
   },
   "chevron_config_1_led_pin": {
     "value": 21,

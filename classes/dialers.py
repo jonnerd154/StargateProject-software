@@ -16,9 +16,18 @@ class Dialer: # pylint: disable=too-few-public-methods
         self.dhd_serial_baud_rate = self.cfg.get("dhd_serial_baud_rate")
         self.dhd_brightness_center = self.cfg.get("dhd_brightness_center")
         self.dhd_brightness_symbols = self.cfg.get("dhd_brightness_symbols")
-        self.dhd_color_center = self.cfg.get("dhd_color_center")
-        self.dhd_color_symbols = self.cfg.get("dhd_color_symbols")
         self.dhd_enable = self.cfg.get("dhd_enable")
+        self.dhd_color_center = [
+            self.cfg.get("dhd_color_center_red"),
+            self.cfg.get("dhd_color_center_green"),
+            self.cfg.get("dhd_color_center_blue")
+        ]
+
+        self.dhd_color_symbols = [
+            self.cfg.get("dhd_color_symbols_red"),
+            self.cfg.get("dhd_color_symbols_green"),
+            self.cfg.get("dhd_color_symbols_blue")
+        ]
 
         self.hardware = None
         self.type = None
