@@ -40,20 +40,16 @@ class StargateAudio:
         self.volume = self.cfg.get('audio_volume')
         self.set_volume(self.volume)
 
-        self.audio_enable = self.cfg.get('audio_enable')
-
-
-
     def sound_start(self, clip_name):
-        if self.audio_enable:
+        if self.cfg.get('audio_enable'):
             self.sounds[clip_name]['obj'] = self.sounds[clip_name]['file'].play()
 
     def sound_stop(self, clip_name):
-        if self.audio_enable:
+        if self.cfg.get('audio_enable'):
             self.sounds[clip_name]['obj'].stop()
 
     def is_playing(self, clip_name):
-        if self.audio_enable:
+        if self.cfg.get('audio_enable'):
             return self.sounds[clip_name]['obj'].is_playing()
         return False
 
@@ -61,7 +57,7 @@ class StargateAudio:
         return sa.WaveObject.from_wave_file(str(self.sound_fx_root + "/" + file_path))
 
     def incoming_chevron(self):
-        if self.audio_enable:
+        if self.cfg.get('audio_enable'):
             choice(self.incoming_chevron_sounds)['file'].play()
 
     def play_random_clip(self, directory):
@@ -72,7 +68,7 @@ class StargateAudio:
         :return: the play object is returned.
         """
 
-        if not self.audio_enable:
+        if not self.cfg.get('audio_enable'):
             return
 
         # Don't start playing another clip if one is already playing
@@ -92,7 +88,7 @@ class StargateAudio:
         return
 
     def random_clip_is_playing(self):
-        if not self.audio_enable:
+        if not self.cfg.get('audio_enable'):
             return False
 
         try:
