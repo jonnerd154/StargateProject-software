@@ -100,15 +100,7 @@
                     //   our use only needs 2 layers deep....we'll do it the ugly way.
 
                     $.each(item['value'], function (nestedParamName, nestedItem) {
-                      if (paramName == "chevron_config"){
-                        paramName_f = "Chevron"
-                        $.each(nestedItem, function (nestedParamName2, nestedItem2) {
-                          paramName_u = paramName + "||" + nestedParamName + "||" + nestedParamName2
-                          paramPrettyName = toProperCase(paramName_f + " " + nestedParamName + " " + nestedParamName2)
-                          trHTML += getHTMLTableRow(paramName_u, paramPrettyName, nestedItem2)
-                        })
-                      }
-                      else if ( paramName == "dhd_color_center" || paramName == "dhd_color_symbols"){
+                      if ( paramName == "dhd_color_center" || paramName == "dhd_color_symbols"){
                         paramName_u = paramName + "||" + nestedParamName
                         paramPrettyName = toProperCase(paramName + " " + nestedParamName)
                         trHTML += getHTMLTableRow(paramName_u, paramPrettyName, nestedItem)

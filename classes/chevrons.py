@@ -16,8 +16,10 @@ class ChevronManager:
     def load_from_config(self):
         # Retrieve the Chevron config and initialize the Chevron objects
         self.chevrons = {}
-        for key, value in self.cfg.get("chevron_config").items():
-            self.chevrons[int(key)] = Chevron( self.electronics, value['led_pin']['value'], value['motor_number']['value'], self.audio, self.cfg )
+        for index in range(1,10):
+            led_pin = self.cfg.get("chevron_config_" + str(index) + "_led_pin")
+            motor_number = self.cfg.get("chevron_config_" + str(index) + "_motor_number")
+            self.chevrons[index] = Chevron( self.electronics, led_pin, motor_number, self.audio, self.cfg )
 
     def get( self, chevron_number ):
         return self.chevrons[int(chevron_number)]
@@ -63,6 +65,7 @@ class Chevron:
         self.electronics = electronics
 
         # Retrieve Configurations
+        # TODO: Move to allow config to change without restart
         self.audio_chevron_down_headstart = self.cfg.get("audio_chevron_down_headstart") #0.2
         self.chevron_down_throttle = self.cfg.get("chevron_down_throttle") #-0.65 # negative
         self.chevron_down_time = self.cfg.get("chevron_down_time") #0.1

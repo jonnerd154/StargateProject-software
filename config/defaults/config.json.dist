@@ -60,97 +60,131 @@
       }
     }
   },
-  "chevron_config": {
-    "desc": "These configurations setup the mapping of hardware outputs to their positions around the Stargate",
-    "type": "dict",
-    "item_config": {
-      "led_pin": {
-        "desc": "The GPIO Pin for this Chevron's LEDs. Active HIGH",
-        "type": "int",
-        "max_value": 40,
-        "min_value": 0
-      },
-      "motor_number": {
-        "desc": "The Motor Shield Channel number (zero-indexed)",
-        "type": "int",
-        "max_value": 11,
-        "min_value": 0
-      }
-    },
-    "value": {
-      "1": {
-        "led_pin": {
-          "value": 21
-        },
-        "motor_number": {
-          "value": 3
-        }
-      },
-      "2": {
-        "led_pin": {
-          "value": 16
-        },
-        "motor_number": {
-          "value": 4
-        }
-      },
-      "3": {
-        "led_pin": {
-          "value": 20
-        },
-        "motor_number": {
-          "value": 5
-        }
-      },
-      "4": {
-        "led_pin": {
-          "value": 26
-        },
-        "motor_number": {
-          "value": 6
-        }
-      },
-      "5": {
-        "led_pin": {
-          "value": 6
-        },
-        "motor_number": {
-          "value": 7
-        }
-      },
-      "6": {
-        "led_pin": {
-          "value": 13
-        },
-        "motor_number": {
-          "value": 8
-        }
-      },
-      "7": {
-        "led_pin": {
-          "value": 19
-        },
-        "motor_number": {
-          "value": 9
-        }
-      },
-      "8": {
-        "led_pin": {
-          "value": null
-        },
-        "motor_number": {
-          "value": 10
-        }
-      },
-      "9": {
-        "led_pin": {
-          "value": null
-        },
-        "motor_number": {
-          "value": 11
-        }
-      }
-    }
+  "chevron_config_1_led_pin": {
+    "value": 21,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 1 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_1_motor_number": {
+    "value": 3,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 1 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_2_led_pin": {
+    "value": 16,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 2 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_2_motor_number": {
+    "value": 4,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 2 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_3_led_pin": {
+    "value": 20,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 3 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_3_motor_number": {
+    "value": 5,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 3 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_4_led_pin": {
+    "value": 26,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 4 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_4_motor_number": {
+    "value": 6,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 4 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_5_led_pin": {
+    "value": 6,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 5 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_5_motor_number": {
+    "value": 7,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 5 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_6_led_pin": {
+    "value": 13,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 6 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_6_motor_number": {
+    "value": 8,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 6 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_7_led_pin": {
+    "value": 19,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 7 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_7_motor_number": {
+    "value": 9,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 7 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_8_led_pin": {
+    "value": null,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 8 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_8_motor_number": {
+    "value": 10,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 8 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_9_led_pin": {
+    "value": null,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 9 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_9_motor_number": {
+    "value": 11,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 9 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
   },
   "audio_volume": {
     "value": 50,
