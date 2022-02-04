@@ -269,7 +269,23 @@
                     }
                     else{
                       dialogConfig['title'] = "Comtrya!"
-                      $("<div>" + data.message + "</div>").dialog(dialogConfig);
+
+                      if ( Object.entries(data.results).length > 0){
+                        listHTML = data.message + "<br>"
+                        listHTML += "<ul>"
+                        console.log( )
+                        for (const [key, value] of Object.entries(data.results)) {
+                          console.log(value)
+                          listHTML += "<li>" + toProperCase(key) + ": " + value + "</li>"
+                        }
+
+                        listHTML += "</ul>"
+                      }
+                      else{
+                        listHTML = "No changes to be saved"
+                      }
+
+                      $("<div>" + listHTML + "</div>").dialog(dialogConfig);
                     }
                   },
                   error: function(data)

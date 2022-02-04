@@ -105,6 +105,7 @@ class StargateConfig:
         '''
         Accepts a dict containing configurations to update.
         Validates all inputs, raises ValueError on invalid input values
+        Returns: dict of values updated, with new values.
         '''
         from pprint import pformat
 
@@ -120,6 +121,7 @@ class StargateConfig:
 
         # We get here if there were no validation problems. Update the CHANGED values
         self.__set_raw_bulk(data_out)
+        return data_out
 
     def __set_raw_bulk(self, data):
         '''
