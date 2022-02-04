@@ -147,21 +147,27 @@ class StargateConfig:
                 raise ValueError("Not a valid IP Address")
 
         if param_config['type'].lower() == "int":
-            if not isinstance(test_value, int ):
+            try:
+                test_value = int(test_value)
+            except ValueError:
                 raise ValueError("Must be type `int`")
+                
             if param_config['max_value'] and test_value > param_config['max_value']:
                 raise ValueError(f"Maximum value: {param_config['max_value']}")
             if param_config['max_value'] and test_value < param_config['min_value']:
                 raise ValueError(f"Minimum value: {param_config['min_value']}")
 
         if param_config['type'].lower() == "float":
-            if not isinstance(test_value, float ):
+            try:
+                test_value = float(test_value)
+            except ValueError:
                 raise ValueError("Must be type `float`")
+
             if param_config['max_value'] and test_value > param_config['max_value']:
                 raise ValueError(f"Maximum value: {param_config['max_value']}")
             if param_config['max_value'] and test_value < param_config['min_value']:
                 raise ValueError(f"Minimum value: {param_config['min_value']}")
-                
+
         if param_config['type'].lower() == "dict" and not isinstance(test_value, dict ):
             raise ValueError("Must be type `dict`")
 
