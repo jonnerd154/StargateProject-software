@@ -50,9 +50,9 @@ class GateApplication:
         self.cfg.load()
 
         ### Start the websockets-based LogTailServer
-        from websocket_server import LogTailServerWrapper
-        self.log_tail_server = LogTailServerWrapper("logs/sg1.log", str(9000))
-        self.log_tail_server.start()
+        # from websocket_server import LogTailServerWrapper
+        # self.log_tail_server = LogTailServerWrapper("logs/sg1.log", str(9000))
+        # self.log_tail_server.start()
 
         # Some credits
         self.log.log('*******************************************************************')
@@ -110,7 +110,7 @@ class GateApplication:
     def cleanup(self):
         self.stargate.ring.release()      # Release the ring when exiting. Just in case.
         self.httpd_server.shutdown()
-        self.log_tail_server.terminate()
+        #self.log_tail_server.terminate()
 
         self.log.log('The Stargate program is no longer running\r\n\r\n')
         sys.exit(0)
