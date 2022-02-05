@@ -104,14 +104,14 @@ class KeyboardManager:
         keyboard.wait()
 
     def enable_dhd_test( self, enable ):
-      if enable:
-          self.stargate.shutdown()
-          self.dhd_test_enable = True
-      else:
-          self.dhd_test_enable = False
-          self.stargate.dialer.hardware.clear_lights()
+        if enable:
+            self.stargate.shutdown()
+            self.dhd_test_enable = True
+        else:
+            self.dhd_test_enable = False
+            self.stargate.dialer.hardware.clear_lights()
 
-      self.dhd_test_active_buttons = []
+        self.dhd_test_active_buttons = []
 
     def handle_dhd_test(self, key):
         # Handle test mode here
