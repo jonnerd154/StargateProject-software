@@ -10,6 +10,19 @@ else
   WGROOT=/etc/wireguard/ # For Raspi
 fi
 
+# Verify that WGROOT is a valid path
+if [ -d $WGROOT ]; then
+  echo "WireGuard is not installed"
+  exit 1
+fi
+
+# Verify that we have wg installed
+which wg
+if [ $? -eq 1 ]; then
+  echo "WireGuard is not installed"
+  exit 1
+fi
+
 if sudo test -f "$WGROOT"/publickey; then
     sudo cat $WGROOT/publickey
 else
