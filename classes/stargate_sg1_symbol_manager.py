@@ -2,7 +2,8 @@
 class StargateSG1SymbolManager:
 
     def __init__(self):
-        pass
+        self.symbols = None
+        self.init()
 
     def get_all_ddslick(self):
         symbols = self.get_all()
@@ -20,9 +21,8 @@ class StargateSG1SymbolManager:
 
         return symbols_out
 
-    @staticmethod
-    def get_all():
-        return [
+    def init(self):
+        self.symbols = [
             {
                 'index': 1,
                 'name': "Earth"
@@ -179,6 +179,11 @@ class StargateSG1SymbolManager:
             {
                 'index': 39,
                 'name': "Leo"
-            },
-
+            }
         ]
+
+    def get_all(self):
+        return self.symbols
+
+    def get_name_by_index(self, index):
+        return next(item for item in self.symbols if item['index'] == index)['name']
