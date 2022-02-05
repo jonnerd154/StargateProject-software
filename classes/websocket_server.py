@@ -1,5 +1,3 @@
-import os
-import signal
 import threading
 import subprocess
 

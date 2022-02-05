@@ -89,7 +89,7 @@ class StargateAddressBook:
 
     def get_fan_gates(self):
         gates = self.datastore.get("fan_gates").copy()
-        for name, record in gates.items():
+        for record in gates.values():
             record['type'] = 'fan'
         return gates
 
@@ -111,7 +111,7 @@ class StargateAddressBook:
 
     def get_lan_gates(self):
         gates = self.datastore.get("lan_gates").copy()
-        for name, record in gates.items():
+        for record in gates.values():
             record['type'] = 'lan'
         return gates
 
@@ -133,7 +133,7 @@ class StargateAddressBook:
 
     def get_standard_gates(self):
         gates = self.datastore.get("standard_gates").copy()
-        for name, record in gates.items():
+        for record in gates.values():
             record['type'] = 'standard'
         return gates
 

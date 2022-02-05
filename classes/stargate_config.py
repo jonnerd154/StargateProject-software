@@ -3,8 +3,8 @@ import json
 import shutil
 import os
 import collections
-from dateutil.parser import parse as parse_date
 import ipaddress
+from dateutil.parser import parse as parse_date
 
 sys.path.append('config')
 
@@ -65,10 +65,9 @@ class StargateConfig:
     def get_full_config_by_key(self, key):
         try:
             config_record = self.config.get(key)
-        except json.decoder.JSONDecodeError:
+        except json.decoder.JSONDecodeError as ex:
             self.log.log(f"*** ERROR: Key '{key}' not found in {self.file_name}!")
-            raise NameError(f"Key {key} not found.")
-
+            raise NameError(f"Key {key} not found.") from ex
         try:
             if config_record['type'] == 'dict':
                 # Expand the values to include metadata
@@ -80,10 +79,11 @@ class StargateConfig:
                         except KeyError:
                             pass
 
-        except TypeError:
+        except TypeError as ex:
             # We should never hit this case in production.
             self.log.log(f"!!!!!!! config key {key} is missing metadata")
-            raise TypeError(f"Config key {key} not found")
+            raise TypeError(f"Config key {key} not found") from ex
+
         return config_record
 
     def get_all_configs(self):
@@ -95,8 +95,6 @@ class StargateConfig:
         Validates all inputs, raises ValueError on invalid input values
         Returns: dict of values updated, with new values.
         '''
-        from pprint import pformat
-
         data_out = {}
         for attr_key, attr_value in data.items():
             # Validate all of the inputs before modifying anything
@@ -156,8 +154,8 @@ class StargateConfig:
             except KeyError:
                 nullable = False
 
-        except (TypeError, json.decoder.JSONDecodeError):
-            raise NameError(f"Config key {key} not found.")
+        except (TypeError, json.decoder.JSONDecodeError) as ex:
+            raise TypeError(f"Config key {key} not found") from ex
 
         if required_type == "bool":
             if not isinstance(test_value, bool ):
@@ -193,12 +191,12 @@ class StargateConfig:
         elif required_type == "float":
             try:
                 test_value = float(test_value)
-            except ValueError:
+            except ValueError as ex:
                 # if the float can be an int without loss of precision, that's okay
                 if test_value == float(test_value):
                     test_value = float(test_value)
                 else:
-                    raise ValueError(f"{key} must be type `float`")
+                    raise ValueError(f"{key} must be type `float`") from ex
 
             if param_config['max_value'] and test_value > param_config['max_value']:
                 raise ValueError(f"{key} Maximum value: {param_config['max_value']}")
@@ -211,8 +209,8 @@ class StargateConfig:
             else:
                 try:
                     test_value = int(test_value)
-                except ValueError:
-                    raise ValueError(f"{key} must be type `int` got {test_value}")
+                except ValueError as ex:
+                    raise ValueError(f"{key} must be type `int` got {test_value}") from ex
 
                 if param_config['max_value'] and test_value > param_config['max_value']:
                     raise ValueError(f"{key} Maximum value: {param_config['max_value']}")

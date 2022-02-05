@@ -7,6 +7,10 @@ class SymbolRingHomingManager:
         self.log = stargate.log
         self.cfg = stargate.cfg
 
+        # This SymbolRingHomingManager object is initialized in the SymbolRing initializer,
+        # and therefore stargate.ring is not yet available
+        self.ring = None # Gets set after initialization of the SymbolRing object.
+
         # Retrieve the configurations
         self.auto_homing_enabled = self.cfg.get("stepper_auto_homing_enabled")
         self.auto_homing_threshold = self.cfg.get("stepper_auto_homing_threshold")

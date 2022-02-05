@@ -12,7 +12,7 @@ class LogTailServer():
 
         async def tail(websocket, path): # pylint: disable=unused-argument
             try:
-                with open(file_path, 'rt') as file:
+                with open(file_path, 'rt', encoding="utf8") as file:
                     sleep = None
 
                     file.seek (0, 2)           # Seek @ EOF
@@ -32,10 +32,10 @@ class LogTailServer():
                 raise
 
 
-        tail_server = websockets.serve(tail, '', port)
+        tail_server = websockets.serve(tail, '', PORT) # pylint: disable=no-member
         loop.run_until_complete(tail_server)
         loop.run_forever()
 
 file_path = sys.argv[1]
-port = str(sys.argv[2])
+PORT = str(sys.argv[2])
 log_tail_server = LogTailServer()

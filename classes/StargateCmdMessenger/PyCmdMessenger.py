@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 ### COMMAND FORMATS
 
 __description__ = \
@@ -5,7 +7,7 @@ __description__ = \
 PyCmdMessenger
 
 Class for communication with an arduino using the CmdMessenger serial
-communication library.  
+communication library.
 """
 __author__ = "Michael J. Harms"
 __date__ = "2016-05-20"
@@ -15,10 +17,10 @@ import re, warnings, multiprocessing, time, struct
 
 class CmdMessenger:
     """
-    Basic interface for interfacing over a serial connection to an arduino 
+    Basic interface for interfacing over a serial connection to an arduino
     using the CmdMessenger library.
     """
-    
+
     def __init__(self,
                  board_instance,
                  commands,
@@ -29,7 +31,7 @@ class CmdMessenger:
         """
         Input:
             board_instance:
-                instance of ArduinoBoard initialized with correct serial 
+                instance of ArduinoBoard initialized with correct serial
                 connection (points to correct serial with correct baud rate) and
                 correct board parameters (float bytes, etc.)
 
@@ -46,8 +48,8 @@ class CmdMessenger:
 
             command_separator:
                 character that separates messages (commands) from each other
-                Default: ";" 
-       
+                Default: ";"
+
             escape_separator:
                 escape character to allow separators within messages.
                 Default: "/"
@@ -55,10 +57,10 @@ class CmdMessenger:
             warnings:
                 warnings for user
                 Default: True
- 
+
             The separators and escape_separator should match what's
             in the arduino code that initializes the CmdMessenger.  The default
-            separator values match the default values as of CmdMessenger 4.0. 
+            separator values match the default values as of CmdMessenger 4.0.
         """
 
         self.board = board_instance
@@ -79,7 +81,7 @@ class CmdMessenger:
             self._cmd_name_to_int[c[0]] = i
             self._int_to_cmd_name[i] = c[0]
             self._cmd_name_to_format[c[0]] = c[1]
- 
+
         self._byte_field_sep = self.field_separator.encode("ascii")
         self._byte_command_sep = self.command_separator.encode("ascii")
         self._byte_escape_sep = self.escape_separator.encode("ascii")
@@ -119,13 +121,13 @@ class CmdMessenger:
 
     def send(self,cmd,*args,arg_formats=None):
         """
-        Send a command (which may or may not have associated arguments) to an 
+        Send a command (which may or may not have associated arguments) to an
         arduino using the CmdMessage protocol.  The command and any parameters
-        should be passed as direct arguments to send.  
+        should be passed as direct arguments to send.
 
         arg_formats is an optional string that specifies the formats to use for
         each argument when passed to the arduino. If specified here,
-        arg_formats supercedes formats specified on initialization.  
+        arg_formats supercedes formats specified on initialization.
         """
 
         # Turn the command into an integer.
@@ -135,7 +137,7 @@ class CmdMessenger:
             err = "Command '{}' not recognized.\n".format(cmd)
             raise ValueError(err)
 
-        # Figure out what formats to use for each argument.  
+        # Figure out what formats to use for each argument.
         arg_format_list = []
         if arg_formats != None:
 
@@ -150,8 +152,8 @@ class CmdMessenger:
             except KeyError:
                 # if not, guess for all arguments
                 arg_format_list = ["g" for i in range(len(args))]
-  
-        # Deal with "*" format  
+
+        # Deal with "*" format
         arg_format_list = self._treat_star_format(arg_format_list,args)
 
         if len(args) > 0:
@@ -160,7 +162,7 @@ class CmdMessenger:
                 raise ValueError(err)
 
         # Go through each argument and create a bytes representation in the
-        # proper format to send.  Escape appropriate characters. 
+        # proper format to send.  Escape appropriate characters.
         fields = ["{}".format(command_as_int).encode("ascii")]
         for i, a in enumerate(args):
             fields.append(self._send_methods[arg_format_list[i]](a))
@@ -174,15 +176,15 @@ class CmdMessenger:
 
     def receive(self,arg_formats=None):
         """
-        Recieve commands coming off the serial port. 
+        Recieve commands coming off the serial port.
 
         arg_formats is an optimal keyword that specifies the formats to use to
         parse incoming arguments.  If specified here, arg_formats supercedes
-        the formats specified on initialization.  
+        the formats specified on initialization.
         """
 
         # Read serial input until a command separator or empty character is
-        # reached 
+        # reached
         msg = [[]]
         raw_msg = []
         escaped = False
@@ -218,26 +220,26 @@ class CmdMessenger:
                     command_sep_found = True
                     break
 
-                # or any empty characater 
+                # or any empty characater
                 elif tmp == b'':
                     break
 
                 # okay, must be something
                 else:
                     msg[-1].append(tmp)
-  
+
         # No message received given timeouts
         if len(msg) == 1 and len(msg[0]) == 0:
             return None
 
         # Make sure the message terminated properly
         if not command_sep_found:
-          
-            # empty message (likely from line endings being included) 
-            joined_raw = b''.join(raw_msg) 
+
+            # empty message (likely from line endings being included)
+            joined_raw = b''.join(raw_msg)
             if joined_raw.strip() == b'':
                 return  None
-           
+
             err = "Incomplete message ({})".format(joined_raw.decode())
             raise EOFError(err)
 
@@ -254,8 +256,8 @@ class CmdMessenger:
                 cmd_name = "unknown"
                 w = "Recieved unrecognized command ({}).".format(cmd)
                 warnings.warn(w,Warning)
-        
-        # Figure out what formats to use for each argument.  
+
+        # Figure out what formats to use for each argument.
         arg_format_list = []
         if arg_formats != None:
 
@@ -271,7 +273,7 @@ class CmdMessenger:
                 # if not, guess for all arguments
                 arg_format_list = ["g" for i in range(len(fields[1:]))]
 
-        # Deal with "*" format  
+        # Deal with "*" format
         arg_format_list = self._treat_star_format(arg_format_list,fields[1:])
 
         if len(fields[1:]) > 0:
@@ -282,7 +284,7 @@ class CmdMessenger:
         received = []
         for i, f in enumerate(fields[1:]):
             received.append(self._recv_methods[arg_format_list[i]](f))
-        
+
         # Record the time the message arrived
         message_time = time.time()
 
@@ -314,7 +316,7 @@ class CmdMessenger:
                 err = "'*' format must occur only once, be at end of string, and be preceded by at least one other format."
                 raise ValueError(err)
 
-        return arg_format_list 
+        return arg_format_list
 
     def _send_char(self,value):
         """
@@ -367,7 +369,7 @@ class CmdMessenger:
         bounds for signed int.
         """
 
-        # Coerce to int. This will throw a ValueError if the value can't 
+        # Coerce to int. This will throw a ValueError if the value can't
         # actually be converted.
         if type(value) != int:
             new_value = int(value)
@@ -381,15 +383,15 @@ class CmdMessenger:
         if value > self.board.int_max or value < self.board.int_min:
             err = "Value {} exceeds the size of the board's int.".format(value)
             raise OverflowError(err)
-           
+
         return struct.pack(self.board.int_type,value)
- 
+
     def _send_unsigned_int(self,value):
         """
         Convert a numerical value into an integer, then to a bytes object. Check
         bounds for unsigned int.
         """
-        # Coerce to int. This will throw a ValueError if the value can't 
+        # Coerce to int. This will throw a ValueError if the value can't
         # actually be converted.
         if type(value) != int:
             new_value = int(value)
@@ -403,7 +405,7 @@ class CmdMessenger:
         if value > self.board.unsigned_int_max or value < self.board.unsigned_int_min:
             err = "Value {} exceeds the size of the board's unsigned int.".format(value)
             raise OverflowError(err)
-           
+
         return struct.pack(self.board.unsigned_int_type,value)
 
     def _send_long(self,value):
@@ -412,11 +414,11 @@ class CmdMessenger:
         bounds for signed long.
         """
 
-        # Coerce to int. This will throw a ValueError if the value can't 
+        # Coerce to int. This will throw a ValueError if the value can't
         # actually be converted.
         if type(value) != int:
             new_value = int(value)
-            
+
             if self.give_warnings:
                 w = "Coercing {} into int ({})".format(value,new_value)
                 warnings.warn(w,Warning)
@@ -426,16 +428,16 @@ class CmdMessenger:
         if value > self.board.long_max or value < self.board.long_min:
             err = "Value {} exceeds the size of the board's long.".format(value)
             raise OverflowError(err)
-           
+
         return struct.pack(self.board.long_type,value)
- 
+
     def _send_unsigned_long(self,value):
         """
-        Convert a numerical value into an integer, then to a bytes object. 
+        Convert a numerical value into an integer, then to a bytes object.
         Check bounds for unsigned long.
         """
 
-        # Coerce to int. This will throw a ValueError if the value can't 
+        # Coerce to int. This will throw a ValueError if the value can't
         # actually be converted.
         if type(value) != int:
             new_value = int(value)
@@ -449,7 +451,7 @@ class CmdMessenger:
         if value > self.board.unsigned_long_max or value < self.board.unsigned_long_min:
             err = "Value {} exceeds the size of the board's unsigned long.".format(value)
             raise OverflowError(err)
-          
+
         return struct.pack(self.board.unsigned_long_type,value)
 
     def _send_float(self,value):
@@ -457,7 +459,7 @@ class CmdMessenger:
         Return a float as a IEEE 754 format bytes object.
         """
 
-        # convert to float. this will throw a ValueError if the type is not 
+        # convert to float. this will throw a ValueError if the type is not
         # readily converted
         if type(value) != float:
             value = float(value)
@@ -468,13 +470,13 @@ class CmdMessenger:
             raise OverflowError(err)
 
         return struct.pack(self.board.float_type,value)
- 
+
     def _send_double(self,value):
         """
         Return a float as a IEEE 754 format bytes object.
         """
 
-        # convert to float. this will throw a ValueError if the type is not 
+        # convert to float. this will throw a ValueError if the type is not
         # readily converted
         if type(value) != float:
             value = float(value)
@@ -489,7 +491,7 @@ class CmdMessenger:
     def _send_string(self,value):
         """
         Convert a string to a bytes object.  If value is not a string, it is
-        be converted to one with a standard string.format call.  
+        be converted to one with a standard string.format call.
         """
 
         if type(value) != bytes:
@@ -513,8 +515,8 @@ class CmdMessenger:
         """
         Send the argument as a string in a way that should (probably, maybe!) be
         processed properly by C++ calls like atoi, atof, etc.  This method is
-        NOT RECOMMENDED, particularly for floats, because values are often 
-        mangled silently.  Instead, specify a format (e.g. "f") and use the 
+        NOT RECOMMENDED, particularly for floats, because values are often
+        mangled silently.  Instead, specify a format (e.g. "f") and use the
         CmdMessenger::readBinArg<CAST> method (e.g. c.readBinArg<float>();) to
         read the values on the arduino side.
         """
@@ -584,7 +586,7 @@ class CmdMessenger:
         """
 
         return struct.unpack(self.board.double_type,value)[0]
-            
+
     def _recv_string(self,value):
         """
         Recieve a binary (bytes) string, returning a python string.
@@ -604,13 +606,13 @@ class CmdMessenger:
         """
         Receive a binary bool, return as python bool.
         """
-        
+
         return struct.unpack("?",value)[0]
 
     def _recv_guess(self,value):
         """
-        Take the binary spew and try to make it into a float or integer.  If 
-        that can't be done, return a string.  
+        Take the binary spew and try to make it into a float or integer.  If
+        that can't be done, return a string.
 
         Note: this is generally a bad idea, as values can be seriously mangled
         by going from float -> string -> float.  You'll generally be better off
@@ -638,5 +640,3 @@ class CmdMessenger:
 
         # Return as string
         return self._recv_string(value)
-
-

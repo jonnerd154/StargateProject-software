@@ -119,7 +119,7 @@ class KeyboardManager:
             symbol_number = self.get_symbol_key_map()[key]
             self.log.log(f'DHD Test: Pressed Key {key} --> Symbol {symbol_number}')
         except KeyError:
-            if (key == self.center_button_key):
+            if key == self.center_button_key:
                 self.log.log(f'DHD Test: Pressed Center Button {key} --> Symbol {symbol_number}')
                 symbol_number = 0
             else:

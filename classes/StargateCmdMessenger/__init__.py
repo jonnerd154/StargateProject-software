@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 __description__ = \
 """
 Python class for interfacing with CmdMessenger arduino serial communications

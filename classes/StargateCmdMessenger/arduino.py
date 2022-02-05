@@ -1,3 +1,5 @@
+# pylint: skip-file
+
 __description__ = \
 """
 Base class for allowing connections between arduino and PyCmdMessenger instances
