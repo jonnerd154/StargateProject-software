@@ -123,7 +123,7 @@ class DHDv2:
         self.color_center = None
 
         # Initialize the messenger
-        self.c = PyCmdMessenger.CmdMessenger(self.board, self.commands) # pylint: disable=invalid-name
+        self.c = StargateCmdMessenger.CmdMessenger(self.board, self.commands) # pylint: disable=invalid-name
 
     def get_firmware_version(self):
         self.c.send("get_fw_version")
