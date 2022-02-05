@@ -20,21 +20,7 @@
     "value": {},
     "desc": "A Dictionary of LAN Gates. These allow inter-Stargate communication without an internet connection, or Subspace Network configuration.",
     "type": "dict",
-    "value": {
-      "My LAN Gate": {
-        "name": "My LAN Gate",
-        "gate_address": [
-          27,
-          7,
-          15,
-          1,
-          2,
-          3
-        ],
-        "ip_address": "127.0.0.1",
-        "is_black_hole": false
-      }
-    }
+    "value": {}
   },
   "fan_gates": {
     "value": {},
