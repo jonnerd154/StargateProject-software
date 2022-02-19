@@ -53,10 +53,17 @@ class StargateAddressBook:
 
     def get_entry_by_address(self, address):
         #print("Searching Address Book for {}".format(address))
+
         found_standard_gate = self.get_standard_gate_by_address(address)
         if found_standard_gate:
             found_standard_gate['type'] = 'standard'
             return found_standard_gate
+
+        # Check LAN Gates before Fan Gates - they take priority
+        found_lan_gate = self.get_lan_gate_by_address(address)
+        if found_lan_gate:
+            found_lan_gate['type'] = 'lan'
+            return found_lan_gate
 
         found_fan_gate = self.get_fan_gate_by_address(address)
         if found_fan_gate:
@@ -67,14 +74,24 @@ class StargateAddressBook:
 
     def get_all_nonlocal_addresses(self):
         fan_gates = self.get_fan_gates()
+        lan_gates = self.get_lan_gates()
         standard_gates = self.get_standard_gates()
-        all_gates = {**fan_gates, **standard_gates}
+        all_gates = {**fan_gates, **lan_gates, **standard_gates}
+        return all_gates
+
+    def get_fan_and_lan_addresses(self):
+        fan_gates = self.get_fan_gates()
+        lan_gates = self.get_lan_gates()
+        all_gates = {**fan_gates, **lan_gates}
         return all_gates
 
     # ----
 
     def get_fan_gates(self):
-        return self.datastore.get("fan_gates")
+        gates = self.datastore.get("fan_gates").copy()
+        for record in gates.values():
+            record['type'] = 'fan'
+        return gates
 
     def get_fan_gate_by_address(self, address):
         for value in self.get_fan_gates().values():
@@ -90,10 +107,35 @@ class StargateAddressBook:
         fan_gates[name] = { "name": name, "gate_address": gate_address, "ip_address": ip_address, "is_black_hole": is_black_hole }
         self.datastore.set("fan_gates", fan_gates)
 
+# ----
+
+    def get_lan_gates(self):
+        gates = self.datastore.get("lan_gates").copy()
+        for record in gates.values():
+            record['type'] = 'lan'
+        return gates
+
+    def get_lan_gate_by_address(self, address):
+        for value in self.get_lan_gates().values():
+            if address == value['gate_address']:
+                return value
+
+        return False
+
+    def set_lan_gate(self, name, gate_address, ip_address, is_black_hole=False):
+        # TODO: Validate gate_address, ip_address
+        # TODO: Ensure unique address
+        lan_gates = self.get_lan_gates()
+        lan_gates[name] = { "name": name, "gate_address": gate_address, "ip_address": ip_address, "is_black_hole": is_black_hole }
+        self.datastore.set("lan_gates", lan_gates)
+
     # ----
 
     def get_standard_gates(self):
-        return self.datastore.get("standard_gates")
+        gates = self.datastore.get("standard_gates").copy()
+        for record in gates.values():
+            record['type'] = 'standard'
+        return gates
 
     def get_standard_gate_by_address(self, address):
         for value in self.get_standard_gates().values():

@@ -7,6 +7,7 @@ from ast import literal_eval
 from pathlib import Path
 from datetime import datetime
 import requests
+from packaging import version
 
 from network_tools import NetworkTools
 from database import Database
@@ -24,9 +25,9 @@ class SoftwareUpdate:
         self.database = Database(app.base_path)
 
         # Retrieve the configurations
-        self.base_url = self.cfg.get("software_updates_url")
-        self.file_download_username = self.cfg.get("software_updates_username")
-        self.file_download_password = self.cfg.get("software_updates_password")
+        self.base_url = self.cfg.get("software_update_url")
+        self.file_download_username = self.cfg.get("software_update_username")
+        self.file_download_password = self.cfg.get("software_update_password")
 
         # Update the fan gates from the DB every x hours
         interval = self.cfg.get("software_update_interval")
@@ -67,7 +68,7 @@ class SoftwareUpdate:
             for entry in sw_update:
 
                 ## if there is a newer version:
-                if entry[1] > self.current_version:
+                if version.parse(str(self.current_version)) < version.parse(str(entry[1])):
                     update_audio = self.audio.play_random_audio_clip("update")
                     update_found = True
                     self.log.log(f"Newer version {entry[1]} detected!")

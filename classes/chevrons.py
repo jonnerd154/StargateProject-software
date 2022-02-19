@@ -10,16 +10,28 @@ class ChevronManager:
         self.audio = app.audio
         self.electronics = app.electronics
 
+        self.chevrons = {}
         self.load_from_config()
 
     def load_from_config(self):
         # Retrieve the Chevron config and initialize the Chevron objects
         self.chevrons = {}
-        for key, value in self.cfg.get("chevronMapping").items():
-            self.chevrons[int(key)] = Chevron( self.electronics, value['ledPin'], value['motorNumber'], self.audio, self.cfg )
+        for index in range(1,10):
+            led_pin = self.cfg.get("chevron_config_" + str(index) + "_led_pin")
+            motor_number = self.cfg.get("chevron_config_" + str(index) + "_motor_number")
+            self.chevrons[index] = Chevron( self.electronics, led_pin, motor_number, self.audio, self.cfg )
 
     def get( self, chevron_number ):
         return self.chevrons[int(chevron_number)]
+
+    def get_status( self ):
+        output = {}
+        for index, chevron in self.chevrons.items():
+            row = {}
+            row['position'] = chevron.position
+            row['led_state'] = chevron.led_state
+            output[index] = row
+        return output
 
     def all_off(self, sound_on=None):
         """
@@ -53,18 +65,22 @@ class Chevron:
         self.electronics = electronics
 
         # Retrieve Configurations
-        self.chevron_down_audio_head_start = self.cfg.get("chevronDownAudioHeadStart") #0.2
-        self.chevron_down_throttle = self.cfg.get("chevronDownThrottle") #-0.65 # negative
-        self.chevron_down_time = self.cfg.get("chevronDownTime") #0.1
-        self.chevron_down_wait_time = self.cfg.get("chevronDownWaitTime") #0.35
-        self.chevron_up_throttle = self.cfg.get("chevronUpThrottle") #0.65 # positive
-        self.chevron_up_time = self.cfg.get("chevronUpTime") #0.2
+        # TODO: Move to allow config to change without restart
+        self.audio_chevron_down_headstart = self.cfg.get("audio_chevron_down_headstart") #0.2
+        self.chevron_down_throttle = self.cfg.get("chevron_down_throttle") #-0.65 # negative
+        self.chevron_down_time = self.cfg.get("chevron_down_time") #0.1
+        self.chevron_down_wait_time = self.cfg.get("chevron_down_wait_time") #0.35
+        self.chevron_up_throttle = self.cfg.get("chevron_up_throttle") #0.65 # positive
+        self.chevron_up_time = self.cfg.get("chevron_up_time") #0.2
 
         self.motor_number = motor_number
         self.motor = self.electronics.get_chevron_motor(self.motor_number)
 
         self.led_gpio = led_gpio
         self.led = self.electronics.get_led(self.led_gpio)
+
+        self.position = "unknown"
+        self.led_state = False
 
     def cycle_outgoing(self):
         self.move_down() # Motor down, light on
@@ -73,11 +89,12 @@ class Chevron:
     def move_down(self):
         ### Chevron Down ###
         self.audio.sound_start('chevron_1') # chev down audio
-        sleep(self.chevron_down_audio_head_start)
+        sleep(self.audio_chevron_down_headstart)
 
         self.motor.throttle = self.chevron_down_throttle # Start the motor
         sleep(self.chevron_down_time) # Motor movement time
         self.motor.throttle = None # Stop the motor
+        self.position = "unlocked"
 
         ### Turn on the LED ###
         sleep(self.chevron_down_wait_time) # wait time without motion
@@ -91,10 +108,12 @@ class Chevron:
         self.motor.throttle = self.chevron_up_throttle # Start the motor
         sleep(self.chevron_up_time) # motor movement time
         self.motor.throttle = None # Stop the motor
+        self.position = "locked"
 
     def light_on(self):
         if self.led:
             self.led.on()
+        self.led_state = True
 
     def incoming_on(self):
         if self.led:
@@ -107,3 +126,4 @@ class Chevron:
             choice(self.audio.incoming_chevron_sounds).play()
         if self.led:
             self.led.off()
+        self.led_state = False

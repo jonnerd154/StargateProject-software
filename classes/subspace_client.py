@@ -2,6 +2,7 @@ import socket
 import subprocess
 
 from database import Database
+import subspace_messages
 
 class SubspaceClient:
 
@@ -24,7 +25,6 @@ class SubspaceClient:
         # Some other configurations that are relatively static will stay here
         self.header_bytes = 8
         self.encoding_format = 'utf-8'
-        self.disconnect_message = '!DISCONNECT'
 
         # We'll share one Client object through a few methods. Initialize it here.
         self.client = None
@@ -71,8 +71,8 @@ class SubspaceClient:
         disconnect message after the message_string.
         :param server_ip: The IP of the stargate server where to send the message, as string.
         :param message_string: The message can be a string of stargate symbols. eg '[7]', '[7, 32]' or '[7, 32, 27, 18, 12, 16]'.
-        It can also be, 'centre_button_incoming'.
-        If the message is "what_is_your_status", we also expect a status message in return.
+        It can also be, DIAL_CENTER_INCOMING.
+        If the message is CHECK_STATUS, we also expect a status message in return.
         :return: The function returns a tuple where the first value is True if we have a connection to the server, and False if not.
         The second value in the tuple is either None, or it contains the status of the remote gate, if we asked for it.
         """
@@ -102,12 +102,12 @@ class SubspaceClient:
             self.send_raw(message_string) # Send the message
 
             #If we ask for the status, expect an answer
-            if message_string == 'what_is_your_status':
+            if message_string == subspace_messages.CHECK_STATUS:
                 remote_gate_status = (self.client.recv(8).decode(self.encoding_format))
                 if self.logging == "verbose":
                     self.log.log(f'Received STATUS REPLY Line 107: {remote_gate_status}')
 
-            self.send_raw(self.disconnect_message) # always disconnect.
+            self.send_raw(subspace_messages.DISCONNECT) # always disconnect.
             return True, remote_gate_status
 
         return False, False
@@ -118,8 +118,8 @@ class SubspaceClient:
         :param remote_ip: The IP address of the remote gate
         :return: True if a wormhole is already established and False if not.
         """
-        self.log.log("Checking gate status: {remote_ip}")
-        status = self.send_to_remote_stargate(remote_ip, 'what_is_your_status')
+        self.log.log(f"Checking gate status: {remote_ip}")
+        status = self.send_to_remote_stargate(remote_ip, subspace_messages.CHECK_STATUS)
         if status[1] == 'False':
             return False
         return True

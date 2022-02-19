@@ -53,7 +53,7 @@ function apt_update_and_install() {
 
   # Install system-level dependencies
   echo 'Installing system-level dependencies...this may take a while.'
-  sudo apt-get install -y clang python3-dev python3-venv libasound2-dev avahi-daemon apache2 wireguard ufw | sed 's/^/     /'
+  sudo apt-get install -y clang python3-dev python3-venv libasound2-dev avahi-daemon apache2 wireguard ufw python3-smbus i2c-tools | sed 's/^/     /'
 }
 
 function init_venv() {
@@ -61,24 +61,25 @@ function init_venv() {
   cd /home/pi
 
   # Remove the env if it already exists
-  [ ! -d './sg1_venv_v4' ] && rm -Rf /home/pi/sg1_venv_v4
+  [ ! -d './venv_v4' ] && rm -Rf /home/pi/venv_v4
 
   echo 'Initializing Python virtual environment'
-  python3 -m venv sg1_venv_v4
+  python3 -m venv venv_v4
 
   # Activate the venv and install some dependencies
   echo 'Installing pip setuptools into the virtual environment'
-  source sg1_venv_v4/bin/activate
+  source venv_v4/bin/activate
   export CFLAGS=-fcommon
   pip install setuptools | sed 's/^/     /'
 
   # Install requirements.txt pip packages
   echo 'Installing requirements.txt dependencies into the Virtual Environment'
-  source sg1_venv_v4/bin/activate
+  source venv_v4/bin/activate
   pip install -r sg1_v4/requirements.txt | sed 's/^/     /'
 
   echo 'Deactivating the virtual environment'
   deactivate
+
 }
 
 function configure_hostname() {
@@ -143,7 +144,7 @@ function restart_apache() {
 function configure_crontab() {
   # Add the speaker-tickler to our crontab
   echo 'Configuring crontab (user: pi)'
-  (crontab -l; echo '*/8 * * * * /home/pi/sg1_venv_v4/bin/python3 /home/pi/sg1_v4/scripts/speaker_on.py')|awk '!x[$0]++'|crontab -
+  (crontab -l; echo '*/8 * * * * /home/pi/venv_v4/bin/python3 /home/pi/sg1_v4/scripts/speaker_on.py')|awk '!x[$0]++'|crontab -
 }
 
 function disable_pwr_mgmt() {
@@ -212,17 +213,33 @@ EOT
 function configure_systemd_service() {
   # Load the logrotated configs
   echo 'Adding systemd service'
+#   sudo tee /etc/systemd/system/stargate.service > /dev/null <<EOT
+# [Unit]
+# Description=BuildAStargate.com Stargate Daemon (SG1)
+# After=multi-user.target
+# [Service]
+# Type=simple
+# Restart=always
+# WorkingDirectory=/home/pi/sg1_v4
+# ExecStart=/home/pi/venv_v4/bin/python /home/pi/sg1_v4/main.py
+# [Install]
+# WantedBy=multi-user.target
+# EOT
   sudo tee /etc/systemd/system/stargate.service > /dev/null <<EOT
 [Unit]
 Description=BuildAStargate.com Stargate Daemon (SG1)
-After=multi-user.target
+Requires=multi-user.target
+After=multi-user.target rc-local.service
+AllowIsolate=yes
+
 [Service]
 Type=simple
-Restart=always
 WorkingDirectory=/home/pi/sg1_v4
-ExecStart=/home/pi/sg1_venv_v4/bin/python /home/pi/sg1_v4/main.py
+ExecStart=/home/pi/venv_v4/bin/python /home/pi/sg1_v4/main.py --daemon
+
 [Install]
 WantedBy=multi-user.target
+
 EOT
 
   echo 'Reloading systemd daemon configs'
@@ -230,11 +247,22 @@ EOT
 
   echo 'Enabling stargate.service in the normal runlevels'
   sudo systemctl enable stargate.service
+
+  sudo systemctl stop stargate.service
+  sudo systemctl start stargate.service
+
+}
+
+function configure_wireguard(){
+  echo 'Configuring wireguard VPN / Subspace Interface'
+  sudo su root -c "cd /etc/wireguard/; wget https://thestargateproject.com/subspace.conf; chmod 600 subspace.conf"
 }
 
 function configure_firewall_ufw() {
   echo 'Configuring firewall'
 
+
+  sudo ufw reload
   sudo ufw deny in on any
   sudo ufw allow OpenSSH # Allow SSH
   sudo ufw allow http # Allow HTTP

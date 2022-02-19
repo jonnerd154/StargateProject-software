@@ -1,13 +1,11 @@
 from time import sleep
 
 from stargate_config import StargateConfig
-from homing import SymbolRingHomingManager
+from symbol_ring_homing_manager import SymbolRingHomingManager
 
 class SymbolRing:
     """
     The dialing sequence.
-    One iteration is 16 micro steps (as printed from the onestep function when stepper.DOUBLE. But for unknown reasons
-    the first step is 8 micro steps..) This is set in the self.micro_steps variable.
     1251 is the normal steps needed for one revolutions of the gate as set in self.total_steps.
     # A range of 32 is approximately one symbol movement.
     """
@@ -20,16 +18,6 @@ class SymbolRing:
         self.audio = stargate.audio
         self.chevrons = stargate.chevrons
         self.base_path = stargate.base_path
-
-        # Retrieve the configurations
-        self.stepper_drive_mode = self.cfg.get("stepper_drive_mode")
-        self.total_steps = self.cfg.get("stepper_one_revolution_steps") # Old value: 1251
-        self.micro_steps = self.cfg.get("stepper_micro_steps")
-        self.normal_speed = self.cfg.get("stepper_normal_speed")
-        self.slow_speed = self.cfg.get("stepper_slow_speed")
-        self.initial_speed = self.cfg.get("stepper_initial_speed")
-        self.acceleration_length = self.cfg.get("stepper_acceleration_length")  # the number of steps used for acceleration
-        self.ring_direction_mode_longest = self.cfg.get("stepper_ring_direction_mode_longest")
 
         # The symbol positions on the symbol ring
         self.symbol_step_positions = {
@@ -88,23 +76,36 @@ class SymbolRing:
         }
         ## --------------------------
 
+        # Inititialize some hardware
         self.stepper = stargate.electronics.get_stepper()
         self.forward_direction = stargate.electronics.get_stepper_forward()
         self.backward_direction = stargate.electronics.get_stepper_backward()
-        self.stepper_drive_mode = stargate.electronics.get_stepper_drive_mode(self.stepper_drive_mode)
 
         # Load the last known ring position
-        self.stepper_pos = 0
-        self.position_store = StargateConfig(self.base_path, "ring_position.json", { "ring_position": 0 })
+        self.position_store = StargateConfig(self.base_path, "ring_position.json")
         self.position_store.set_log(self.log)
         self.position_store.load()
 
         ## Initialize the Homing Manager
-        self.homing_manager = SymbolRingHomingManager(stargate, self)
+        self.homing_manager = SymbolRingHomingManager( self.stargate )
+
+        # Initialize some state variables for Web UI
+        self.direction = False
+        self.steps_remaining = 0
+        self.current_speed = False
+        self.drive_status = "Stopped"
 
         # Release the ring for safety
         self.release()
 
+    def get_status(self):
+        return {
+            "ring_position": self.get_position(),
+            "direction": self.direction,
+            "steps_remaining": self.steps_remaining,
+            "current_speed": self.current_speed,
+            "drive_status": self.drive_status
+        }
 
     @staticmethod
     def find_offset(position, max_steps):
@@ -121,53 +122,79 @@ class SymbolRing:
             return max_steps - position
         return 0
 
-    def move(self, steps, direction=False):
+    def move(self, steps, direction):
         """
         This method moves the stepper motor the desired number of steps in the desired direction and updates the
-        self.stepper_pos with the new value. This method does NOT release the stepper. Do this with the release method.
-        Nor does this method update the "ring_position". Do this with the ring_position method.
-        :param steps: the number of steps to move as int. Negative is backward(ccw) and positive is forward (cw)
+        saved position with the new value. This method does NOT release the stepper. Do this with the release method.
+        :param steps: the number of steps to move as int.
+        :param direction: the direction to move. Must be either self.forward_direction or self.backward_direction
         :return: Nothing is returned
         """
-        ## Set the direction ##
-        if not direction:
-            if steps >= 0:  # If steps is positive move forward
-                direction = self.forward_direction
-            else:  # if steps is negative move backward
-                steps = abs(steps)
-                direction = self.backward_direction
 
-        current_speed = self.initial_speed
+        # Check that `direction` is valid
+        if direction not in [ self.forward_direction, self.backward_direction ]:
+            self.log.log("move() called with invalid direction")
+            raise ValueError
 
-        # Move the ring
-        self.audio.sound_start('rolling_ring')  # play the audio movement
-        stepper_micro_pos = 0
+        # Check that `steps` is valid/non-negative
+        if steps < 0:
+            self.log.log("move() called with negative steps")
+            raise ValueError
+
+        # Start the rolling ring sound
+        self.audio.sound_start('rolling_ring')
+
+        self.direction = direction
+        self.steps_remaining = steps
+        self.current_speed = self.cfg.get("stepper_speed_slow")
+
+        #TODO: Consider caching the configs here?
+
+        # Move the ring one step at at time
         for i in range(steps):
-
             # Check if the gate is still running, if not, break out of the loop.
             if not self.stargate.running:
                 break
 
-            self.stepper.onestep(direction=direction, style=self.stepper_drive_mode)
-            stepper_micro_pos += 8
-            self.stepper_pos = (stepper_micro_pos // self.micro_steps) % self.total_steps # Update the self.stepper_pos value as the ring moves. Will have a value from 0 till self.total_steps = 1250.
+            # Move the stepper one step
+            stepper_drive_mode = self.stargate.electronics.get_stepper_drive_mode(self.cfg.get("stepper_drive_mode"))
+            self.stepper.onestep(direction=direction, style=stepper_drive_mode)
+            self.steps_remaining -= 1
 
             ## acceleration
-            if i < self.acceleration_length:
-                current_speed -= (self.slow_speed - self.normal_speed) / self.acceleration_length
-                sleep(current_speed)
-            ## deceleration
-            elif i > (steps - self.acceleration_length):
-                current_speed += (self.slow_speed - self.normal_speed) / self.acceleration_length
-                sleep(current_speed)
-            ## slow without acceleration when short distance
-            elif steps < self.acceleration_length:
-                current_speed = self.normal_speed
-                sleep(current_speed)
+            try:
+                if i < self.cfg.get("stepper_acceleration_steps"):
+                    self.current_speed -= (self.cfg.get("stepper_speed_slow") - self.cfg.get("stepper_speed_normal")) / self.cfg.get("stepper_acceleration_steps")
+                    self.drive_status = "Accelerating"
+                    sleep(self.current_speed)
+                ## deceleration
+                elif i > (steps - self.cfg.get("stepper_acceleration_steps")):
+                    self.current_speed += (self.cfg.get("stepper_speed_slow") - self.cfg.get("stepper_speed_normal")) / self.cfg.get("stepper_acceleration_steps")
+                    self.drive_status = "Decelerating"
+                    sleep(self.current_speed)
+                ## slow without acceleration when short distance
+                elif steps < self.cfg.get("stepper_acceleration_steps"):
+                    self.current_speed = self.cfg.get("stepper_speed_normal")
+                    self.drive_status = "Constant Speed: Slow"
+                    sleep(self.current_speed)
+                else:
+                    self.drive_status = "Constant Speed: Normal"
+            except ValueError:
+                # If we've tried to sleep for negative time
+                pass
 
-            self.set_position() # Update the volatile position variable, we'll save it later.
+            # Update the position in non-persistent memory
+            self.update_position(1, direction)
 
-        self.release() # Release the stepper to prevent overheating
+            # Checks if the ring is in the home position, and zeros the cached value if so
+            self.homing_manager.in_move_calibrate()
+
+        # After this move() is complete, save the position to persistent memory
+        self.current_speed = False
+        self.direction = False
+        self.drive_status = "Stopped"
+        self.save_position()
+
         self.audio.sound_stop('rolling_ring')  # stop the audio
 
     def calculate_steps(self, chevron_number, symbol_number):
@@ -177,12 +204,12 @@ class SymbolRing:
         """
         # How many steps are needed:
         try:
-            steps = self.chevron_step_positions[chevron_number] - ((self.get_position() + self.symbol_step_positions[symbol_number]) % self.total_steps)
+            steps = self.chevron_step_positions[chevron_number] - ((self.get_position() + self.symbol_step_positions[symbol_number]) % self.cfg.get("stepper_one_revolution_steps"))
         except KeyError: # If we dial more chevrons than the stargate can handle. Don't return any steps.
             return None
 
-        if abs(steps) > self.total_steps / 2: # Check if distance is more than half a revolution
-            new_steps = (self.total_steps - abs(steps)) % self.total_steps # Reduce with half a revolution, and flips the direction
+        if abs(steps) > self.cfg.get("stepper_one_revolution_steps") / 2: # Check if distance is more than half a revolution
+            new_steps = (self.cfg.get("stepper_one_revolution_steps") - abs(steps)) % self.cfg.get("stepper_one_revolution_steps") # Reduce with half a revolution, and flips the direction
             if steps > 0: # if the direction was forward, flip the direction
                 new_steps = new_steps * -1
             return new_steps
@@ -196,35 +223,51 @@ class SymbolRing:
         :param chevron: the number of the chevron
         :return: nothing is returned
         """
-
         calc_steps = self.calculate_steps(chevron_number, symbol_number) # calculate the steps
 
         # Choose which ring direction mode to use
-        if self.ring_direction_mode_longest is False:
+        if self.cfg.get("dialing_ring_direction_mode") is False:
             ## Option one. This will move the symbol the shortest direction, cc or ccw.
             if calc_steps: # If not None
-                self.move(calc_steps) # move the ring the calc_steps steps.
+                ## Determine the direction
+                if calc_steps >= 0:  # If steps is positive move forward
+                    direction = self.forward_direction
+                else:  # if steps is negative move backward
+                    calc_steps = abs(calc_steps)
+                    direction = self.backward_direction
+
+                self.move(calc_steps, direction) # move the ring the calc_steps steps.
         else:
             ## Option two. This will move the symbol the longest direction, cc or ccw.
             if calc_steps: # If not None
                 if calc_steps >= 0:
-                    self.move((self.total_steps - calc_steps) * -1)  # move the ring, but the long way in the opposite direction.
+                    calc_steps = (self.cfg.get("stepper_one_revolution_steps") - calc_steps)
+                    direction = self.backward_direction
+                    self.move(calc_steps, direction)  # move the ring, but the long way in the opposite direction.
                 else:
-                    self.move((self.total_steps - abs(calc_steps)))  # move the ring, but the long way in the opposite direction.
-
-        # Update and save the ring position.
-        self.set_position()
-        self.save_position()
+                    calc_steps = self.cfg.get("stepper_one_revolution_steps") - abs(calc_steps)
+                    direction = self.forward_direction
+                    self.move(calc_steps, direction)  # move the ring, but the long way in the opposite direction.
 
     def get_position(self):
         return self.position_store.get('ring_position')
 
-    def set_position(self):
-        calculated_position = ( (self.stepper_pos + self.get_position() ) % self.total_steps) + self.homing_manager.offset
-        self.position_store.set_non_persistent('ring_position', calculated_position)
+    def update_position(self, steps, direction):
+        if direction == self.forward_direction:
+            offset = steps
+        else: # Backward
+            offset = steps * -1
+
+        new_position = (self.get_position() + offset) % self.cfg.get("stepper_one_revolution_steps")
+        self.position_store.set_non_persistent('ring_position', new_position)
 
     def save_position(self):
         self.position_store.save()
+
+    def zero_position(self):
+        self.log.log("Setting Ring Position: 0")
+        self.position_store.set_non_persistent('ring_position', 0)
+        self.save_position()
 
     def release(self):
 

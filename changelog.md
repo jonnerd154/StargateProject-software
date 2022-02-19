@@ -48,6 +48,7 @@ sudo systemctl status stargate.service
 - Better exception handling to prevent crashes
 - Improved memory management
 - Added firewall (UFW) to limit access. This is redundant and complementary to the firewalling that occurs on the Subspace Network Server.
+- Improved logging - threads don't step on STDOUT anymore
 - Added logrotate, so log files don't get huge and slow things down or fill up the drive. Retains 30 days of daily log file backups, FIFO.
 - Automatic configuration of the audio devices to prevent snafus.
 

@@ -1,7 +1,7 @@
 import os
 from time import sleep
 from serial.serialutil import SerialException
-import PyCmdMessenger
+import StargateCmdMessenger
 
 class Dialer: # pylint: disable=too-few-public-methods
 
@@ -11,13 +11,22 @@ class Dialer: # pylint: disable=too-few-public-methods
         self.cfg = stargate.cfg
 
         # Retrieve the configurations
-        self.dhd_port = self.cfg.get("DHD_serial_port")
-        self.dhd_baud_rate = self.cfg.get("DHD_baud_rate")
-        self.dhd_brightness_center = self.cfg.get("DHD_brightness_center")
-        self.dhd_brightness_symbols = self.cfg.get("DHD_brightness_symbols")
-        self.dhd_color_center = self.cfg.get("DHD_color_center")
-        self.dhd_color_symbols = self.cfg.get("DHD_color_symbols")
-        self.dhd_enable = self.cfg.get("DHD_enable")
+        self.dhd_port = self.cfg.get("dhd_serial_port")
+        self.dhd_serial_baud_rate = self.cfg.get("dhd_serial_baud_rate")
+        self.dhd_brightness_center = self.cfg.get("dhd_brightness_center")
+        self.dhd_brightness_symbols = self.cfg.get("dhd_brightness_symbols")
+        self.dhd_enable = self.cfg.get("dhd_enable")
+        self.dhd_color_center = [
+            self.cfg.get("dhd_color_center_red"),
+            self.cfg.get("dhd_color_center_green"),
+            self.cfg.get("dhd_color_center_blue")
+        ]
+
+        self.dhd_color_symbols = [
+            self.cfg.get("dhd_color_symbols_red"),
+            self.cfg.get("dhd_color_symbols_green"),
+            self.cfg.get("dhd_color_symbols_blue")
+        ]
 
         self.hardware = None
         self.type = None
@@ -27,9 +36,10 @@ class Dialer: # pylint: disable=too-few-public-methods
     def _connect_dialer(self):
         # Detect if we have a DHD connected, else use the keyboard
         try:
-            # If The DHD is disabled, raise an exception to use KeyboardMode
+            # If The DHD is disabled, raise an exception to jump to the except block and use KeyboardMode
             if not self.dhd_enable:
                 raise AttributeError
+
             self.hardware = self._connect_dhd()
             self.type = "DHDv2"
         except SerialException:
@@ -38,9 +48,14 @@ class Dialer: # pylint: disable=too-few-public-methods
             self.type = "Keyboard"
 
     def _connect_dhd(self):
-        ### Connect to the DHD object. Will throw exception if not present
-        dhd = DHDv2(self.dhd_port, self.dhd_baud_rate)
-        self.log.log('DHDv2 Found. Connected.')
+        try:
+            # Get a Semaphore lock on the parent process so when the PyCmdMessenger class
+            # prints to STDOUT, it doesn't step on STDOUT from other threads
+            ### Connect to the DHD object. Will throw exception if not present
+            dhd = DHDv2(self.dhd_port, self.dhd_serial_baud_rate, self.log)
+            self.log.log('DHDv2 Found. Connected.')
+        except SerialException: # pylint: disable=try-except-raise
+            raise
 
         # Configure the DHD
         dhd.set_brightness_center(self.dhd_brightness_center)
@@ -60,9 +75,9 @@ class Dialer: # pylint: disable=too-few-public-methods
 
 class DHDv2:
 
-    def __init__(self, port, baud_rate):
+    def __init__(self, port, baud_rate, log):
         # Initialize an ArduinoBoard instance.
-        self.board = PyCmdMessenger.ArduinoBoard(port, baud_rate=baud_rate)
+        self.board = StargateCmdMessenger.ArduinoBoard(port, baud_rate=baud_rate, log=log)
 
         # List of command names (and formats for their associated arguments). These must
         # be in the same order as in the sketch.
@@ -108,7 +123,7 @@ class DHDv2:
         self.color_center = None
 
         # Initialize the messenger
-        self.c = PyCmdMessenger.CmdMessenger(self.board, self.commands) # pylint: disable=invalid-name
+        self.c = StargateCmdMessenger.CmdMessenger(self.board, self.commands) # pylint: disable=invalid-name
 
     def get_firmware_version(self):
         self.c.send("get_fw_version")

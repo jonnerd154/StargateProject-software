@@ -1,7 +1,7 @@
 from ast import literal_eval
 from datetime import datetime
-import requests
 import json
+import requests
 
 from database import Database
 from stargate_address_book import StargateAddressBook
@@ -22,15 +22,16 @@ class StargateAddressManager:
         self.known_planets = self.address_book.get_standard_gates()
 
         ### Retrieve and merge all fan gates, local and in-DB
-        self.fan_gates = self.address_book.get_fan_gates() ### Stargate fan-made gate addresses
+        self.fan_gates = self.address_book.get_fan_and_lan_addresses() ### Stargate fan-made gate addresses
 
         self.validator = StargateAddressValidator()
 
-        self.info_api_url = self.cfg.get("stargate_info_api_url")
+        self.info_api_url = self.cfg.get("subspace_public_api_url")
 
         # Update the fan gates from the DB every x minutes
-        update_interval = self.cfg.get("fan_gate_refresh_interval")
-        stargate.app.schedule.every(update_interval).minutes.do( self.update_fan_gates_from_api )
+        if self.cfg.get("fan_gate_refresh_enable"):
+            update_interval = self.cfg.get("fan_gate_refresh_interval")
+            stargate.app.schedule.every(update_interval).minutes.do( self.update_fan_gates_from_api )
 
     def get_book(self):
         return self.address_book
@@ -53,7 +54,7 @@ class StargateAddressManager:
         This function gets the fan_gates from the API and stores it in the AddressBook
         :return: The updated fan_gate dictionary is returned.
         """
-        self.log.log("Updating Fan Gates from Database")
+        self.log.log("Updating Fan Gates from API")
 
         if self.stargate.net_tools.has_internet_access():
             try:
@@ -70,7 +71,7 @@ class StargateAddressManager:
                     # Add it to the datastore
                     self.address_book.set_fan_gate(name, gate_address, ip_address)
 
-                self.cfg.set('last_fan_gate_update', str(datetime.now()))
+                self.cfg.set('fan_gate_last_update', str(datetime.now()))
             except: # pylint: disable=bare-except
                 pass
 
@@ -117,7 +118,7 @@ class StargateAddressManager:
         :return: True if we are dialing a fan made address, False if not.
         """
         local_address = self.address_book.get_local_address()
-        for gate_config in self.address_book.get_fan_gates().values():
+        for gate_config in self.address_book.get_fan_and_lan_addresses().values():
             try:
                 #If we dial our own local address:
                 if dialed_address[:2] == local_address[:2]:
@@ -153,7 +154,7 @@ class StargateAddressManager:
         :return: The stargate's IP address is returned as a string, or "Unknown" if not found
         """
         stargate_ip = 'Unknown'
-        for stargate_config in self.address_book.get_fan_gates().values():
+        for stargate_config in self.address_book.get_fan_and_lan_addresses().values():
             if stargate_config['ip_address'] == remote_ip:
                 return stargate_config['name'] # TODO: Should this return `gate_address`?
         return str(stargate_ip) # If the gate address of the IP was not found
@@ -166,7 +167,7 @@ class StargateAddressManager:
         :param known_fan_made_stargates: This is the dictionary of the known stargates
         :return: The IP address is returned as a string.
         """
-        for stargate_config in self.address_book.get_fan_gates().values():
+        for stargate_config in self.address_book.get_fan_and_lan_addresses().values():
             if len(stargate_address) > 1 and stargate_address[0:2] == stargate_config['gate_address'][0:2]:
                 return stargate_config['ip_address']
 
@@ -180,8 +181,8 @@ class StargateAddressManager:
         :param IP: the IP address as a string
         :return: The planet/stargate name is returned as a string.
         """
-        for config in enumerate(self.address_book.get_fan_gates().values()):
-            if config['ip_address'] == remote_ip:
+        for gate_name, config in self.address_book.get_fan_and_lan_addresses().items(): # pylint: disable=unused-variable
+            if config['ip_address'] == str(remote_ip):
                 return config['name']
         return 'Unknown'
 

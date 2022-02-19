@@ -1,6 +1,7 @@
 class HardwareDetector:
 
-    def __init__(self):
+    def __init__(self, app):
+        self.log = app.log
         self.motor_hardware_mode = None
         self.signature_adafruit_shields = ['0x60', '0x61', '0x62'] # Mode 1
         self.motor_hardware_mode_name = None
@@ -15,7 +16,7 @@ class HardwareDetector:
             return
         except ModuleNotFoundError:
             self.smbus = False
-            print("Failed to import smbus. Assuming no I2C devices.")
+            self.log.log("Failed to import smbus. Assuming no I2C devices.")
             return
 
     def get_i2c_devices(self):
@@ -42,7 +43,6 @@ class HardwareDetector:
                 self.motor_hardware_mode = 1
             else:
                 self.motor_hardware_mode_name = False
-                print("WARNING: No supported motor control hardware detected")
                 self.motor_hardware_mode = 0
 
         return self.motor_hardware_mode

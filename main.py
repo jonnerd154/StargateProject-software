@@ -35,15 +35,24 @@ class GateApplication:
             print("Stopping startup.")
             sys.exit(1)
 
+        # Check if we're running in systemd, some functionality will change if so.
+        self.is_daemon = self.check_is_daemon()
+
+        # Get the base path of execution - this is used in various places when working with files
         self.base_path = os.path.split(os.path.abspath(__file__))[0]
 
-        ### Load our config file
+        ### Load our config file.
         self.cfg = StargateConfig(self.base_path, "config.json")
 
-        ### Setup the logger
-        self.log = AncientsLogBook(self.base_path, "sg1.log")
+        ### Setup the logger. If we're in systemd, don't print to the console.
+        self.log = AncientsLogBook(self.base_path, "sg1.log", print_to_console = not self.is_daemon )
         self.cfg.set_log(self.log)
         self.cfg.load()
+
+        ### Start the websockets-based LogTailServer
+        # from websocket_server import LogTailServerWrapper
+        # self.log_tail_server = LogTailServerWrapper("logs/sg1.log", str(9000))
+        # self.log_tail_server.start()
 
         # Some credits
         self.log.log('*******************************************************************')
@@ -56,6 +65,8 @@ class GateApplication:
         self.log.log('***      https://github.com/danclarke/WorkingStargateMk2Raspi   ***')
         self.log.log("***                                                             ***")
         self.log.log('*******************************************************************\r\n')
+        self.log.log('')
+        self.log.log(f'Running as Daemon: {self.is_daemon}')
 
         ### Detect our electronics and initialize the hardware
         self.electronics = Electronics(self).hardware
@@ -69,7 +80,7 @@ class GateApplication:
 
         ### Check for new software updates ###
         self.sw_updater = SoftwareUpdate(self)
-        if self.cfg.get("enableUpdates"):
+        if self.cfg.get("software_update_enabled"):
             self.sw_updater.check_and_install()
 
         ### Create the Stargate object
@@ -81,12 +92,11 @@ class GateApplication:
         ### Start the web server
         try:
             StargateWebServer.stargate = self.stargate
-            StargateWebServer.debug = self.cfg.get("web_debug_enable")
-            self.httpd_server = HTTPServer(('', self.cfg.get("httpServerPort")), StargateWebServer)
+            self.httpd_server = HTTPServer(('', self.cfg.get("control_api_server_port")), StargateWebServer)
             self.httpd_thread = threading.Thread(name="stargate-http", target=self.httpd_server.serve_forever)
             self.httpd_thread.daemon = True
             self.httpd_thread.start()
-            self.log.log(f'Web Services API running on: {self.net_tools.get_local_ip()}:{self.cfg.get("httpServerPort")}')
+            self.log.log(f'Web Services API running on: {self.net_tools.get_local_ip()}:{self.cfg.get("control_api_server_port")}')
         except:
             self.log.log("Failed to start webserver. Is the port in use?")
             raise
@@ -100,9 +110,17 @@ class GateApplication:
     def cleanup(self):
         self.stargate.ring.release()      # Release the ring when exiting. Just in case.
         self.httpd_server.shutdown()
+        #self.log_tail_server.terminate()
 
         self.log.log('The Stargate program is no longer running\r\n\r\n')
         sys.exit(0)
+
+    @staticmethod
+    def check_is_daemon():
+        for index, arg in enumerate(sys.argv): # pylint: disable=unused-variable
+            if arg == '--daemon':
+                return True
+        return False
 
 # Run the stargate application
 app = GateApplication()

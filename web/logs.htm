@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Tail </title>
+	<style>
+		body {font-family: monospace;}
+		p{ margin: 0;}
+		ul{padding: 0;}
+		li{list-style:none; padding: 0; margin: 0;}
+	</style>
+</head>
+<body>
+<ul id="logger">
+
+</ul>
+<script>
+	var socket = new WebSocket('ws://localhost:9000');
+	var log = document.getElementById('logger')
+
+
+  	// Listen for messages
+	socket.addEventListener('message', function (event) {
+		var text = document.createTextNode(event.data)
+		var li = document.createElement("li")
+		li.appendChild(text)
+		log.prepend(li)
+	});
+
+  window.onbeforeunload = function(event)
+    {
+      console.log("closing")
+      socket.onclose = function () {}; // disable onclose handler first
+      socket.close();
+      return
+    };
+
+
+
+</script>
+
+</body>
+</html>

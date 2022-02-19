@@ -3,7 +3,8 @@ from hardware_detection import HardwareDetector
 class Electronics: # pylint: disable=too-few-public-methods
 
     def __init__(self, app):
-        detector = HardwareDetector()
+        self.app = app
+        detector = HardwareDetector(app)
 
         self.motor_hardware_mode = detector.get_motor_hardware_mode()
 
@@ -15,3 +16,5 @@ class Electronics: # pylint: disable=too-few-public-methods
         else:
             from electronics_none import ElectronicsNone # pylint: disable=import-outside-toplevel
             self.hardware = ElectronicsNone()
+
+        self.app.log.log(f"Detected Hardware: {self.hardware.name}")

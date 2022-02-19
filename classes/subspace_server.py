@@ -4,6 +4,7 @@ from time import sleep
 from icmplib import ping
 
 from database import Database
+import subspace_messages
 
 class SubspaceServer:
     """
@@ -35,7 +36,6 @@ class SubspaceServer:
         # Some other configurations that are relatively static will stay here
         self.header = 8
         self.encoding_format = 'utf-8'
-        self.disconnect_message = '!DISCONNECT'
         self.keep_alive_running_check_interval = 0.5
 
         # Get server IP, preferable the IP of the stargate in subspace.
@@ -50,8 +50,8 @@ class SubspaceServer:
         thread_keep_alive.start()
 
         # Update fan_gates from the subspace server
-        self.stargate.addr_manager.update_fan_gates_from_api()
-
+        if self.cfg.get("fan_gate_refresh_enable"):
+            self.stargate.addr_manager.update_fan_gates_from_api()
 
     def open_socket(self):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -97,24 +97,24 @@ class SubspaceServer:
             if msg_length:  # if the msg_length is not None
                 msg_length = int(msg_length)
                 msg = conn.recv(msg_length).decode(self.encoding_format)
-                if msg == self.disconnect_message:  # always disconnect after sending a message to the server.
+                if msg == subspace_messages.DISCONNECT:  # always disconnect after sending a message to the server.
                     if self.logging == "verbose":
                         self.log.log('disconnect request')
                     connected = False
 
                 # If we are receiving the centre_button_incoming
-                elif msg == 'centre_button_incoming':
+                elif msg == subspace_messages.DIAL_CENTER_INCOMING:
                     if self.logging == "verbose":
                         self.log.log('centre_button_incoming')
                     # Check if incoming wormholes are allowed
-                    if not self.cfg.get("allow_incoming_dialing"):
+                    if not self.cfg.get("dialing_incoming_allowed"):
                         conn.close()  # close the connection.
                         return
 
-                    # If a wormhole is already established, and we are receiving the centre_button_incoming from the same gate.
-                    if self.stargate.wormhole and addr[0] == self.stargate.fan_gate_incoming_ip:
+                    # If a wormhole is already established, and we are receiving DIAL_CENTER_INCOMING from the same gate.
+                    if self.stargate.wormhole_active and addr[0] == self.stargate.fan_gate_incoming_ip:
                         self.stargate.centre_button_incoming = False
-                        self.stargate.wormhole = False
+                        self.stargate.wormhole_active = False
                     # If we are dialling (no wormhole established)
                     else:
                         self.log.log("Received Center Button Incoming")
@@ -122,17 +122,15 @@ class SubspaceServer:
                         # If there are not already a saved IP, or if we dialed an none fan_gate
                         if not self.stargate.fan_gate_incoming_ip:
                             self.stargate.fan_gate_incoming_ip = addr[0] # Save the IO address when establishing a wormhole.
-                            self.stargate.dialer.hardware.set_center_on()# Activate the centre_button_outgoing light
 
-                    planet_name = self.addr_manager.get_planet_name_from_IP(addr[0], self.address_book.get_fan_gates())
+                    planet_name = self.addr_manager.get_planet_name_from_ip(addr[0])
                     if self.logging == "verbose":
                         self.log.log(f'Line 123: Received from {planet_name} - {stargate_address} -> {msg}')
 
                 # If we are asked about the status (wormhole already active from a different gate or actively dialing out)
-                elif msg == 'what_is_your_status':
-                    self.log.log(f'Received what_is_your_status from {addr} -> {msg}')
-                    # It the wormhole is already established, or if we are dialing out.
-                    if self.stargate.wormhole or len(self.stargate.address_buffer_outgoing) > 0:
+                elif msg == subspace_messages.CHECK_STATUS:
+                    # If the wormhole is already established, or if we are dialing out.
+                    if self.stargate.wormhole_active or len(self.stargate.address_buffer_outgoing) > 0:
                         # If the established wormhole is from the remote gate
                         if addr[0] == self.stargate.fan_gate_incoming_ip:
                             status = False
@@ -140,6 +138,9 @@ class SubspaceServer:
                             status = True
                     else:
                         status = False
+
+                    self.log.log(f'Received CHECK_STATUS from {addr} is_busy -> {status}')
+
                     # Send the status to the client stargate
                     conn.send(str(status).encode(self.encoding_format))
 
@@ -147,7 +148,7 @@ class SubspaceServer:
                 elif self.addr_manager.is_valid(msg):
 
                     # Check if incoming wormholes are allowed
-                    if not self.cfg.get("allow_incoming_dialing"):
+                    if not self.cfg.get("dialing_incoming_allowed"):
                         conn.close()  # close the connection.
                         return
 
@@ -156,9 +157,9 @@ class SubspaceServer:
                         if not symbol in self.stargate.address_buffer_incoming:
                             self.stargate.address_buffer_incoming.append(symbol)
 
-                    planet_name = self.addr_manager.get_planet_name_from_IP(addr[0], self.address_book.get_fan_gates())
+                    planet_name = self.addr_manager.get_planet_name_from_ip(addr[0])
                     if self.logging == "verbose":
-                        self.log.log(f'LINE 154 Received from {planet_name} - {stargate_address} -> {msg}')
+                        self.log.log(f'Received Address Components from {planet_name} - {stargate_address} -> {msg}')
 
                 # For unknown messages
                 else:

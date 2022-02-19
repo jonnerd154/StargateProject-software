@@ -15,8 +15,8 @@ class ElectronicsOriginal:
 
         self.name = "Kristian's Original 3-Shield Stack w/Optional Homing"
 
-        self.enable_stepper_motor = self.cfg.get("enable_stepper_motor")
-        self.enable_chevron_motors = self.cfg.get("enable_chevron_motors")
+        self.stepper_motor_enable = self.cfg.get("stepper_motor_enable")
+        self.chevron_motors_enable = self.cfg.get("chevron_motors_enable")
 
         self.motor_shield_address_1 = 0x60
         self.motor_shield_address_2 = 0x61
@@ -48,11 +48,12 @@ class ElectronicsOriginal:
         self.init_neopixels()
 
         self.spi = None
+        self.init_spi_for_adc()
 
     def init_motor_shields(self):
         # Initialize all of the shields as DC motors
 
-        if self.enable_chevron_motors:
+        if self.chevron_motors_enable:
             self.shield_config =  {
             #1: MotorKit(address=self.motor_shield_address_1).motor1, # Used for Stepper
             #2: MotorKit(address=self.motor_shield_address_1).motor2, # Used for Stepper
@@ -81,12 +82,10 @@ class ElectronicsOriginal:
             12: DCMotorSim(),
         }
         # Initialize the Stepper
-        if self.enable_stepper_motor:
+        if self.stepper_motor_enable:
             self.stepper = MotorKit(address=self.motor_shield_address_1).stepper1
         else:
             self.stepper = StepperSim()
-
-
 
     def get_chevron_motor(self, chevron_number):
         return self.shield_config[chevron_number]
@@ -119,8 +118,6 @@ class ElectronicsOriginal:
     def get_adc_by_channel(self, adc_ch):
         # CREDIT: https://learn.sparkfun.com/tutorials/python-programming-tutorial-getting-started-with-the-raspberry-pi/experiment-3-spi-and-analog-input
 
-        self.init_spi_for_adc()
-
         # Make sure ADC channel is 0 or 1
         if adc_ch not in [0,1]:
             raise ValueError
@@ -145,8 +142,8 @@ class ElectronicsOriginal:
         # Convert ADC value to voltage
         return (self.adc_vref * adc_value) / (2^self.adc_resolution)-1
 
-    def homing_enabled(self):
-        # TODO: Move this to software config, default to disabled.
+    def homing_supported(self):
+        # Tie ADC CH1 HIGH to enable homing
         if 0.000 < self.adc_to_voltage( self.get_adc_by_channel(1) ) < 1:
             return True
         return False

@@ -164,7 +164,7 @@
                   updateInfo();
                 }
                 else{
-                  $("<div></div>").html( data.error ).dialog({
+                  $("<div></div>").html( data.message ).dialog({
                     title: "Error",
                     resizable: false,
                     modal: true,
@@ -392,11 +392,13 @@
             $('#softwareUpdateTime').html(data.software_update_last_check)
             $('#softwareUpdateStatus').html(data.software_update_status)
             $('#pythonVersion').html(data.python_version)
-            $('#fanGateLastUpdate').html(data.last_fan_gate_update)
+            $('#fanGateLastUpdate').html(data.fan_gate_last_update)
             $('#fanGateCount').html(data.fan_gate_count)
+            $('#lanGateCount').html(data.lan_gate_count)
             $('#standardGateCount').html(data.standard_gate_count)
             $('#dialerMode').html(data.dialer_mode)
             $('#hardwareMode').html(data.hardware_mode)
+            $('#volumeAsPercent').html(data.audio_volume)
 
             if (data.subspace_public_key){
               $('#publicKey').html(data.subspace_public_key)
@@ -527,9 +529,11 @@
       <div class="div-table-row"><span class="div-table-col-names">LAN IP Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="lanIPAddress">Loading...</span></div>
       <div class="div-table-row"><span class="div-table-col-names">Known Standard Gates:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="standardGateCount">Loading...</span></div>
       <div class="div-table-row"><span class="div-table-col-names">Known Fan Gates:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="fanGateCount">Loading...</span></div>
+      <div class="div-table-row"><span class="div-table-col-names">Known LAN Gates:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="lanGateCount">Loading...</span></div>
       <div class="div-table-row"><span class="div-table-col-names">&nbsp;&nbsp;Last Updated:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="fanGateLastUpdate">Loading...</span></div>
       <div class="div-table-row"><span class="div-table-col-names">Dialer Mode:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="dialerMode">Loading...</span></div>
       <div class="div-table-row"><span class="div-table-col-names">Hardware in Use:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="hardwareMode">Loading...</span></div>
+      <div class="div-table-row"><span class="div-table-col-names">Audio Volume (%):&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="volumeAsPercent">Loading...</span></div>
     </div>
 
     <hr />
@@ -549,7 +553,10 @@
         <div class="control" onclick="window.location = 'testing.htm';">
             Testing / Debug
         </div>
-         <div class="control" onclick="window.location = 'index.htm';">
+        <div class="control" onclick="window.location = 'config.htm';">
+            Configuration
+        </div>
+        <div class="control" onclick="window.location = 'index.htm';">
             Dialing <br> page
         </div>
     </div>
