@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+## A commit test from Kristian
+
 """
 This is the stargate program for running the stargate from https://thestargateproject.com
 This main.py file is run automatically on boot. It is executed in the .bashrc file for the sg1 user.
