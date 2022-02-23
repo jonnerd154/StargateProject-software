@@ -6,11 +6,11 @@ class Electronics: # pylint: disable=too-few-public-methods
         self.app = app
         detector = HardwareDetector(app)
 
-        self.motor_hardware_mode = detector.get_motor_hardware_mode()
+        self.hardware_mode = detector.get_hardware_mode()
 
         # Detect Hardware, initialize the correct subclass
-        if self.motor_hardware_mode > 0:
-            if self.motor_hardware_mode == 1:
+        if self.hardware_mode > 0:
+            if self.hardware_mode == 1:
                 from electronics_main_board_v1 import ElectronicsMainBoard # pylint: disable=import-outside-toplevel
                 self.hardware = ElectronicsMainBoard(app)
         else:

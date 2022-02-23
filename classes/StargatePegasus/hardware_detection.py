@@ -2,9 +2,9 @@ class HardwareDetector:
 
     def __init__(self, app):
         self.log = app.log
-        self.motor_hardware_mode = None
-        self.signature_adafruit_shields = ['0x60', '0x61', '0x62'] # Mode 1
-        self.motor_hardware_mode_name = None
+        self.hardware_mode = None
+        self.signature_main_board_v1 = ['0x40'] # Mode 1
+        self.hardware_mode_name = None
 
         self.smbus = False
         self.import_smbus()
@@ -34,18 +34,18 @@ class HardwareDetector:
                 pass
         return devices
 
-    def get_motor_hardware_mode(self):
+    def get_hardware_mode(self):
         if self.motor_hardware_mode is None:
             devices = self.get_i2c_devices()
 
-            if all( item in devices for item in self.signature_adafruit_shields ):
-                self.motor_hardware_mode_name = "Adafruit Motor Shields (3)"
-                self.motor_hardware_mode = 1
+            if all( item in devices for item in self.signature_main_board_v1 ):
+                self.hardware_mode_name = "Pegasus Main Board v1"
+                self.hardware_mode = 1
             else:
-                self.motor_hardware_mode_name = False
-                self.motor_hardware_mode = 0
+                self.hardware_mode_name = False
+                self.hardware_mode = 0
 
-        return self.motor_hardware_mode
+        return self.hardware_mode
 
-    def get_motor_hardware_mode_name(self):
-        return self.motor_hardware_mode_name
+    def get_hardware_mode_name(self):
+        return self.hardware_mode_name
