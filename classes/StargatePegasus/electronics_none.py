@@ -1,7 +1,4 @@
-from hardware_simulation import StepperSim
-from hardware_simulation import DCMotorSim
-from hardware_simulation import LEDSim
-from hardware_simulation import NeopixelSim
+from hardware_simulation import LEDDriverSim
 
 class ElectronicsNone:
 
