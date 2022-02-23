@@ -15,13 +15,14 @@ class StargateSymbolManager:
                 'value':        symbol['index'],
                 'selected':     False,
                 'description':  symbol['name'],
-                'imageSrc':     "/chevrons/milky_way/" + str(symbol['index']).zfill(3) + ".svg"
+                'imageSrc':     "/chevrons/pegasus/" + str(symbol['index']).zfill(3) + ".svg"
             }
             symbols_out.append(new_symbol)
 
         return symbols_out
 
     def init(self):
+        # TODO: Update these for the Pegasus symbol set
         self.symbols = [
             {
                 'index': 1,
