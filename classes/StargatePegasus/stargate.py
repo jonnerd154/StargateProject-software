@@ -56,8 +56,8 @@ class Stargate:
         self.ring = SymbolRing(self)
         self.dialer = Dialer(self) # A "Dialer" is either a Keyboard or DHDv2
         self.keyboard = KeyboardManager(self, app.is_daemon)
-        self.wh_manager = WormholeManager(self)
-        self.wh_manager.initialize_animation_manager()
+        # self.wh_manager = WormholeManager(self)
+        # self.wh_manager.initialize_animation_manager()
 
         ### Run the stargate server if we have an internet connection ###
         # The stargate_server runs in it's own thread listening for incoming wormholes
@@ -124,7 +124,6 @@ class Stargate:
 
             ### The wormhole phase ###
             elif self.wormhole_active: # If wormhole
-                self.ring.release() # Release the stepper motor.
                 self.wh_manager.establish_wormhole() # This will establish the wormhole and keep it running until self.wormhole_active is False
                 #When the wormhole is no longer running
                 self.shutdown(cancel_sound=False)
@@ -270,8 +269,6 @@ class Stargate:
             # Try to establish a wormhole
             if self.possible_to_establish_wormhole():
 
-                self.ring.release() # Release the stepper to prevent overheating
-
                 # Update the state variables
                 self.wormhole_active = 'outgoing'
                 self.connected_planet_name = self.get_connected_planet_name()
@@ -327,9 +324,6 @@ class Stargate:
 
         # Turn off the DHD lights
         self.dialer.hardware.clear_lights()
-
-        # Release the stepper motor.
-        self.ring.release()
 
         # Put the gate back in to an idle state
         self.initialize_gate_state_vars()

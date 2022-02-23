@@ -18,11 +18,6 @@ class WormholeManager:
         self.audio = stargate.app.audio
         self.electronics = stargate.electronics
 
-        # Initialize the NeoPixel strip and the WormholePatternManager
-        self.pixels = self.electronics.get_wormhole_pixels()
-        self.tot_leds = self.electronics.get_wormhole_pixel_count()
-        self.animation_manager = WormholeAnimationManager(stargate)
-
         self.root_path = Path(__file__).parent.absolute()
 
         # Retrieve the configurations
@@ -39,16 +34,12 @@ class WormholeManager:
 
         self.open_time = None
 
-    def initialize_animation_manager(self):
-        self.animation_manager.after_init(self)
-
     def open_wormhole(self):
         """
         Method for opening the wormhole. For some reason i did not use the fade_transition function here..
         :return: Nothing is returned.
         """
         self.audio.sound_start('wormhole_open')  # Open wormhole audio
-        self.animation_manager.animate_kawoosh()
 
     def close_wormhole(self):
         """
@@ -56,19 +47,9 @@ class WormholeManager:
         :return: Nothing is returned
         """
 
-        def pattern_blue(number_of_leds):
-            blue_pattern = []
-            for index in range(number_of_leds): # pylint: disable=unused-variable
-                blue_pattern.append((81, 110, 158))
-            return blue_pattern
-
-        no_pattern = self.animation_manager.pattern_manager.pattern_off()
-
         self.stargate.wormhole_active = True  # temporarily to be able to use the fade_transition function
-        self.animation_manager.fade_transition(pattern_blue(self.tot_leds))
         self.audio.sound_start('wormhole_close')  # Play the close wormhole audio
         sleep(self.audio_wormhole_close_headstart)
-        self.animation_manager.fade_transition(no_pattern)
 
         # Reset some state variables
         self.stargate.wormhole_max_time = self.wormhole_max_time_default # Reset the variable
@@ -114,7 +95,6 @@ class WormholeManager:
             #    Maybe the Neopixel stuff should run in it's own thread?
 
             # Change the patterns/animations around with transitions
-            self.animation_manager.do_random_transitions(self.stargate)
 
             # Play random audio clips if wormhole not closing
             if self.audio_play_random_clips and self.stargate.wormhole_active and (time() - random_audio_start_time) > self.audio_clip_wait_time:  # If there has been "silence" for more than audio_clip_wait_time

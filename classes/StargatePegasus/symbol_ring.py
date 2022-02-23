@@ -19,84 +19,16 @@ class SymbolRing:
         self.chevrons = stargate.chevrons
         self.base_path = stargate.base_path
 
-        # The symbol positions on the symbol ring
-        self.symbol_step_positions = {
-            1: 0,
-            2: 32,
-            3: 64,
-            4: 96,
-            5: 128,
-            6: 160,
-            7: 192,
-            8: 224,
-            9: 256,
-            10: 288,
-            11: 320,
-            12: 352,
-            13: 384,
-            14: 416,
-            15: 448,
-            16: 480,
-            17: 512,
-            18: 544,
-            19: 576,
-            20: 608,
-            21: 640,
-            22: 672,
-            23: 704,
-            24: 736,
-            25: 768,
-            26: 800,
-            27: 832,
-            28: 864,
-            29: 896,
-            30: 928,
-            31: 960,
-            32: 992,
-            33: 1024,
-            34: 1056,
-            35: 1088,
-            36: 1120,
-            37: 1152,
-            38: 1184,
-            39: 1216,
-        }
-
-        # The chevron positions on the stargate
-        self.chevron_step_positions = {
-            1: 139,
-            2: 278,
-            3: 417,
-            4: 834,
-            5: 973,
-            6: 1112,
-            7: 0,
-            8: 556,
-            9: 695,
-        }
-        ## --------------------------
-
-        # Inititialize some hardware
-        self.stepper = stargate.electronics.get_stepper()
-        self.forward_direction = stargate.electronics.get_stepper_forward()
-        self.backward_direction = stargate.electronics.get_stepper_backward()
-
         # Load the last known ring position
         self.position_store = StargateConfig(self.base_path, "ring_position.json")
         self.position_store.set_log(self.log)
         self.position_store.load()
-
-        ## Initialize the Homing Manager
-        self.homing_manager = SymbolRingHomingManager( self.stargate )
 
         # Initialize some state variables for Web UI
         self.direction = False
         self.steps_remaining = 0
         self.current_speed = False
         self.drive_status = "Stopped"
-
-        # Release the ring for safety
-        self.release()
 
     def get_status(self):
         return {
@@ -268,12 +200,3 @@ class SymbolRing:
         self.log.log("Setting Ring Position: 0")
         self.position_store.set_non_persistent('ring_position', 0)
         self.save_position()
-
-    def release(self):
-
-        """
-        This method releases the stepper so that there are no power holding it in position. The stepper is free to roll.
-        :return: Nothing is returned.
-        """
-        sleep(0.4)
-        self.stepper.release()
