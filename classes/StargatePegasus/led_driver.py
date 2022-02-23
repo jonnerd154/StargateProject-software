@@ -4,7 +4,7 @@ from smbus import SMBus
 import time
 import struct
 
-class PegasusLEDController():
+class LEDDriver():
     def __init__(self, cfg, log):
 
         # Configure
@@ -29,7 +29,7 @@ class PegasusLEDController():
         self.clear_all() # Clear all the pixels on init
         time.sleep(0.5)
 
-        self.log.log( "Atlantis LED Controller is Ready!" )
+        self.log.log( "Atlantis LED Driver is Ready!" )
 
     # ++++++++++++++++++++++++++++++++++++++++++
 

@@ -1,4 +1,4 @@
-from led_controller import PegasusLEDController
+from led_driver import LEDDriver
 
 class ElectronicsMainBoard:
 
@@ -9,4 +9,4 @@ class ElectronicsMainBoard:
 
         self.name = "Stargate Pegasus Main Board"
 
-        self.led_controller = PegasusLEDController( self.cfg, self.log ):
+        self.led_driver = PegasusLEDDriver( self.cfg, self.log ):
