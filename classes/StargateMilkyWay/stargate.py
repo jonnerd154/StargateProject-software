@@ -29,6 +29,8 @@ class Stargate:
         self.sw_updater = self.app.sw_updater
         self.schedule = app.schedule
 
+        self.log.log(f'Initializing Milky Way Stargate Software')
+
         # Retrieve the configurations
         self.inactivity_timeout = self.cfg.get("dialing_timeout")
 
