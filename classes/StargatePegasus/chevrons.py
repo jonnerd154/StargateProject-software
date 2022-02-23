@@ -55,7 +55,7 @@ class Chevron:
     The motor_number is the number for the motor as an int.
     """
 
-    def __init__(self, electronics, led_gpio, motor_number, audio, cfg):
+    def __init__(self, electronics, audio, cfg):
 
         self.cfg = cfg
         self.audio = audio

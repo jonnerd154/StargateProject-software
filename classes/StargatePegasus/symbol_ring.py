@@ -1,7 +1,6 @@
 from time import sleep
 
 from stargate_config import StargateConfig
-from symbol_ring_homing_manager import SymbolRingHomingManager
 
 class SymbolRing:
     """

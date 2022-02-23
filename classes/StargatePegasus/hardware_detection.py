@@ -35,7 +35,7 @@ class HardwareDetector:
         return devices
 
     def get_hardware_mode(self):
-        if self.motor_hardware_mode is None:
+        if self.hardware_mode is None:
             devices = self.get_i2c_devices()
 
             if all( item in devices for item in self.signature_main_board_v1 ):

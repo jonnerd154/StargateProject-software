@@ -3,8 +3,6 @@ from datetime import timedelta
 from pathlib import Path
 import math
 
-from wormhole_animation_manager import WormholeAnimationManager
-
 class WormholeManager:
     """
     This class handles all things wormhole. It takes the stargate object as input.
