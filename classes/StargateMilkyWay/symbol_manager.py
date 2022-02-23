@@ -1,5 +1,5 @@
 
-class StargateSG1SymbolManager:
+class StargateSymbolManager:
 
     def __init__(self):
         self.symbols = None
@@ -15,7 +15,7 @@ class StargateSG1SymbolManager:
                 'value':        symbol['index'],
                 'selected':     False,
                 'description':  symbol['name'],
-                'imageSrc':     "/chevrons/" + str(symbol['index']).zfill(3) + ".svg"
+                'imageSrc':     "/chevrons/milky_way/" + str(symbol['index']).zfill(3) + ".svg"
             }
             symbols_out.append(new_symbol)
 

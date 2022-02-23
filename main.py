@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 
-## A commit test from Kristian
-
 """
 This is the stargate program for running the stargate from https://thestargateproject.com
 This main.py file is run automatically on boot. It is executed in the .bashrc file for the sg1 user.
@@ -14,16 +12,25 @@ import threading
 import atexit
 import schedule
 
+# Include the classes shared between galaxy variants
 sys.path.append('classes')
 sys.path.append('config')
 
-# pylint: disable=wrong-import-position
 from stargate_config import StargateConfig
 from ancients_log_book import AncientsLogBook
 from software_update import SoftwareUpdate
 from stargate_audio import StargateAudio
-from stargate_sg1 import StargateSG1
 from web_server import StargateWebServer
+
+galaxy = "Milky Way" #"Pegasus"
+
+# Include the galaxy-specific variants
+if galaxy == "Milky Way":
+    sys.path.append('classes/StargateMilkyWay')
+elif galaxy == "Pegasus":
+    sys.path.append('classes/StargatePegasus')
+# pylint: disable=wrong-import-position
+from stargate import Stargate
 from electronics import Electronics
 from network_tools import NetworkTools
 
@@ -89,7 +96,7 @@ class GateApplication:
         self.log.log(f'Booting up the Stargate! Version {self.sw_updater.get_current_version()}')
 
         # Actually start it...
-        self.stargate = StargateSG1(self)
+        self.stargate = Stargate(self)
 
         ### Start the web server
         try:
