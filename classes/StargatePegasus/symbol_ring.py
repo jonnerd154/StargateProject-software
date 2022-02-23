@@ -199,3 +199,7 @@ class SymbolRing:
         self.log.log("Setting Ring Position: 0")
         self.position_store.set_non_persistent('ring_position', 0)
         self.save_position()
+
+    def release(self):
+        # TODO: Extinguish all lights
+        pass
