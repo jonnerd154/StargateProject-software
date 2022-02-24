@@ -154,7 +154,7 @@ class Stargate:
                 return
 
             try:
-                self.chevrons.get(self.locked_chevrons_outgoing).cycle_outgoing()  # Do the chevron locking thing.
+                self.chevrons.get(self.locked_chevrons_outgoing).lock()  # Do the chevron locking thing.
             except KeyError:  # If we dialed more chevrons than the stargate can handle.
                 pass  # Just pass without activating a chevron.
             self.log.log(f'Chevron {self.locked_chevrons_outgoing} locked with symbol: {self.address_buffer_outgoing[self.locked_chevrons_outgoing - 1]}')

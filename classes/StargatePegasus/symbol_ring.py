@@ -5,8 +5,6 @@ from stargate_config import StargateConfig
 class SymbolRing:
     """
     The dialing sequence.
-    1251 is the normal steps needed for one revolutions of the gate as set in self.total_steps.
-    # A range of 32 is approximately one symbol movement.
     """
 
     def __init__(self, stargate):
@@ -23,11 +21,35 @@ class SymbolRing:
         self.position_store.set_log(self.log)
         self.position_store.load()
 
+        self.gate_symbol_count = 36
+
         # Initialize some state variables for Web UI
         self.direction = False
         self.steps_remaining = 0
         self.current_speed = False
         self.drive_status = "Stopped"
+
+        # Constants for direction handling
+        self.forward_direction = 0
+        self.backward_direction = 1
+
+        # What symbol is each Chevron aligned with?
+        # Symbol positions starting from 0.
+
+        # TODO: This needs some thinking: Where is symbol 0? Where is chevron 0? What order are the chevrons in?
+        #           Do we need to re-map the symbol & chevron position maps on the LED Controller?
+
+        self.chevron_positions = [
+            0,
+            5,
+            9,
+            13,
+            17,
+            21,
+            24,
+            28,
+            32
+        ]
 
     def get_status(self):
         return {
@@ -38,25 +60,10 @@ class SymbolRing:
             "drive_status": self.drive_status
         }
 
-    @staticmethod
-    def find_offset(position, max_steps):
-        """
-        This static function finds the offset of position as compared to max_steps for when the position is in the home position.
-        :param position: The current real position of the ring
-        :param max_steps: the total_max steps for one revolution
-        :return: The offset is returned. The value is positive for CW and negative for CCW.
-        """
-        if 5 < position < (max_steps - 5):  # if the position is between 5 and 5 lower than max.
-            if position < (max_steps // 2):  # If the offset is positive/counter clock wise.
-                return position * -1
-            # if the offset is negative/clock wise.
-            return max_steps - position
-        return 0
-
     def move(self, steps, direction):
         """
-        This method moves the stepper motor the desired number of steps in the desired direction and updates the
-        saved position with the new value. This method does NOT release the stepper. Do this with the release method.
+        This method moves a symbol the desired number of steps in the desired direction and from it's last position, and
+        updates the saved position with the new value.
         :param steps: the number of steps to move as int.
         :param direction: the direction to move. Must be either self.forward_direction or self.backward_direction
         :return: Nothing is returned
@@ -87,38 +94,15 @@ class SymbolRing:
             if not self.stargate.running:
                 break
 
-            # Move the stepper one step
-            stepper_drive_mode = self.stargate.electronics.get_stepper_drive_mode(self.cfg.get("stepper_drive_mode"))
-            self.stepper.onestep(direction=direction, style=stepper_drive_mode)
-            self.steps_remaining -= 1
-
-            ## acceleration
-            try:
-                if i < self.cfg.get("stepper_acceleration_steps"):
-                    self.current_speed -= (self.cfg.get("stepper_speed_slow") - self.cfg.get("stepper_speed_normal")) / self.cfg.get("stepper_acceleration_steps")
-                    self.drive_status = "Accelerating"
-                    sleep(self.current_speed)
-                ## deceleration
-                elif i > (steps - self.cfg.get("stepper_acceleration_steps")):
-                    self.current_speed += (self.cfg.get("stepper_speed_slow") - self.cfg.get("stepper_speed_normal")) / self.cfg.get("stepper_acceleration_steps")
-                    self.drive_status = "Decelerating"
-                    sleep(self.current_speed)
-                ## slow without acceleration when short distance
-                elif steps < self.cfg.get("stepper_acceleration_steps"):
-                    self.current_speed = self.cfg.get("stepper_speed_normal")
-                    self.drive_status = "Constant Speed: Slow"
-                    sleep(self.current_speed)
-                else:
-                    self.drive_status = "Constant Speed: Normal"
-            except ValueError:
-                # If we've tried to sleep for negative time
-                pass
+            # Move the symbol one step
+            # TODO: Kristian
 
             # Update the position in non-persistent memory
             self.update_position(1, direction)
 
-            # Checks if the ring is in the home position, and zeros the cached value if so
-            self.homing_manager.in_move_calibrate()
+            ## Speed control
+            self.drive_status = "Constant Speed: Normal"
+            sleep(self.current_speed)
 
         # After this move() is complete, save the position to persistent memory
         self.current_speed = False
@@ -133,14 +117,15 @@ class SymbolRing:
         Helper function to determine the needed number of steps to move symbol_number, to chevron
         :return: The number of steps to move is returned as an int.
         """
+
         # How many steps are needed:
         try:
-            steps = self.chevron_step_positions[chevron_number] - ((self.get_position() + self.symbol_step_positions[symbol_number]) % self.cfg.get("stepper_one_revolution_steps"))
+            steps = self.chevron_positions[chevron_number] - ((self.get_position() + symbol_number) % self.gate_symbol_count )
         except KeyError: # If we dial more chevrons than the stargate can handle. Don't return any steps.
             return None
 
-        if abs(steps) > self.cfg.get("stepper_one_revolution_steps") / 2: # Check if distance is more than half a revolution
-            new_steps = (self.cfg.get("stepper_one_revolution_steps") - abs(steps)) % self.cfg.get("stepper_one_revolution_steps") # Reduce with half a revolution, and flips the direction
+        if abs(steps) > self.gate_symbol_count / 2: # Check if distance is more than half a revolution
+            new_steps = (self.gate_symbol_count - abs(steps)) % self.gate_symbol_count # Reduce with half a revolution, and flips the direction
             if steps > 0: # if the direction was forward, flip the direction
                 new_steps = new_steps * -1
             return new_steps
