@@ -14,6 +14,8 @@ class ElectronicsMainBoard:
         self.gpio_pins = {}
         self.serial_to_driver = None
 
+        self.init_gpio()
+
     def init_gpio(self):
         self.gpio_pins['DRIVER_BOOTSEL'] = 17
         self.gpio_pins['DRIVER_CHIPEN'] = 13
