@@ -3,7 +3,7 @@ class HardwareDetector:
     def __init__(self, app):
         self.log = app.log
         self.hardware_mode = None
-        self.signature_main_board_v1 = ['0x40'] # Mode 1
+        self.signature_main_board_v1 = ['0x38'] # Mode 1
         self.hardware_mode_name = None
 
         self.smbus = False
