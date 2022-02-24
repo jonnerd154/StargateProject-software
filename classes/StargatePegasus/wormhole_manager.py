@@ -92,12 +92,14 @@ class WormholeManager:
             # on wormhole close/timeout, and the random clips.
             #    Maybe the Neopixel stuff should run in it's own thread?
 
-            # Change the patterns/animations around with transitions
+            # Change the patterns/animations around with transitions (or maybe do nothing here - just play the video)
 
             # Play random audio clips if wormhole not closing
             if self.audio_play_random_clips and self.stargate.wormhole_active and (time() - random_audio_start_time) > self.audio_clip_wait_time:  # If there has been "silence" for more than audio_clip_wait_time
                 self.audio.play_random_clip(audio_group) # Won't play if a clip is already playing
                 random_audio_start_time = time()
+
+            sleep(0.1) # Give the CPU a break (and yield to other threads)
 
         # Wormhole is closing. Did it close because it ran out of power/time?
         if self.get_time_remaining() < 1:  # if the wormhole closes due to the 38min time limit.

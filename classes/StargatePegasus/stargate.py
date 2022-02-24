@@ -58,8 +58,7 @@ class Stargate:
         self.ring = SymbolRing(self)
         self.dialer = Dialer(self) # A "Dialer" is either a Keyboard or DHDv2
         self.keyboard = KeyboardManager(self, app.is_daemon)
-        # self.wh_manager = WormholeManager(self)
-        # self.wh_manager.initialize_animation_manager()
+        self.wh_manager = WormholeManager(self)
 
         ### Run the stargate server if we have an internet connection ###
         # The stargate_server runs in it's own thread listening for incoming wormholes
