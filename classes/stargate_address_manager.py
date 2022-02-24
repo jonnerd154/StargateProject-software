@@ -15,9 +15,10 @@ class StargateAddressManager:
         self.cfg = stargate.cfg
         self.net_tools = stargate.net_tools
         self.base_path = stargate.base_path
+        self.galaxy = stargate.galaxy
 
-        self.database = Database(stargate.base_path, stargate.galaxy)
-        self.address_book = StargateAddressBook(self, stargate.galaxy)
+        self.database = Database(stargate.base_path, self.galaxy)
+        self.address_book = StargateAddressBook(self, self.galaxy)
 
         self.known_planets = self.address_book.get_standard_gates()
 
@@ -54,12 +55,13 @@ class StargateAddressManager:
         This function gets the fan_gates from the API and stores it in the AddressBook
         :return: The updated fan_gate dictionary is returned.
         """
-        self.log.log("Updating Fan Gates from API")
+        self.log.log(f"Updating Fan Gates from API: {self.galaxy} Galaxy")
 
         if self.stargate.net_tools.has_internet_access():
             try:
                 # Retrieve the data from the API
-                request = requests.get(self.info_api_url + "/get_fan_gates.php")
+                galaxy_name = self.galaxy.replace(" ", "").lower()
+                request = requests.get(self.info_api_url + "/get_fan_gates.php?galaxy=" + galaxy_name )
                 data = json.loads(request.text)
 
                 for gate_config in data:
