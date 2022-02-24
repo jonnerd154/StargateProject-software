@@ -59,6 +59,8 @@ class GateApplication:
         self.cfg.set_log(self.log)
         self.cfg.load()
 
+        self.galaxy = galaxy
+        
         ### Start the websockets-based LogTailServer
         # from websocket_server import LogTailServerWrapper
         # self.log_tail_server = LogTailServerWrapper("logs/sg1.log", str(9000))

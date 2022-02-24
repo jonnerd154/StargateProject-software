@@ -28,6 +28,7 @@ class Stargate:
         self.net_tools = app.net_tools
         self.sw_updater = self.app.sw_updater
         self.schedule = app.schedule
+        self.galaxy = app.galaxy
 
         self.log.log(f'Initializing Pegasus Stargate Software')
 

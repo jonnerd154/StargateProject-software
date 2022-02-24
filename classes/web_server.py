@@ -80,7 +80,8 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "fan_gate_last_update":           self.stargate.cfg.get('fan_gate_last_update'),
                     "dialer_mode":                    self.stargate.dialer.type,
                     "hardware_mode":                  self.stargate.electronics.name,
-                    "audio_volume":                   self.stargate.audio.volume
+                    "audio_volume":                   self.stargate.audio.volume,
+                    "galaxy":                         self.stargate.galaxy
                 }
 
             elif request_path == "/get/hardware_status":
