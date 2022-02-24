@@ -139,6 +139,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 self.stargate.wormhole_active = False
                 sleep(5)
                 self.send_response(200, 'OK')
+                self.end_headers()
                 os.system('systemctl poweroff')
                 return
 
@@ -146,6 +147,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 self.stargate.wormhole_active = False
                 sleep(5)
                 self.send_response(200, 'OK')
+                self.end_headers()
                 os.system('systemctl reboot')
                 return
 
