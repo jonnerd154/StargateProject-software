@@ -90,3 +90,7 @@ class Chevron:
             choice(self.audio.incoming_chevron_sounds).play()
         self.electronics.led_driver.clear_chevron( self.index )
         self.led_state = False
+
+    def cycle_outgoing(self):
+        # This is an alias function for web UI support between galaxy variants
+        self.lock()
