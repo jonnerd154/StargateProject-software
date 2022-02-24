@@ -82,11 +82,11 @@ class Chevron:
         self.audio.incoming_chevron()
 
     def light_on(self):
-        self.electronics.set_chevron( self.index, self.chevron_color_red, self.chevron_color_green, self.chevron_color_blue )
+        self.electronics.led_driver.set_chevron( self.index, self.chevron_color_red, self.chevron_color_green, self.chevron_color_blue )
         self.led_state = True
 
     def off(self, sound=None):
         if sound == 'on':
             choice(self.audio.incoming_chevron_sounds).play()
-        self.electronics.clear_chevron( self.index )
+        self.electronics.led_driver.clear_chevron( self.index )
         self.led_state = False
