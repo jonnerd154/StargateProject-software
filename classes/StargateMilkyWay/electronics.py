@@ -2,19 +2,15 @@ from hardware_detection import HardwareDetector
 
 class Electronics: # pylint: disable=too-few-public-methods
 
-    def __init__(self, app):
-        self.app = app
-        detector = HardwareDetector(app)
+    def __new__(self, app):
+        # Detect Hardware
+        hw_mode = HardwareDetector(app).get_motor_hardware_mode()
 
-        self.motor_hardware_mode = detector.get_motor_hardware_mode()
-
-        # Detect Hardware, initialize the correct subclass
-        if self.motor_hardware_mode > 0:
-            if self.motor_hardware_mode == 1:
+        # initialize the correct subclass
+        if hw_mode > 0:
+            if hw_mode == HARDWARE_MODE_ORIGINAL:
                 from electronics_original import ElectronicsOriginal # pylint: disable=import-outside-toplevel
-                self.hardware = ElectronicsOriginal(app)
+                return ElectronicsOriginal(app)
         else:
             from electronics_none import ElectronicsNone # pylint: disable=import-outside-toplevel
-            self.hardware = ElectronicsNone()
-
-        self.app.log.log(f"Detected Hardware: {self.hardware.name}")
+            return ElectronicsNone()

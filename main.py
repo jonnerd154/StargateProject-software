@@ -82,7 +82,7 @@ class GateApplication:
         self.log.log(f'Running as Daemon: {self.is_daemon}')
 
         ### Detect our electronics and initialize the hardware
-        self.electronics = Electronics(self).hardware
+        self.electronics = Electronics(self)
 
         ### Initialize the Audio class and do some setup
         self.audio = StargateAudio(self, self.base_path)

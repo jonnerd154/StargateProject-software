@@ -1,9 +1,13 @@
+# Hardware Mode enums
+HARDWARE_MODE_NONE = 0
+HARDWARE_MODE_ORIGINAL = 1
+
 class HardwareDetector:
 
     def __init__(self, app):
         self.log = app.log
         self.motor_hardware_mode = None
-        self.signature_adafruit_shields = ['0x60', '0x61', '0x62'] # Mode 1
+        self.signature_adafruit_shields = ['0x60', '0x61', '0x62'] # HARDWARE_MODE_ORIGINAL
         self.motor_hardware_mode_name = None
 
         self.smbus = False
@@ -40,10 +44,10 @@ class HardwareDetector:
 
             if all( item in devices for item in self.signature_adafruit_shields ):
                 self.motor_hardware_mode_name = "Adafruit Motor Shields (3)"
-                self.motor_hardware_mode = 1
+                self.motor_hardware_mode = HARDWARE_MODE_ORIGINAL
             else:
                 self.motor_hardware_mode_name = False
-                self.motor_hardware_mode = 0
+                self.motor_hardware_mode = HARDWARE_MODE_NONE
 
         return self.motor_hardware_mode
 
