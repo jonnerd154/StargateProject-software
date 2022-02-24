@@ -17,7 +17,7 @@ class ChevronManager:
         # Retrieve the Chevron config and initialize the Chevron objects
         self.chevrons = {}
         for index in range(1,10):
-            self.chevrons[index] = Chevron( self.electronics, self.audio, self.cfg )
+            self.chevrons[index] = Chevron( index, self.electronics, self.audio, self.cfg )
 
     def get( self, chevron_number ):
         return self.chevrons[int(chevron_number)]
@@ -55,8 +55,9 @@ class Chevron:
     The motor_number is the number for the motor as an int.
     """
 
-    def __init__(self, electronics, audio, cfg):
+    def __init__(self, index, electronics, audio, cfg):
 
+        self.index = index
         self.cfg = cfg
         self.audio = audio
         self.electronics = electronics
@@ -64,7 +65,10 @@ class Chevron:
         # Retrieve Configurations
         # TODO: Move to allow config to change without restart
         self.audio_chevron_down_headstart = self.cfg.get("audio_chevron_down_headstart") #0.2
-        self.chevron_down_wait_time = self.cfg.get("chevron_down_wait_time") #0.35
+
+        self.chevron_color_red = 0x22
+        self.chevron_color_green = 0x22
+        self.chevron_color_blue = 0x22
 
         self.led_state = False
 
@@ -73,20 +77,16 @@ class Chevron:
         sleep(self.audio_chevron_down_headstart)
         self.light_on()
 
-    def light_on(self):
-        if self.led:
-            self.led.on()
-        self.led_state = True
-
     def incoming_on(self):
-        if self.led:
-            self.led.on()
-
+        self.light_on()
         self.audio.incoming_chevron()
+
+    def light_on(self):
+        self.electronics.set_chevron( self.index, self.chevron_color_red, self.chevron_color_green, self.chevron_color_blue )
+        self.led_state = True
 
     def off(self, sound=None):
         if sound == 'on':
             choice(self.audio.incoming_chevron_sounds).play()
-        if self.led:
-            self.led.off()
+        self.electronics.clear_chevron( self.index )
         self.led_state = False
