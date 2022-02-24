@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# pylint: disable=wrong-import-position
 
 """
 This is the stargate program for running the stargate from https://thestargateproject.com
@@ -22,15 +23,15 @@ from software_update import SoftwareUpdate
 from stargate_audio import StargateAudio
 from web_server import StargateWebServer
 
-#galaxy = "Milky Way"
-galaxy = "Pegasus"
+#GALAXY = "Milky Way"
+GALAXY = "Pegasus"
 
 # Include the galaxy-specific variants
-if galaxy == "Milky Way":
+if GALAXY == "Milky Way":
     sys.path.append('classes/StargateMilkyWay')
-elif galaxy == "Pegasus":
+elif GALAXY == "Pegasus":
     sys.path.append('classes/StargatePegasus')
-# pylint: disable=wrong-import-position
+
 from stargate import Stargate
 from electronics import Electronics
 from network_tools import NetworkTools
@@ -59,8 +60,8 @@ class GateApplication:
         self.cfg.set_log(self.log)
         self.cfg.load()
 
-        self.galaxy = galaxy
-        
+        self.galaxy = GALAXY
+
         ### Start the websockets-based LogTailServer
         # from websocket_server import LogTailServerWrapper
         # self.log_tail_server = LogTailServerWrapper("logs/sg1.log", str(9000))

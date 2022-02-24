@@ -1,3 +1,5 @@
+#pylint: disable=too-few-public-methods
+
 from hardware_simulation import LEDDriverSim
 
 class ElectronicsNone:
@@ -10,4 +12,3 @@ class ElectronicsNone:
 
         self.gpio_pins = {}
         self.serial_to_driver = None
-        

@@ -89,7 +89,7 @@ class SymbolRing:
         #TODO: Consider caching the configs here?
 
         # Move the ring one step at at time
-        for i in range(steps):
+        for i in range(steps): # pylint: disable=unused-variable
             # Check if the gate is still running, if not, break out of the loop.
             if not self.stargate.running:
                 break

@@ -9,7 +9,7 @@ class ElectronicsMainBoard:
 
         self.name = "Stargate Pegasus Main Board"
 
-        self.led_driver = PegasusLEDDriver( self.cfg, self.log ):
+        self.led_driver = LEDDriver( self.cfg, self.log )
 
         self.gpio_pins = {}
         self.serial_to_driver = None

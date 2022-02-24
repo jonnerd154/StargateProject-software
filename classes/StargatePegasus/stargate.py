@@ -30,7 +30,7 @@ class Stargate:
         self.schedule = app.schedule
         self.galaxy = app.galaxy
 
-        self.log.log(f'Initializing Pegasus Stargate Software')
+        self.log.log('Initializing Pegasus Stargate Software')
 
         # Retrieve the configurations
         self.inactivity_timeout = self.cfg.get("dialing_timeout")
