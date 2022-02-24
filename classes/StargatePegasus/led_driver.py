@@ -34,24 +34,24 @@ class LEDDriver():
     # ++++++++++++++++++++++++++++++++++++++++++
 
     def set_chevron( self, pos, red_color, green_color, blue_color ):
-        self.log.log("Turning Chevron {} ON".format(pos));
+        self.log.log(f"Turning Chevron {pos} ON ({red_color}, {green_color}, {blue_color})");
         message = [ pos, red_color, green_color, blue_color ]
         self.__write_message(self.COMMAND_SET_CHEVRON, message)
 
     def clear_chevron(self, pos):
-        self.log.log("Turning Chevron {} OFF".format(pos) );
+        self.log.log(f"Turning Chevron {pos} OFF")
         message = [ pos ]
         self.__write_message(self.COMMAND_CLEAR_CHEVRON, message)
 
     def display_symbol_in_position( self, symbol, pos, red_color, green_color, blue_color ):
-        self.log.log("Displaying pre-saved Symbol {} in Position {} ({}, {}, {})".format(
+        self.log.log(f"Displaying pre-saved Symbol {symbol} in Position {pos} ({red_color}, {green_color}, {blue_color})")
         	symbol, pos, red_color, green_color, blue_color ));
 
         message = [ symbol, pos, red_color, green_color, blue_color ]
         self.__write_message(self.COMMAND_SET_SYMBOL_IN_POSITION, message)
 
     def display_bitmap_in_position( self, bitmap, pos, red_color, green_color, blue_color ):
-        self.log.log("Displaying Bitmap {} in position {} ({}, {}, {})".format(
+        self.log.log(f"Displaying Bitmap {hex(bitmap)} in position {pos} ({red_color}, {green_color}, {blue_color})")
         	hex(bitmap), pos, red_color, green_color, blue_color ));
 
         # Split the 32-bit unsigned long into 4 bytes for transmission
@@ -62,16 +62,16 @@ class LEDDriver():
         self.__write_message(self.COMMAND_SET_BITMAP_IN_POSITION, message)
 
     def clear_symbol_in_position( self, pos ):
-        self.log.log("Clearing symbol position {}".format(pos));
+        self.log.log(f"Clearing symbol position {pos}");
         message = [ pos ]
         self.__write_message(self.COMMAND_CLEAR_SYMBOL_IN_POSITION, message)
 
     def clear_all(self):
-        self.log.log("Clearing All LEDs");
+        self.log.log(f"Clearing All LEDs");
         self.__write_message(self.COMMAND_CLEAR_ALL, [] )
 
     def set_pixel_raw( self, pixel, red_color, green_color, blue_color ):
-        self.log.log("Setting pixel {} to ({}, {}, {})".format(pixel, red_color, blue_color, green_color));
+        self.log.log(f"Setting pixel {pixel} to ({red_color}, {blue_color}, {green_color})");
 
         # Split the 32-bit unsigned long into 4 bytes for transmission
         pixel_buffer = struct.unpack('4B', struct.pack('>I', pixel))
@@ -82,7 +82,7 @@ class LEDDriver():
 
 
     def clear_pixel_raw( self, pixel ):
-        self.log.log("Clearing pixel {}".format(pixel));
+        self.log.log(f"Clearing pixel {pixel}");
 
         # Split the 32-bit unsigned long into 4 bytes for transmission
         pixel_buffer = struct.unpack('4B', struct.pack('>I', pixel))

@@ -10,30 +10,28 @@ class LEDDriverSim():
     # ++++++++++++++++++++++++++++++++++++++++++
 
     def set_chevron( self, pos, red_color, green_color, blue_color ):
-        self.log.log("Simulated: Turning Chevron {} ON".format(pos));
+        self.log.log(f"Simulated: Turning Chevron {pos} ON ({red_color}, {green_color}, {blue_color})");
 
     def clear_chevron(self, pos):
-        self.log.log("Simulated: Turning Chevron {} OFF".format(pos) );
+        self.log.log(f"Simulated: Turning Chevron {pos} OFF")
 
     def display_symbol_in_position( self, symbol, pos, red_color, green_color, blue_color ):
-        self.log.log("Simulated: Displaying pre-saved Symbol {} in Position {} ({}, {}, {})".format(
-        	symbol, pos, red_color, green_color, blue_color ));
+        self.log.log(f"Simulated: Displaying pre-saved Symbol {symbol} in Position {pos} ({red_color}, {green_color}, {blue_color})")
 
     def display_bitmap_in_position( self, bitmap, pos, red_color, green_color, blue_color ):
-        self.log.log("Simulated: Displaying Bitmap {} in position {} ({}, {}, {})".format(
-        	hex(bitmap), pos, red_color, green_color, blue_color ));
+        self.log.log(f"Simulated: Displaying Bitmap {hex(bitmap)} in position {pos} ({red_color}, {green_color}, {blue_color})")
 
     def clear_symbol_in_position( self, pos ):
-        self.log.log("Simulated: Clearing symbol position {}".format(pos));
+        self.log.log(f"Simulated: Clearing symbol position {pos}");
 
     def clear_all(self):
-        self.log.log("Simulated: Clearing All LEDs");
+        self.log.log(f"Simulated: Clearing All LEDs");
 
     def set_pixel_raw( self, pixel, red_color, green_color, blue_color ):
-        self.log.log("Simulated: Setting pixel {} to ({}, {}, {})".format(pixel, red_color, blue_color, green_color));
+        self.log.log(f"Simulated: Setting pixel {pixel} to ({red_color}, {blue_color}, {green_color})");
 
     def clear_pixel_raw( self, pixel ):
-        self.log.log("Simulated: Clearing pixel {}".format(pixel));
+        self.log.log(f"Simulated: Clearing pixel {pixel}");
 
     def test(self, repeat = True):
         self.log.log("Simulated: Starting test sequence")
