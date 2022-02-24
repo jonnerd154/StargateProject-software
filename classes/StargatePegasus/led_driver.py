@@ -30,12 +30,29 @@ class LEDDriver():
         self.clear_all() # Clear all the pixels on init
         time.sleep(0.5)
 
+        # The different modes for lighting a chevron - pass one of these to set_chevron()
+        self.CHEVRON_SEGMENT_OFF         = 0
+        self.CHEVRON_SEGMENT_V_ONLY      = 1
+        self.CHEVRON_SEGMENT_LENS_ONLY   = 2
+        self.CHEVRON_SEGMENT_ALL         = 3
+
+        # Used to lookup pretty name for debug. Keep in same order as above
+        self.chevron_segment_enum = [
+            "Off"
+            "V ONLY"
+            "LENS ONLY"
+            "ALL"
+        ]
+
         self.log.log( "Atlantis LED Driver is Ready!" )
 
     # ++++++++++++++++++++++++++++++++++++++++++
 
-    def set_chevron( self, pos, red_color, green_color, blue_color ):
-        self.log.log(f"Turning Chevron {pos} ON ({red_color}, {green_color}, {blue_color})");
+    def get_segment_name(segment):
+        return self.chevron_segment_enum[segment]
+
+    def set_chevron( self, pos, red_color, green_color, blue_color, segment ):
+        self.log.log(f"Turning Chevron {pos} ON ({red_color}, {green_color}, {blue_color}, Segment: {get_segment_name(segment)})");
         message = [ pos, red_color, green_color, blue_color ]
         self.__write_message(self.COMMAND_SET_CHEVRON, message)
 

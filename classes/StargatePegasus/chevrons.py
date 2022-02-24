@@ -82,7 +82,12 @@ class Chevron:
         self.audio.incoming_chevron()
 
     def light_on(self):
-        self.electronics.led_driver.set_chevron( self.index, self.chevron_color_red, self.chevron_color_green, self.chevron_color_blue )
+
+        #TODO: Select what segment to light
+        # Other options are defined in led_driver.py:34
+        segment = self.CHEVRON_SEGMENT_ALL
+
+        self.electronics.led_driver.set_chevron( self.index, self.chevron_color_red, self.chevron_color_green, self.chevron_color_blue, segment )
         self.led_state = True
 
     def off(self, sound=None):
