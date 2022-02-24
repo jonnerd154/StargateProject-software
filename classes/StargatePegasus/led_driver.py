@@ -8,6 +8,7 @@ class LEDDriver():
     def __init__(self, cfg, log):
 
         # Configure
+        # TODO: Move these to config
         self.i2c_bus_id = 1
         self.i2c_slave_address = 0x38 # Because 38 minutes!
         self.debug_enabled = True
