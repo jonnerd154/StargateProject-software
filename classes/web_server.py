@@ -149,6 +149,19 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 os.system('systemctl reboot')
                 return
 
+            if self.path == '/do/restart':
+                if not self.stargate.app.is_daemon:
+                    self.stargate.log.log("Software Reboot Requested, but not running as Daemon. Unable.")
+                    self.send_response(200, 'Unable, software not running as daemon.')
+                    self.end_headers()
+                    return
+
+                self.stargadate.wormhole_active = False
+                sleep(5)
+                self.send_response(200, 'OK')
+                os.system('systemctl restart stargate.service')
+                return
+
             if self.path == "/do/chevron_cycle":
                 self.stargate.chevrons.get(int(data['chevron_number'])).cycle_outgoing()
                 data = { "success": True }
