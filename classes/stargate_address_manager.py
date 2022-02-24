@@ -16,8 +16,8 @@ class StargateAddressManager:
         self.net_tools = stargate.net_tools
         self.base_path = stargate.base_path
 
-        self.database = Database(stargate.base_path)
-        self.address_book = StargateAddressBook(self)
+        self.database = Database(stargate.base_path, stargate.galaxy)
+        self.address_book = StargateAddressBook(self, stargate.galaxy)
 
         self.known_planets = self.address_book.get_standard_gates()
 

@@ -40,6 +40,8 @@ class GateApplication:
 
     def __init__(self):
 
+        self.galaxy = GALAXY
+
         # Check that we're running with root-like permissions (sudo)
         if not os.geteuid() == 0:
             print("The Stargate software must run with root-like permissions (use sudo)")
@@ -53,14 +55,12 @@ class GateApplication:
         self.base_path = os.path.split(os.path.abspath(__file__))[0]
 
         ### Load our config file.
-        self.cfg = StargateConfig(self.base_path, "config.json")
+        self.cfg = StargateConfig(self.base_path, "config", self.galaxy)
 
         ### Setup the logger. If we're in systemd, don't print to the console.
         self.log = AncientsLogBook(self.base_path, "sg1.log", print_to_console = not self.is_daemon )
         self.cfg.set_log(self.log)
         self.cfg.load()
-
-        self.galaxy = GALAXY
 
         ### Start the websockets-based LogTailServer
         # from websocket_server import LogTailServerWrapper

@@ -10,13 +10,13 @@ from hardcoded_addresses import known_planets       # pylint: disable=import-err
 
 class StargateAddressBookMigration():
 
-    def __init__(self, base_path):
+    def __init__(self, base_path, galaxy):
 
         ### Get the directory base_path
         self.base_path = base_path
 
         ### Load our config file
-        self.cfg = StargateConfig(self.base_path, "config.json")
+        self.cfg = StargateConfig(self.base_path, "config", galaxy)
 
         ### Setup the logger
         self.log = AncientsLogBook(self.base_path, "sg1.log")

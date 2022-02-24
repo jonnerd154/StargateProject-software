@@ -17,7 +17,7 @@ class SymbolRing:
         self.base_path = stargate.base_path
 
         # Load the last known ring position
-        self.position_store = StargateConfig(self.base_path, "ring_position.json")
+        self.position_store = StargateConfig(self.base_path, "ring_position", stargate.galaxy)
         self.position_store.set_log(self.log)
         self.position_store.load()
 

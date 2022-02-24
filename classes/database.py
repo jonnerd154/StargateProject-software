@@ -6,10 +6,10 @@ from stargate_config import StargateConfig
 
 class Database:
 
-    def __init__(self, base_path):
+    def __init__(self, base_path, galaxy):
 
         ### Load our config file
-        self.cfg = StargateConfig(base_path, "database.json")
+        self.cfg = StargateConfig(base_path, "database", galaxy)
 
         ### Setup the logger
         self.log = AncientsLogBook(base_path, "database.log", print_to_console=False)

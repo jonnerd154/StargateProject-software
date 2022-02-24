@@ -10,11 +10,12 @@ sys.path.append('config')
 
 class StargateConfig:
 
-    def __init__(self, base_path, file_name):
+    def __init__(self, base_path, file_name, galaxy):
 
         self.file_name = file_name
         self.conf_dir = base_path + "/config" #No trailing slash
         self.log = None # call set_log when log is available
+        self.galaxy = galaxy
 
         self.config = None
 
@@ -32,13 +33,16 @@ class StargateConfig:
             self.copy_default_config_file()
             self.log.log(f"*** Configuration initialized with default file {self.file_name}")
 
+    def get_galaxy_path(self):
+        # Remove spaces, to lower space
+        return self.galaxy.replace(" ", "").lower()
 
     def copy_default_config_file(self):
         # If the file exists, copy the file into the config directory
         try:
-            defaults_file_path = self.conf_dir + "/defaults/" + self.file_name + ".dist"
+            defaults_file_path = self.conf_dir + "/defaults-" + self.get_galaxy_path() + "/" + self.file_name + ".json.dist"
             shutil.copyfile( defaults_file_path, self.get_full_file_path())
-            os.chmod(self.get_full_file_path(), 0o777)
+            os.chmod(self.get_full_file_path(), 0o655)
         except FileNotFoundError:
             print(f"Default Configuration file not found for {self.file_name}. Quitting.")
             sys.exit(1)
@@ -51,7 +55,7 @@ class StargateConfig:
         self.log = log
 
     def get_full_file_path(self):
-        return self.conf_dir+"/"+self.file_name
+        return self.conf_dir + "/" + self.get_galaxy_path() + "-" + self.file_name + ".json"
 
     def get(self, key):
         config = self.get_full_config_by_key( key )
