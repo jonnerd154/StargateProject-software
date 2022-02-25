@@ -95,7 +95,29 @@ class SymbolRing:
                 break
 
             # Move the symbol one step
+
+
+
+
+
+
+
             # TODO: Kristian
+
+            # This is where you should add your dialing logic!
+            # You'll need to keep track of whether or not the symbol is already lit,
+            # when shifting a symbol into a position (if that symbol is already locked in a chevron)
+            # So that you can re-light it again after the next step.
+
+
+
+
+
+
+
+
+
+
 
             # Update the position in non-persistent memory
             self.update_position(1, direction)
