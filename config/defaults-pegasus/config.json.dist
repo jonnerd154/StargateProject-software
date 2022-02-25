@@ -1,0 +1,511 @@
+{
+  "audio_chevron_down_headstart": {
+    "value": 0.2,
+    "desc": "How much of a headstart should we give the audio before unlocking a chevron?",
+    "type": "float",
+    "min_value": 0,
+    "max_value": 5,
+    "units": "Seconds"
+  },
+  "audio_clip_wait_time_blackhole": {
+    "value": 1.0,
+    "desc": "How long should we wait between playing random clips when a BLACKHOLE wormhole is established?",
+    "type": "float",
+    "min_value": 0,
+    "max_value": 7,
+    "units": "Seconds"
+  },
+  "audio_enable": {
+    "value": true,
+    "desc": "True to enable audio output",
+    "type": "bool"
+  },
+  "audio_play_random_clips": {
+    "value": true,
+    "desc": "True to play random movie clips while the wormhole is established",
+    "type": "bool"
+  },
+  "audio_volume": {
+    "value": 50,
+    "desc": "Volume as a %",
+    "type": "int",
+    "min_value": 0,
+    "max_value": 100,
+    "protected": true,
+    "units": "%"
+  },
+  "audio_wormhole_active_quotes_interval": {
+    "value": 17.0,
+    "desc": "How long should we wait between playing random clips when a NORMAL wormhole is established?",
+    "type": "float",
+    "min_value": 0,
+    "max_value": false,
+    "units": "Seconds"
+  },
+  "audio_wormhole_close_headstart": {
+    "value": 1.0,
+    "desc": "How much of a headstart should we give the audio before closing a Wormhole?",
+    "type": "float",
+    "min_value": 0,
+    "max_value": 5,
+    "units": "Seconds"
+  },
+  "chevron_config_1_led_pin": {
+    "value": 21,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 1 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_1_motor_number": {
+    "value": 3,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 1 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_2_led_pin": {
+    "value": 16,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 2 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_2_motor_number": {
+    "value": 4,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 2 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_3_led_pin": {
+    "value": 20,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 3 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_3_motor_number": {
+    "value": 5,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 3 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_4_led_pin": {
+    "value": 26,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 4 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_4_motor_number": {
+    "value": 6,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 4 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_5_led_pin": {
+    "value": 6,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 5 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_5_motor_number": {
+    "value": 7,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 5 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_6_led_pin": {
+    "value": 13,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 6 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_6_motor_number": {
+    "value": 8,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 6 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_7_led_pin": {
+    "value": 19,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 7 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0
+  },
+  "chevron_config_7_motor_number": {
+    "value": 9,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 7 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_8_led_pin": {
+    "value": null,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 8 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0,
+    "nullable": true
+  },
+  "chevron_config_8_motor_number": {
+    "value": 10,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 8 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_config_9_led_pin": {
+    "value": null,
+    "desc": "The GPIO Pin for this Chevron's LEDs for Chevron 9 (1-indexed). Active HIGH",
+    "type": "int",
+    "max_value": 40,
+    "min_value": 0,
+    "nullable": true
+  },
+  "chevron_config_9_motor_number": {
+    "value": 11,
+    "desc": "The Motor Shield Channel number (0-indexed) for Chevron 9 (1-indexed)",
+    "type": "int",
+    "max_value": 11,
+    "min_value": 0
+  },
+  "chevron_down_throttle": {
+    "value": -0.65,
+    "desc": "Throttle setting for moving chevrons down. -1 means full speed down.",
+    "type": "float",
+    "min_value": -1,
+    "max_value": 1
+  },
+  "chevron_down_time": {
+    "value": 0.1,
+    "desc": "How long to energize the motor when moving a chevron down",
+    "type": "float",
+    "min_value": 0,
+    "max_value": 0.5,
+    "units": "Seconds"
+  },
+  "chevron_down_wait_time": {
+    "value": 0.35,
+    "desc": "How long to leave the chevron unlocked, before locking it.",
+    "type": "float",
+    "min_value": 0,
+    "max_value": 0.7,
+    "units": "Seconds"
+  },
+  "chevron_motors_enable": {
+    "value": true,
+    "desc": "True to enable Chevron DC Motors",
+    "type": "bool"
+  },
+  "chevron_up_throttle": {
+    "value": 0.65,
+    "desc": "Throttle setting for moving chevrons up. +1 means full speed up.",
+    "type": "float",
+    "min_value": -1,
+    "max_value": 1
+  },
+  "chevron_up_time": {
+    "value": 0.2,
+    "desc": "How long to energize the motor when moving a chevron up",
+    "type": "float",
+    "min_value": 0,
+    "max_value": 0.7,
+    "units": "Seconds"
+  },
+  "control_api_debug_enable": {
+    "value": false,
+    "desc": "True to enable Web API Debug output",
+    "type": "bool"
+  },
+  "control_api_server_port": {
+    "value": 8080,
+    "desc": "What TCP port should the Stargate Control API run on? (1025-65535)",
+    "type": "int",
+    "min_value": 1025,
+    "max_value": 65535
+  },
+  "dhd_brightness_center": {
+    "value": 100,
+    "desc": "From 0-255, how bright should the DHD CENTER BUTTON be? Higher values->Brighter",
+    "type": "int",
+    "min_value": 0,
+    "max_value": 255
+  },
+  "dhd_brightness_symbols": {
+    "value": 3,
+    "desc": "From 0-255, how bright should the DHD SYMBOLS be? Higher values->Brighter",
+    "type": "int",
+    "min_value": 0,
+    "max_value": 255
+  },
+  "dhd_color_center_blue": {
+    "value": 0,
+    "desc": "Controls the BLUE color component of the LED that illuminates the DHD's Center Button",
+    "type": "int",
+    "max_value": 255,
+    "min_value": 0
+  },
+  "dhd_color_center_green": {
+    "value": 0,
+    "desc": "Controls the GREEN color component of the LED that illuminates the DHD's Center Button",
+    "type": "int",
+    "max_value": 255,
+    "min_value": 0
+  },
+  "dhd_color_center_red": {
+    "value": 255,
+    "desc": "Controls the RED color component of the LED that illuminates the DHD's Center Button",
+    "type": "int",
+    "max_value": 255,
+    "min_value": 0
+  },
+  "dhd_color_symbols_blue": {
+    "value": 0,
+    "desc": "Controls the BLUE color component of the LEDs that illuminate the DHD's symbol buttons",
+    "type": "int",
+    "max_value": 255,
+    "min_value": 0
+  },
+  "dhd_color_symbols_green": {
+    "value": 117,
+    "desc": "Controls the GREEN color component of the LEDs that illuminate the DHD's symbol buttons",
+    "type": "int",
+    "max_value": 255,
+    "min_value": 0
+  },
+  "dhd_color_symbols_red": {
+    "value": 250,
+    "desc": "Controls the RED color component of the LEDs that illuminate the DHD's symbol buttons",
+    "type": "int",
+    "max_value": 255,
+    "min_value": 0
+  },
+  "dhd_enable": {
+    "value": true,
+    "desc": "True to enable DHD handling",
+    "type": "bool"
+  },
+  "dhd_serial_baud_rate": {
+    "value": 115200,
+    "desc": "Baud Rate for use in DHD Serial communications",
+    "type": "int",
+    "min_value": 115200,
+    "max_value": 115200
+  },
+  "dhd_serial_port": {
+    "value": "/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00",
+    "desc": "The USB Serial Device path for the DHD",
+    "type": "str"
+  },
+  "dialing_address_book_dials_full_address": {
+    "value": true,
+    "desc": "True: Speed Dial the full address with origin and center button. False: Dial only the 6-7 symbol address.",
+    "type": "bool"
+  },
+  "dialing_incoming_allowed": {
+    "value": true,
+    "desc": "True allow incoming dialing attempts",
+    "type": "bool"
+  },
+  "dialing_ring_direction_mode": {
+    "value": true,
+    "desc": "True: move from one symbol to the next, going the long way everytime. False: always use the shortest direction",
+    "type": "bool"
+  },
+  "dialing_timeout": {
+    "value": 60,
+    "desc": "How long to sit partially-dialed before resetting.",
+    "type": "int",
+    "min_value": 0,
+    "max_value": false,
+    "units": "Seconds"
+  },
+  "fan_gate_last_update": {
+    "value": "2022-02-04 13:09:22.582583",
+    "desc": "Timestamp of the last attempt to update the list of Fan Gates on the Subspace Network",
+    "type": "str-datetime",
+    "protected": true
+  },
+  "fan_gate_refresh_enable": {
+    "value": true,
+    "desc": "True to enable periodic checks to retrieve new Fan-Built Stargates",
+    "type": "bool"
+  },
+  "fan_gate_refresh_interval": {
+    "value": 30,
+    "desc": "How often should we check for new Fan Gates on the Subspace Network?",
+    "type": "int",
+    "min_value": 1,
+    "max_value": false,
+    "units": "Minutes"
+  },
+  "software_update_enabled": {
+    "value": true,
+    "desc": "True to enable automatic software updates",
+    "type": "bool"
+  },
+  "software_update_exception": {
+    "value": false,
+    "desc": "Was an exception encountered during the last Software Update attempt?",
+    "type": "bool",
+    "protected": true
+  },
+  "software_update_interval": {
+    "value": 24,
+    "desc": "How often should we check for Software Updates?",
+    "type": "int",
+    "min_value": 1,
+    "max_value": false,
+    "units": "Hours"
+  },
+  "software_update_last_check": {
+    "value": "2022-02-04 13:09:21.624562",
+    "desc": "Timestamp of the last attempt to check for Software Updates",
+    "type": "str-datetime",
+    "protected": true
+  },
+  "software_update_password": {
+    "value": "CarterSG1!",
+    "desc": "The BasicAuth Password to use to authenticate for downloads on the Software Update service",
+    "type": "str"
+  },
+  "software_update_status": {
+    "value": "up-to-date",
+    "desc": "Status of Software Updates",
+    "type": "str",
+    "protected": true
+  },
+  "software_update_url": {
+    "value": "https://thestargateproject.com/stargate_software_updates/",
+    "desc": "The API Endpoint URL for the Software Update service",
+    "type": "str"
+  },
+  "software_update_username": {
+    "value": "Samantha",
+    "desc": "The BasicAuth Username to use to authenticate for downloads on the Software Update service",
+    "type": "str"
+  },
+  "stepper_acceleration_steps": {
+    "value": 40,
+    "desc": "Over how many steps should the symbol ring accelerate/decelerate?",
+    "type": "int",
+    "min_value": 0,
+    "max_value": false,
+    "units": "Steps"
+  },
+  "stepper_auto_homing_enabled": {
+    "value": true,
+    "desc": "True to use the light sensor to calibrate the position of the ring",
+    "type": "bool"
+  },
+  "stepper_auto_homing_threshold": {
+    "value": 0.15,
+    "desc": "The voltage threshold below which we'll determine the ring is in the Home Position.",
+    "type": "float",
+    "min_value": 0,
+    "max_value": 3.3,
+    "units": "Volts"
+  },
+  "stepper_drive_mode": {
+    "value": "double",
+    "desc": "How many steps constitutes one revolution of the glyph ring?",
+    "type": "string-enum",
+    "enum_values": [
+      "double",
+      "single",
+      "microstep"
+    ]
+  },
+  "stepper_motor_enable": {
+    "value": true,
+    "desc": "True to enable the Glyph Ring Stepper Motor",
+    "type": "bool"
+  },
+  "stepper_one_revolution_steps": {
+    "value": 1250,
+    "desc": "How many steps constitutes one revolution of the glyph ring?",
+    "type": "int",
+    "min_value": 0,
+    "max_value": false,
+    "units": "Steps"
+  },
+  "stepper_speed_normal": {
+    "value": 0.002,
+    "desc": "Delay between steps in 'normal' speed. Larger values->slower",
+    "type": "float",
+    "min_value": 0,
+    "max_value": false,
+    "units": "Seconds"
+  },
+  "stepper_speed_slow": {
+    "value": 0.01,
+    "desc": "Delay between steps in 'slow' speed. Larger values->slower",
+    "type": "float",
+    "min_value": 0,
+    "max_value": false,
+    "units": "Seconds"
+  },
+  "subspace_ip_address": {
+    "value": "",
+    "desc": "IP Address configured for Subspace Network VPN",
+    "type": "str-ip"
+  },
+  "subspace_keep_alive_address": {
+    "value": "172.30.0.1",
+    "desc": "What IP address should we ping for Subspace VPN Keepalives?",
+    "type": "str-ip"
+  },
+  "subspace_keep_alive_interval": {
+    "value": 24,
+    "desc": "How often to send a ping on the subspace network to ensure the VPN stays connected",
+    "type": "int",
+    "min_value": 10,
+    "max_value": 50,
+    "units": "Seconds"
+  },
+  "subspace_port": {
+    "value": 3838,
+    "desc": "What TCP port should Subspace communications happen on? (1025-65535)",
+    "type": "int",
+    "min_value": 1025,
+    "max_value": 65535
+  },
+  "subspace_public_api_url": {
+    "value": "https://api.thestargateproject.com",
+    "desc": "The API Endpoint URL for the Subspace Information Service",
+    "type": "str"
+  },
+  "subspace_timeout": {
+    "value": 10,
+    "desc": "Time to wait for a remote stargate to respond to a communication before assuming it's offline",
+    "type": "int",
+    "min_value": 1,
+    "max_value": 30,
+    "units": "Seconds"
+  },
+  "wormhole_max_time_blackhole": {
+    "value": 5259488.0,
+    "desc": "How long can a wormhole to a blackhole planet be sustained? FOREVER.",
+    "type": "float",
+    "min_value": 0,
+    "max_value": false,
+    "units": "Minutes"
+  },
+  "wormhole_max_time_minutes": {
+    "value": 38.0,
+    "desc": "How long can a normal wormhole be sustained? (Hint, it's 38 minutes!)",
+    "type": "float",
+    "min_value": 0,
+    "max_value": false,
+    "units": "Minutes"
+  }
+}

@@ -23,7 +23,7 @@ fail-under=10.0
 ignore=
     LICENSE,README.md,UPGRADING_MODULES.md,ENVIRONMENT_SETUP.md,changelog.md,
     requirements.txt,test,API_DOCUMENTATION.html,api_spec.yaml,EXPRESS_SETUP.md,
-    UPGRADING_FROM_V3.X.md
+    UPGRADING_FROM_V3.X.md, classes/StargatePegasus
 
 # Add files or directories matching the regex patterns to the ignore-list. The
 # regex matches against paths and can be in Posix or Windows format.
@@ -35,7 +35,7 @@ ignore-patterns=
 
 # Python code to execute, usually for sys.path manipulation such as
 # pygtk.require().
-init-hook='import sys; sys.path.append("classes"); sys.path.append("classes/migrations")'
+init-hook='import sys; sys.path.append("classes"); sys.path.append("classes/StargateMilkyWay");'
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
 # number of processors available to use.
@@ -329,7 +329,7 @@ ignore-imports=no
 ignore-signatures=no
 
 # Minimum lines number of a similarity.
-min-similarity-lines=10
+min-similarity-lines=1000
 
 
 [BASIC]

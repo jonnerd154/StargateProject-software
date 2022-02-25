@@ -12,7 +12,7 @@ class SubspaceClient:
         self.cfg = stargate.cfg
         self.net_tools = stargate.net_tools
 
-        self.database = Database(stargate.base_path)
+        self.database = Database(stargate.base_path, stargate.galaxy)
 
         self.logging = "normal"
         #self.logging = "verbose"

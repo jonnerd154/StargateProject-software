@@ -2,7 +2,7 @@ from threading import Thread
 from time import time, sleep
 from random import randrange
 
-from stargate_sg1_symbol_manager import StargateSG1SymbolManager
+from symbol_manager import StargateSymbolManager
 from chevrons import ChevronManager
 from dialers import Dialer
 from keyboard_manager import KeyboardManager
@@ -13,7 +13,7 @@ from subspace_client import SubspaceClient
 from wormhole_manager import WormholeManager
 from subspace_server import SubspaceServer
 
-class StargateSG1:
+class Stargate:
     """
     This is the class to create the stargate object itself.
     """
@@ -28,6 +28,9 @@ class StargateSG1:
         self.net_tools = app.net_tools
         self.sw_updater = self.app.sw_updater
         self.schedule = app.schedule
+        self.galaxy = app.galaxy
+
+        self.log.log('Initializing Milky Way Stargate Software')
 
         # Retrieve the configurations
         self.inactivity_timeout = self.cfg.get("dialing_timeout")
@@ -49,7 +52,7 @@ class StargateSG1:
         self.dhd_test = False
 
         ### Set up the needed classes and make them ready to use ###
-        self.symbol_manager = StargateSG1SymbolManager()
+        self.symbol_manager = StargateSymbolManager()
         self.subspace_client = SubspaceClient(self)
         self.addr_manager = StargateAddressManager(self)
         self.chevrons = ChevronManager(self)

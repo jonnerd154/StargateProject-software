@@ -42,3 +42,8 @@ The documentation can be found in the repo, or at one of the below links
 Stargate SG-1, Stargate Atlantis & Stargate Universe are ™ & © of Metro-Goldwyn-Mayer Studios Inc.  This project is in no way sponsored or endorsed by: SyFy or MGM. This project was created solely as a hobby project and to help other Stargate fans create their own Stargates and to keep the passion and love for Stargate alive.
 
 TheStargateProject.com is a fan-based project and is not intended to infringe upon any copyrights or registered trademarks.
+
+# Development
+## Running PyLint
+ - To run for StargateMilkyWay: `pylint --rcfile=.pylintrc-milkyway ./*`
+ - To run for StargatePegasus:  `pylint --rcfile=.pylintrc-pegasus ./*`

@@ -22,7 +22,7 @@ class SoftwareUpdate:
         self.cfg = app.cfg
         self.audio = app.audio
 
-        self.database = Database(app.base_path)
+        self.database = Database(app.base_path, app.galaxy)
 
         # Retrieve the configurations
         self.base_url = self.cfg.get("software_update_url")

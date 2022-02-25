@@ -1,5 +1,5 @@
 
-class StargateSG1SymbolManager:
+class StargateSymbolManager:
 
     def __init__(self):
         self.symbols = None
@@ -15,13 +15,14 @@ class StargateSG1SymbolManager:
                 'value':        symbol['index'],
                 'selected':     False,
                 'description':  symbol['name'],
-                'imageSrc':     "/chevrons/" + str(symbol['index']).zfill(3) + ".svg"
+                'imageSrc':     "/chevrons/pegasus/" + str(symbol['index']).zfill(3) + ".svg"
             }
             symbols_out.append(new_symbol)
 
         return symbols_out
 
     def init(self):
+        # TODO: Update these for the Pegasus symbol set
         self.symbols = [
             {
                 'index': 1,
