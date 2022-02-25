@@ -73,8 +73,10 @@ class StargateAddressManager:
                     # Add it to the datastore
                     self.address_book.set_fan_gate(name, gate_address, ip_address)
 
+                self.log.log(f"Fan Gate Update: Success!")
                 self.cfg.set('fan_gate_last_update', str(datetime.now()))
             except: # pylint: disable=bare-except
+                self.log.log(f"Fan Gate Update: FAILED")
                 pass
 
         return self.fan_gates
