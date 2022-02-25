@@ -29,6 +29,7 @@ class Stargate:
         self.sw_updater = self.app.sw_updater
         self.schedule = app.schedule
         self.galaxy = app.galaxy
+        self.galaxy_path = app.galaxy_path
 
         self.log.log('Initializing Pegasus Stargate Software')
 
@@ -96,7 +97,6 @@ class Stargate:
         self.fan_gate_incoming_ip = None # To keep track of the IP address for the remote gate that establishes a wormhole
         self.connected_planet_name = None
 
-    ## Methods to manipulate the StargateSG1 object ###
     def update(self):
         """
         This is the main method to keep the stargate running and make decisions based on the manipulated objects variables.

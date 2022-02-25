@@ -23,8 +23,8 @@ from software_update import SoftwareUpdate
 from stargate_audio import StargateAudio
 from web_server import StargateWebServer
 
-#GALAXY = "Milky Way"
-GALAXY = "Pegasus"
+GALAXY = "Milky Way"
+#GALAXY = "Pegasus"
 
 # Include the galaxy-specific variants
 if GALAXY == "Milky Way":
@@ -41,6 +41,7 @@ class GateApplication:
     def __init__(self):
 
         self.galaxy = GALAXY
+        self.galaxy_path = self.galaxy.replace(" ", "").lower()
 
         # Check that we're running with root-like permissions (sudo)
         if not os.geteuid() == 0:
@@ -55,10 +56,10 @@ class GateApplication:
         self.base_path = os.path.split(os.path.abspath(__file__))[0]
 
         ### Load our config file.
-        self.cfg = StargateConfig(self.base_path, "config", self.galaxy)
+        self.cfg = StargateConfig(self.base_path, "config", self.galaxy_path)
 
         ### Setup the logger. If we're in systemd, don't print to the console.
-        self.log = AncientsLogBook(self.base_path, "sg1.log", print_to_console = not self.is_daemon )
+        self.log = AncientsLogBook(self.base_path, self.galaxy_path + ".log", print_to_console = not self.is_daemon )
         self.cfg.set_log(self.log)
         self.cfg.load()
 

@@ -22,7 +22,7 @@ class SoftwareUpdate:
         self.cfg = app.cfg
         self.audio = app.audio
 
-        self.database = Database(app.base_path, app.galaxy)
+        self.database = Database(app.base_path, app.galaxy_path)
 
         # Retrieve the configurations
         self.base_url = self.cfg.get("software_update_url")
@@ -57,7 +57,7 @@ class SoftwareUpdate:
             update_found = False
             root_path = Path(__file__).parent.absolute()
 
-            # get the user ID and group ID of the owner of this file (__file__). (In most instances this would result in the UID 1001 for the sg1 user.
+            # get the user ID and group ID of the owner of this file (__file__).
             uid = pwd.getpwuid(stat(__file__).st_uid).pw_name
             gid = pwd.getpwuid(stat(__file__).st_uid).pw_gid
 

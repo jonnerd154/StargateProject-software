@@ -23,7 +23,7 @@ class SubspaceServer:
         self.addr_manager = stargate.addr_manager
         self.address_book = stargate.addr_manager.get_book()
 
-        self.database = Database(self.base_path, stargate.galaxy)
+        self.database = Database(self.base_path, stargate.galaxy_path)
 
         self.logging = "normal"
         #self.logging = "verbose"

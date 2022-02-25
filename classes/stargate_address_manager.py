@@ -16,9 +16,10 @@ class StargateAddressManager:
         self.net_tools = stargate.net_tools
         self.base_path = stargate.base_path
         self.galaxy = stargate.galaxy
+        self.galaxy_path = stargate.galaxy_path
 
-        self.database = Database(stargate.base_path, self.galaxy)
-        self.address_book = StargateAddressBook(self, self.galaxy)
+        self.database = Database(stargate.base_path, self.galaxy_path)
+        self.address_book = StargateAddressBook(self, self.galaxy_path)
 
         self.known_planets = self.address_book.get_standard_gates()
 
@@ -60,8 +61,7 @@ class StargateAddressManager:
         if self.stargate.net_tools.has_internet_access():
             try:
                 # Retrieve the data from the API
-                galaxy_name = self.galaxy.replace(" ", "").lower()
-                request = requests.get(self.info_api_url + "/get_fan_gates.php?galaxy=" + galaxy_name, timeout=5 )
+                request = requests.get(self.info_api_url + "/get_fan_gates.php?galaxy=" + self.galaxy_path, timeout=5 )
                 data = json.loads(request.text)
 
                 for gate_config in data:
