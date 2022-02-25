@@ -181,8 +181,7 @@ class StargateSymbolManager:
                 ret_arr.append(ret_symbol)
         return ret_arr
 
-    @staticmethod
-    def get_image_path(index):
+    def get_image_path(self, index):
         return "/chevrons/" + self.galaxy_path + "/" + str(index).zfill(3) + ".svg"
 
     def get_all_ddslick(self):
