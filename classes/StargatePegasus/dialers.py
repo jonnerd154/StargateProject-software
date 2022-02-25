@@ -303,37 +303,3 @@ class KeyboardMode:
     @staticmethod
     def set_color_symbols(color_tuple):
         pass
-
-# class DHD:
-#     """
-#     This is the old DHD version. Not recommended. Use the new version instead.
-#     """
-#     def __init__(self):
-#         import adafruit_dotstar as dotstar
-#         import board
-#         self.dots = dotstar.DotStar(board.D14, board.D15, 39, brightness=0.01)
-#         self.center_dot = dotstar.DotStar(board.D14, board.D15, 1, brightness=0.15)
-#
-#     def light_on(self, symbol_number, color):
-#         """
-#         This helper function activates the light for the dhd button of "symbol" with the "color" specified.
-#         :param symbol_number: The symbol number of which to control.
-#         :param color: The color for the led as a tuple. eg: (250, 117, 0)
-#         :return: nothing is returned.
-#         """
-#         symbol_number_to_dhd_light_map = {0: 0, 1: 25, 2: 19, 3: 38, 4: 20, 5: 23, 6: 30, 7: 28, 8: 3, 9: 22,
-#                                           10: 11, 11: 36, 12: 34, 14: 17, 15: 6, 16: 9, 17: 18, 18: 16, 19: 26,
-#                                           20: 21, 21: 37, 22: 27, 23: 15, 24: 29, 25: 1, 26: 14, 27: 4, 28: 10, 29: 31,
-#                                           30: 8, 31: 5, 32: 24, 33: 12, 34: 33, 35: 7, 36: 2, 37: 35, 38: 32, 39: 13}
-#         self.dots[symbol_number_to_dhd_light_map[symbol_number]] = color
-#     def lights_off(self):
-#         """
-#         This method turns off all dhd lights
-#         """
-#         self.dots.fill((0, 0, 0))
-#     def center_light_on(self):
-#         """
-#         A helper function to turn on the centre dhd light. It needs a bit more brightness than the other lights. Hence
-#         this extra method.
-#         """
-#         self.center_dot[0] = (255, 0, 0)
