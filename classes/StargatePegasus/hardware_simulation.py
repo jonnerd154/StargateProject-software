@@ -5,12 +5,31 @@ import time
 class LEDDriverSim():
     def __init__(self, app):
         self.log = app.log
-        self.log.log( "SIMULATED Atlantis LED Driver is Ready!" )
+
+        self.log.log( "Initializing Simulated LED Driver" )
+
+        # The different modes for lighting a chevron - pass one of these to set_chevron()
+        self.CHEVRON_SEGMENT_OFF         = 0 # pylint: disable=invalid-name
+        self.CHEVRON_SEGMENT_V_ONLY      = 1 # pylint: disable=invalid-name
+        self.CHEVRON_SEGMENT_LENS_ONLY   = 2 # pylint: disable=invalid-name
+        self.CHEVRON_SEGMENT_ALL         = 3 # pylint: disable=invalid-name
+
+        # Used to lookup pretty name for debug. Keep in same order as above
+        self.chevron_segment_enum = [
+            "Off",
+            "V ONLY",
+            "LENS ONLY",
+            "ALL"
+        ]
+
+        self.log.log( "Simulated LED Driver is Ready!" )
 
     # ++++++++++++++++++++++++++++++++++++++++++
+    def get_segment_name(self, segment):
+        return self.chevron_segment_enum[segment]
 
-    def set_chevron( self, pos, red_color, green_color, blue_color ):
-        self.log.log(f"Simulated: Turning Chevron {pos} ON ({red_color}, {green_color}, {blue_color})")
+    def set_chevron( self, pos, red_color, green_color, blue_color, segment ):
+        self.log.log(f"Simulated: Turning Chevron {pos} ON ({red_color}, {green_color}, {blue_color}, Segment: {self.get_segment_name(segment)})")
 
     def clear_chevron(self, pos):
         self.log.log(f"Simulated: Turning Chevron {pos} OFF")

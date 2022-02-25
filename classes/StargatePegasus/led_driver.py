@@ -10,6 +10,8 @@ class LEDDriver():
         self.log = log
         self.cfg = cfg
 
+        self.log.log( "Initializing LED Driver" )
+
         # Configure
         # TODO: Move these to config
         self.i2c_bus_id = 1
@@ -41,13 +43,13 @@ class LEDDriver():
 
         # Used to lookup pretty name for debug. Keep in same order as above
         self.chevron_segment_enum = [
-            "Off"
-            "V ONLY"
-            "LENS ONLY"
+            "Off",
+            "V ONLY",
+            "LENS ONLY",
             "ALL"
         ]
 
-        self.log.log( "Atlantis LED Driver is Ready!" )
+        self.log.log( "LED Driver is Ready!" )
 
     # ++++++++++++++++++++++++++++++++++++++++++
 
