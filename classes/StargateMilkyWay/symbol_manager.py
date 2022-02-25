@@ -1,27 +1,13 @@
 
 class StargateSymbolManager:
 
-    def __init__(self):
+    def __init__(self, galaxy_path):
+        self.galaxy_path = galaxy_path
+
         self.symbols = None
-        self.init()
+        self.init_symbol_list()
 
-    def get_all_ddslick(self):
-        symbols = self.get_all()
-
-        symbols_out = []
-        for symbol in symbols:
-            new_symbol = {
-                'text':         "",
-                'value':        symbol['index'],
-                'selected':     False,
-                'description':  symbol['name'],
-                'imageSrc':     "/chevrons/milky_way/" + str(symbol['index']).zfill(3) + ".svg"
-            }
-            symbols_out.append(new_symbol)
-
-        return symbols_out
-
-    def init(self):
+    def init_symbol_list(self):
         self.symbols = [
             {
                 'index': 1,
@@ -73,7 +59,8 @@ class StargateSymbolManager:
             },
             {
                 'index': 13,
-                'name': "Aquila"
+                'name': "Aquila",
+                'is_on_dhd': False
             },
             {
                 'index': 14,
@@ -185,5 +172,33 @@ class StargateSymbolManager:
     def get_all(self):
         return self.symbols
 
+    def get_dhd_symbols(self):
+        ret_arr = []
+        for symbol in self.symbols:
+            ret_symbol = symbol
+            if symbol.get("is_on_dhd", True): # If the key doesn't exist, assume it's on the DHD
+                ret_symbol['imageSrc'] = self.get_image_path(ret_symbol['index'])
+                ret_arr.append(ret_symbol)
+        return ret_arr
+
+    @staticmethod
+    def get_image_path(index):
+        return "/chevrons/" + self.galaxy_path + "/" + str(index).zfill(3) + ".svg"
+
+    def get_all_ddslick(self):
+        symbols = self.get_all()
+
+        symbols_out = []
+        for symbol in symbols:
+            new_symbol = {
+                'text':         "",
+                'value':        symbol['index'],
+                'selected':     False,
+                'description':  symbol['name'],
+                'imageSrc':     self.get_image_path(symbol['index']) + ".svg"
+            }
+            symbols_out.append(new_symbol)
+
+        return symbols_out
     def get_name_by_index(self, index):
         return next(item for item in self.symbols if item['index'] == index)['name']
