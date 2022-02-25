@@ -1,0 +1,9 @@
+{
+  "ring_position": {
+    "value": 0,
+    "desc": "The step offset of the ring's current position, 0=Earth at Top Dead Center",
+    "type": "int",
+    "min_value": 0,
+    "max_value": 5000
+  }
+}

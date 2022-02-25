@@ -15,9 +15,11 @@ class StargateAddressManager:
         self.cfg = stargate.cfg
         self.net_tools = stargate.net_tools
         self.base_path = stargate.base_path
+        self.galaxy = stargate.galaxy
+        self.galaxy_path = stargate.galaxy_path
 
-        self.database = Database(stargate.base_path)
-        self.address_book = StargateAddressBook(self)
+        self.database = Database(stargate.base_path, self.galaxy_path)
+        self.address_book = StargateAddressBook(self, self.galaxy_path)
 
         self.known_planets = self.address_book.get_standard_gates()
 
@@ -54,12 +56,12 @@ class StargateAddressManager:
         This function gets the fan_gates from the API and stores it in the AddressBook
         :return: The updated fan_gate dictionary is returned.
         """
-        self.log.log("Updating Fan Gates from API")
+        self.log.log(f"Updating Fan Gates from API: {self.galaxy} Galaxy")
 
         if self.stargate.net_tools.has_internet_access():
             try:
                 # Retrieve the data from the API
-                request = requests.get(self.info_api_url + "/get_fan_gates.php")
+                request = requests.get(self.info_api_url + "/get_fan_gates.php?galaxy=" + self.galaxy_path, timeout=5 )
                 data = json.loads(request.text)
 
                 for gate_config in data:
@@ -71,9 +73,10 @@ class StargateAddressManager:
                     # Add it to the datastore
                     self.address_book.set_fan_gate(name, gate_address, ip_address)
 
+                self.log.log("Fan Gate Update: Success!")
                 self.cfg.set('fan_gate_last_update', str(datetime.now()))
             except: # pylint: disable=bare-except
-                pass
+                self.log.log("Fan Gate Update: FAILED")
 
         return self.fan_gates
 

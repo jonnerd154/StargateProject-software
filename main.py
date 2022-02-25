@@ -1,10 +1,9 @@
 #!/usr/bin/python3
-
-## A commit test from Kristian
+# pylint: disable=wrong-import-position
 
 """
 This is the stargate program for running the stargate from https://thestargateproject.com
-This main.py file is run automatically on boot. It is executed in the .bashrc file for the sg1 user.
+This main.py file is run automatically on boot. It is executed in a systemd daemon/service.
 """
 
 import sys
@@ -14,22 +13,35 @@ import threading
 import atexit
 import schedule
 
+# Include the classes shared between galaxy variants
 sys.path.append('classes')
 sys.path.append('config')
 
-# pylint: disable=wrong-import-position
 from stargate_config import StargateConfig
 from ancients_log_book import AncientsLogBook
 from software_update import SoftwareUpdate
 from stargate_audio import StargateAudio
-from stargate_sg1 import StargateSG1
 from web_server import StargateWebServer
+
+GALAXY = "Milky Way"
+#GALAXY = "Pegasus"
+
+# Include the galaxy-specific variants
+if GALAXY == "Milky Way":
+    sys.path.append('classes/StargateMilkyWay')
+elif GALAXY == "Pegasus":
+    sys.path.append('classes/StargatePegasus')
+
+from stargate import Stargate
 from electronics import Electronics
 from network_tools import NetworkTools
 
 class GateApplication:
 
     def __init__(self):
+
+        self.galaxy = GALAXY
+        self.galaxy_path = self.galaxy.replace(" ", "").lower()
 
         # Check that we're running with root-like permissions (sudo)
         if not os.geteuid() == 0:
@@ -44,10 +56,10 @@ class GateApplication:
         self.base_path = os.path.split(os.path.abspath(__file__))[0]
 
         ### Load our config file.
-        self.cfg = StargateConfig(self.base_path, "config.json")
+        self.cfg = StargateConfig(self.base_path, "config", self.galaxy_path)
 
         ### Setup the logger. If we're in systemd, don't print to the console.
-        self.log = AncientsLogBook(self.base_path, "sg1.log", print_to_console = not self.is_daemon )
+        self.log = AncientsLogBook(self.base_path, self.galaxy_path + ".log", print_to_console = not self.is_daemon )
         self.cfg.set_log(self.log)
         self.cfg.load()
 
@@ -71,7 +83,7 @@ class GateApplication:
         self.log.log(f'Running as Daemon: {self.is_daemon}')
 
         ### Detect our electronics and initialize the hardware
-        self.electronics = Electronics(self).hardware
+        self.electronics = Electronics(self)
 
         ### Initialize the Audio class and do some setup
         self.audio = StargateAudio(self, self.base_path)
@@ -89,7 +101,7 @@ class GateApplication:
         self.log.log(f'Booting up the Stargate! Version {self.sw_updater.get_current_version()}')
 
         # Actually start it...
-        self.stargate = StargateSG1(self)
+        self.stargate = Stargate(self)
 
         ### Start the web server
         try:

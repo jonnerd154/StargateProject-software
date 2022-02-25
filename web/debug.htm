@@ -136,6 +136,9 @@
             <div class="control" onclick="window.location = 'info.htm';">
                 System Info
             </div>
+            <div class="control" onclick="restart();">
+                Restart Software
+            </div>
             <div class="control" onclick="reboot();">
                 Reboot
             </div>
@@ -164,11 +167,18 @@
             doPoll();
           })
 
+          function restart() {
+              $.post({
+                  url: 'stargate/do/restart'
+              });
+          }
+
           function reboot() {
               $.post({
                   url: 'stargate/do/reboot'
               });
           }
+
 
           function shutdown() {
               $.post({
