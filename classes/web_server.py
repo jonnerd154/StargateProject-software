@@ -158,7 +158,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     self.end_headers()
                     return
 
-                self.stargadate.wormhole_active = False
+                self.stargate.wormhole_active = False
                 sleep(5)
                 self.send_response(200, 'OK')
                 os.system('systemctl restart stargate.service')
