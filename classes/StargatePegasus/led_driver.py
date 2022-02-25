@@ -144,9 +144,9 @@ class LEDDriver:
 
     # ++++++++++++++++++++++++++++++++++++++++++
 
-    def __write_message(self, command, message):
+    def __write_message(self, command, message, retries_remaining = 5):
         try:
             self.i2c.write_i2c_block_data( self.i2c_slave_address, command, message)
-            time.sleep(0.001)
         except (TypeError, ValueError, IOError):
-            self.log.log("Failed to write")
+            self.log.log("Failed to write...retrying")
+            self.__write_message(command, message, retries_remaining-1)
