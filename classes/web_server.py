@@ -90,6 +90,9 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "glyph_ring":                     self.stargate.ring.get_status()
                 }
 
+            elif request_path == "/get/dhd_symbols":
+                data = self.stargate.symbol_manager.get_dhd_symbols()
+
             elif request_path == "/get/config":
                 data = collections.OrderedDict(sorted(self.stargate.cfg.get_all_configs().items()))
 

@@ -53,7 +53,7 @@ class Stargate:
         self.dhd_test = False
 
         ### Set up the needed classes and make them ready to use ###
-        self.symbol_manager = StargateSymbolManager()
+        self.symbol_manager = StargateSymbolManager(self.galaxy_path)
         self.subspace_client = SubspaceClient(self)
         self.addr_manager = StargateAddressManager(self)
         self.chevrons = ChevronManager(self)
