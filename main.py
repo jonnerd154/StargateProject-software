@@ -3,7 +3,7 @@
 
 """
 This is the stargate program for running the stargate from https://thestargateproject.com
-This main.py file is run automatically on boot. It is executed in the .bashrc file for the sg1 user.
+This main.py file is run automatically on boot. It is executed in a systemd daemon/service.
 """
 
 import sys
