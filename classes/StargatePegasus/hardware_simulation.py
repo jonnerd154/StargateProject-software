@@ -56,7 +56,7 @@ class LEDDriverSim():
         self.log.log("Simulated: Starting test sequence")
         while True:
 
-            self.set_chevron( 0, 255, 0, 0 ) # Chevron 0, red
+            self.set_chevron( 0, 255, 0, 0, 3 ) # Chevron 0, red (full chevron)
             time.sleep(0.5)
 
             self.clear_chevron( 0 ) # Clear Chevron 0
