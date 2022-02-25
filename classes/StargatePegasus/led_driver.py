@@ -4,7 +4,7 @@ import time
 import struct
 from smbus import SMBus #pylint: disable=import-error
 
-class LEDDriver():
+class LEDDriver:
     def __init__(self, cfg, log):
 
         self.log = log
@@ -58,7 +58,7 @@ class LEDDriver():
 
     def set_chevron( self, pos, red_color, green_color, blue_color, segment ):
         self.log.log(f"Turning Chevron {pos} ON ({red_color}, {green_color}, {blue_color}, Segment: {self.get_segment_name(segment)})")
-        message = [ pos, red_color, green_color, blue_color ]
+        message = [ (pos-1), red_color, green_color, blue_color, segment ]
         self.__write_message(self.COMMAND_SET_CHEVRON, message)
 
     def clear_chevron(self, pos):
@@ -147,5 +147,6 @@ class LEDDriver():
     def __write_message(self, command, message):
         try:
             self.i2c.write_i2c_block_data( self.i2c_slave_address, command, message)
+            time.sleep(0.001)
         except (TypeError, ValueError, IOError):
             self.log.log("Failed to write")

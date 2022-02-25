@@ -25,8 +25,7 @@ class ChevronManager:
     def get_status( self ):
         output = {}
         for index, chevron in self.chevrons.items():
-            row = {}
-            row['led_state'] = chevron.led_state
+            row = {'led_state': chevron.led_state}
             output[index] = row
         return output
 
@@ -34,7 +33,6 @@ class ChevronManager:
         """
         A helper method to turn off all the chevrons
         :param sound_on: Set sound_on to 'on' if sound is desired when turning off a chevron light.
-        :param chevrons: the dictionary of chevrons
         :return: Nothing is returned
         """
         for chevron in self.chevrons.values():
@@ -66,14 +64,14 @@ class Chevron:
         # TODO: Move to allow config to change without restart
         self.audio_chevron_down_headstart = self.cfg.get("audio_chevron_down_headstart") #0.2
 
-        self.chevron_color_red = 0x22
-        self.chevron_color_green = 0x22
-        self.chevron_color_blue = 0x22
+        self.chevron_color_red = 0
+        self.chevron_color_green = 255
+        self.chevron_color_blue = 100
 
         self.led_state = False
 
     def lock(self):
-        self.audio.sound_start('chevron_lock') # chev down audio
+        # self.audio.sound_start('chevron_lock') # chev down audio
         sleep(self.audio_chevron_down_headstart)
         self.light_on()
 
