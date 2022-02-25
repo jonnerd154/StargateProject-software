@@ -61,7 +61,7 @@ class StargateAddressManager:
             try:
                 # Retrieve the data from the API
                 galaxy_name = self.galaxy.replace(" ", "").lower()
-                request = requests.get(self.info_api_url + "/get_fan_gates.php?galaxy=" + galaxy_name )
+                request = requests.get(self.info_api_url + "/get_fan_gates.php?galaxy=" + galaxy_name, timeout=5 )
                 data = json.loads(request.text)
 
                 for gate_config in data:
