@@ -23,8 +23,8 @@ from software_update import SoftwareUpdate
 from stargate_audio import StargateAudio
 from web_server import StargateWebServer
 
-GALAXY = "Milky Way"
-#GALAXY = "Pegasus"
+#GALAXY = "Milky Way"
+GALAXY = "Pegasus"
 
 # Include the galaxy-specific variants
 if GALAXY == "Milky Way":
