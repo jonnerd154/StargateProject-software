@@ -16,7 +16,6 @@ class LEDDriver:
         # TODO: Move these to config
         self.i2c_bus_id = 1
         self.i2c_slave_address = 0x38 # Because 38 minutes!
-        self.debug_enabled = True
 
         # Define commands
         self.COMMAND_SET_CHEVRON =              10 # pylint: disable=invalid-name
@@ -27,6 +26,7 @@ class LEDDriver:
         self.COMMAND_CLEAR_ALL =                14 # pylint: disable=invalid-name
         self.COMMAND_SET_PIXEL_RAW =            16 # pylint: disable=invalid-name
         self.COMMAND_CLEAR_PIXEL_RAW =          17 # pylint: disable=invalid-name
+        self.COMMAND_CLEAR_ALL_CHEVRONS =       18 # pylint: disable=invalid-name
 
         # ======================================================
 
@@ -65,6 +65,10 @@ class LEDDriver:
         self.log.log(f"Turning Chevron {pos} OFF")
         message = [ pos ]
         self.__write_message(self.COMMAND_CLEAR_CHEVRON, message)
+
+    def clear_all_chevrons(self):
+        self.log.log(f"Turning ALL Chevrons {pos} OFF")
+        self.__write_message(self.COMMAND_CLEAR_CHEVRON, [])
 
     def display_symbol_in_position( self, symbol, pos, red_color, green_color, blue_color ):
         self.log.log(f"Displaying pre-saved Symbol {symbol} in Position {pos} ({red_color}, {green_color}, {blue_color})")

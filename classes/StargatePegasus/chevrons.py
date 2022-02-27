@@ -35,16 +35,17 @@ class ChevronManager:
         :param sound_on: Set sound_on to 'on' if sound is desired when turning off a chevron light.
         :return: Nothing is returned
         """
-        for chevron in self.chevrons.values():
-            if sound_on == 'on':
-                chevron.off(sound_on='on')
-            else:
-                chevron.off()
+
+        if sound_on == 'on':
+            chevron.off(sound_on='on')
+        else:
+            chevron.off()
+
+        self.electronics.led_driver.clear_all_chevrons()
 
     def all_lights_on(self):
         for chevron in self.chevrons.values():
             chevron.light_on()
-
 
 class Chevron:
     """

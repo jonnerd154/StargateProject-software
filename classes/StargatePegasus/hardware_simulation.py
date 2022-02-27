@@ -34,6 +34,9 @@ class LEDDriverSim():
     def clear_chevron(self, pos):
         self.log.log(f"Simulated: Turning Chevron {pos} OFF")
 
+    def clear_all_chevrons(self):
+        self.log.log(f"Simulated: Turning ALL Chevrons {pos} OFF")
+
     def display_symbol_in_position( self, symbol, pos, red_color, green_color, blue_color ):
         self.log.log(f"Simulated: Displaying pre-saved Symbol {symbol} in Position {pos} ({red_color}, {green_color}, {blue_color})")
 
