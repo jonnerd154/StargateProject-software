@@ -67,7 +67,7 @@ class LEDDriver:
         self.__write_message(self.COMMAND_CLEAR_CHEVRON, message)
 
     def clear_all_chevrons(self):
-        self.log.log(f"Turning ALL Chevrons {pos} OFF")
+        self.log.log("Turning ALL Chevrons OFF")
         self.__write_message(self.COMMAND_CLEAR_CHEVRON, [])
 
     def display_symbol_in_position( self, symbol, pos, red_color, green_color, blue_color ):

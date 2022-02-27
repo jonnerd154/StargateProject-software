@@ -37,9 +37,7 @@ class ChevronManager:
         """
 
         if sound_on == 'on':
-            chevron.off(sound_on='on')
-        else:
-            chevron.off()
+            choice(self.audio.incoming_chevron_sounds).play()
 
         self.electronics.led_driver.clear_all_chevrons()
 
