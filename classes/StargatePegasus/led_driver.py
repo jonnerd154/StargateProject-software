@@ -68,7 +68,7 @@ class LEDDriver:
 
     def clear_all_chevrons(self):
         self.log.log("Turning ALL Chevrons OFF")
-        self.__write_message(self.COMMAND_CLEAR_CHEVRON, [])
+        self.__write_message(self.COMMAND_CLEAR_ALL_CHEVRONS, [])
 
     def display_symbol_in_position( self, symbol, pos, red_color, green_color, blue_color ):
         self.log.log(f"Displaying pre-saved Symbol {symbol} in Position {pos} ({red_color}, {green_color}, {blue_color})")
