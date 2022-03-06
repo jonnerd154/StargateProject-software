@@ -12,6 +12,7 @@ import subspace_messages
 from subspace_client import SubspaceClient
 from wormhole_manager import WormholeManager
 from subspace_server import SubspaceServer
+from dialing_log import DialingLog
 
 class Stargate:
     """
@@ -61,6 +62,7 @@ class Stargate:
         self.dialer = Dialer(self) # A "Dialer" is either a Keyboard or DHDv2
         self.keyboard = KeyboardManager(self, app.is_daemon)
         self.wh_manager = WormholeManager(self)
+        self.dialing_log = DialingLog(self)
 
         ### Run the stargate server if we have an internet connection ###
         # The stargate_server runs in it's own thread listening for incoming wormholes
@@ -279,12 +281,17 @@ class Stargate:
                 self.log.log('Valid address is locked')
                 self.log.log(f'OUTGOING Wormhole to {self.connected_planet_name} established')
 
+                # Log the connection!
+                self.dialing_log.established_outbound(self.address_buffer_outgoing)
+
                 # Check if we dialed a black hole planet
                 if self.addr_manager.get_book().get_entry_by_address(self.address_buffer_outgoing[0:-1])['is_black_hole']:
                     self.log.log("Oh no! It's the black hole planet!")
                     self.black_hole = True
             else:
-                self.log.log('Unable to establish a Wormhole!')
+                # Log the dialing failure
+                self.dialing_log.dialing_fail(self.address_buffer_outgoing)
+
                 self.shutdown(cancel_sound=False, wormhole_fail_sound=True)
 
         ## Incoming wormhole ##
@@ -300,6 +307,11 @@ class Stargate:
 
                 self.log.log('Incoming address is a match!')
                 self.log.log(f'INCOMING Wormhole from {self.connected_planet_name} established')
+
+                # Log the connection!
+                # TODO: hook this up!
+                #self.dialing_log.established_inbound( self.inbound_dialer)
+
             else:
                 self.log.log('Incoming address is NOT a match to Local Gate Address!')
                 self.shutdown(cancel_sound=False, wormhole_fail_sound=True)
@@ -330,7 +342,7 @@ class Stargate:
         # Put the gate back in to an idle state
         self.initialize_gate_state_vars()
 
-        self.log.log("Gate is idle.")
+        self.dialing_log.shutdown()
 
     def inactivity(self, seconds):
         """
@@ -345,6 +357,10 @@ class Stargate:
             if self.last_activity_time: #If the variable is not None
                 if (len(self.address_buffer_incoming) > 0) or (len(self.address_buffer_outgoing) > 0): # If there are something in the buffers
                     if (time() - self.last_activity_time) > seconds:
+
+                        # Log the dialing failure
+                        self.dialing_log.dialing_fail(self.address_buffer_outgoing)
+
                         return True
         return False
 
