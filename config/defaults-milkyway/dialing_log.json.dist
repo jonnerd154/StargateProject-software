@@ -1,0 +1,51 @@
+{
+  "established_standard_count": {
+    "value": 0,
+    "desc": "Lifetime count of established outbound wormholes to Standard/Movie Gates",
+    "type": "int",
+    "min_value": 0,
+    "max_value": false
+  },
+  "established_standard_mins": {
+    "value": 0,
+    "desc": "Lifetime number of minutes outbound wormholes to Standard/Movie Gates established",
+    "type": "float",
+    "min_value": 0,
+    "max_value": false
+  },
+  "established_fan_count": {
+    "value": 0,
+    "desc": "Lifetime count of established outbound wormholes to Fan-Built Gates",
+    "type": "int",
+    "min_value": 0,
+    "max_value": false
+  },
+  "established_fan_mins": {
+    "value": 0,
+    "desc": "Lifetime number of minutes outbound wormholes to Fan-Built Gates established",
+    "type": "float",
+    "min_value": 0,
+    "max_value": false
+  },
+  "inbound_count": {
+    "value": 0,
+    "desc": "Lifetime count of inbound wormholes",
+    "type": "int",
+    "min_value": 0,
+    "max_value": false
+  },
+  "inbound_mins": {
+    "value": 0,
+    "desc": "Lifetime number of minutes inbound wormholes established",
+    "type": "float",
+    "min_value": 0,
+    "max_value": false
+  },
+  "dialing_failures": {
+    "value": 0,
+    "desc": "Lifetime count of failed outbound dialing attempts",
+    "type": "int",
+    "min_value": 0,
+    "max_value": false
+  }
+}

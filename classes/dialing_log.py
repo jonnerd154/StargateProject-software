@@ -1,4 +1,5 @@
 from datetime import datetime,timezone
+from stargate_config import StargateConfig
 
 class DialingLog():
 
@@ -11,24 +12,30 @@ class DialingLog():
         self.current_activity = {}
         self.summary = {}
 
-        self.__reset_summary_storage()
+        # Initialize the Config
+        self.base_path = stargate.base_path
+        self.galaxy_path = stargate.galaxy_path
+        self.datastore = StargateConfig(self.base_path, "dialing_log", self.galaxy_path)
+        self.datastore.set_log(self.log)
+        self.datastore.load()
+
         self.__reset_state()
 
     def __reset_summary_storage(self):
 
-        self.summary['established_standard_count'] = 0    # Lifetime Count of Established Outbound Wormholes to Movie Gates
-        self.summary['established_standard_mins'] = 0     # Lifetime Minutes Outbound Established to Movie Gates
+        self.datastore.set("established_standard_count", 0)    # Lifetime Count of Established Outbound Wormholes to Movie Gates
+        self.datastore.set("established_standard_mins", 0)    # Lifetime Minutes Outbound Established to Movie Gates
 
-        self.summary['established_fan_count'] = 0         # Lifetime Count of Established Outbound Wormholes to Fan Gates
-        self.summary['established_fan_mins'] = 0          # Lifetime Minutes Outbound Established to Fan Gates
+        self.datastore.set("established_fan_count", 0)         # Lifetime Count of Established Outbound Wormholes to Fan Gates
+        self.datastore.set("established_fan_mins", 0)          # Lifetime Minutes Outbound Established to Fan Gates
 
-        self.summary['inbound_count'] = 0                 # Lifetime Count of Established Inbound Wormholes
-        self.summary['inbound_mins'] = 0                  # Lifetime Minutes Inbound Established
+        self.datastore.set("inbound_count", 0)                 # Lifetime Count of Established Inbound Wormholes
+        self.datastore.set("inbound_mins", 0)                  # Lifetime Minutes Inbound Established
 
-        self.summary['dialing_failures'] = 0              # Lifetime Failed Dialing Attempts
+        self.datastore.set("dialing_failures", 0)              # Lifetime Failed Dialing Attempts
 
     def get_summary(self):
-        return self.summary
+        return self.datastore.get_all_configs()
 
     def dialing_fail(self, address_buffer):
         self.current_activity['start_time'] = self.__get_time_now()
@@ -44,7 +51,7 @@ class DialingLog():
         self.log.log(f"   Address Buffer: {self.current_activity['receiver_address']}")
 
         # Update the Summary
-        self.summary['dialing_failures'] += 1
+        self.datastore.set('dialing_failures', self.datastore.get('dialing_failures') + 1)
 
     def established_inbound(self, dialing_gate_address):
         self.current_activity['activity'] = "Inbound"
@@ -53,7 +60,9 @@ class DialingLog():
         self.current_activity['receiver_address'] = self.addr_manager.get_book().get_local_address()
         self.log.log("Dialing Log: Established Inbound")
 
+        # Update the Summary
         self.summary['inbound_count'] += 1
+        self.datastore.set('inbound_count', self.datastore.get('inbound_count') + 1)
 
     def established_outbound(self, receiver_address):
         self.current_activity['activity'] = "Outbound"
@@ -64,9 +73,9 @@ class DialingLog():
                 # TODO: #self.addr_manager.get_type_by_address(receiver_address)
 
         if self.current_activity['remote_gate_type'] == "FAN":
-            self.summary['established_fan_count'] += 1
+            self.datastore.set('established_fan_count', self.datastore.get('established_fan_count') + 1)
         else:
-            self.summary['established_standard_count'] += 1
+            self.datastore.set('established_standard_count', self.datastore.get('established_standard_count') + 1)
 
         self.log.log("Dialing Log: Established Outbound")
 
@@ -94,11 +103,11 @@ class DialingLog():
 
         if self.current_activity['activity'] == "Outbound":
             if self.current_activity['remote_gate_type'] == "FAN":
-                self.summary['established_fan_mins'] += elapsed
+                self.datastore.set('established_fan_mins', self.datastore.get('established_fan_mins') + elapsed)
             else: # standard/movie
-                self.summary['established_standard_mins'] += elapsed
+                self.datastore.set('established_standard_mins', self.datastore.get('established_standard_mins') + elapsed)
         else: # Inbound
-            self.summary['inbound_mins'] += elapsed
+            self.datastore.set('inbound_mins', self.datastore.get('inbound_mins') + elapsed)
 
         # Reset the state vars to get ready for the next activity
         self.__reset_state()
