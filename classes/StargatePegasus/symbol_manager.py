@@ -14,161 +14,155 @@ class StargateSymbolManager:
         self.symbols = [
             {
                 'index': 1,
-                'name': "Earth"
+                'name': "Acjesis"
             },
             {
                 'index': 2,
-                'name': "Crater"
+                'name': "Lenchan"
             },
             {
                 'index': 3,
-                'name': "Virgo"
+                'name': "Alura"
             },
             {
                 'index': 4,
-                'name': "Bootes"
+                'name': "Ca Po"
             },
             {
                 'index': 5,
-                'name': "Centaurus"
+                'name': "Laylox"
             },
             {
                 'index': 6,
-                'name': "Libra"
+                'name': "Ecrumig"
             },
             {
                 'index': 7,
-                'name': "Serpens Caput"
+                'name': "Avoniv"
             },
             {
                 'index': 8,
-                'name': "Norma"
+                'name': "Bydo"
             },
             {
                 'index': 9,
-                'name': "Scorpio"
+                'name': "Aaxel"
             },
             {
                 'index': 10,
-                'name': "Cra"
+                'name': "Aldeni"
             },
             {
                 'index': 11,
-                'name': "Scutum"
+                'name': "Setas"
             },
             {
                 'index': 12,
-                'name': "Sagittarius"
+                'name': "Arami"
             },
             {
                 'index': 13,
-                'name': "Aquila",
-                'is_on_dhd': False
+                'name': "Danami",
             },
             {
                 'index': 14,
-                'name': "Mic"
+                'name': "Unknown Constellation"
             },
             {
                 'index': 15,
-                'name': "Capricorn"
+                'name': "Robandus"
             },
             {
                 'index': 16,
-                'name': "Pisces Austrinus"
+                'name': "Recktic"
             },
             {
                 'index': 17,
-                'name': "Equuleus"
+                'name': "Zamilloz"
             },
             {
                 'index': 18,
-                'name': "Aquarius"
+                'name': "Subido"
             },
             {
                 'index': 19,
-                'name': "Pegasus"
+                'name': "Dawnre"
             },
             {
                 'index': 20,
-                'name': "Sculptor"
+                'name': "Salma"
             },
             {
                 'index': 21,
-                'name': "Pisces"
+                'name': "Hamlinto"
             },
             {
                 'index': 22,
-                'name': "Andromeda"
+                'name': "Elenami"
             },
             {
                 'index': 23,
-                'name': "Triangulum"
+                'name': "Tahnan"
             },
             {
                 'index': 24,
-                'name': "Aries"
+                'name': "Zeo"
             },
             {
                 'index': 25,
-                'name': "Perseus"
+                'name': "Roehi"
             },
             {
                 'index': 26,
-                'name': "Cetus"
+                'name': "Once el"
             },
             {
                 'index': 27,
-                'name': "Taurus"
+                'name': "Baselai"
             },
             {
                 'index': 28,
-                'name': "Auriga"
+                'name': "Sandovi"
             },
             {
                 'index': 29,
-                'name': "Eridanus"
+                'name': "Illume"
             },
             {
                 'index': 30,
-                'name': "Orion"
+                'name': "Amiwill"
             },
             {
                 'index': 31,
-                'name': "Canis Minor"
+                'name': "Sibbron"
             },
             {
                 'index': 32,
-                'name': "Monoceros"
+                'name': "Gilltin"
             },
             {
                 'index': 33,
-                'name': "Gemini"
+                'name': "Unknown Constellation #2"
             },
             {
                 'index': 34,
-                'name': "Hydra"
+                'name': "Ramnon"
             },
             {
                 'index': 35,
-                'name': "Lynx"
+                'name': "Olavii"
             },
-
             {
                 'index': 36,
-                'name': "Cancer"
+                'name': "Hacemil"
             },
             {
                 'index': 37,
-                'name': "Sextans"
+                'name': "Poco Re"
             },
             {
                 'index': 38,
-                'name': "Leo Minor"
-            },
-            {
-                'index': 39,
-                'name': "Leo"
+                'name': "Abrin"
             }
         ]
 
