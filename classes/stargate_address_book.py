@@ -14,7 +14,6 @@ class StargateAddressBook:
         self.datastore.set_log(self.log)
         self.datastore.load()
 
-
     def initialize_storage(self):
         self.datastore.remove_all()
         self.datastore.set("local_stargate_address", None)
