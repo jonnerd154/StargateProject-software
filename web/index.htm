@@ -112,6 +112,8 @@
           $.get('stargate/get/dhd_symbols')
               .done(function(data) {
 
+                  $('.chevrons').html('')
+
                   // Add the symbols
                   for (var i = 0; i < data.length; i++) {
                       html = '<div class="chevron" num="' + data[i]['index'] + '" id="chevron' + data[i]['index'] + '"><img src="' + data[i]['imageSrc'] + '" alt="' + data[i]['name'] + '"/></div>'
@@ -144,7 +146,7 @@
                   });
 
                   hasSymbols = true
-                  
+
                   // Run the "recover from offline" process
                   returnFromOffline()
 
