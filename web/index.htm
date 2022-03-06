@@ -26,6 +26,8 @@
 
         <script type="text/javascript">
 
+        var hasSymbols = false;
+
         $(function() {
             loadDHDSymbols();
             doPoll();
@@ -110,10 +112,6 @@
           $.get('stargate/get/dhd_symbols')
               .done(function(data) {
 
-
-                  // Hide the offline modal
-                  hideOfflineModal()
-
                   // Add the symbols
                   for (var i = 0; i < data.length; i++) {
                       html = '<div class="chevron" num="' + data[i]['index'] + '" id="chevron' + data[i]['index'] + '"><img src="' + data[i]['imageSrc'] + '" alt="' + data[i]['name'] + '"/></div>'
@@ -145,6 +143,12 @@
                       });
                   });
 
+                  hasSymbols = true
+                  
+                  // Run the "recover from offline" process
+                  returnFromOffline()
+
+
               })
               .fail(function(jqXHR, textStatus, errorThrown) {
                   // Show the "we're offline modal"
@@ -164,8 +168,8 @@
                       doSpeedDial(data.speed_dial_full_address);
                     }
 
-                    // Hide the offline modal
-                    hideOfflineModal()
+                    // Run the "recover from offline" process
+                    returnFromOffline()
 
                     // Update the Wormhole status
                     updateWormholeStatus(data)
@@ -204,6 +208,13 @@
 
         function hideOfflineModal(){
             offline_modal.dialog("close");
+        }
+
+        function returnFromOffline(){
+          if (!hasSymbols){
+            loadDHDSymbols();
+          }
+          hideOfflineModal()
         }
 
         function updateConnectedPlanetStatus(data){
