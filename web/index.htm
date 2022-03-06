@@ -116,7 +116,7 @@
 
                   // Add the symbols
                   for (var i = 0; i < data.length; i++) {
-                      html = '<div class="chevron" num="' + data[i]['index'] + '" id="chevron' + data[i]['index'] + '"><img src="' + data[i]['imageSrc'] + '" /></div>'
+                      html = '<div class="chevron" num="' + data[i]['index'] + '" id="chevron' + data[i]['index'] + '"><img src="' + data[i]['imageSrc'] + '" alt="' + data[i]['name'] + '"/></div>'
                       $('.chevrons').append(html)
                       //Do something
                   }
