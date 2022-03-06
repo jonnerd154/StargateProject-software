@@ -101,6 +101,9 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "symbols": self.stargate.symbol_manager.get_all_ddslick()
                 }
 
+            elif request_path == "/get/lifetime_stats":
+                data = self.stargate.dialing_log.get_summary()
+
             else:
                 # Unhandled GET request: send a 404
                 self.send_response(404, 'Not Found')
