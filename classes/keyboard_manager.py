@@ -15,6 +15,7 @@ class KeyboardManager:
         self.audio = stargate.audio
         self.addr_manager = stargate.addr_manager
         self.address_book = stargate.addr_manager.get_book()
+        self.symbol_manager = stargate.symbol_manager
 
         self.dhd_test_enable = False
         self.dhd_test_active_buttons = []
@@ -24,15 +25,6 @@ class KeyboardManager:
             self.keyboard_direct_thread_start()
         else:
             self.stdin_thread_start()
-
-    @staticmethod
-    def get_symbol_key_map():
-        # Symbol numbers are mapped as in this document: https://www.rdanderson.com/stargate/glyphs/index.htm
-        return {'8': 1, 'C': 2, 'V': 3, 'U': 4, 'a': 5, '3': 6, '5': 7, 'S': 8, 'b': 9, 'K': 10, 'X': 11, 'Z': 12,
-                  'E': 14, 'P': 15, 'M': 16, 'D': 17, 'F': 18, '7': 19, 'c': 20, 'W': 21, '6': 22, 'G': 23, '4': 24,
-                  'B': 25, 'H': 26, 'R': 27, 'L': 28, '2': 29, 'N': 30, 'Q': 31, '9': 32, 'J': 33, '0': 34, 'O': 35,
-                  'T': 36, 'Y': 37, '1': 38, 'I': 39
-                  }
 
     @staticmethod
     def get_abort_characters():
@@ -88,7 +80,7 @@ class KeyboardManager:
         # pylint: disable-next=import-outside-toplevel
         import keyboard # importing this on MacOS causes a seg fault
 
-        for char_in in self.get_symbol_key_map():
+        for char_in in self.symbol_manager.get_symbol_key_map():
             # Transform upper case presses
             char = char_in
             if char_in != char_in.lower():
@@ -116,7 +108,7 @@ class KeyboardManager:
     def handle_dhd_test(self, key):
         # Handle test mode here
         try:
-            symbol_number = self.get_symbol_key_map()[key]
+            symbol_number = self.symbol_manager.get_symbol_key_map()[key]
             self.log.log(f'DHD Test: Pressed Key {key} --> Symbol {symbol_number}')
         except KeyError:
             if key == self.center_button_key:
@@ -164,7 +156,7 @@ class KeyboardManager:
 
         # Try to convert other key presses to symbol_number
         try:
-            symbol_number = self.get_symbol_key_map()[key]
+            symbol_number = self.symbol_manager.get_symbol_key_map()[key]
             self.queue_symbol(symbol_number)
             return
         except KeyError:

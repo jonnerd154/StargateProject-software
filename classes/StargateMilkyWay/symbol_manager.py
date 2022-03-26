@@ -11,163 +11,207 @@ class StargateSymbolManager:
         self.symbols = [
             {
                 'index': 1,
-                'name': "Earth"
+                'name': "Earth",
+                'keyboard_mapping': "8"
             },
             {
                 'index': 2,
-                'name': "Crater"
+                'name': "Crater",
+                'keyboard_mapping': "C"
             },
             {
                 'index': 3,
-                'name': "Virgo"
+                'name': "Virgo",
+                'keyboard_mapping': "V"
             },
             {
                 'index': 4,
-                'name': "Bootes"
+                'name': "Bootes",
+                'keyboard_mapping': "U"
             },
             {
                 'index': 5,
-                'name': "Centaurus"
+                'name': "Centaurus",
+                'keyboard_mapping': "a"
             },
             {
                 'index': 6,
-                'name': "Libra"
+                'name': "Libra",
+                'keyboard_mapping': "3"
             },
             {
                 'index': 7,
-                'name': "Serpens Caput"
+                'name': "Serpens Caput",
+                'keyboard_mapping': "5"
             },
             {
                 'index': 8,
-                'name': "Norma"
+                'name': "Norma",
+                'keyboard_mapping': "S"
             },
             {
                 'index': 9,
-                'name': "Scorpio"
+                'name': "Scorpio",
+                'keyboard_mapping': "b"
             },
             {
                 'index': 10,
-                'name': "Cra"
+                'name': "Cra",
+                'keyboard_mapping': "K"
             },
             {
                 'index': 11,
-                'name': "Scutum"
+                'name': "Scutum",
+                'keyboard_mapping': "X"
             },
             {
                 'index': 12,
-                'name': "Sagittarius"
+                'name': "Sagittarius",
+                'keyboard_mapping': "Z"
             },
             {
                 'index': 13,
                 'name': "Aquila",
-                'is_on_dhd': False
+                'is_on_dhd': False,
+                'keyboard_mapping': False
             },
             {
                 'index': 14,
-                'name': "Mic"
+                'name': "Mic",
+                'keyboard_mapping': "E"
             },
             {
                 'index': 15,
-                'name': "Capricorn"
+                'name': "Capricorn",
+                'keyboard_mapping': "P"
             },
             {
                 'index': 16,
-                'name': "Pisces Austrinus"
+                'name': "Pisces Austrinus",
+                'keyboard_mapping': "M"
             },
             {
                 'index': 17,
-                'name': "Equuleus"
+                'name': "Equuleus",
+                'keyboard_mapping': "D"
             },
             {
                 'index': 18,
-                'name': "Aquarius"
+                'name': "Aquarius",
+                'keyboard_mapping': "F"
             },
             {
                 'index': 19,
-                'name': "Pegasus"
+                'name': "Pegasus",
+                'keyboard_mapping': "7"
             },
             {
                 'index': 20,
-                'name': "Sculptor"
+                'name': "Sculptor",
+                'keyboard_mapping': "c"
             },
             {
                 'index': 21,
-                'name': "Pisces"
+                'name': "Pisces",
+                'keyboard_mapping': "W"
             },
             {
                 'index': 22,
-                'name': "Andromeda"
+                'name': "Andromeda",
+                'keyboard_mapping': "6"
             },
             {
                 'index': 23,
-                'name': "Triangulum"
+                'name': "Triangulum",
+                'keyboard_mapping': "G"
             },
             {
                 'index': 24,
-                'name': "Aries"
+                'name': "Aries",
+                'keyboard_mapping': "4"
             },
             {
                 'index': 25,
-                'name': "Perseus"
+                'name': "Perseus",
+                'keyboard_mapping': "B"
             },
             {
                 'index': 26,
-                'name': "Cetus"
+                'name': "Cetus",
+                'keyboard_mapping': "H"
             },
             {
                 'index': 27,
-                'name': "Taurus"
+                'name': "Taurus",
+                'keyboard_mapping': "R"
             },
             {
                 'index': 28,
-                'name': "Auriga"
+                'name': "Auriga",
+                'keyboard_mapping': "L"
             },
             {
                 'index': 29,
-                'name': "Eridanus"
+                'name': "Eridanus",
+                'keyboard_mapping': "2"
             },
             {
                 'index': 30,
-                'name': "Orion"
+                'name': "Orion",
+                'keyboard_mapping': "N"
             },
             {
                 'index': 31,
-                'name': "Canis Minor"
+                'name': "Canis Minor",
+                'keyboard_mapping': "Q"
             },
             {
                 'index': 32,
-                'name': "Monoceros"
+                'name': "Monoceros",
+                'keyboard_mapping': "9"
             },
             {
                 'index': 33,
-                'name': "Gemini"
+                'name': "Gemini",
+                'keyboard_mapping': "J"
             },
             {
                 'index': 34,
-                'name': "Hydra"
+                'name': "Hydra",
+                'keyboard_mapping': "0"
             },
             {
                 'index': 35,
-                'name': "Lynx"
+                'name': "Lynx",
+                'keyboard_mapping': "O"
             },
-
             {
                 'index': 36,
-                'name': "Cancer"
+                'name': "Cancer",
+                'keyboard_mapping': "T"
             },
             {
                 'index': 37,
-                'name': "Sextans"
+                'name': "Sextans",
+                'keyboard_mapping': "Y"
             },
             {
                 'index': 38,
-                'name': "Leo Minor"
+                'name': "Leo Minor",
+                'keyboard_mapping': "1"
             },
             {
                 'index': 39,
-                'name': "Leo"
+                'name': "Leo",
+                'keyboard_mapping': "I"
             }
         ]
+
+    def get_symbol_key_map(self):
+        keyboard_mapping = {}
+        for symbol in self.symbols:
+            keyboard_mapping.update({ symbol.get('keyboard_mapping'): symbol.get('index') })
+        return keyboard_mapping
 
     def get_all(self):
         return self.symbols
