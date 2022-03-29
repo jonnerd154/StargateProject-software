@@ -82,7 +82,8 @@ class SoftwareUpdateV2:
             self.log.log("!!!! Local copy of Gate has been modified, aborting update!")
             return
 
-        update_audio = self.audio.play_random_audio_clip("update")
+        # Play a random update-related clip
+        self.audio.play_random_clip("update")
 
         # Git pull
         self.repo.git.checkout(version_config.get('tag_commit'))
@@ -93,8 +94,8 @@ class SoftwareUpdateV2:
         # Run PIP requirements.txt update
         #subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", Path.joinpath(root_path, 'requirements.txt')])
 
-        if update_audio.is_playing():
-            update_audio.wait_done()
+        # Wait for the clip to finish playing before restarting
+        self.audio.random_clip_wait_done()
 
         self.log.log('Update installed -> restarting the program')
 
