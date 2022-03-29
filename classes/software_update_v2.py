@@ -68,7 +68,9 @@ class SoftwareUpdateV2:
                     "tag_version": tag_version
                 }
 
-        pprint(newer_versions)
+        #TODO DEBUG REMOVE
+        #pprint(newer_versions)
+
         # Sort the list and pick out the next-newest version
         return OrderedDict(sorted(newer_versions.items()))
 
@@ -83,7 +85,7 @@ class SoftwareUpdateV2:
         update_audio = self.audio.play_random_audio_clip("update")
 
         # Git pull
-        self.repo.git.checkout(version_config.get('tag_version'))
+        self.repo.git.checkout(version_config.get('tag_commit'))
 
         # Run apt-get updates:
         ### TODO
