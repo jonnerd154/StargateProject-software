@@ -1,7 +1,6 @@
 import socket
 import subprocess
 
-from database import Database
 import subspace_messages
 
 class SubspaceClient:
@@ -11,8 +10,6 @@ class SubspaceClient:
         self.log = stargate.log
         self.cfg = stargate.cfg
         self.net_tools = stargate.net_tools
-
-        self.database = Database(stargate.base_path, stargate.galaxy_path)
 
         self.logging = "normal"
         #self.logging = "verbose"

@@ -97,7 +97,6 @@ class GateApplication:
         if self.cfg.get("software_update_enabled"):
             self.sw_updater.check_and_install()
 
-        quit()
         ### Create the Stargate object
         self.log.log(f'Booting up the Stargate! Version {self.sw_updater.get_current_version()}')
 

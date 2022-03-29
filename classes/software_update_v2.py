@@ -12,13 +12,7 @@ from packaging import version
 import git
 
 from network_tools import NetworkTools
-from database import Database
 from version import VERSION as current_version
-
-
-from pprint import pprint
-
-
 
 class SoftwareUpdateV2:
 
@@ -102,14 +96,6 @@ class SoftwareUpdateV2:
         # TODO: Quit or restart
 
     def check_and_install(self):
-        """
-        This functions tries to update the stargate program with new files listed in the database
-        main.py must always be updated due to the version variable change in the file.
-        The owner and group of the files is set to match the same as the current __file__ variable.
-        If the requirements.txt file is updated the missing modules will be installed.
-        :return: Nothing is returned.
-        """
-
 
         ## Verify that we have an internet connection, if not, return false.
         if not NetworkTools(self.log).has_internet_access():
