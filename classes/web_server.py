@@ -80,7 +80,8 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "fan_gate_last_update":           self.stargate.cfg.get('fan_gate_last_update'),
                     "dialer_mode":                    self.stargate.dialer.type,
                     "hardware_mode":                  self.stargate.electronics.name,
-                    "audio_volume":                   self.stargate.audio.volume
+                    "audio_volume":                   self.stargate.audio.volume,
+                    "galaxy":                         self.stargate.galaxy
                 }
 
             elif request_path == "/get/hardware_status":
@@ -89,6 +90,9 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "glyph_ring":                     self.stargate.ring.get_status()
                 }
 
+            elif request_path == "/get/dhd_symbols":
+                data = self.stargate.symbol_manager.get_dhd_symbols()
+
             elif request_path == "/get/config":
                 data = collections.OrderedDict(sorted(self.stargate.cfg.get_all_configs().items()))
 
@@ -96,6 +100,9 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 data = {
                     "symbols": self.stargate.symbol_manager.get_all_ddslick()
                 }
+
+            elif request_path == "/get/lifetime_stats":
+                data = self.stargate.dialing_log.get_summary()
 
             else:
                 # Unhandled GET request: send a 404
@@ -138,6 +145,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 self.stargate.wormhole_active = False
                 sleep(5)
                 self.send_response(200, 'OK')
+                self.end_headers()
                 os.system('systemctl poweroff')
                 return
 
@@ -145,7 +153,21 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 self.stargate.wormhole_active = False
                 sleep(5)
                 self.send_response(200, 'OK')
+                self.end_headers()
                 os.system('systemctl reboot')
+                return
+
+            if self.path == '/do/restart':
+                if not self.stargate.app.is_daemon:
+                    self.stargate.log.log("Software Reboot Requested, but not running as Daemon. Unable.")
+                    self.send_response(200, 'Unable, software not running as daemon.')
+                    self.end_headers()
+                    return
+
+                self.stargate.wormhole_active = False
+                sleep(5)
+                self.send_response(200, 'OK')
+                os.system('systemctl restart stargate.service')
                 return
 
             if self.path == "/do/chevron_cycle":

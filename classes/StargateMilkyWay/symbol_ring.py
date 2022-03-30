@@ -82,7 +82,7 @@ class SymbolRing:
         self.backward_direction = stargate.electronics.get_stepper_backward()
 
         # Load the last known ring position
-        self.position_store = StargateConfig(self.base_path, "ring_position.json")
+        self.position_store = StargateConfig(self.base_path, "ring_position", stargate.galaxy_path)
         self.position_store.set_log(self.log)
         self.position_store.load()
 

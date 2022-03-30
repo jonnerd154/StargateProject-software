@@ -2,7 +2,7 @@ from threading import Thread
 from time import time, sleep
 from random import randrange
 
-from stargate_sg1_symbol_manager import StargateSG1SymbolManager
+from symbol_manager import StargateSymbolManager
 from chevrons import ChevronManager
 from dialers import Dialer
 from keyboard_manager import KeyboardManager
@@ -13,7 +13,7 @@ from subspace_client import SubspaceClient
 from wormhole_manager import WormholeManager
 from subspace_server import SubspaceServer
 
-class StargateSG1:
+class Stargate:
     """
     This is the class to create the stargate object itself.
     """
@@ -28,6 +28,10 @@ class StargateSG1:
         self.net_tools = app.net_tools
         self.sw_updater = self.app.sw_updater
         self.schedule = app.schedule
+        self.galaxy = app.galaxy
+        self.galaxy_path = app.galaxy_path
+
+        self.log.log('Initializing Milky Way Stargate Software')
 
         # Retrieve the configurations
         self.inactivity_timeout = self.cfg.get("dialing_timeout")
@@ -49,7 +53,7 @@ class StargateSG1:
         self.dhd_test = False
 
         ### Set up the needed classes and make them ready to use ###
-        self.symbol_manager = StargateSG1SymbolManager()
+        self.symbol_manager = StargateSymbolManager(self.galaxy_path)
         self.subspace_client = SubspaceClient(self)
         self.addr_manager = StargateAddressManager(self)
         self.chevrons = ChevronManager(self)
@@ -94,7 +98,6 @@ class StargateSG1:
         self.fan_gate_incoming_ip = None # To keep track of the IP address for the remote gate that establishes a wormhole
         self.connected_planet_name = None
 
-    ## Methods to manipulate the StargateSG1 object ###
     def update(self):
         """
         This is the main method to keep the stargate running and make decisions based on the manipulated objects variables.

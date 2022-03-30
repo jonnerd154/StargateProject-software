@@ -190,16 +190,7 @@ function configure_logrotate() {
   # Load the logrotated configs
   echo 'Configuring logrotate'
   sudo tee -a /etc/logrotate.d/stargate > /dev/null <<EOT
-/home/pi/sg1_v4/logs/sg1.log {
-    missingok
-    notifempty
-    size 30k
-    daily
-    rotate 30
-    create 0600 sg1 sg1
-}
-
-/home/pi/sg1_v4/logs/database.log {
+/home/pi/sg1_v4/logs/*.log {
     missingok
     notifempty
     size 30k

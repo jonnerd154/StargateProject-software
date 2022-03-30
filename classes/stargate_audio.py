@@ -42,7 +42,10 @@ class StargateAudio:
 
     def sound_start(self, clip_name):
         if self.cfg.get('audio_enable'):
-            self.sounds[clip_name]['obj'] = self.sounds[clip_name]['file'].play()
+            try:
+                self.sounds[clip_name]['obj'] = self.sounds[clip_name]['file'].play()
+            except: #pylint: disable=bare-except
+                self.log.log("Failed to start audio file - is the USB Audio adapter installed?")
 
     def sound_stop(self, clip_name):
         if self.cfg.get('audio_enable'):
@@ -58,7 +61,10 @@ class StargateAudio:
 
     def incoming_chevron(self):
         if self.cfg.get('audio_enable'):
-            choice(self.incoming_chevron_sounds)['file'].play()
+            try:
+                choice(self.incoming_chevron_sounds)['file'].play()
+            except: #pylint: disable=bare-except
+                self.log.log("Failed to start audio file - is the USB Audio adapter installed?")
 
     def play_random_clip(self, directory):
 
@@ -83,7 +89,11 @@ class StargateAudio:
             rand_file = choice(listdir(path_to_folder)) # Choose a new one.
             filepath = path.join(path_to_folder, rand_file) # Update Filepath
         clip = sa.WaveObject.from_wave_file(path_to_folder + '/' + rand_file)
-        self.random_clip = clip.play()
+
+        try:
+            self.random_clip = clip.play()
+        except: #pylint: disable=bare-except
+            self.log.log("Failed to start audio file - is the USB Audio adapter installed?")
 
         return
 

@@ -2,7 +2,7 @@
 Software for Kristian's Fully Functional 3D Printed Stargate
 
 ## Setup Instructions:
-It is _highly_ recommended to build your gate by using the pre-built Disk Image (ISO) provided by Kristian. 
+It is _highly_ recommended to build your gate by using the pre-built Disk Image (ISO) provided by Kristian.
  - If you are **upgrading an existing gate** read this first: [UPGRADING_FROM_V3.X.md](UPGRADING_FROM_V3.X.md)
  - EXPRESS SETUP process can be found in [EXPRESS_SETUP.md](EXPRESS_SETUP.md)
  - A manual setup guide can be found in [ENVIRONMENT_SETUP.md](ENVIRONMENT_SETUP.md)
@@ -27,7 +27,7 @@ A web interface is provided to allow testing of individual hardware components, 
 [http://stargate.local](http://stargate.local)
 
 ## Web API
-There is a JSON API to interact with the Stargate via a web service. This enables anyone to build software that can control the Stargate. We'd love to see someone build a Stargate Command computer-style controller, or a RPG game that interfaces with the 'Gate. Your imagination is the limit! 
+There is a JSON API to interact with the Stargate via a web service. This enables anyone to build software that can control the Stargate. We'd love to see someone build a Stargate Command computer-style controller, or a RPG game that interfaces with the 'Gate. Your imagination is the limit!
 
 The documentation can be found in the repo, or at one of the below links
 
@@ -42,3 +42,8 @@ The documentation can be found in the repo, or at one of the below links
 Stargate SG-1, Stargate Atlantis & Stargate Universe are ™ & © of Metro-Goldwyn-Mayer Studios Inc.  This project is in no way sponsored or endorsed by: SyFy or MGM. This project was created solely as a hobby project and to help other Stargate fans create their own Stargates and to keep the passion and love for Stargate alive.
 
 TheStargateProject.com is a fan-based project and is not intended to infringe upon any copyrights or registered trademarks.
+
+# Development
+## Running PyLint
+ - To run for StargateMilkyWay: `pylint --rcfile=.pylintrc-milkyway ./*`
+ - To run for StargatePegasus:  `pylint --rcfile=.pylintrc-pegasus ./*`

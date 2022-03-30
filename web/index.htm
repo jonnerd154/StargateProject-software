@@ -20,12 +20,16 @@
         <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
     </head>
     <body>
+        <img src="img/header.jpg" style="alignment: center" width="100%" alt="header_image">
         <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
         <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
 
         <script type="text/javascript">
 
+        var hasSymbols = false;
+
         $(function() {
+            loadDHDSymbols();
             doPoll();
         });
 
@@ -104,6 +108,59 @@
             }
         }
 
+        function loadDHDSymbols(){
+          $.get('stargate/get/dhd_symbols')
+              .done(function(data) {
+
+                  $('.chevrons').html('')
+
+                  // Add the symbols
+                  for (var i = 0; i < data.length; i++) {
+                      html = '<div class="chevron" num="' + data[i]['index'] + '" id="chevron' + data[i]['index'] + '"><img src="' + data[i]['imageSrc'] + '" alt="' + data[i]['name'] + '"/></div>'
+                      $('.chevrons').append(html)
+                      //Do something
+                  }
+
+                  // Add the Center Button
+                  html = '<div class="chevron" num="0" id="chevron0"><img id="center_button_image" src="img/center_button.png" alt="Center Button" /></div>'
+                  $('.chevrons').append(html)
+
+                  // Attach the on-click handlers
+                  $('div.chevrons div.chevron').click(function() {
+                      const symbol_number = $(this).attr('num');
+
+                      $.post({
+                          url: '/stargate/do/dhd_press',
+                          data: JSON.stringify({
+                              symbol: symbol_number
+                          })
+                      })
+                      .fail(function() {
+                          console.log("Failed to communicate with Stargate")
+                          $("<div>Failed to communicate with Stargate</div>").dialog();
+                      })
+                      .done(function() {
+                          // Call the doPoll() function with single-shot mode so we can update ASAP
+                          doPoll( true )
+                      });
+                  });
+
+                  hasSymbols = true
+
+                  // Run the "recover from offline" process
+                  returnFromOffline()
+
+
+              })
+              .fail(function(jqXHR, textStatus, errorThrown) {
+                  // Show the "we're offline modal"
+                  showOfflineModal()
+
+              }
+
+          );
+        }
+
         function doPoll( singleShot = false ){
 
             $.get('stargate/get/dialing_status')
@@ -113,8 +170,8 @@
                       doSpeedDial(data.speed_dial_full_address);
                     }
 
-                    // Hide the offline modal
-                    hideOfflineModal()
+                    // Run the "recover from offline" process
+                    returnFromOffline()
 
                     // Update the Wormhole status
                     updateWormholeStatus(data)
@@ -155,6 +212,13 @@
             offline_modal.dialog("close");
         }
 
+        function returnFromOffline(){
+          if (!hasSymbols){
+            loadDHDSymbols();
+          }
+          hideOfflineModal()
+        }
+
         function updateConnectedPlanetStatus(data){
             if (data.wormhole_active && data.connected_planet){
 
@@ -164,7 +228,7 @@
                     $('body').css('background-color', '#721121')
                 }
                 else{
-                    $('body').css('background-color', 'black')
+                    $('body').css('background-color', '#7F95A3')
                 }
                 content += "</p>"
                 $('#connected-planet').html(content)
@@ -205,7 +269,7 @@
                 }
 
                 $('#connected-planet').html("&nbsp;")
-                $('body').css('background-color', 'black')
+                $('body').css('background-color', '#7F95A3')
             }
         }
 
@@ -278,7 +342,6 @@
             }
         }
 
-
         </script>
         <div class="gate-status">
             <span id='wormhole-status'></span>
@@ -288,57 +351,14 @@
         <div class="dial-sequence">
         </div>
 
-        <div class="chevrons">
-            <!-- Chevrons from Manz: https://codepen.io/manz/pen/zoREJL -->
-            <div class="chevron" num="1" id="chevron1"><img src="chevrons/001.svg" /></div>
-            <div class="chevron" num="2" id="chevron2"><img src="chevrons/002.svg" /></div>
-            <div class="chevron" num="3" id="chevron3"><img src="chevrons/003.svg" /></div>
-            <div class="chevron" num="4" id="chevron4"><img src="chevrons/004.svg" /></div>
-            <div class="chevron" num="5" id="chevron5"><img src="chevrons/005.svg" /></div>
-            <div class="chevron" num="6" id="chevron6"><img src="chevrons/006.svg" /></div>
-            <div class="chevron" num="7" id="chevron7"><img src="chevrons/007.svg" /></div>
-            <div class="chevron" num="8" id="chevron8"><img src="chevrons/008.svg" /></div>
-            <div class="chevron" num="9" id="chevron9"><img src="chevrons/009.svg" /></div>
-            <div class="chevron" num="10" id="chevron10"><img src="chevrons/010.svg" /></div>
-            <div class="chevron" num="11" id="chevron11"><img src="chevrons/011.svg" /></div>
-            <div class="chevron" num="12" id="chevron12"><img src="chevrons/012.svg" /></div>
-            <div class="chevron" num="13" id="chevron13"><img src="chevrons/013.svg" /></div>
-            <div class="chevron" num="14" id="chevron14"><img src="chevrons/014.svg" /></div>
-            <div class="chevron" num="15" id="chevron15"><img src="chevrons/015.svg" /></div>
-            <div class="chevron" num="16" id="chevron16"><img src="chevrons/016.svg" /></div>
-            <div class="chevron" num="17" id="chevron17"><img src="chevrons/017.svg" /></div>
-            <div class="chevron" num="18" id="chevron18"><img src="chevrons/018.svg" /></div>
-            <div class="chevron" num="19" id="chevron19"><img src="chevrons/019.svg" /></div>
-            <div class="chevron" num="20" id="chevron20"><img src="chevrons/020.svg" /></div>
-            <div class="chevron" num="21" id="chevron21"><img src="chevrons/021.svg" /></div>
-            <div class="chevron" num="22" id="chevron22"><img src="chevrons/022.svg" /></div>
-            <div class="chevron" num="23" id="chevron23"><img src="chevrons/023.svg" /></div>
-            <div class="chevron" num="24" id="chevron24"><img src="chevrons/024.svg" /></div>
-            <div class="chevron" num="25" id="chevron25"><img src="chevrons/025.svg" /></div>
-            <div class="chevron" num="26" id="chevron26"><img src="chevrons/026.svg" /></div>
-            <div class="chevron" num="27" id="chevron27"><img src="chevrons/027.svg" /></div>
-            <div class="chevron" num="28" id="chevron28"><img src="chevrons/028.svg" /></div>
-            <div class="chevron" num="29" id="chevron29"><img src="chevrons/029.svg" /></div>
-            <div class="chevron" num="30" id="chevron30"><img src="chevrons/030.svg" /></div>
-            <div class="chevron" num="31" id="chevron31"><img src="chevrons/031.svg" /></div>
-            <div class="chevron" num="32" id="chevron32"><img src="chevrons/032.svg" /></div>
-            <div class="chevron" num="33" id="chevron33"><img src="chevrons/033.svg" /></div>
-            <div class="chevron" num="34" id="chevron34"><img src="chevrons/034.svg" /></div>
-            <div class="chevron" num="35" id="chevron35"><img src="chevrons/035.svg" /></div>
-            <div class="chevron" num="36" id="chevron36"><img src="chevrons/036.svg" /></div>
-            <div class="chevron" num="37" id="chevron37"><img src="chevrons/037.svg" /></div>
-            <div class="chevron" num="38" id="chevron38"><img src="chevrons/038.svg" /></div>
-            <div class="chevron" num="39" id="chevron39"><img src="chevrons/039.svg" /></div>
-
-            <div class="chevron" num="0" id="chevron0"><img id='center_button_image' src="img/center_button.png" /></div>
-        </div>
+        <div class="chevrons"></div>
 
         <div class="controls">
             <br />
             <div class="control" onclick="window.location = 'address_book.htm';">
                 Address Book<br><br>
             </div>
-            <div class="control" onclick="window.location = 'testing.htm';">
+            <div class="control" onclick="window.location = 'debug.htm';">
                 Testing / Debug
             </div>
             <div class="control" onclick="window.location = 'info.htm';">
@@ -346,29 +366,5 @@
             </div>
         </div>
 
-        <script type="text/javascript">
-
-            $('div.chevrons div.chevron').click(function() {
-                const symbol_number = $(this).attr('num');
-
-                $.post({
-                    url: '/stargate/do/dhd_press',
-                    data: JSON.stringify({
-                        symbol: symbol_number
-                    })
-                })
-                .fail(function() {
-                    console.log("Failed to communicate with Stargate")
-                    $("<div>Failed to communicate with Stargate</div>").dialog();
-                })
-                .done(function() {
-                    // Call the doPoll() function with single-shot mode so we can update ASAP
-                    doPoll( true )
-                });
-            });
-
-
-
-        </script>
     </body>
 </html>

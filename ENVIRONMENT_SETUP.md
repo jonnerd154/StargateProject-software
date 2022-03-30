@@ -11,29 +11,23 @@ The majority of the installation is completed by a script at `sg1_v4/install/ins
 3. Click on "Raspberry Pi OS (Other)"
 4. Select _Raspberry Pi OS Lite (32-bit)_ (At the time of this writing: Debian v11/"Bullseye")
 5. Click Choose Storage, and select your SD card.
-6. Click "Write." Accept any warnings, and you may need to enter an Admin password for the computer you're working on.
-7. When the process is complete, remove the SD card, and insert back *into the same computer*, _not_ the raspberry pi. We have one more thing to do before installing it in the Pi.
-
-## Configure Wi-Fi & enable SSH
-1. After reinserting the SD card, it should appear on your computer as a drive. Browse to that drive.
-2. Create a new file with the below contents (substituting your Wi-Fi credentials) and save it to the root directory of the SD card's `/boot` partition.
- - It must be named _exactly_ `wpa_supplicant.conf`
- - Adjust the `country=` line to match your country (use the [ISO 2-letter abbreviation](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements), in lowercase. )
- - Replace `YOUR_NETWORK_SSID` and `YOUR_NETWORK_SSID` with your network's details. Your values should be enclosed in `"` (double quotes) *These are case-sensitive, and spaces matter!*
-```
-country=us
-update_config=1
-ctrl_interface=/var/run/wpa_supplicant
-
-network={
- scan_ssid=1
- ssid="YOUR_NETWORK_SSID"
- psk="YOUR_PASSWORD"
-}
-```
-3. Create a blank file called `ssh` in `/boot/` (`/boot/ssh`) to enable SSH
-4. Eject the SD card, and reinstall it in your Raspberry Pi
-5. Power the Raspberry Pi and wait for it to boot (the green light will stop flickering)
+6. Click on the GEAR icon in the bottom right corner. Configure some settings:
+  - Set Hostname: `YES` (`stargate`)
+  - Enable SSH: `YES` (Use Password Authentication)
+  - Set Username and Password: `YES`
+    - Username: `pi`
+    - Password: `sg1`
+  - Configure wifi: `YES`
+    - Enter your wifi AP credentials
+    - Select your country code for Wi-Fi Compliance
+  - Set Locale Settings: `YES`
+    - Time Zone
+    - Keyboard Layout
+    - Skip First Run Wizard: `YES`
+  - Click SAVE.
+7. Click "Write." Accept any warnings, and you may need to enter an Admin password for the computer you're working on.
+8. When the process is complete, remove the SD card and reinstall it in your Raspberry Pi
+9. Power the Raspberry Pi and wait for it to boot (the green light will stop flickering)
 
 ## Connecting to the Pi for the first time
 1. You need to find the Raspi's IP address. There are a few ways to do this:
@@ -44,13 +38,17 @@ network={
   - Windows: Use PuTTY
   - MacOS: Use Terminal: `ssh pi@YOURIPADDRESS`
   
-Default login credentials (NOTE: password will change to `sg1` after installation):
+Login credentials:
   ```
   Username: pi
-  Password: raspberry
+  Password: sg1
   ```
 
-## Copying the Software bundle
+## Copying the software bundle (git clone)
+1. Clone the Repo: `cd ~ && git clone https://github.com/jonnerd154/StargateProject2021.git sg1_v4`
+2. TODO: download audio files
+
+## (ALTERNATIVE) Copying the Software bundle (Via SCP)
 1. Connect to the Pi using an SCP/SFTP file transfer client.
     - Windows: [WinSCP](https://winscp.net/eng/index.php) or [FileZilla](https://filezilla-project.org/download.php?type=client)
     - MacOS: [CyberDuck](https://cyberduck.io/) or [FileZilla](https://filezilla-project.org/download.php?type=client)

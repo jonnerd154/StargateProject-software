@@ -3,7 +3,6 @@ from threading import Thread
 from time import sleep
 from icmplib import ping
 
-from database import Database
 import subspace_messages
 
 class SubspaceServer:
@@ -22,8 +21,6 @@ class SubspaceServer:
         self.subspace_client = stargate.subspace_client
         self.addr_manager = stargate.addr_manager
         self.address_book = stargate.addr_manager.get_book()
-
-        self.database = Database(self.base_path)
 
         self.logging = "normal"
         #self.logging = "verbose"

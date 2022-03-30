@@ -10,13 +10,15 @@ sys.path.append('config')
 
 class StargateConfig:
 
-    def __init__(self, base_path, file_name):
+    def __init__(self, base_path, file_name, galaxy_path):
 
         self.file_name = file_name
         self.conf_dir = base_path + "/config" #No trailing slash
         self.log = None # call set_log when log is available
+        self.galaxy_path = galaxy_path
 
         self.config = None
+        self.config_defaults = None
 
         # pass now, setup the logger, then set the logger, then use the class
 
@@ -26,19 +28,30 @@ class StargateConfig:
             #print(f"Loading {self.file_name}")
             with open(self.get_full_file_path(), "r", encoding="utf8") as file:
                 self.config = json.load(file)
+            self.load_defaults() # load the defaults in case we need them later
         except FileNotFoundError:
             # The Config file doesn't exist
             # Check if there's a default config available to load
             self.copy_default_config_file()
             self.log.log(f"*** Configuration initialized with default file {self.file_name}")
 
+    def load_defaults(self):
+        # Open the json file and load it into a python object
+        try:
+            with open(self.get_default_file_path(), "r", encoding="utf8") as file:
+                self.config_defaults = json.load(file)
+        except FileNotFoundError:
+            # The Config file doesn't exist
+            self.log.log(f"Default Configuration for {self.file_name} not found!")
+
+    def get_default_file_path(self):
+        return self.conf_dir + "/defaults-" + self.galaxy_path + "/" + self.file_name + ".json.dist"
 
     def copy_default_config_file(self):
         # If the file exists, copy the file into the config directory
         try:
-            defaults_file_path = self.conf_dir + "/defaults/" + self.file_name + ".dist"
-            shutil.copyfile( defaults_file_path, self.get_full_file_path())
-            os.chmod(self.get_full_file_path(), 0o777)
+            shutil.copyfile( self.get_default_file_path(), self.get_full_file_path())
+            os.chmod(self.get_full_file_path(), 0o655)
         except FileNotFoundError:
             print(f"Default Configuration file not found for {self.file_name}. Quitting.")
             sys.exit(1)
@@ -51,7 +64,7 @@ class StargateConfig:
         self.log = log
 
     def get_full_file_path(self):
-        return self.conf_dir+"/"+self.file_name
+        return self.conf_dir + "/" + self.galaxy_path + "-" + self.file_name + ".json"
 
     def get(self, key):
         config = self.get_full_config_by_key( key )
@@ -65,9 +78,21 @@ class StargateConfig:
     def get_full_config_by_key(self, key):
         try:
             config_record = self.config.get(key)
-        except json.decoder.JSONDecodeError as ex:
-            self.log.log(f"*** ERROR: Key '{key}' not found in {self.file_name}!")
-            raise NameError(f"Key {key} not found.") from ex
+
+            if config_record is None:
+                raise TypeError(f"Config key {key} not found in local config")
+
+        except (TypeError, json.decoder.JSONDecodeError) as ex:
+            # Check if the key is found in the defaults.
+            try:
+                config_record = self.config_defaults.get(key)
+                # We found the config key in the defaults, copy it to the local config
+                self.log.log(f"Setting new config value from defaults {key}")
+                self.__set_direct(key, config_record)
+
+            except json.decoder.JSONDecodeError as ex:
+                self.log.log(f"Key {key} not found in defaults.")
+                raise TypeError(f"Config key {key} not found in defaults") from ex
         try:
             if config_record['type'] == 'dict':
                 # Expand the values to include metadata
@@ -82,7 +107,8 @@ class StargateConfig:
         except TypeError as ex:
             # We should never hit this case in production.
             self.log.log(f"!!!!!!! config key {key} is missing metadata")
-            raise TypeError(f"Config key {key} not found") from ex
+            raise TypeError(f"Config key {key} not found in default or local config") from ex
+
 
         return config_record
 
@@ -121,6 +147,13 @@ class StargateConfig:
         Without validation, sets and persists a single key/value pair
         '''
         self.set_non_persistent(key, value)
+        self.save()
+
+    def __set_direct(self, key, configuration):
+        '''
+        Without validation, sets and persists a complete configuration element
+        '''
+        self.config[key] = configuration
         self.save()
 
     def set(self, key, value):

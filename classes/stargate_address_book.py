@@ -2,7 +2,7 @@ from stargate_config import StargateConfig
 
 class StargateAddressBook:
 
-    def __init__(self, manager):
+    def __init__(self, manager, galaxy_path):
 
         self.manager = manager
         self.cfg = manager.cfg
@@ -10,10 +10,9 @@ class StargateAddressBook:
         self.log = manager.log
 
         # Initialize the Config
-        self.datastore = StargateConfig(self.base_path, "addresses.json")
+        self.datastore = StargateConfig(self.base_path, "addresses", galaxy_path)
         self.datastore.set_log(self.log)
         self.datastore.load()
-
 
     def initialize_storage(self):
         self.datastore.remove_all()
