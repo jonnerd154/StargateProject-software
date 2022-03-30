@@ -59,9 +59,6 @@ class SoftwareUpdateV2:
                     "tag_version": tag_version
                 }
 
-        #TODO DEBUG REMOVE
-        #pprint(newer_versions)
-
         # Sort the list and pick out the next-newest version
         return OrderedDict(sorted(newer_versions.items()))
 
