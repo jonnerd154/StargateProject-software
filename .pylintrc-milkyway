@@ -23,7 +23,7 @@ fail-under=10.0
 ignore=
     LICENSE,README.md,UPGRADING_MODULES.md,ENVIRONMENT_SETUP.md,changelog.md,
     requirements.txt,test,API_DOCUMENTATION.html,api_spec.yaml,EXPRESS_SETUP.md,
-    UPGRADING_FROM_V3.X.md, classes/StargatePegasus
+    UPGRADING_FROM_V3.X.md
 
 # Add files or directories matching the regex patterns to the ignore-list. The
 # regex matches against paths and can be in Posix or Windows format.

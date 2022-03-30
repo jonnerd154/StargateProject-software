@@ -23,14 +23,11 @@ from software_update_v2 import SoftwareUpdateV2
 from stargate_audio import StargateAudio
 from web_server import StargateWebServer
 
-#GALAXY = "Milky Way"
-GALAXY = "Pegasus"
+GALAXY = "Milky Way"
 
 # Include the galaxy-specific variants
 if GALAXY == "Milky Way":
     sys.path.append('classes/StargateMilkyWay')
-elif GALAXY == "Pegasus":
-    sys.path.append('classes/StargatePegasus')
 
 from stargate import Stargate
 from electronics import Electronics
@@ -140,7 +137,7 @@ class GateApplication:
         if not self.check_is_daemon():
             self.log.log("Please manually restart the software")
             sys.exit(0)
-            
+
         os.system('systemctl restart stargate.service')
 
     @staticmethod
