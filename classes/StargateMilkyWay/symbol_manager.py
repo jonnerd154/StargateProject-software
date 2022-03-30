@@ -238,7 +238,7 @@ class StargateSymbolManager:
                 'value':        symbol['index'],
                 'selected':     False,
                 'description':  symbol['name'],
-                'imageSrc':     self.get_image_path(symbol['index']) + ".svg"
+                'imageSrc':     self.get_image_path(symbol['index'])
             }
             symbols_out.append(new_symbol)
 
