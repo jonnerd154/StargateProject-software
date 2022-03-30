@@ -91,7 +91,7 @@
       function updateInfo(){
 
         $.ajax({
-            url: '/stargate/get/dhd_symbols',
+            url: '/stargate/get/symbols_all',
             success: function (response) {
               var trHTML = '';
               $.each(response, function (paramName, item) {

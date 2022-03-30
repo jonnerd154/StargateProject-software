@@ -100,13 +100,16 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             elif request_path == "/get/dhd_symbols":
                 data = self.stargate.symbol_manager.get_dhd_symbols()
 
-            elif request_path == "/get/config":
-                data = collections.OrderedDict(sorted(self.stargate.cfg.get_all_configs().items()))
-
             elif request_path == "/get/symbols":
                 data = {
                     "symbols": self.stargate.symbol_manager.get_all_ddslick()
                 }
+
+            elif request_path == "/get/symbols_all":
+                data = self.stargate.symbol_manager.get_all()
+
+            elif request_path == "/get/config":
+                data = collections.OrderedDict(sorted(self.stargate.cfg.get_all_configs().items()))
 
             else:
                 # Unhandled GET request: send a 404

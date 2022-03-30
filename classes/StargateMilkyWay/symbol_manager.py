@@ -214,7 +214,12 @@ class StargateSymbolManager:
         return keyboard_mapping
 
     def get_all(self):
-        return self.symbols
+        symbols_out = []
+        for symbol in self.symbols:
+            new_symbol = symbol.copy()
+            new_symbol['imageSrc'] = self.get_image_path(new_symbol['index'])
+            symbols_out.append(new_symbol)
+        return symbols_out
 
     def get_dhd_symbols(self):
         ret_arr = []
