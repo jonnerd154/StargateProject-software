@@ -79,7 +79,11 @@ class SoftwareUpdateV2:
         #self.repo.git.checkout(version_config.get('tag_commit'))
 
         # Run apt-get updates:
-        ### TODO
+        try:
+            subprocess.check_call(["apt-get", "update"])
+        except: # pylint: disable=bare-except
+            self.log.log("pip update failed")
+            pass
 
         # Run PIP requirements.txt update
         try:
