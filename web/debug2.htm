@@ -1,0 +1,289 @@
+<!--
+*******************************************************************
+***   Kristian's Stargate Project - TheStargateProject.com      ***
+*******************************************************************
+***                                                             ***
+***   Original Software written by Kristian Tysse               ***
+***   Restructuring and Development by Jonathan Moyes           ***
+***                                                             ***
+*******************************************************************
+-->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Jonathan Moyes">
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+
+    <title>Address Book | Stargate Command</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="lib/bootstrap-4.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="main.css" />
+
+  </head>
+
+  <body>
+
+    <script type="text/javascript">
+      // Configuration
+      var poll_delay_default = 5000
+      var poll_delay_offline = 500
+
+      // State variables
+      var poll_delay = poll_delay_default
+
+      var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
+        offline_modal.dialog({
+        autoOpen: false,
+        modal: true,
+        dialogClass: "no-close",
+      });
+
+      $( function() {
+        initialize_button_handlers()
+        doPoll();
+      })
+
+      function restart() {
+          $.post({
+              url: 'stargate/do/restart'
+          });
+      }
+
+      function reboot() {
+          $.post({
+              url: 'stargate/do/reboot'
+          });
+      }
+
+
+      function shutdown() {
+          $.post({
+              url: 'stargate/do/shutdown'
+          });
+      }
+
+      function initialize_button_handlers(){
+        $('div.button_container div.cycleChevronButton').click(function() {
+            const chevron_number = $(this).attr('chevron_number');
+
+            $.post({
+                url: 'stargate/do/chevron_cycle',
+                data: JSON.stringify({
+                    chevron_number: chevron_number
+                })
+            })
+            .fail(function() {
+                console.log("Failed to communicate with Stargate")
+                $("<div>Failed to communicate with Stargate</div>").dialog();
+            });
+        });
+
+        $('div.button_container div.button').click(function() {
+            const action = $(this).attr('action');
+
+            $.post({
+                url: 'stargate/do/' + action,
+            })
+            .fail(function() {
+                console.log("Failed to communicate with Stargate")
+                $("<div>Failed to communicate with Stargate</div>").dialog();
+            });
+        });
+      }
+
+      function doPoll( singleShot = false ){
+        $.get('stargate/get/is_alive')
+          .done(function(data) {
+
+            // Hide the offline modal
+            hideOfflineModal()
+
+            poll_delay = poll_delay_default
+
+            // Schedule the next polling
+            if ( !singleShot ){
+              setTimeout(function(){doPoll( false ); }, poll_delay);
+            }
+          })
+          .fail(function(jqXHR, textStatus, errorThrown) {
+              // Show the "we're offline modal"
+              showOfflineModal()
+
+              // Slow the polling rate to default
+              poll_delay = poll_delay_offline
+
+              // Schedule the next polling
+              if ( !singleShot ){
+                setTimeout(function(){doPoll( false ); }, poll_delay);
+              }
+          }
+        );
+
+      }
+
+      function showOfflineModal(){
+        offline_modal.dialog("open");
+      }
+
+      function hideOfflineModal(){
+        offline_modal.dialog("close");
+      }
+
+    </script>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#">Stargate Command</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.htm">Home</a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="#">Address Book <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="debug.htm">Testing / Debug</a>
+              <a><hr></a>
+              <a class="dropdown-item" href="config.htm">Configuration</a>
+              <a class="dropdown-item" href="info.htm">System Information</a>
+              <a><hr></a>
+              <a class="dropdown-item" href="#">Restart Software</a>
+              <a class="dropdown-item" href="#">Reboot Raspberry Pi</a>
+              <a class="dropdown-item" href="#">Shutdown Raspberry Pi</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <img src="img/header.jpg" style="alignment: center" width="100%" alt="header_image">
+
+    <main role="main" class="container">
+
+      <div class="starter-template">
+
+        <div class="button_container">
+        <h2>Symbol Ring</h2>
+            <div class="button" action="symbol_forward">
+                Forward
+            </div>
+            <div class="button" action="symbol_backward">
+                Backward
+            </div>
+            <div class="button" action="set_glyph_ring_zero">
+                Zero Position (Earth-up)
+            </div>
+          <!--<div class="animation" action="goHome">
+                Home Stargate
+            </div>
+            -->
+      <hr />
+        <h2>Lighting control </h2>
+            <div class="button" action="all_chevron_leds_on">
+                Chevrons On
+            </div>
+            <div class="button" action="all_chevron_leds_off">
+                All Off
+            </div>
+            <div class="button" action="wormhole_on">
+                Wormhole On
+            </div>
+            <div class="button" action="wormhole_off">
+                Wormhole Off
+            </div>
+        <!--
+            <div class="buttonClass" action="homingToggle">
+                Homing LED
+            </div>
+         -->
+        <hr />
+        <h2>Cycle Chevrons (Motors, Lights, Sound)</h2>
+        <div class="cycleChevronButton" chevron_number='1'>
+            Chevron 1
+        </div>
+        <div class="cycleChevronButton" chevron_number='2'>
+            Chevron 2
+        </div>
+        <div class="cycleChevronButton" chevron_number='3'>
+            Chevron 3
+        </div>
+        <div class="cycleChevronButton" chevron_number='4'>
+            Chevron 4
+        </div>
+        <div class="cycleChevronButton" chevron_number='5'>
+            Chevron 5
+        </div>
+        <div class="cycleChevronButton" chevron_number='6'>
+            Chevron 6
+        </div>
+        <div class="cycleChevronButton" chevron_number='7'>
+            Chevron 7
+        </div>
+        <div class="cycleChevronButton" chevron_number='8'>
+            Chevron 8
+        </div>
+        <div class="cycleChevronButton" chevron_number='9'>
+            Chevron 9
+        </div>
+        <hr />
+        <h2>Sound</h2>
+          <div class="button" action="volume_down">
+              Volume Down
+          </div>
+        	<div class="button" action="volume_up">
+              Volume Up
+          </div>
+        <hr />
+        <h2>Simulate</h2>
+            <div class="button" action="simulate_incoming">
+            Incoming Wormhole
+            </div>
+            <div class="button" action="wormhole_off">
+            Disconnect<br>&nbsp;
+            </div>
+        <hr />
+        <h2>Dial Home Device</h2>
+            <div class="button" action="dhd_test_enable">
+                Test Mode<br>Enable
+            </div>
+            <div class="button" action="dhd_test_disable">
+                Test Mode<br>Disable
+            </div>
+          <hr />
+          <!--
+          <hr />
+          <h2>Iris Control (Iris is OPEN)</h2>
+              <div class="cycleChevronButton" chevron_number='1'>
+              Close Iris
+              </div>
+          </div>
+          -->
+        </div>
+
+      </div>
+
+    </main><!-- /.container -->
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script>window.jQuery || document.write('<script src="/lib/bootstrap-4.0.0/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="/lib/bootstrap-4.0.0/assets/js/vendor/popper.min.js"></script>
+    <script src="/lib/bootstrap-4.0.0/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>
