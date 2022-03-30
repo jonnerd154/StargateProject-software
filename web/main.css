@@ -183,6 +183,7 @@ html {
     line-height:75px;
     cursor: pointer;
     font-size: 20pt;
+    background-color: #52b69a;
 }
 
     .presetAddress:hover{
@@ -199,7 +200,57 @@ html {
         height: 75px;
     }
 
+.presetAddressFan {
+    height: 75px;
+    border: 1px solid black;
+    margin: 0 5px 5px;
+    padding: 0 10px;
+    text-align: left;
+    line-height:75px;
+    cursor: pointer;
+    font-size: 20pt;
+    background-color: #168aad;
+}
 
+    .presetAddressFan:hover{
+        border: 1px solid white;
+    }
+
+.presetAddressFan .name, .presetAddress .glyphs {
+    float:left;
+}
+
+.presetAddressFan img {
+        filter: invert(1);
+        width: 75px;
+        height: 75px;
+    }
+
+.presetAddressLAN {
+    height: 75px;
+    border: 1px solid black;
+    margin: 0 5px 5px;
+    padding: 0 10px;
+    text-align: left;
+    line-height:75px;
+    cursor: pointer;
+    font-size: 20pt;
+    background-color: #1a759f;
+}
+
+    .presetAddressLAN:hover{
+        border: 1px solid white;
+    }
+
+.presetAddressLAN .name, .presetAddress .glyphs {
+    float:left;
+}
+
+.presetAddressLAN img {
+        filter: invert(1);
+        width: 75px;
+        height: 75px;
+    }
 .filter-green{
     filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);
 }
@@ -233,5 +284,12 @@ html {
   float: left; /* fix for  buggy browsers */
   display: table-column;
   width: auto;
+  #background-color: #ccc;
+}
+
+.div-table-col-planet-names {
+  float: left; /* fix for  buggy browsers */
+  display: table-column;
+  width: 500px;
   #background-color: #ccc;
 }

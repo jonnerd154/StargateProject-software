@@ -88,10 +88,10 @@
                 fan_gate_string = ""
                 switch (value.type){
                     case "fan":
-                      fan_gate_string = "(FAN)"
+                      fan_gate_string = "Fan"
                       break
                     case "lan":
-                      fan_gate_string = "(LAN)"
+                      fan_gate_string = "LAN"
                       break
                     case "standard":
                       fan_gate_string = ""
@@ -99,7 +99,7 @@
                     default:
                       fan_gate_string = "(Unknown)"
                 }
-                $("#presets").append('<div class="presetAddress" onclick="window.location = \'index.htm?address=' + address_string + '\';"><div class="name">' + value.name + ' ' + fan_gate_string + '</div><div class="glyphs">' + address +  '</div></div>' );
+                $("#presets").append('<div class="presetAddress'+fan_gate_string+'" onclick="window.location = \'index.htm?address=' + address_string + '\';"><div class="div-table-col-planet-names">' + value.name + '</div><div class="glyphs">' + address +  '</div></div>' );
             });
         }
 
