@@ -238,14 +238,15 @@ class StargateSymbolManager:
 
         symbols_out = []
         for symbol in symbols:
-            new_symbol = {
-                'text':         "",
-                'value':        symbol['index'],
-                'selected':     False,
-                'description':  symbol['name'],
-                'imageSrc':     self.get_image_path(symbol['index'])
-            }
-            symbols_out.append(new_symbol)
+            if symbol.get("is_on_dhd", True): # Only show symbols that are on the DHD
+                new_symbol = {
+                    'text':         "",
+                    'value':        symbol['index'],
+                    'selected':     False,
+                    'description':  symbol['name'],
+                    'imageSrc':     symbol['imageSrc']
+                }
+                symbols_out.append(new_symbol)
 
         return symbols_out
     def get_name_by_index(self, index):
