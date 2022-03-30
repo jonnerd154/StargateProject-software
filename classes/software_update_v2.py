@@ -64,7 +64,7 @@ class SoftwareUpdateV2:
         return OrderedDict(sorted(newer_versions.items()))
 
     def do_update(self, version_config):
-        self.log.log(f"Starting update from {self.current_version} to v{version_config.get('tag_version')}.")
+        self.log.log(f"Starting update from v{self.current_version} to v{version_config.get('tag_version')}.")
 
         # Check if the local copy is dirty, if so, abort.
         if self.repo.is_dirty():
