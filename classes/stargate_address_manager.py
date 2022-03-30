@@ -3,7 +3,6 @@ from datetime import datetime
 import json
 import requests
 
-from database import Database
 from stargate_address_book import StargateAddressBook
 
 class StargateAddressManager:
@@ -18,7 +17,6 @@ class StargateAddressManager:
         self.galaxy = stargate.galaxy
         self.galaxy_path = stargate.galaxy_path
 
-        self.database = Database(stargate.base_path, self.galaxy_path)
         self.address_book = StargateAddressBook(self, self.galaxy_path)
 
         self.known_planets = self.address_book.get_standard_gates()
@@ -180,7 +178,7 @@ class StargateAddressManager:
     def get_planet_name_from_ip(self, remote_ip):
         """
         This function gets the planet name of the IP in the fan_gate dictionary.
-        :param fan_gates: The dictionary of fan_gates from the database
+        :param fan_gates: The dictionary of fan_gates from the API
         :param IP: the IP address as a string
         :return: The planet/stargate name is returned as a string.
         """

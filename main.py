@@ -19,7 +19,7 @@ sys.path.append('config')
 
 from stargate_config import StargateConfig
 from ancients_log_book import AncientsLogBook
-from software_update import SoftwareUpdate
+from software_update_v2 import SoftwareUpdateV2
 from stargate_audio import StargateAudio
 from web_server import StargateWebServer
 
@@ -90,10 +90,10 @@ class GateApplication:
 
         ### We'll use NetworkTools and Schedule throughout the app, initialize them here.
         self.net_tools = NetworkTools(self.log)
-        self.schedule = schedule # Alias the class here so it can be used in with a clear interface
+        self.schedule = schedule # Alias the class here so it can be used in other areas with a clear interface
 
         ### Check for new software updates ###
-        self.sw_updater = SoftwareUpdate(self)
+        self.sw_updater = SoftwareUpdateV2(self)
         if self.cfg.get("software_update_enabled"):
             self.sw_updater.check_and_install()
 
@@ -128,6 +128,20 @@ class GateApplication:
 
         self.log.log('The Stargate program is no longer running\r\n\r\n')
         sys.exit(0)
+
+    def restart(self):
+        # If we have a stargate, shut it down
+        try:
+            self.stargate.wormhole_active = False
+            sleep(5)
+        except: # pylint: disable=base_except
+            pass
+
+        if not self.check_is_daemon():
+            self.log.log("Please manually restart the software")
+            sys.exit(0)
+            
+        os.system('systemctl restart stargate.service')
 
     @staticmethod
     def check_is_daemon():
