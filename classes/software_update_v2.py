@@ -12,10 +12,11 @@ class SoftwareUpdateV2:
 
     def __init__(self, app):
 
-        self.current_version = current_version
+        self.app = app
         self.log = app.log
         self.cfg = app.cfg
         self.audio = app.audio
+        self.current_version = current_version
 
         # Retrieve the configurations
         self.base_url = self.cfg.get("software_update_url")
@@ -74,7 +75,7 @@ class SoftwareUpdateV2:
         self.audio.play_random_clip("update")
 
         # Git pull
-        self.repo.git.checkout(version_config.get('tag_commit'))
+        #self.repo.git.checkout(version_config.get('tag_commit'))
 
         # Run apt-get updates:
         ### TODO
@@ -87,11 +88,11 @@ class SoftwareUpdateV2:
 
         self.log.log('Update installed -> restarting the program')
 
-        # TODO: Quit or restart
+        self.app.restart()
 
     def check_and_install(self):
 
-        try:
+        #try:
             ## Verify that we have an internet connection, if not, return false.
             if not NetworkTools(self.log).has_internet_access():
                 self.log.log('No internet connection available. Aborting Software Update.')
@@ -102,7 +103,7 @@ class SoftwareUpdateV2:
             if len(updates_available) > 0:
                 self.log.log(f"Found {len(updates_available)} available update(s)")
                 next_version = list(updates_available.values())[0]
-                most_recent_version = list(updates_available.values())[len(updates_available)-1]['tag_name']
+                most_recent_version = list(updates_available.values())[len(updates_available)-1]
                 self.cfg.set('software_update_status', f"Update Available: {most_recent_version.get('tag_name')}")
 
                 # Start the update process to move us up one version
@@ -113,8 +114,8 @@ class SoftwareUpdateV2:
                 self.cfg.set('software_update_status', 'up-to-date' )
                 self.cfg.set('software_update_exception', False )
 
-        except Exception as ex: # pylint: disable=broad-except
-            self.log.log(f"Software update failed with error: {ex}")
-            self.cfg.set('software_update_last_check', str(datetime.now()))
-            # Flag the problem in update_exception, not update_status so that update_status can show that an update is available.
-            self.cfg.set('software_update_exception', True)
+        # except Exception as ex: # pylint: disable=broad-except
+        #     self.log.log(f"Software update failed with error: {ex}")
+        #     self.cfg.set('software_update_last_check', str(datetime.now()))
+        #     # Flag the problem in update_exception, not update_status so that update_status can show that an update is available.
+        #     self.cfg.set('software_update_exception', True)

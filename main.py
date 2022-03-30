@@ -129,6 +129,15 @@ class GateApplication:
         self.log.log('The Stargate program is no longer running\r\n\r\n')
         sys.exit(0)
 
+    def restart(self):
+        if self.check_is_daemon():
+            self.log.log("Please manually restart the software")
+            sys.exit(0)
+
+        self.stargate.wormhole_active = False
+        sleep(5)
+        os.system('systemctl restart stargate.service')
+
     @staticmethod
     def check_is_daemon():
         for index, arg in enumerate(sys.argv): # pylint: disable=unused-variable
