@@ -40,7 +40,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     data['address_book'] = collections.OrderedDict(sorted(all_addr.items()))
 
                 data['galaxy_path'] = self.stargate.galaxy_path
-                
+
             elif request_path == "/get/local_address":
                 data = self.stargate.addr_manager.get_book().get_local_address()
 
