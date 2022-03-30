@@ -74,7 +74,7 @@ class SoftwareUpdateV2:
         self.audio.play_random_clip("update")
 
         # Git pull
-        #self.repo.git.checkout(version_config.get('tag_commit'))
+        self.repo.git.checkout(version_config.get('tag_commit'))
 
         # Run apt-get updates, as supported:
         if self.is_raspi():
