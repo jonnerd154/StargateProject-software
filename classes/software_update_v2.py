@@ -66,9 +66,9 @@ class SoftwareUpdateV2:
         self.log.log(f"Starting update from v{self.current_version} to v{version_config.get('tag_version')}.")
 
         # Check if the local copy is dirty, if so, abort.
-        if self.repo.is_dirty():
-            self.log.log("!!!! Local copy of Gate has been modified, aborting update!")
-            return
+        # if self.repo.is_dirty():
+        #     self.log.log("!!!! Local copy of Gate has been modified, aborting update!")
+        #     return
 
         # Play a random update-related clip
         self.audio.play_random_clip("update")
