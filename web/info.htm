@@ -5,56 +5,64 @@
 ***                                                             ***
 ***   Original Software written by Kristian Tysse               ***
 ***   Restructuring and Development by Jonathan Moyes           ***
-***   Web Interface adapted from Dan Clarke:                    ***
-***      https://github.com/danclarke/WorkingStargateMk2Raspi   ***
 ***                                                             ***
 *******************************************************************
 -->
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Stargate Command</title>
-        <link rel="stylesheet" href="lib/jquery-ui-1.13.0.custom/jquery-ui.css">
-        <link rel="stylesheet" href="main.css" />
-        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
 
-        <style>
-        .button, .cycleChevronButton {margin:10px;}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Jonathan Moyes">
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
 
-        .dd-selected-image, .dd-option-image {
-        	max-height: 25px !important;
-        }
+    <title>System Info | Stargate Command</title>
 
-        label.dd-selected-text {
-           line-height: 20px !important;
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="lib/jquery-ui-1.13.0.custom/jquery-ui.css">
+    <link href="lib/bootstrap-4.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-        }
-        a.dd-selected, a.dd-option-description {
-        	color: black;
-        }
+    <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
+    <script type="text/javascript" src="lib/jquery.ddslick.min.js"></script>
 
-        input[type='number']{
-            width:150px;
-        }
+    <!-- Custom styles for this template -->
+    <style>
+    .button, .cycleChevronButton {margin:10px;}
 
-        #lcl_addr_image_container img{
-          max-height: 40px;
-          filter: invert(1);
-        }
+    .dd-selected-image, .dd-option-image {
+      max-height: 25px !important;
+    }
 
-        #lcl_addr_image_container, #localStargateAddress{
-          display: inline-flex;
-          align-items: center;
-        }
+    label.dd-selected-text {
+       line-height: 20px !important;
 
-        </style>
+    }
+    a.dd-selected, a.dd-option-description {
+      color: black;
+    }
 
-        <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
-        <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
-        <script type="text/javascript" src="lib/jquery.ddslick.min.js"></script>
-    </head>
-    <body>
+    input[type='number']{
+        width:150px;
+    }
 
+    #lcl_addr_image_container img{
+      max-height: 40px;
+      filter: invert(1);
+    }
+
+    #lcl_addr_image_container, #localStargateAddress{
+      display: inline-flex;
+      align-items: center;
+    }
+
+    </style>
+    <link rel="stylesheet" href="main.css" />
+
+  </head>
+
+  <body>
     <script type="text/javascript" >
 
       // Configuration
@@ -495,95 +503,126 @@
 
     </script>
 
-    <div id="dialog-form" title="Configure Local Gate Address">
-      <p class="validateTips">Enter the Address you which to use.</p>
-      <form>
-          <fieldset>
-            <div id="symbol_1"></div>
-            <div id="symbol_2"></div>
-            <div id="symbol_3"></div>
-            <div id="symbol_4"></div>
-            <div id="symbol_5"></div>
-            <div id="symbol_6"></div>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#">Stargate Command</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-            <!-- Allow form submission with keyboard without duplicating the dialog button -->
-            <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
-          </fieldset>
-      </form>
-    </div>
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.htm">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="address_book.htm">Address Book</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="debug.htm">Testing / Debug</a>
+              <a><hr></a>
+              <a class="dropdown-item" href="config.htm">Configuration</a>
+              <a class="dropdown-item active" href="#">System Information  <span class="sr-only">(current)</span></a>
+              <a><hr></a>
+              <a class="dropdown-item" href="#">Restart Software</a>
+              <a class="dropdown-item" href="#">Reboot Raspberry Pi</a>
+              <a class="dropdown-item" href="#">Shutdown Raspberry Pi</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
 
-    <div id="dialog-form-subspace-ip" title="Configure Subspace IP Address">
-      <p class="validateTips">Enter the IP address assigned to this gate by Kristian</p>
-      <form>
-          <fieldset>
-            <input type="text" class="form-control" id="subspace_ip_input" name="subspace_ip" placeholder="Subspace IP Address"/>
+    <img src="img/header.jpg" style="alignment: center" width="100%" alt="header_image">
 
-            <!-- Allow form submission with keyboard without duplicating the dialog button -->
-            <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
-          </fieldset>
-      </form>
-    </div>
-    <h3>System Information</h3>
-    <div class='div-table'>
-      <div class="div-table-row"><span class="div-table-col-names">Stargate Name:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="gateName">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Galaxy:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="galaxy">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Software Version:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="softwareVersion">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">&nbsp;&nbsp;Status:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="softwareUpdateStatus">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">&nbsp;&nbsp;Last Checked:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="softwareUpdateTime">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Python Version:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="pythonVersion">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Local Stargate Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="localStargateAddress">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Subspace Status:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="subspaceStatus">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Subspace Public Key:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="publicKey">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Subspace IP Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="subspaceIPAddress">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Internet Connection:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="hasInternet">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">LAN IP Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="lanIPAddress">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Known Standard Gates:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="standardGateCount">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Known Fan Gates:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="fanGateCount">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Known LAN Gates:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="lanGateCount">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">&nbsp;&nbsp;Last Updated:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="fanGateLastUpdate">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Dialer Mode:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="dialerMode">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Hardware in Use:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="hardwareMode">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Audio Volume (%):&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="volumeAsPercent">Loading...</span></div>
-    </div>
+    <main role="main" class="container">
 
-    <h3>Lifetime Statistics</h3>
-    <div class='div-table'>
-      <div class="div-table-row"><span class="div-table-col-names">Dialing Failures</span><span class="div-table-col-values" id="stats_dialing_failures">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Count of Established Outbound to Fan Gates</span><span class="div-table-col-values" id="stats_established_fan_count">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Minutes Established Outbound to Fan Gates</span><span class="div-table-col-values" id="stats_established_fan_mins">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Count of Established Outbound to Standard Gates</span><span class="div-table-col-values" id="stats_established_standard_count">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Minutes Established Outbound to Standard Gates</span><span class="div-table-col-values" id="stats_established_standard_mins">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Count Inbound Established</span><span class="div-table-col-values" id="stats_inbound_count">Loading...</span></div>
-      <div class="div-table-row"><span class="div-table-col-names">Minutes Inbound Established</span><span class="div-table-col-values" id="stats_inbound_mins">Loading...</span></div>
-    </div>
+      <div class="starter-template">
 
-    <h3>Legal & Credits</h3>
-    <div style='max-width: 800px;'>
-      <ul>
-        <li>Kristian Tysse designed and wrote all of the original code, most of which is still in use today's program.</li>
-        <li>Jonathan Moyes restructured the code and extended it to include additional functionalities.</li>
-        <li>The Web UI and basic implementation of the Stargate API Server were based on <a href='https://github.com/danclarke/WorkingStargateMk2Raspi'>Dan Clarke's work</a></li>
-      </ul>
-      Stargate SG-1, Stargate Atlantis & Stargate Universe are ™ & © of Metro-Goldwyn-Mayer Studios Inc.  This project is in no way sponsored or endorsed by: SyFy or MGM. This project was created solely as a hobby project and to help other Stargate fans create their own Stargates and to keep the passion and love for Stargate alive.
-      <br><br>
-      TheStargateProject.com is a fan-based project and is not intended to infringe upon any copyrights or registered trademarks.
-    </div>
+        <div id="dialog-form" title="Configure Local Gate Address">
+          <p class="validateTips">Enter the Address you which to use.</p>
+          <form>
+              <fieldset>
+                <div id="symbol_1"></div>
+                <div id="symbol_2"></div>
+                <div id="symbol_3"></div>
+                <div id="symbol_4"></div>
+                <div id="symbol_5"></div>
+                <div id="symbol_6"></div>
 
-    <hr />
-
-    <div class="controls">
-        <div class="control" onclick="window.location = 'debug.htm';">
-            Testing / Debug
+                <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+              </fieldset>
+          </form>
         </div>
-        <div class="control" onclick="window.location = 'symbol_overview.htm';">
-            Symbol Overview
+
+        <div id="dialog-form-subspace-ip" title="Configure Subspace IP Address">
+          <p class="validateTips">Enter the IP address assigned to this gate by Kristian</p>
+          <form>
+              <fieldset>
+                <input type="text" class="form-control" id="subspace_ip_input" name="subspace_ip" placeholder="Subspace IP Address"/>
+
+                <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+              </fieldset>
+          </form>
         </div>
-        <div class="control" onclick="window.location = 'config.htm';">
-            Configuration<br><br>
+        <h3>System Information</h3>
+        <div class='div-table'>
+          <div class="div-table-row"><span class="div-table-col-names">Stargate Name:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="gateName">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Galaxy:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="galaxy">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Software Version:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="softwareVersion">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">&nbsp;&nbsp;Status:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="softwareUpdateStatus">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">&nbsp;&nbsp;Last Checked:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="softwareUpdateTime">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Python Version:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="pythonVersion">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Local Stargate Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="localStargateAddress">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Subspace Status:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="subspaceStatus">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Subspace Public Key:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="publicKey">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Subspace IP Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="subspaceIPAddress">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Internet Connection:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="hasInternet">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">LAN IP Address:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="lanIPAddress">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Known Standard Gates:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="standardGateCount">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Known Fan Gates:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="fanGateCount">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Known LAN Gates:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="lanGateCount">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">&nbsp;&nbsp;Last Updated:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="fanGateLastUpdate">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Dialer Mode:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="dialerMode">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Hardware in Use:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="hardwareMode">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Audio Volume (%):&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="volumeAsPercent">Loading...</span></div>
         </div>
-        <div class="control" onclick="window.location = 'index.htm';">
-            Dialing <br> page
+
+        <h3>Lifetime Statistics</h3>
+        <div class='div-table'>
+          <div class="div-table-row"><span class="div-table-col-names">Dialing Failures</span><span class="div-table-col-values" id="stats_dialing_failures">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Count of Established Outbound to Fan Gates</span><span class="div-table-col-values" id="stats_established_fan_count">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Minutes Established Outbound to Fan Gates</span><span class="div-table-col-values" id="stats_established_fan_mins">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Count of Established Outbound to Standard Gates</span><span class="div-table-col-values" id="stats_established_standard_count">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Minutes Established Outbound to Standard Gates</span><span class="div-table-col-values" id="stats_established_standard_mins">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Count Inbound Established</span><span class="div-table-col-values" id="stats_inbound_count">Loading...</span></div>
+          <div class="div-table-row"><span class="div-table-col-names">Minutes Inbound Established</span><span class="div-table-col-values" id="stats_inbound_mins">Loading...</span></div>
         </div>
-    </div>
+
+        <h3>Legal & Credits</h3>
+        <div style='max-width: 800px;'>
+          <ul>
+            <li>Kristian Tysse designed and wrote all of the original code, most of which is still in use today's program.</li>
+            <li>Jonathan Moyes restructured the code and extended it to include additional functionalities.</li>
+            <li>The Web UI and basic implementation of the Stargate API Server were based on <a href='https://github.com/danclarke/WorkingStargateMk2Raspi'>Dan Clarke's work</a></li>
+          </ul>
+          Stargate SG-1, Stargate Atlantis & Stargate Universe are ™ & © of Metro-Goldwyn-Mayer Studios Inc.  This project is in no way sponsored or endorsed by: SyFy or MGM. This project was created solely as a hobby project and to help other Stargate fans create their own Stargates and to keep the passion and love for Stargate alive.
+          <br><br>
+          TheStargateProject.com is a fan-based project and is not intended to infringe upon any copyrights or registered trademarks.
+        </div>
+
+      </div>
+
+    </main><!-- /.container -->
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script>window.jQuery || document.write('<script src="/lib/bootstrap-4.0.0/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="/lib/bootstrap-4.0.0/assets/js/vendor/popper.min.js"></script>
+    <script src="/lib/bootstrap-4.0.0/dist/js/bootstrap.min.js"></script>
   </body>
 </html>

@@ -5,29 +5,34 @@
 ***                                                             ***
 ***   Original Software written by Kristian Tysse               ***
 ***   Restructuring and Development by Jonathan Moyes           ***
-***   Web Interface adapted from Dan Clarke:                    ***
-***      https://github.com/danclarke/WorkingStargateMk2Raspi   ***
 ***                                                             ***
 *******************************************************************
 -->
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Stargate Command</title>
-        <link rel="stylesheet" href="lib/jquery-ui-1.13.0.custom/jquery-ui.css">
-        <link rel="stylesheet" href="main.css" />
-        <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
 
-        <style>
-        .button, .cycleChevronButton {margin:10px;}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Jonathan Moyes">
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
 
-        </style>
+    <title>Configuration | Stargate Command</title>
 
-        <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
-        <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
-        <script type="text/javascript" src="lib/moment.js"></script>
-    </head>
-    <body>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="lib/jquery-ui-1.13.0.custom/jquery-ui.css">
+    <link href="lib/bootstrap-4.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.js"></script>
+    <script type="text/javascript" src="lib/moment.js"></script>
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="main.css" />
+
+  </head>
+
+  <body>
 
     <script type="text/javascript" >
 
@@ -324,24 +329,60 @@
       }
 
     </script>
-    <h2>Stargate Configuration</h2>
-    <form id='config'>
-      <input type="submit" value="Save Changes">
-      <table id="records_table" border='1'></table>
-      <input type="submit" value="Save Changes">
-    </form>
-    <hr />
 
-    <div class="controls">
-        <div class="control" onclick="window.location = 'debug.htm';">
-            Testing / Debug
-        </div>
-        <div class="control" onclick="window.location = 'info.htm';">
-            System<br>Info
-        </div>
-         <div class="control" onclick="window.location = 'index.htm';">
-            Dialing <br> page
-        </div>
-    </div>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="#">Stargate Command</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.htm">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="address_book.htm">Address Book </a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="debug.htm">Testing / Debug</a>
+              <a><hr></a>
+              <a class="dropdown-item  active" href="#">Configuration <span class="sr-only">(current)</span></a>
+              <a class="dropdown-item" href="info.htm">System Information</a>
+              <a><hr></a>
+              <a class="dropdown-item" href="#">Restart Software</a>
+              <a class="dropdown-item" href="#">Reboot Raspberry Pi</a>
+              <a class="dropdown-item" href="#">Shutdown Raspberry Pi</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <img src="img/header.jpg" style="alignment: center" width="100%" alt="header_image">
+
+    <main role="main" class="container">
+
+      <div class="starter-template">
+
+        <form id='config'>
+          <input type="submit" value="Save Changes">
+          <table id="records_table" border='1'></table>
+          <input type="submit" value="Save Changes">
+        </form>
+        <hr />
+
+      </div>
+
+    </main><!-- /.container -->
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script>window.jQuery || document.write('<script src="/lib/bootstrap-4.0.0/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="/lib/bootstrap-4.0.0/assets/js/vendor/popper.min.js"></script>
+    <script src="/lib/bootstrap-4.0.0/dist/js/bootstrap.min.js"></script>
   </body>
 </html>
