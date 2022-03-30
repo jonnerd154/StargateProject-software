@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import os
 
 from collections import OrderedDict
 from datetime import datetime
@@ -78,16 +79,20 @@ class SoftwareUpdateV2:
         # Git pull
         #self.repo.git.checkout(version_config.get('tag_commit'))
 
-        # Run apt-get updates:
-        try:
+        # Run apt-get updates, as supported:
+        if self.is_raspi():
             subprocess.check_call(["apt-get", "update"])
-        except: # pylint: disable=bare-except
-            self.log.log("pip update failed")
-            pass
 
-        # Run PIP requirements.txt update
+        # Run PIP requirements.txt update, as supported
         try:
-            subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", self.app.base_path + "/" + 'requirements.txt'])
+            if self.is_raspi():
+                file_name = 'requirements.txt'
+            else:
+                # OS lacks hardware support, install minimum requirements:
+                file_name = 'requirements_minimum.txt'
+
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", self.app.base_path + "/" + file_name])
+
         except: # pylint: disable=bare-except
             self.log.log("pip update failed")
             pass
@@ -96,12 +101,11 @@ class SoftwareUpdateV2:
         self.audio.random_clip_wait_done()
 
         self.log.log('Update installed -> restarting the program')
-
         self.app.restart()
 
     def check_and_install(self):
 
-        #try:
+        try:
             ## Verify that we have an internet connection, if not, return false.
             if not NetworkTools(self.log).has_internet_access():
                 self.log.log('No internet connection available. Aborting Software Update.')
@@ -123,8 +127,13 @@ class SoftwareUpdateV2:
                 self.cfg.set('software_update_status', 'up-to-date' )
                 self.cfg.set('software_update_exception', False )
 
-        # except Exception as ex: # pylint: disable=broad-except
-        #     self.log.log(f"Software update failed with error: {ex}")
-        #     self.cfg.set('software_update_last_check', str(datetime.now()))
-        #     # Flag the problem in update_exception, not update_status so that update_status can show that an update is available.
-        #     self.cfg.set('software_update_exception', True)
+        except Exception as ex: # pylint: disable=broad-except
+            self.log.log(f"Software update failed with error: {ex}")
+            self.cfg.set('software_update_last_check', str(datetime.now()))
+            # Flag the problem in update_exception, not update_status so that update_status can show that an update is available.
+            self.cfg.set('software_update_exception', True)
+
+    @staticmethod
+    def is_raspi():
+        # Is an ARM processor, and not Apple Silicon M1 (also ARM)
+        return os.uname()[4][:3] == 'arm' and "Darwin" not in os.uname().sysname;
