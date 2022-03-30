@@ -1,13 +1,7 @@
-import pwd
-import sys
 import subprocess
 
-from os import stat, makedirs, path, chown, execl
-from ast import literal_eval
 from collections import OrderedDict
-from pathlib import Path
 from datetime import datetime
-import requests
 from packaging import version
 import git
 
@@ -53,7 +47,7 @@ class SoftwareUpdateV2:
             tag_version = tag_name.strip('v')
 
             # Check if this version is newer than the current one
-            if (version.parse(tag_version) > current_version_sem ):
+            if version.parse(tag_version) > current_version_sem:
                 # Add it to the list of updates
                 newer_versions[tag_version] = {
                     "tag_path": tag.path,
@@ -108,7 +102,7 @@ class SoftwareUpdateV2:
             self.log.log(f"Found {len(updates_available)} available update(s)")
             next_version = list(updates_available.values())[0]
             most_recent_version = list(updates_available.values())[len(updates_available)-1]['tag_name']
-            self.cfg.set('software_update_status', f"Update Available: {next_version.get('tag_name')}")
+            self.cfg.set('software_update_status', f"Update Available: {most_recent_version.get('tag_name')}")
 
             # Start the update process to move us up one version
             self.do_update(next_version)
