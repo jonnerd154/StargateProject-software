@@ -226,7 +226,7 @@ html {
 .div-table-col-names {
   float: left; /* fix for  buggy browsers */
   display: table-column;
-  width: 200px;
+  width: 400px;
   #background-color: #ccc;
 }
 .div-table-col-values {

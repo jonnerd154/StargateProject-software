@@ -401,6 +401,14 @@
             $('#hardwareMode').html(data.hardware_mode)
             $('#volumeAsPercent').html(data.audio_volume)
 
+            $('#stats_dialing_failures').html(data.stats_dialing_failures)
+            $('#stats_established_fan_count').html(data.stats_established_fan_count)
+            $('#stats_established_fan_mins').html(data.stats_established_fan_mins)
+            $('#stats_established_standard_count').html(data.stats_established_standard_count)
+            $('#stats_established_standard_mins').html(data.stats_established_standard_mins)
+            $('#stats_inbound_count').html(data.stats_inbound_count)
+            $('#stats_inbound_mins').html(data.stats_inbound_mins)
+
             if (data.subspace_public_key){
               $('#publicKey').html(data.subspace_public_key)
             }
@@ -538,6 +546,17 @@
       <div class="div-table-row"><span class="div-table-col-names">Audio Volume (%):&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="volumeAsPercent">Loading...</span></div>
     </div>
 
+    <h3>Lifetime Statistics</h3>
+    <div class='div-table'>
+      <div class="div-table-row"><span class="div-table-col-names">Dialing Failures</span><span class="div-table-col-values" id="stats_dialing_failures">Loading...</span></div>
+      <div class="div-table-row"><span class="div-table-col-names">Count of Established Outbound to Fan Gates</span><span class="div-table-col-values" id="stats_established_fan_count">Loading...</span></div>
+      <div class="div-table-row"><span class="div-table-col-names">Minutes Established Outbound to Fan Gates</span><span class="div-table-col-values" id="stats_established_fan_mins">Loading...</span></div>
+      <div class="div-table-row"><span class="div-table-col-names">Count of Established Outbound to Standard Gates</span><span class="div-table-col-values" id="stats_established_standard_count">Loading...</span></div>
+      <div class="div-table-row"><span class="div-table-col-names">Minutes Established Outbound to Standard Gates</span><span class="div-table-col-values" id="stats_established_standard_mins">Loading...</span></div>
+      <div class="div-table-row"><span class="div-table-col-names">Count Inbound Established</span><span class="div-table-col-values" id="stats_inbound_count">Loading...</span></div>
+      <div class="div-table-row"><span class="div-table-col-names">Minutes Inbound Established</span><span class="div-table-col-values" id="stats_inbound_mins">Loading...</span></div>
+
+    </div>
     <hr />
     <div>Legal & Credits</div>
     <div style='max-width: 800px;'>
