@@ -1,4 +1,5 @@
 import subprocess
+import sys
 
 from collections import OrderedDict
 from datetime import datetime
@@ -81,7 +82,11 @@ class SoftwareUpdateV2:
         ### TODO
 
         # Run PIP requirements.txt update
-        #subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", Path.joinpath(root_path, 'requirements.txt')])
+        try:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", self.app.base_path + "/" + 'requirements.txt'])
+        except: # pylint: disable=bare-except
+            self.log.log("pip update failed")
+            pass
 
         # Wait for the clip to finish playing before restarting
         self.audio.random_clip_wait_done()
