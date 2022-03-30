@@ -348,7 +348,7 @@ class Stargate:
         # Put the gate back in to an idle state
         self.initialize_gate_state_vars()
 
-        self.log.log("Gate is idle.")
+        self.dialing_log.shutdown()
 
     def inactivity(self, seconds):
         """
