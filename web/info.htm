@@ -403,11 +403,11 @@
 
             $('#stats_dialing_failures').html(data.stats_dialing_failures)
             $('#stats_established_fan_count').html(data.stats_established_fan_count)
-            $('#stats_established_fan_mins').html(data.stats_established_fan_mins)
+            $('#stats_established_fan_mins').html(data.stats_established_fan_mins.toFixed(2))
             $('#stats_established_standard_count').html(data.stats_established_standard_count)
-            $('#stats_established_standard_mins').html(data.stats_established_standard_mins)
+            $('#stats_established_standard_mins').html(data.stats_established_standard_mins.toFixed(2))
             $('#stats_inbound_count').html(data.stats_inbound_count)
-            $('#stats_inbound_mins').html(data.stats_inbound_mins)
+            $('#stats_inbound_mins').html(data.stats_inbound_mins.toFixed(2))
 
             if (data.subspace_public_key){
               $('#publicKey').html(data.subspace_public_key)
