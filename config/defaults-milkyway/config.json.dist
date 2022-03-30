@@ -360,7 +360,7 @@
     "protected": true
   },
   "software_update_interval": {
-    "value": 24,
+    "value": 6,
     "desc": "How often should we check for Software Updates?",
     "type": "int",
     "min_value": 1,
