@@ -130,12 +130,17 @@ class GateApplication:
         sys.exit(0)
 
     def restart(self):
-        if self.check_is_daemon():
+        # If we have a stargate, shut it down
+        try:
+            self.stargate.wormhole_active = False
+            sleep(5)
+        except: # pylint: disable=base_except
+            pass
+
+        if not self.check_is_daemon():
             self.log.log("Please manually restart the software")
             sys.exit(0)
-
-        self.stargate.wormhole_active = False
-        sleep(5)
+            
         os.system('systemctl restart stargate.service')
 
     @staticmethod
