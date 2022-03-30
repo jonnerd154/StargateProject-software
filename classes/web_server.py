@@ -29,15 +29,18 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 data = { 'is_alive': True }
 
             elif request_path == "/get/address_book":
+                data = {}
                 record_type = get_vars.get('type')[0]
                 if record_type == "standard":
-                    data = self.stargate.addr_manager.get_book().get_standard_gates()
+                    data['address_book'] = self.stargate.addr_manager.get_book().get_standard_gates()
                 elif record_type == "fan":
-                    data = self.stargate.addr_manager.get_book().get_fan_and_lan_addresses()
+                    data['address_book'] = self.stargate.addr_manager.get_book().get_fan_and_lan_addresses()
                 else:
                     all_addr = self.stargate.addr_manager.get_book().get_all_nonlocal_addresses()
-                    data = collections.OrderedDict(sorted(all_addr.items()))
+                    data['address_book'] = collections.OrderedDict(sorted(all_addr.items()))
 
+                data['galaxy_path'] = self.stargate.galaxy_path
+                
             elif request_path == "/get/local_address":
                 data = self.stargate.addr_manager.get_book().get_local_address()
 

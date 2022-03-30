@@ -64,7 +64,8 @@
 									type: "all"
 							},
 							success: function( json ) {
-									addresses = json
+                  addresses = json['address_book']
+                  galaxy_path = json['galaxy_path']
 									load_address_book()
 							},
 							error: function (xhr, textStatus, errorThrown){
@@ -80,7 +81,7 @@
                 address_string = address_raw.join("-");
                 $.each(address_raw, function( index, value) {
                     value=("000" + value).substr(-3,3);
-                    address_raw[index] = '<img src="chevrons/'+value+'.svg" />';
+                    address_raw[index] = '<img src="chevrons/'+galaxy_path+'/'+value+'.svg" />';
                 });
                 address = address_raw.join("");
 
