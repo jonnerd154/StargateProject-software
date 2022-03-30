@@ -1,1 +1,1 @@
-VERSION = "4.0.0a4" # The current Program version as a SemVer String
+VERSION = "4.0.0a8" # The current Program version as a SemVer String
