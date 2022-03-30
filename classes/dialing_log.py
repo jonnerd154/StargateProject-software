@@ -21,7 +21,7 @@ class DialingLog():
 
         self.__reset_state()
 
-    def __reset_summary_storage(self):
+    def __reset_summary_storage(self): # pylint: disable=unused-private-member
 
         self.datastore.set("established_standard_count", 0)    # Lifetime Count of Established Outbound Wormholes to Movie Gates
         self.datastore.set("established_standard_mins", 0)    # Lifetime Minutes Outbound Established to Movie Gates
