@@ -84,6 +84,10 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "galaxy":                         self.stargate.galaxy
                 }
 
+                # Put the lifetime stats in here too.
+                for key, value in self.stargate.dialing_log.get_summary().items():
+                    data['stats_'+key] = value.get('value')
+
             elif request_path == "/get/hardware_status":
                 data = {
                     "chevrons":                       self.stargate.chevrons.get_status(),
@@ -100,9 +104,6 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 data = {
                     "symbols": self.stargate.symbol_manager.get_all_ddslick()
                 }
-
-            elif request_path == "/get/lifetime_stats":
-                data = self.stargate.dialing_log.get_summary()
 
             else:
                 # Unhandled GET request: send a 404
