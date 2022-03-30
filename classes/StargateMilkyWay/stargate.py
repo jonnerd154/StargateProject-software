@@ -285,12 +285,16 @@ class Stargate:
                 self.log.log('Valid address is locked')
                 self.log.log(f'OUTGOING Wormhole to {self.connected_planet_name} established')
 
+                # Log the connection!
+                self.dialing_log.established_outbound(self.address_buffer_outgoing)
+
                 # Check if we dialed a black hole planet
                 if self.addr_manager.get_book().get_entry_by_address(self.address_buffer_outgoing[0:-1])['is_black_hole']:
                     self.log.log("Oh no! It's the black hole planet!")
                     self.black_hole = True
             else:
-                self.log.log('Unable to establish a Wormhole!')
+                # Log the dialing failure
+                self.dialing_log.dialing_fail(self.address_buffer_outgoing)
                 self.shutdown(cancel_sound=False, wormhole_fail_sound=True)
 
         ## Incoming wormhole ##
@@ -306,6 +310,11 @@ class Stargate:
 
                 self.log.log('Incoming address is a match!')
                 self.log.log(f'INCOMING Wormhole from {self.connected_planet_name} established')
+
+                # Log the connection!
+                # TODO: hook this up!
+                #self.dialing_log.established_inbound( self.inbound_dialer)
+
             else:
                 self.log.log('Incoming address is NOT a match to Local Gate Address!')
                 self.shutdown(cancel_sound=False, wormhole_fail_sound=True)
