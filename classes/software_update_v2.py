@@ -91,29 +91,30 @@ class SoftwareUpdateV2:
 
     def check_and_install(self):
 
-        ## Verify that we have an internet connection, if not, return false.
-        if not NetworkTools(self.log).has_internet_access():
-            self.log.log('No internet connection available. Aborting Software Update.')
-            return
+        try:
+            ## Verify that we have an internet connection, if not, return false.
+            if not NetworkTools(self.log).has_internet_access():
+                self.log.log('No internet connection available. Aborting Software Update.')
+                return
 
-        self.log.log('Checking for software updates.')
-        updates_available = self.get_available_updates()
-        if len(updates_available) > 0:
-            self.log.log(f"Found {len(updates_available)} available update(s)")
-            next_version = list(updates_available.values())[0]
-            most_recent_version = list(updates_available.values())[len(updates_available)-1]['tag_name']
-            self.cfg.set('software_update_status', f"Update Available: {most_recent_version.get('tag_name')}")
+            self.log.log('Checking for software updates.')
+            updates_available = self.get_available_updates()
+            if len(updates_available) > 0:
+                self.log.log(f"Found {len(updates_available)} available update(s)")
+                next_version = list(updates_available.values())[0]
+                most_recent_version = list(updates_available.values())[len(updates_available)-1]['tag_name']
+                self.cfg.set('software_update_status', f"Update Available: {most_recent_version.get('tag_name')}")
 
-            # Start the update process to move us up one version
-            self.do_update(next_version)
-        else:
-            self.log.log("The Stargate is up-to-date.")
-            self.cfg.set('software_update_last_check', str(datetime.now() ) )
-            self.cfg.set('software_update_status', 'up-to-date' )
-            self.cfg.set('software_update_exception', False )
+                # Start the update process to move us up one version
+                self.do_update(next_version)
+            else:
+                self.log.log("The Stargate is up-to-date.")
+                self.cfg.set('software_update_last_check', str(datetime.now() ) )
+                self.cfg.set('software_update_status', 'up-to-date' )
+                self.cfg.set('software_update_exception', False )
 
-        # except Exception as ex: # pylint: disable=broad-except
-        #     self.log.log(f"Software update failed with error: {ex}")
-        #     self.cfg.set('software_update_last_check', str(datetime.now()))
-        #     # Flag the problem in update_exception, not update_status so that update_status can show that an update is available.
-        #     self.cfg.set('software_update_exception', True)
+        except Exception as ex: # pylint: disable=broad-except
+            self.log.log(f"Software update failed with error: {ex}")
+            self.cfg.set('software_update_last_check', str(datetime.now()))
+            # Flag the problem in update_exception, not update_status so that update_status can show that an update is available.
+            self.cfg.set('software_update_exception', True)
