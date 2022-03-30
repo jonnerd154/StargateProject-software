@@ -69,8 +69,7 @@ class DialingLog():
         self.current_activity['start_time'] = self.__get_time_now()
         self.current_activity['dialer_address']= self.addr_manager.get_book().get_local_address()
         self.current_activity['receiver_address'] = receiver_address
-        self.current_activity['remote_gate_type'] = "MOVIE"
-                # TODO: #self.addr_manager.get_type_by_address(receiver_address)
+        self.current_activity['remote_gate_type'] = "FAN" if self.addr_manager.is_fan_made_stargate(receiver_address) else "MOVIE"
 
         if self.current_activity['remote_gate_type'] == "FAN":
             self.datastore.set('established_fan_count', self.datastore.get('established_fan_count') + 1)
