@@ -11,6 +11,8 @@
 *******************************************************************
 */
 
+/* GLOBAL STYLES */
+
 html, body {
     background-color: #7f95a3;
     color: black;
@@ -283,4 +285,26 @@ html, body {
   float:left;
   max-width:14%;
   width: 14%
+}
+
+/* CONFIGURATION STYLES */
+#records_table div{
+  padding: 10px;
+  max-width: 700px;
+}
+
+#records_table div input{
+  width: 200px;
+}
+
+#records_table div select{
+  width: 200px;
+}
+
+#records_table div:nth-of-type(odd) {
+  background: #ffffff;
+}
+
+#records_table div:nth-of-type(even) {
+  background: #e0e0e0;
 }

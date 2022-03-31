@@ -21,17 +21,22 @@ function updateInfo(){
       url: '/stargate/get/config',
       success: function (response) {
         var trHTML = '';
+        var lastGroup = false
+
         $.each(response, function (paramName, item) {
+
             paramPrettyName = toProperCase(paramName)
-            trHTML += getHTMLTableRow(paramName, paramPrettyName, item)
+            group = getParamGroupByPrettyName(paramPrettyName)
+
+            if (lastGroup == false || lastGroup != group){
+              trHTML += "<br><h3>" + group + " Configurations" +"</h3>"
+            }
+            lastGroup = group
+
+            trHTML += getHTMLTableRow(paramName, paramPrettyName, item, group)
         });
-        $('#records_table').html("\
-            <tr>\
-                <th>Name</th>\
-                <th>Value</th>\
-                <th>Units</th>\
-                <th>Description</th>\
-            </tr>");
+
+        trHTML +='<br><button type="submit" class="btn btn-primary">Submit</button><br><br>'
 
         $('#records_table').append(trHTML);
 
@@ -41,10 +46,42 @@ function updateInfo(){
   });
 }
 
-function getHTMLTableRow(paramName, paramPrettyName, data){
+function getParamGroupByPrettyName(paramPrettyName){
+
+  // Hacky, but gets the job done
+  groups = {
+      "Audio": "Audio",
+      "Chevron": "Chevron",
+      "Control": "Stargate Control API",
+      "DHD": "Dial Home Device (DHD)",
+      "Dialing": "Dialing",
+      "Fan": "Fan Gate Update",
+      "Software": "Software Update",
+      "Stepper": "Stepper",
+      "Subspace": "Subspace Network",
+      "Wormhole": "Wormhole Max Time"
+  }
+
+  group_basic = paramPrettyName.split(' ')[0]
+  if ( !groups[group_basic] ){
+    return "Miscellaneous"
+  }
+  return groups[group_basic]
+
+}
+function getHTMLTableRow(paramName, paramPrettyName, data, group){
   inputField = getHTMLField( paramName, data )
-  if (!data.units) data.units = ""
-  return '<tr><td>' + paramPrettyName + '</td><td>' + inputField + '</td><td>' + data.units + '</td><td>' + data.desc + '</td></tr>';
+  if (!data.units){
+    data.units = ""
+  }
+  else{
+    data.units = "("+ data.units +") "
+  }
+  return '<div class="form-group-'+group+'">\
+    <label for="'+paramName+'">' + paramPrettyName + '</label>\
+    <span class="float-right">' + inputField + '</span>\
+    <small class="form-text">' + data.units + data.desc + '</small>\
+  </div>'
 }
 
 function getHTMLField( paramName, data ){
