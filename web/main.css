@@ -174,83 +174,7 @@ html {
         border: 1px solid white;
     }
 
-.presetAddress {
-    height: 75px;
-    border: 1px solid black;
-    margin: 0 5px 5px;
-    padding: 0 10px;
-    text-align: left;
-    line-height:75px;
-    cursor: pointer;
-    font-size: 20pt;
-    background-color: #52b69a;
-}
 
-    .presetAddress:hover{
-        border: 1px solid white;
-    }
-
-.presetAddress .name, .presetAddress .glyphs {
-    float:left;
-}
-
-.presetAddress img {
-        filter: invert(1);
-        width: 75px;
-        height: 75px;
-    }
-
-.presetAddressFan {
-    height: 75px;
-    border: 1px solid black;
-    margin: 0 5px 5px;
-    padding: 0 10px;
-    text-align: left;
-    line-height:75px;
-    cursor: pointer;
-    font-size: 20pt;
-    background-color: #168aad;
-}
-
-    .presetAddressFan:hover{
-        border: 1px solid white;
-    }
-
-.presetAddressFan .name, .presetAddress .glyphs {
-    float:left;
-}
-
-.presetAddressFan img {
-        filter: invert(1);
-        width: 75px;
-        height: 75px;
-    }
-
-.presetAddressLAN {
-    height: 75px;
-    border: 1px solid black;
-    margin: 0 5px 5px;
-    padding: 0 10px;
-    text-align: left;
-    line-height:75px;
-    cursor: pointer;
-    font-size: 20pt;
-    background-color: #1a759f;
-}
-
-    .presetAddressLAN:hover{
-        border: 1px solid white;
-    }
-
-.presetAddressLAN .name, .presetAddress .glyphs {
-    float:left;
-}
-
-.presetAddressLAN img {
-        filter: invert(1);
-        width: 75px;
-        height: 75px;
-    }
 .filter-green{
     filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);
 }
@@ -280,16 +204,77 @@ html {
   width: 400px;
   #background-color: #ccc;
 }
-.div-table-col-values {
+
+
+/* ADDRESS BOOK STYLES */
+
+.address-book-col-values {
   float: left; /* fix for  buggy browsers */
   display: table-column;
   width: auto;
   #background-color: #ccc;
 }
 
-.div-table-col-planet-names {
+.address-book-col-planet-names {
   float: left; /* fix for  buggy browsers */
   display: table-column;
-  width: 500px;
+  width: 40%;
   #background-color: #ccc;
+  min-width: 200px;
+  font-size: 2vw
+}
+
+.address-book-col-glyphs {
+  float: left; /* fix for  buggy browsers */
+  width: 60%;
+
+  display: table-column;
+  #background-color: #ccc;
+
+}
+
+.address-book-row {
+    height: 75px;
+    border: 1px solid black;
+    margin: 0 5px 5px;
+    padding: 0 10px;
+    text-align: left;
+    line-height:75px;
+    cursor: pointer;
+    font-size: 20pt;
+    display: flex;
+}
+
+.address-book-row:hover{
+    border: 1px solid white;
+}
+
+.address-book-row-standard{
+  background-color: #52b69a;
+}
+
+.address-book-row-fan{
+  background-color: #168aad;
+}
+
+.address-book-row-lan{
+  background-color: #1a759f;
+}
+
+.address-book-row .name, .address-book-row{
+    float:left;
+    width:100%;
+}
+
+.address-book-row img {
+    filter: invert(1);
+    width: 75px;
+    height: 75px;
+}
+
+.address-book-glyph {
+  position:relative;
+  float:left;
+  max-width:14%;
+  width: 14%
 }

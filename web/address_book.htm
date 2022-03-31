@@ -80,25 +80,13 @@
             address_string = address_raw.join("-");
             $.each(address_raw, function( index, value) {
                 value=("000" + value).substr(-3,3);
-                address_raw[index] = '<img src="chevrons/'+galaxy_path+'/'+value+'.svg" />';
+                address_raw[index] = '<img class="address-book-glyph" src="chevrons/'+galaxy_path+'/'+value+'.svg" />';
             });
+
             address = address_raw.join("");
 
-            fan_gate_string = ""
-            switch (value.type){
-                case "fan":
-                  fan_gate_string = "Fan"
-                  break
-                case "lan":
-                  fan_gate_string = "LAN"
-                  break
-                case "standard":
-                  fan_gate_string = ""
-                  break
-                default:
-                  fan_gate_string = "(Unknown)"
-            }
-            $("#presets").append('<div class="presetAddress'+fan_gate_string+'" onclick="window.location = \'index.htm?address=' + address_string + '\';"><div class="div-table-col-planet-names">' + value.name + '</div><div class="glyphs">' + address +  '</div></div>' );
+            $("#presets").append('<div class="address-book-row address-book-row-'+value.type+'" onclick="window.location = \'index.htm?address=' +
+              address_string + '\';"><div class="address-book-col-planet-names">' + value.name + '</div><div class="address-book-col-glyphs">' + address +  '</div></div>' );
         });
     }
 
