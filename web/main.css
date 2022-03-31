@@ -308,3 +308,11 @@ html, body {
 #records_table div:nth-of-type(even) {
   background: #e0e0e0;
 }
+
+#symbol_overview_table tr td{
+  text-align: center;
+}
+#symbol_overview_table tr th{
+  text-align: center;
+  padding: 10px;
+}

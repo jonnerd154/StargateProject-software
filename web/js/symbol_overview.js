@@ -7,7 +7,7 @@ function updateInfo(){
         $.each(response, function (paramName, item) {
             trHTML += getHTMLTableRow(paramName, item)
         });
-        $('#records_table').html("\
+        $('#symbol_overview_table').html("\
             <tr>\
                 <th>Symbol Number</th>\
                 <th>Index</th>\
@@ -15,7 +15,7 @@ function updateInfo(){
                 <th>Keyboard Mapping</th>\
             </tr>");
 
-        $('#records_table').append(trHTML);
+        $('#symbol_overview_table').append(trHTML);
 
       }
   });
