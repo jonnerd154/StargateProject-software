@@ -417,7 +417,7 @@
   },
   "stepper_drive_mode": {
     "value": "double",
-    "desc": "How many steps constitutes one revolution of the glyph ring?",
+    "desc": "What Stepper Driver drive mode to use? Single, Double, Microstep",
     "type": "string-enum",
     "enum_values": [
       "double",
