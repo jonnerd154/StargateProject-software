@@ -11,7 +11,7 @@ function poll_success(singleShot, data){
 }
 
 function initialize_button_handlers(){
-  $('div.button_container div.cycleChevronButton').click(function() {
+  $('.debug_button_container .cycleChevronButton').click(function() {
       const chevron_number = $(this).attr('chevron_number');
 
       $.post({
@@ -26,7 +26,7 @@ function initialize_button_handlers(){
       });
   });
 
-  $('div.button_container div.button').click(function() {
+  $('.debug_button_container .controlButton').click(function() {
       const action = $(this).attr('action');
 
       $.post({

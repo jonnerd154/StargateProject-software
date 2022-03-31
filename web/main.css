@@ -309,10 +309,42 @@ html, body {
   background: #e0e0e0;
 }
 
+/* SYMBOL OVERVIEW STYLES */
+
 #symbol_overview_table tr td{
   text-align: center;
 }
 #symbol_overview_table tr th{
   text-align: center;
   padding: 10px;
+}
+
+/* TESTING/DEBUG STYLES */
+
+.debug_button_container{
+  padding-top: 20px;
+  padding-bottom: 50px;
+}
+
+.debug_button_container .cycleChevronButton{
+  margin:10px;
+  margin-top: 0px;
+  padding: 5px;
+  background-color: #52b69a;
+}
+.debug_button_container .controlButton{
+  padding: 5px;
+  margin-top: 0px;
+  margin:10px;
+  width: 300px;
+  font-size: 1em;
+  height: 60px;
+  background-color: #52b69a;
+}
+
+.cycleChevronButton{
+  padding: 5px;
+  width: 150px;
+  font-size: 1em;
+  height: 60px;
 }

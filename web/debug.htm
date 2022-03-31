@@ -85,108 +85,51 @@
 
     <main role="main" class="container">
 
-      <div class="starter-template">
+      <div class="debug_button_container">
 
-        <div class="button_container">
-        <h2>Symbol Ring</h2>
-            <div class="button" action="symbol_forward">
-                Forward
-            </div>
-            <div class="button" action="symbol_backward">
-                Backward
-            </div>
-            <div class="button" action="set_glyph_ring_zero">
-                Zero Position (Earth-up)
-            </div>
-          <!--<div class="animation" action="goHome">
-                Home Stargate
-            </div>
-            -->
-      <hr />
-        <h2>Lighting control </h2>
-            <div class="button" action="all_chevron_leds_on">
-                Chevrons On
-            </div>
-            <div class="button" action="all_chevron_leds_off">
-                All Off
-            </div>
-            <div class="button" action="wormhole_on">
-                Wormhole On
-            </div>
-            <div class="button" action="wormhole_off">
-                Wormhole Off
-            </div>
-        <!--
-            <div class="buttonClass" action="homingToggle">
-                Homing LED
-            </div>
-         -->
-        <hr />
-        <h2>Cycle Chevrons (Motors, Lights, Sound)</h2>
-        <div class="cycleChevronButton" chevron_number='1'>
-            Chevron 1
-        </div>
-        <div class="cycleChevronButton" chevron_number='2'>
-            Chevron 2
-        </div>
-        <div class="cycleChevronButton" chevron_number='3'>
-            Chevron 3
-        </div>
-        <div class="cycleChevronButton" chevron_number='4'>
-            Chevron 4
-        </div>
-        <div class="cycleChevronButton" chevron_number='5'>
-            Chevron 5
-        </div>
-        <div class="cycleChevronButton" chevron_number='6'>
-            Chevron 6
-        </div>
-        <div class="cycleChevronButton" chevron_number='7'>
-            Chevron 7
-        </div>
-        <div class="cycleChevronButton" chevron_number='8'>
-            Chevron 8
-        </div>
-        <div class="cycleChevronButton" chevron_number='9'>
-            Chevron 9
-        </div>
-        <hr />
-        <h2>Sound</h2>
-          <div class="button" action="volume_down">
-              Volume Down
-          </div>
-        	<div class="button" action="volume_up">
-              Volume Up
-          </div>
-        <hr />
-        <h2>Simulate</h2>
-            <div class="button" action="simulate_incoming">
-            Incoming Wormhole
-            </div>
-            <div class="button" action="wormhole_off">
-            Disconnect<br>&nbsp;
-            </div>
-        <hr />
-        <h2>Dial Home Device</h2>
-            <div class="button" action="dhd_test_enable">
-                Test Mode<br>Enable
-            </div>
-            <div class="button" action="dhd_test_disable">
-                Test Mode<br>Disable
-            </div>
-          <hr />
-          <!--
-          <hr />
-          <h2>Iris Control (Iris is OPEN)</h2>
-              <div class="cycleChevronButton" chevron_number='1'>
-              Close Iris
-              </div>
-          </div>
-          -->
-        </div>
+        <h4>Symbol Ring</h4>
+        <button type="button" class="btn-secondary controlButton" action="symbol_forward">Forward</button>
+        <button type="button" class="btn-secondary controlButton" action="symbol_backward">Backward</button>
+        <button type="button" class="btn-secondary controlButton" action="set_glyph_ring_zero">Set Position=0 (Earth at top)</button>
 
-      </div>
+        <hr />
 
+        <h4>Lighting Control </h4>
+        <button type="button" class="btn-secondary controlButton" action="all_chevron_leds_on">All Chevrons On</button>
+        <button type="button" class="btn-secondary controlButton" action="all_chevron_leds_off">All Chevrons Off</button>
+
+        <hr />
+        <h4>Wormhole Manual Control</h4>
+        <button type="button" class="btn-secondary controlButton" action="wormhole_on">Open Wormhole</button>
+        <button type="button" class="btn-secondary controlButton" action="wormhole_off">Close Wormhole</button>
+
+        <hr />
+        <h4>Cycle Chevrons (Motors, Lights, Sound)</h4>
+        <button type="button" class="btn-secondary cycleChevronButton" chevron_number='1'>Chevron 1</button>
+        <button type="button" class="btn-secondary cycleChevronButton" chevron_number='2'>Chevron 2</button>
+        <button type="button" class="btn-secondary cycleChevronButton" chevron_number='3'>Chevron 3</button>
+        <button type="button" class="btn-secondary cycleChevronButton" chevron_number='4'>Chevron 4</button>
+        <button type="button" class="btn-secondary cycleChevronButton" chevron_number='5'>Chevron 5</button>
+        <button type="button" class="btn-secondary cycleChevronButton" chevron_number='6'>Chevron 6</button>
+        <button type="button" class="btn-secondary cycleChevronButton" chevron_number='7'>Chevron 7</button>
+        <button type="button" class="btn-secondary cycleChevronButton" chevron_number='8'>Chevron 8</button>
+        <button type="button" class="btn-secondary cycleChevronButton" chevron_number='9'>Chevron 9</button>
+
+        <hr />
+        <h4>Sound & Volume</h4>
+        <button type="button" class="btn-secondary controlButton" action="volume_down">Volume Down</button>
+        <button type="button" class="btn-secondary controlButton" action="volume_up">Volume Up</button>
+
+        <hr />
+        <h4>Simulate</h4>
+        <button type="button" class="btn-secondary controlButton" action="simulate_incoming">Incoming Wormhole</button>
+        <button type="button" class="btn-secondary controlButton" action="wormhole_off">Disconnect</button>
+
+        <hr />
+        <h4>Dial Home Device</h4>
+        <button type="button" class="btn-secondary controlButton" action="dhd_test_enable">Test Mode<br>Enable</button>
+        <button type="button" class="btn-secondary controlButton" action="dhd_test_disable">Test Mode<br>Disable</button>
+      </div><!-- /. button container -->
     </main><!-- /.container -->
 
     <!-- Bootstrap core JavaScript
