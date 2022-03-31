@@ -411,11 +411,11 @@
 
             $('#stats_dialing_failures').html(data.stats_dialing_failures)
             $('#stats_established_fan_count').html(data.stats_established_fan_count)
-            $('#stats_established_fan_mins').html(data.stats_established_fan_mins.toFixed(2))
+            $('#stats_established_fan_mins').html("&nbsp;(" + data.stats_established_fan_mins.toFixed(2) + " Minutes)")
             $('#stats_established_standard_count').html(data.stats_established_standard_count)
-            $('#stats_established_standard_mins').html(data.stats_established_standard_mins.toFixed(2))
+            $('#stats_established_standard_mins').html("&nbsp;(" + data.stats_established_standard_mins.toFixed(2) + " Minutes)")
             $('#stats_inbound_count').html(data.stats_inbound_count)
-            $('#stats_inbound_mins').html(data.stats_inbound_mins.toFixed(2))
+            $('#stats_inbound_mins').html("&nbsp;(" + data.stats_inbound_mins.toFixed(2) + " Minutes)")
 
             if (data.subspace_public_key){
               $('#publicKey').html(data.subspace_public_key)
@@ -568,6 +568,7 @@
               </fieldset>
           </form>
         </div>
+        <br>
         <h3>System Information</h3>
         <div class='div-table'>
           <div class="div-table-row"><span class="div-table-col-names">Stargate Name:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="gateName">Loading...</span></div>
@@ -590,18 +591,34 @@
           <div class="div-table-row"><span class="div-table-col-names">Hardware in Use:&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="hardwareMode">Loading...</span></div>
           <div class="div-table-row"><span class="div-table-col-names">Audio Volume (%):&nbsp;&nbsp;&nbsp;</span><span class="div-table-col-values" id="volumeAsPercent">Loading...</span></div>
         </div>
-
+        <br>
         <h3>Lifetime Statistics</h3>
         <div class='div-table'>
-          <div class="div-table-row"><span class="div-table-col-names">Dialing Failures</span><span class="div-table-col-values" id="stats_dialing_failures">Loading...</span></div>
-          <div class="div-table-row"><span class="div-table-col-names">Count of Established Outbound to Fan Gates</span><span class="div-table-col-values" id="stats_established_fan_count">Loading...</span></div>
-          <div class="div-table-row"><span class="div-table-col-names">Minutes Established Outbound to Fan Gates</span><span class="div-table-col-values" id="stats_established_fan_mins">Loading...</span></div>
-          <div class="div-table-row"><span class="div-table-col-names">Count of Established Outbound to Standard Gates</span><span class="div-table-col-values" id="stats_established_standard_count">Loading...</span></div>
-          <div class="div-table-row"><span class="div-table-col-names">Minutes Established Outbound to Standard Gates</span><span class="div-table-col-values" id="stats_established_standard_mins">Loading...</span></div>
-          <div class="div-table-row"><span class="div-table-col-names">Count Inbound Established</span><span class="div-table-col-values" id="stats_inbound_count">Loading...</span></div>
-          <div class="div-table-row"><span class="div-table-col-names">Minutes Inbound Established</span><span class="div-table-col-values" id="stats_inbound_mins">Loading...</span></div>
-        </div>
+          <div class="div-table-row">
+              <span class="div-table-col-names">Dialing Failures</span>
+              <span class="div-table-col-values" id="stats_dialing_failures">Loading...</span>
+              <span class="div-table-col-values"></span>
+          </div>
 
+          <div class="div-table-row">
+            <span class="div-table-col-names">Established Outbound - Fan Gates</span>
+            <span class="div-table-col-values" id="stats_established_fan_count"></span>
+            <span class="div-table-col-values" id="stats_established_fan_mins"></span>
+          </div>
+
+          <div class="div-table-row">
+            <span class="div-table-col-names">Established Outbound - Standard Gates</span>
+            <span class="div-table-col-values" id="stats_established_standard_count"></span>
+            <span class="div-table-col-values" id="stats_established_standard_mins"></span>
+          </div>
+
+          <div class="div-table-row">
+            <span class="div-table-col-names">Established Inbound - Fan Gates</span>
+            <span class="div-table-col-values" id="stats_inbound_count"></span>
+            <span class="div-table-col-values" id="stats_inbound_mins"></span>
+          </div>
+        </div>
+        <br>
         <h3>Legal & Credits</h3>
         <div style='max-width: 800px;'>
           <ul>
@@ -612,6 +629,7 @@
           Stargate SG-1, Stargate Atlantis & Stargate Universe are ™ & © of Metro-Goldwyn-Mayer Studios Inc.  This project is in no way sponsored or endorsed by: SyFy or MGM. This project was created solely as a hobby project and to help other Stargate fans create their own Stargates and to keep the passion and love for Stargate alive.
           <br><br>
           TheStargateProject.com is a fan-based project and is not intended to infringe upon any copyrights or registered trademarks.
+          <br><br>
         </div>
 
       </div>
