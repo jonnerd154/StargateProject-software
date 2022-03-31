@@ -367,3 +367,41 @@ html, body {
   font-size: 1em;
   height: 60px;
 }
+
+/* SYSTEM INFORMATION STYLES */
+
+.system-info-table {
+  display: table;
+  width: 100%;
+  #background-color: #eee;
+  border: 1px solid #666666;
+  border-spacing: 5px; /* cellspacing:poor IE support for  this */
+  border-collapse: collapse;
+}
+.system-info-row {
+  width: 100%;
+
+  display: table-row;
+  width: auto;
+  clear: both;
+}
+.system-info-row span {
+  padding: 10px;
+  float: left;
+}
+
+.system-info-col-names {
+  float: left; /* fix for  buggy browsers */
+  display: table-column;
+  min-width: 400px;
+  #background-color: #ccc;
+  font-weight: bold;
+}
+
+.system-info-row:nth-of-type(odd) {
+  background-color: #ffffff;
+}
+
+.system-info-row:nth-of-type(even) {
+  background-color: #e0e0e0;
+}
