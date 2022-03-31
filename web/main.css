@@ -11,7 +11,7 @@
 *******************************************************************
 */
 
-html {
+html, body {
     background-color: #7f95a3;
     color: black;
     font-family: Arial, Helvetica, sans-serif;
