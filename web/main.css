@@ -205,32 +205,27 @@ html, body {
   #background-color: #ccc;
 }
 
+/* HELP PAGE STYLES */
+
+.help_list li{
+  padding: 10px;
+}
 
 /* ADDRESS BOOK STYLES */
-
-.address-book-col-values {
-  float: left; /* fix for  buggy browsers */
-  display: table-column;
-  width: auto;
-  #background-color: #ccc;
-}
 
 .address-book-col-planet-names {
   float: left; /* fix for  buggy browsers */
   display: table-column;
   width: 40%;
-  #background-color: #ccc;
   min-width: 200px;
-  font-size: 2vw
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .address-book-col-glyphs {
   float: left; /* fix for  buggy browsers */
   width: 60%;
-
   display: table-column;
-  #background-color: #ccc;
-
 }
 
 .address-book-row {
@@ -241,8 +236,8 @@ html, body {
     text-align: left;
     line-height:75px;
     cursor: pointer;
-    font-size: 20pt;
     display: flex;
+    max-width: 500px;
 }
 
 .address-book-row:hover{
