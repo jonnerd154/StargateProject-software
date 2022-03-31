@@ -226,6 +226,10 @@ html, body {
 
 /* ADDRESS BOOK STYLES */
 
+.address_book_container{
+  padding-top:20px;
+}
+
 .address-book-col-planet-names {
   float: left; /* fix for  buggy browsers */
   display: table-column;
