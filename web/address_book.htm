@@ -34,105 +34,10 @@
   <body>
 
     <script type="text/javascript">
-
-    // Configuration
-    var poll_delay_default = 5000
-    var poll_delay_offline = 500
-
-    // State variables
-    var poll_delay = poll_delay_default
-    var is_online = false
-
-    var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
-    offline_modal.dialog({
-        autoOpen: false,
-        modal: true,
-        dialogClass: "no-close",
-    });
-
-    // This function is run on document-ready
-    $( function() {
-        doPoll()
-    })
-
-    function update_address_book(){
-      $.ajax({
-          dataType: "json",
-          url: "/stargate/get/address_book",
-          data: {
-              type: "all"
-          },
-          success: function( json ) {
-              addresses = json['address_book']
-              galaxy_path = json['galaxy_path']
-              load_address_book()
-          },
-          error: function (xhr, textStatus, errorThrown){
-              console.log("Failed to load Address Book from Stargate")
-              $("<div>Failed to load Address Book from Stargate</div>").dialog();
-          }
-
-      });
-    }
-    function load_address_book(){
-        $.each(addresses, function( index, value ) {
-            address_raw = value.gate_address
-            address_string = address_raw.join("-");
-            $.each(address_raw, function( index, value) {
-                value=("000" + value).substr(-3,3);
-                address_raw[index] = '<img class="address-book-glyph" src="chevrons/'+galaxy_path+'/'+value+'.svg" />';
-            });
-
-            address = address_raw.join("");
-
-            $("#presets").append('<div class="address-book-row address-book-row-'+value.type+'" onclick="window.location = \'index.htm?address=' +
-              address_string + '\';"><div class="address-book-col-planet-names">' + value.name + '</div><div class="address-book-col-glyphs">' + address +  '</div></div>' );
-        });
-    }
-
-    function doPoll( singleShot = false ){
-        $.get('stargate/get/is_alive')
-            .done(function(data) {
-                // If we're coming back from being offline, update the address book
-                if (!is_online){
-                  update_address_book()
-                }
-
-                // Hide the offline modal
-                hideOfflineModal()
-
-                poll_delay = poll_delay_default
-                is_online = true
-                // Schedule the next polling
-                if ( !singleShot ){
-                    setTimeout(function(){doPoll( false ); }, poll_delay);
-                }
-            })
-            .fail(function(jqXHR, textStatus, errorThrown) {
-                // Show the "we're offline modal"
-                showOfflineModal()
-                is_online = false
-                // Slow the polling rate to default
-                poll_delay = poll_delay_offline
-
-                // Schedule the next polling
-                if ( !singleShot ){
-                    setTimeout(function(){doPoll( false ); }, poll_delay);
-                }
-            }
-
-        );
-
-    }
-
-    function showOfflineModal(){
-        offline_modal.dialog("open");
-    }
-
-    function hideOfflineModal(){
-        offline_modal.dialog("close");
-    }
-
+      // This function is run on document-ready
+      $( function() {
+          doPoll()
+      })
     </script>
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
@@ -186,5 +91,8 @@
     <script>window.jQuery || document.write('<script src="/lib/bootstrap-4.0.0/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
     <script src="/lib/bootstrap-4.0.0/assets/js/vendor/popper.min.js"></script>
     <script src="/lib/bootstrap-4.0.0/dist/js/bootstrap.min.js"></script>
-    <script src="/js/top_menu.js"></script>  </body>
+    <script src="/js/top_menu.js"></script>
+    <script src="/js/gate_offline_polling.js"></script>
+    <script src="/js/address_book.js"></script>
+  </body>
 </html>
