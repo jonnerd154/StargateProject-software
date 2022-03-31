@@ -34,19 +34,6 @@
   <body>
 
     <script type="text/javascript">
-      // Configuration
-      var poll_delay_default = 5000
-      var poll_delay_offline = 500
-
-      // State variables
-      var poll_delay = poll_delay_default
-
-      var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
-        offline_modal.dialog({
-        autoOpen: false,
-        modal: true,
-        dialogClass: "no-close",
-      });
 
       $( function() {
         initialize_button_handlers()
@@ -82,42 +69,16 @@
         });
       }
 
-      function doPoll( singleShot = false ){
-        $.get('stargate/get/is_alive')
-          .done(function(data) {
+      function poll_success(singleShot, data){
+        // Hide the offline modal
+        hideOfflineModal()
 
-            // Hide the offline modal
-            hideOfflineModal()
+        poll_delay = poll_delay_default
 
-            poll_delay = poll_delay_default
-
-            // Schedule the next polling
-            if ( !singleShot ){
-              setTimeout(function(){doPoll( false ); }, poll_delay);
-            }
-          })
-          .fail(function(jqXHR, textStatus, errorThrown) {
-              // Show the "we're offline modal"
-              showOfflineModal()
-
-              // Slow the polling rate to default
-              poll_delay = poll_delay_offline
-
-              // Schedule the next polling
-              if ( !singleShot ){
-                setTimeout(function(){doPoll( false ); }, poll_delay);
-              }
-          }
-        );
-
-      }
-
-      function showOfflineModal(){
-        offline_modal.dialog("open");
-      }
-
-      function hideOfflineModal(){
-        offline_modal.dialog("close");
+        // Schedule the next polling
+        if ( !singleShot ){
+          setTimeout(function(){doPoll( false ); }, poll_delay);
+        }
       }
 
     </script>
@@ -267,5 +228,7 @@
     <script>window.jQuery || document.write('<script src="/lib/bootstrap-4.0.0/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
     <script src="/lib/bootstrap-4.0.0/assets/js/vendor/popper.min.js"></script>
     <script src="/lib/bootstrap-4.0.0/dist/js/bootstrap.min.js"></script>
-    <script src="/js/top_menu.js"></script>  </body>
+    <script src="/js/top_menu.js"></script>
+    <script src="/js/gate_offline_polling.js"></script>
+  </body>
 </html>
