@@ -22,5 +22,6 @@ function updateInfo(){
 }
 
 function getHTMLTableRow(paramName, data){
-  return '<tr><td><img src="' + data.imageSrc + '" height="50"/></td><td>' + data.index + '</td><td>' + data.name + '</td><td>' + data.keyboard_mapping + '</td></tr>';
+  return '<tr><td><img src="' + data.imageSrc + '" height="50"/></td><td>' + data.index + '</td><td>' +
+    '<a target="_blank" href="https://en.wikipedia.org/wiki/'+ data.name + '">'+ data.name + '</a></td><td>' + data.keyboard_mapping + '</td></tr>';
 }
