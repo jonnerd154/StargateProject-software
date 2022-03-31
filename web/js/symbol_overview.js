@@ -5,7 +5,6 @@ function updateInfo(){
       success: function (response) {
         var trHTML = '';
         $.each(response, function (paramName, item) {
-            console.log(item)
             trHTML += getHTMLTableRow(paramName, item)
         });
         $('#records_table').html("\
@@ -23,6 +22,5 @@ function updateInfo(){
 }
 
 function getHTMLTableRow(paramName, data){
-  if (!data.units) data.units = ""
-  return '<tr class="tableRow"><td><img src="' + data.imageSrc + '" height="50"/></td><td>' + data.index + '</td><td>' + data.name + '</td><td>' + data.keyboard_mapping + '</td></tr>';
+  return '<tr><td><img src="' + data.imageSrc + '" height="50"/></td><td>' + data.index + '</td><td>' + data.name + '</td><td>' + data.keyboard_mapping + '</td></tr>';
 }
