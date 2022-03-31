@@ -51,7 +51,7 @@ function getParamGroupByPrettyName(paramPrettyName){
   // Hacky, but gets the job done
   groups = {
       "Audio": "Audio",
-      "Chevron": "Chevron",
+      "Chevron": "Chevron Motor",
       "Control": "Stargate Control API",
       "DHD": "Dial Home Device (DHD)",
       "Dialing": "Dialing",
@@ -62,9 +62,19 @@ function getParamGroupByPrettyName(paramPrettyName){
       "Wormhole": "Wormhole Max Time"
   }
 
+  compound_groups = {
+    "Chevron Config": "Chevron GPIO",
+  }
   group_basic = paramPrettyName.split(' ')[0]
-  if ( !groups[group_basic] ){
+  group_basic_2 = paramPrettyName.split(' ')[1]
+  group_compound = group_basic + " " + group_basic_2
+
+  // No group match, misc.
+  if ( !groups[group_basic] && !compound_groups[group_compound]){
     return "Miscellaneous"
+  }
+  else if ( compound_groups[group_compound] ){
+    return compound_groups[group_compound]
   }
   return groups[group_basic]
 
