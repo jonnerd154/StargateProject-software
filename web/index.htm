@@ -374,9 +374,9 @@
               <a class="dropdown-item" href="config.htm">Configuration</a>
               <a class="dropdown-item" href="info.htm">System Information</a>
               <a><hr></a>
-              <a class="dropdown-item" href="#">Restart Software</a>
-              <a class="dropdown-item" href="#">Reboot Raspberry Pi</a>
-              <a class="dropdown-item" href="#">Shutdown Raspberry Pi</a>
+              <a class="dropdown-item" href="#" onClick="software_restart()">Restart Software</a>
+              <a class="dropdown-item" href="#" onClick="host_reboot()">Reboot Raspberry Pi</a>
+              <a class="dropdown-item" href="#" onClick="host_shutdown()">Shutdown Raspberry Pi</a>
             </div>
           </li>
         </ul>
@@ -408,5 +408,6 @@
     <script>window.jQuery || document.write('<script src="/lib/bootstrap-4.0.0/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
     <script src="/lib/bootstrap-4.0.0/assets/js/vendor/popper.min.js"></script>
     <script src="/lib/bootstrap-4.0.0/dist/js/bootstrap.min.js"></script>
+    <script src="/js/top_menu.js"></script>
   </body>
 </html>
