@@ -311,12 +311,27 @@ html, body {
 
 /* SYMBOL OVERVIEW STYLES */
 
+#symbol_overview_table{
+  width: 100%;
+}
+
 #symbol_overview_table tr td{
   text-align: center;
 }
 #symbol_overview_table tr th{
   text-align: center;
   padding: 10px;
+  border: 1px 1px 1px 1px;
+  background-color: grey;
+  border-color: black;
+}
+
+#symbol_overview_table tr:nth-of-type(odd) {
+  background-color: #ffffff;
+}
+
+#symbol_overview_table tr:nth-of-type(even) {
+  background-color: #e0e0e0;
 }
 
 /* TESTING/DEBUG STYLES */
