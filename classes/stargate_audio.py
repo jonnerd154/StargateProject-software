@@ -9,8 +9,9 @@ class StargateAudio:
 
         self.log = app.log
         self.cfg = app.cfg
+        self.galaxy_path = app.galaxy_path
 
-        self.sound_fx_root = base_path + "/soundfx" # No trailing slash
+        self.sound_fx_root = base_path + "/soundfx/" + self.galaxy_path # No trailing slash
 
         # Make ready the sound effects
         self.sounds = {}
