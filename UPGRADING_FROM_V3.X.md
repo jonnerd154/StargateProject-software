@@ -25,17 +25,17 @@ If you already have a Stargate built and running, you'll want to copy some confi
 If you used non-default chevron mappings (or other changes!) when building your 'gate, you'll need to adjust the new configuration as well
 - `/home/pi/sg1_v4/config/addresses.json` - adjust `local_stargate_address` with values from from your old `/home/sg1/sg1/stargate_address.py`
 
-5. Open the web interface (http://stargate.local), go to `Admin`-->`Configuration`. Scroll down to the "Chevron GPIO Configurations" section.
+5. Open the web interface (http://stargate.local), go to `Admin`-->`Configuration`. Scroll down to the "Chevron GPIO Configurations" section. Copy the configurations into the appropriate fields, then press enter or scroll to the bottom and click "submit." Your changes will be confirmed in a dialog box.
 
 To interpret the old configuration file, see these examples:
 
-|  Line in V3 Config   | Chevron Number | Chevron Config * LED Pin | Chevron Config Motor Number |
+|  Line in V3 Config   | Chevron Number | Chevron Config LED Pin   | Chevron Config Motor Number |
 | -------------------- | ---------------|------------------------- | --------------------------- |
 | `1: Chevron(21, 3)`  |      1         |           21             |          3                  |
 | `2: Chevron(16, 4)`  |      2         |           16             |          4                  |
 
 
-6. Restart the Stargate software to load the new values:
+6. Restart the Stargate software to load the new configuration:
 In the web interface, go to `Admin`-->`Restart Software`. Click YES to confirm.
 After about 10 seconds you should hear one of the team members tell you the gate is ready.
 
