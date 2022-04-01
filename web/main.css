@@ -354,7 +354,8 @@ html, body {
   margin:10px;
   margin-top: 0px;
   padding: 5px;
-  background-color: #52b69a;
+  background-color: #e0e0e0;
+  color: black;
 }
 .debug_button_container .controlButton{
   padding: 5px;
@@ -363,7 +364,8 @@ html, body {
   width: 300px;
   font-size: 1em;
   height: 60px;
-  background-color: #52b69a;
+  background-color: #e0e0e0;
+  color: black;
 }
 
 .cycleChevronButton{
