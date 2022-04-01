@@ -187,6 +187,22 @@ class StargateAddressManager:
                 return config['name']
         return 'Unknown'
 
+    def get_summary_from_book(self, book, omit_zeros):
+        summary = {}
+        summary['fan'] = 0;
+        summary['lan'] = 0;
+        summary['standard'] = 0;
+
+        for address, config in book.items():
+            summary[config.get("type", "unknown")] +=1
+
+        if omit_zeros:
+            for name in summary.copy().keys():
+                if summary[name] == 0:
+                    summary.pop(name)
+
+        return summary
+
 class StargateAddressValidator: # pylint: disable=too-few-public-methods
 
     def __init__(self):

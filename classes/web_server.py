@@ -29,14 +29,18 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                 data = { 'is_alive': True }
 
             elif request_path == "/get/address_book":
+                data = {}
                 record_type = get_vars.get('type')[0]
                 if record_type == "standard":
-                    data = self.stargate.addr_manager.get_book().get_standard_gates()
+                    data['address_book'] = self.stargate.addr_manager.get_book().get_standard_gates()
                 elif record_type == "fan":
-                    data = self.stargate.addr_manager.get_book().get_fan_and_lan_addresses()
+                    data['address_book'] = self.stargate.addr_manager.get_book().get_fan_and_lan_addresses()
                 else:
                     all_addr = self.stargate.addr_manager.get_book().get_all_nonlocal_addresses()
-                    data = collections.OrderedDict(sorted(all_addr.items()))
+                    data['address_book'] = collections.OrderedDict(sorted(all_addr.items()))
+
+                data['summary'] = self.stargate.addr_manager.get_summary_from_book(data['address_book'], True)
+                data['galaxy_path'] = self.stargate.galaxy_path
 
             elif request_path == "/get/local_address":
                 data = self.stargate.addr_manager.get_book().get_local_address()
@@ -84,6 +88,10 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "galaxy":                         self.stargate.galaxy
                 }
 
+                # Put the lifetime stats in here too.
+                for key, value in self.stargate.dialing_log.get_summary().items():
+                    data['stats_'+key] = value.get('value')
+
             elif request_path == "/get/hardware_status":
                 data = {
                     "chevrons":                       self.stargate.chevrons.get_status(),
@@ -93,16 +101,16 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             elif request_path == "/get/dhd_symbols":
                 data = self.stargate.symbol_manager.get_dhd_symbols()
 
-            elif request_path == "/get/config":
-                data = collections.OrderedDict(sorted(self.stargate.cfg.get_all_configs().items()))
-
             elif request_path == "/get/symbols":
                 data = {
                     "symbols": self.stargate.symbol_manager.get_all_ddslick()
                 }
 
-            elif request_path == "/get/lifetime_stats":
-                data = self.stargate.dialing_log.get_summary()
+            elif request_path == "/get/symbols_all":
+                data = self.stargate.symbol_manager.get_all()
+
+            elif request_path == "/get/config":
+                data = collections.OrderedDict(sorted(self.stargate.cfg.get_all_configs().items()))
 
             else:
                 # Unhandled GET request: send a 404
@@ -239,6 +247,10 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     self.stargate.keyboard.queue_symbol(symbol_number)
                 elif symbol_number == 0:
                     self.stargate.keyboard.queue_center_button()
+                elif symbol_number == -1 and self.stargate.wormhole_active == False and len(self.stargate.address_buffer_outgoing) > 0:
+                    # Abort dialing
+                    self.stargate.dialing_log.dialing_fail(self.stargate.address_buffer_outgoing)
+                    self.stargate.shutdown(cancel_sound=False, wormhole_fail_sound=False)
 
                 data = { "success": True }
 

@@ -11,10 +11,23 @@
 *******************************************************************
 */
 
-html {
+/* GLOBAL STYLES */
+
+html, body {
     background-color: #7f95a3;
     color: black;
     font-family: Arial, Helvetica, sans-serif;
+}
+
+.header_image_container{
+  max-height: 200px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.header_image{
+  margin-top:50px;
+  width: 100%;
 }
 
 .dial-sequence {
@@ -90,7 +103,7 @@ html {
         margin-right: 0;
     }
 
-    .chevron img {
+    .glyph {
         filter: invert(1);
         width: 100%;
         height: 100%;
@@ -101,10 +114,15 @@ html {
     }
 
 #center_button_image{
-  filter: invert(0);
   width: 100%;
   height: 100%;
 }
+
+#abort_button_image{
+  width: 100%;
+  height: 100%;
+}
+
 
 .chevronPresets {
     width: 324px;
@@ -174,31 +192,6 @@ html {
         border: 1px solid white;
     }
 
-.presetAddress {
-    height: 75px;
-    border: 1px solid black;
-    margin: 0 5px 5px;
-    padding: 0 10px;
-    text-align: left;
-    line-height:75px;
-    cursor: pointer;
-    font-size: 20pt;
-}
-
-    .presetAddress:hover{
-        border: 1px solid white;
-    }
-
-.presetAddress .name, .presetAddress .glyphs {
-    float:left;
-}
-
-.presetAddress img {
-        filter: invert(1);
-        width: 75px;
-        height: 75px;
-    }
-
 
 .filter-green{
     filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);
@@ -226,12 +219,225 @@ html {
 .div-table-col-names {
   float: left; /* fix for  buggy browsers */
   display: table-column;
-  width: 200px;
+  width: 400px;
   #background-color: #ccc;
 }
-.div-table-col-values {
+
+/* HELP PAGE STYLES */
+
+.help_list li{
+  padding: 10px;
+}
+
+/* ADDRESS BOOK STYLES */
+
+.address_book_container{
+  padding-top:20px;
+}
+
+.address-book-col-planet-names {
   float: left; /* fix for  buggy browsers */
   display: table-column;
+  width: 40%;
+  min-width: 200px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.address-book-col-glyphs {
+  float: left; /* fix for  buggy browsers */
+  width: 60%;
+  display: table-column;
+}
+
+.address-book-row {
+    height: 75px;
+    border: 1px solid black;
+    margin: 0 5px 5px;
+    padding: 0 10px;
+    text-align: left;
+    line-height:75px;
+    cursor: pointer;
+    display: flex;
+    max-width: 500px;
+}
+
+.address-book-row:hover{
+    border: 1px solid white;
+}
+
+#address_book_summary{
+  padding: 10px;
+  display:flex;
+  width: 100%;
+
+}
+
+
+#address_book_summary span{
+  padding: 10px;
+
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: -20px;
+  font-size:calc(3px + 1vw);
+  width: 100%;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.gate_count{
+  font-size: 2vw !important;
+  font-weight: bold;
+}
+
+.address-book-row-standard{
+  background-color: #52b69a;
+}
+
+.address-book-row-fan{
+  background-color: #168aad;
+}
+
+.address-book-row-lan{
+  background-color: #1a759f;
+}
+
+.address-book-row .name, .address-book-row{
+    float:left;
+    width:100%;
+}
+
+.address-book-row img {
+    filter: invert(1);
+    width: 75px;
+    height: 75px;
+}
+
+.address-book-glyph {
+  position:relative;
+  float:left;
+  max-width:14%;
+  width: 14%
+}
+
+/* CONFIGURATION STYLES */
+#records_table div{
+  padding: 10px;
+  max-width: 700px;
+}
+
+#records_table div input{
+  width: 200px;
+}
+
+#records_table div select{
+  width: 200px;
+}
+
+#records_table div:nth-of-type(odd) {
+  background: #ffffff;
+}
+
+#records_table div:nth-of-type(even) {
+  background: #e0e0e0;
+}
+
+/* SYMBOL OVERVIEW STYLES */
+
+#symbol_overview_table{
+  width: 100%;
+}
+
+#symbol_overview_table tr td{
+  text-align: center;
+}
+#symbol_overview_table tr th{
+  text-align: center;
+  padding: 10px;
+  border: 1px 1px 1px 1px;
+  background-color: grey;
+  border-color: black;
+}
+
+#symbol_overview_table tr:nth-of-type(odd) {
+  background-color: #ffffff;
+}
+
+#symbol_overview_table tr:nth-of-type(even) {
+  background-color: #e0e0e0;
+}
+
+/* TESTING/DEBUG STYLES */
+
+.debug_button_container{
+  padding-top: 20px;
+  padding-bottom: 50px;
+}
+
+.debug_button_container .cycleChevronButton{
+  margin:10px;
+  margin-top: 0px;
+  padding: 5px;
+  background-color: #e0e0e0;
+  color: black;
+}
+.debug_button_container .controlButton{
+  padding: 5px;
+  margin-top: 0px;
+  margin:10px;
+  width: 300px;
+  font-size: 1em;
+  height: 60px;
+  background-color: #e0e0e0;
+  color: black;
+}
+
+.cycleChevronButton{
+  padding: 5px;
+  width: 150px;
+  font-size: 1em;
+  height: 60px;
+}
+
+/* SYSTEM INFORMATION STYLES */
+
+.system-info-table {
+  display: table;
+  width: 100%;
+  #background-color: #eee;
+  border: 1px solid #666666;
+  border-spacing: 5px; /* cellspacing:poor IE support for  this */
+  border-collapse: collapse;
+}
+.system-info-row {
+  width: 100%;
+
+  display: table-row;
   width: auto;
+  clear: both;
+}
+.system-info-row span {
+  padding: 10px;
+  float: left;
+}
+
+.system-info-col-names {
+  float: left; /* fix for  buggy browsers */
+  display: table-column;
+  min-width: 400px;
   #background-color: #ccc;
+  font-weight: bold;
+}
+
+.system-info-row:nth-of-type(odd) {
+  background-color: #ffffff;
+}
+
+.system-info-row:nth-of-type(even) {
+  background-color: #e0e0e0;
+}
+
+.dd-select, .dd-option-description, .dd-desc{
+  color: black !important;
 }

@@ -21,7 +21,7 @@ class DialingLog():
 
         self.__reset_state()
 
-    def __reset_summary_storage(self):
+    def __reset_summary_storage(self): # pylint: disable=unused-private-member
 
         self.datastore.set("established_standard_count", 0)    # Lifetime Count of Established Outbound Wormholes to Movie Gates
         self.datastore.set("established_standard_mins", 0)    # Lifetime Minutes Outbound Established to Movie Gates
@@ -69,8 +69,7 @@ class DialingLog():
         self.current_activity['start_time'] = self.__get_time_now()
         self.current_activity['dialer_address']= self.addr_manager.get_book().get_local_address()
         self.current_activity['receiver_address'] = receiver_address
-        self.current_activity['remote_gate_type'] = "MOVIE"
-                # TODO: #self.addr_manager.get_type_by_address(receiver_address)
+        self.current_activity['remote_gate_type'] = "FAN" if self.addr_manager.is_fan_made_stargate(receiver_address) else "MOVIE"
 
         if self.current_activity['remote_gate_type'] == "FAN":
             self.datastore.set('established_fan_count', self.datastore.get('established_fan_count') + 1)

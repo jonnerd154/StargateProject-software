@@ -8,6 +8,7 @@ This main.py file is run automatically on boot. It is executed in a systemd daem
 
 import sys
 import os
+from time import sleep
 from http.server import HTTPServer
 import threading
 import atexit
@@ -131,7 +132,7 @@ class GateApplication:
         try:
             self.stargate.wormhole_active = False
             sleep(5)
-        except: # pylint: disable=base_except
+        except: # pylint: disable=bare-except
             pass
 
         if not self.check_is_daemon():

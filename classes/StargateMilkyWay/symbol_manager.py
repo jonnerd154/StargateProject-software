@@ -214,7 +214,12 @@ class StargateSymbolManager:
         return keyboard_mapping
 
     def get_all(self):
-        return self.symbols
+        symbols_out = []
+        for symbol in self.symbols:
+            new_symbol = symbol.copy()
+            new_symbol['imageSrc'] = self.get_image_path(new_symbol['index'])
+            symbols_out.append(new_symbol)
+        return symbols_out
 
     def get_dhd_symbols(self):
         ret_arr = []
@@ -233,14 +238,15 @@ class StargateSymbolManager:
 
         symbols_out = []
         for symbol in symbols:
-            new_symbol = {
-                'text':         "",
-                'value':        symbol['index'],
-                'selected':     False,
-                'description':  symbol['name'],
-                'imageSrc':     self.get_image_path(symbol['index']) + ".svg"
-            }
-            symbols_out.append(new_symbol)
+            if symbol.get("is_on_dhd", True): # Only show symbols that are on the DHD
+                new_symbol = {
+                    'text':         "",
+                    'value':        symbol['index'],
+                    'selected':     False,
+                    'description':  symbol['name'],
+                    'imageSrc':     symbol['imageSrc']
+                }
+                symbols_out.append(new_symbol)
 
         return symbols_out
     def get_name_by_index(self, index):
