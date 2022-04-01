@@ -21,6 +21,7 @@ configure_hostname
 copy_wpa_supplicant
 config_users_and_passwords
 
+configure_git
 set_permissions
 do_hardware_config
 apt_update_and_install

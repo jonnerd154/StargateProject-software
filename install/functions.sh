@@ -265,3 +265,8 @@ function configure_firewall_ufw() {
   echo 'Enabling firewall'
   echo "y" | sudo ufw enable
 }
+
+function configure_git() {
+  cd /home/pi/sg1_v4/
+  git config core.fileMode false
+}
