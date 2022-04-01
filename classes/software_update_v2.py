@@ -92,7 +92,6 @@ class SoftwareUpdateV2:
 
         except: # pylint: disable=bare-except
             self.log.log("pip update failed")
-            pass
 
         # Wait for the clip to finish playing before restarting
         self.audio.random_clip_wait_done()
@@ -133,4 +132,4 @@ class SoftwareUpdateV2:
     @staticmethod
     def is_raspi():
         # Is an ARM processor, and not Apple Silicon M1 (also ARM)
-        return os.uname()[4][:3] == 'arm' and "Darwin" not in os.uname().sysname;
+        return os.uname()[4][:3] == 'arm' and "Darwin" not in os.uname().sysname

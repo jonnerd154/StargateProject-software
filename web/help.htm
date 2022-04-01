@@ -1,0 +1,120 @@
+<!--
+*******************************************************************
+***   Kristian's Stargate Project - TheStargateProject.com      ***
+*******************************************************************
+***                                                             ***
+***   Original Software written by Kristian Tysse               ***
+***   Restructuring and Development by Jonathan Moyes           ***
+***                                                             ***
+*******************************************************************
+-->
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Jonathan Moyes">
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
+
+    <title>Help | Stargate Command</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="lib/jquery-ui-1.13.0.custom/jquery-ui.min.css">
+    <link href="lib/bootstrap-4.0.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.min.js"></script>
+
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" href="main.css" />
+
+    <style>
+      .container{
+        margin-top:50px;
+      }
+    </style>
+
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <a class="navbar-brand" href="/">Stargate Command</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.htm">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="address_book.htm">Address Book</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="symbol_overview.htm">Symbols</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Admin</a>
+            <div class="dropdown-menu" aria-labelledby="dropdown01">
+              <a class="dropdown-item" href="debug.htm">Testing / Debug</a>
+              <a><hr></a>
+              <a class="dropdown-item" href="config.htm">Configuration</a>
+              <a class="dropdown-item" href="info.htm">System Information</a>
+              <a><hr></a>
+              <a class="dropdown-item" href="#" onClick="software_restart()">Restart Software</a>
+              <a class="dropdown-item" href="#" onClick="host_reboot()">Reboot Raspberry Pi</a>
+              <a class="dropdown-item" href="#" onClick="host_shutdown()">Shutdown Raspberry Pi</a>
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="help.htm">Help  <span class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class='header_image_container'>
+      <img class='header_image' src="img/header.jpg" alt="">
+    </div>
+
+    <main role="main" class="container">
+
+      <div class="jumbotron">
+        <h1 class="display-7">Having trouble?</h1>
+        <p class="lead">There are a few resources available to help you finish your Stargate</p>
+        <hr class="my-4">
+        <p>
+          <ol class='help_list' style='max-width: 800px;'>
+              <li><b><a target='_blank' href='https://thestargateproject.com/frequently-asked-questions-faq/'>Visit the FAQ</a></b> on Kristian's Website</li>
+              <li><b>Join our Discord server!</b> There's a lively community of people just like you working to build their gates, and can answer questions. <a href="mailto:kristian@thestargateproject.com">Email Kristian</a> for an invite.</li>
+              <li><b>Software problem or feature request?</b> Visit the <a target='_blank' href='https://github.com/jonnerd154/StargateProject-software'>GitHub page</a>
+                  and <a target='_blank' href='https://github.com/jonnerd154/StargateProject-software/issues'>log an Issue.</a></li>
+              <li><b>Additional resources</b>
+                <ul>
+                  <li><a target="_blank" href="https://thestargateproject.com/wp-content/uploads/2021/01/Schematic_Stargate-Wiring-Diagram_2021-01-03-1024x725.png.webp">Wiring Schematic</a></li>
+                  <li><a target="_blank" href="https://www.youtube.com/watch?v=ElTCFurf5us&feature=youtu.be">Kristian's Assembly Video</a></li>
+                  <li><a target="_blank" href="https://photos.app.goo.gl/rrEA4en7zGrgtoUJ9">Kristian's Design/Build Photo Album</a></li>
+                  <li><a target="_blank" href="https://www.rdanderson.com/stargate/glyphs/index.htm">RD Anderson's Stargate Information</a></li>
+
+                </ul>
+              </li>
+
+          </ol>
+        </p>
+      </div>
+
+    </main><!-- /.container -->
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script>window.jQuery || document.write('<script src="/lib/bootstrap-4.0.0/assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="/lib/bootstrap-4.0.0/dist/js/bootstrap.min.js"></script>
+    <script src="/js/top_menu.js"></script>
+    <script src="/js/gate_offline_polling.js"></script>
+    <script src="/js/debug.js"></script>
+  </body>
+</html>

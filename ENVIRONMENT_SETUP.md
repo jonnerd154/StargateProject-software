@@ -37,7 +37,7 @@ The majority of the installation is completed by a script at `sg1_v4/install/ins
 2. Once you know the IP address, connect to the Pi via SSH and keep it open for later:
   - Windows: Use PuTTY
   - MacOS: Use Terminal: `ssh pi@YOURIPADDRESS`
-  
+
 Login credentials:
   ```
   Username: pi
@@ -45,16 +45,14 @@ Login credentials:
   ```
 
 ## Copying the software bundle (git clone)
-1. Clone the Repo: `cd ~ && git clone https://github.com/jonnerd154/StargateProject2021.git sg1_v4`
-2. TODO: download audio files
+1. Clone the Repo: `cd ~ && git clone https://github.com/jonnerd154/StargateProject-software.git sg1_v4`
 
-## (ALTERNATIVE) Copying the Software bundle (Via SCP)
+## Upload audio files (Via SCP)
 1. Connect to the Pi using an SCP/SFTP file transfer client.
     - Windows: [WinSCP](https://winscp.net/eng/index.php) or [FileZilla](https://filezilla-project.org/download.php?type=client)
     - MacOS: [CyberDuck](https://cyberduck.io/) or [FileZilla](https://filezilla-project.org/download.php?type=client)
-2. Copy the software folder (Kristian's repo `/sg1_v4`) to the Raspi.
-    - Copy it to `/home/pi/sg1_v4`
-    - To be clear, the main readme file should be at `/home/pi/sg1_v4/README.md`
+2. Copy the sound effects folder (Kristian's repo `/soundfx`) to the Raspi.
+    - Copy the folder to `/home/pi/sg1_v4/soundfx`
 
 ## Prepare & Run the Installer
 1. Go back to your SSH client and configure the Install Script's permissions:
