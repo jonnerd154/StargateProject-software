@@ -1,6 +1,7 @@
 
 var first_run = true
-var hasSymbols = false;
+var hasSymbols = false
+var cancel = false
 
 function doSpeedDial(speed_dial_full_address){
   // Check for preset address in $_GET (via javascript instead of server-side)
@@ -51,11 +52,12 @@ function doSpeedDial(speed_dial_full_address){
               clickChevron(chevrons,i);
           }
 
+          cancel = false
+          
           // This will create a new entry in the browser's history, without reloading, so refreshing won't start dialing again.
           window.history.pushState({}, "", '/index.htm');
-
           function clickChevron(chevrons, i) {
-              setTimeout(function() { $("#chevron"+chevrons[i]).click() }, timeouts[i]);
+              setTimeout(function() { if (!cancel){ $("#chevron"+chevrons[i]).click() } }, timeouts[i]);
           }
       });
     }
@@ -69,7 +71,7 @@ function loadDHDSymbols(){
 
           // Add the symbols
           for (var i = 0; i < data.length; i++) {
-              html = '<div class="chevron" num="' + data[i]['index'] + '" id="chevron' + data[i]['index'] + '"><img src="' + data[i]['imageSrc'] + '" alt="' + data[i]['name'] + '"/></div>'
+              html = '<div class="chevron" num="' + data[i]['index'] + '" id="chevron' + data[i]['index'] + '"><img class="glyph" src="' + data[i]['imageSrc'] + '" alt="' + data[i]['name'] + '"/></div>'
               $('.chevrons').append(html)
               //Do something
           }
@@ -78,10 +80,16 @@ function loadDHDSymbols(){
           html = '<div class="chevron" num="0" id="chevron0"><img id="center_button_image" src="img/center_button.png" alt="Center Button" /></div>'
           $('.chevrons').append(html)
 
+          html = '<div class="chevron" num="-1" id="abort-dialing"><img id="abort_button_image" src="img/stop.png" alt="Abort Dialing" /></div>'
+          $('.chevrons').append(html)
+
           // Attach the on-click handlers
           $('div.chevrons div.chevron').click(function() {
               const symbol_number = $(this).attr('num');
 
+              if (symbol_number == -1){
+                cancel = true;
+              }
               $.post({
                   url: '/stargate/do/dhd_press',
                   data: JSON.stringify({

@@ -103,7 +103,7 @@ html, body {
         margin-right: 0;
     }
 
-    .chevron img {
+    .glyph {
         filter: invert(1);
         width: 100%;
         height: 100%;
@@ -114,10 +114,15 @@ html, body {
     }
 
 #center_button_image{
-  filter: invert(0);
   width: 100%;
   height: 100%;
 }
+
+#abort_button_image{
+  width: 100%;
+  height: 100%;
+}
+
 
 .chevronPresets {
     width: 324px;
