@@ -28,18 +28,18 @@ If you used non-default chevron mappings (or other changes!) when building your 
 5. Open the web interface (http://stargate.local), go to `Admin`-->`Configuration`. Scroll down to the "Chevron GPIO Configurations" section.
 
 To interpret the old configuration file, see these examples:
-```
-| Line in V3 Config  | V4 Chevron Config *** LED Pin | Chevron Config 1 Motor Number |
-| ------------------ | ----------------------------- | -------------------------------
-| 1: Chevron(21, 3)  |              21               |              3                |
-| 1: Chevron(16, 4)  |              16               |              4                |
-```
+
+|  Line in V3 Config   | Chevron Number | Chevron Config * LED Pin | Chevron Config Motor Number |
+| -------------------- | ---------------|------------------------- | --------------------------- |
+| `1: Chevron(21, 3)`  |      1         |           21             |          3                  |
+| `2: Chevron(16, 4)`  |      2         |           16             |          4                  |
+
 
 6. Restart the Stargate software to load the new values:
 In the web interface, go to `Admin`-->`Restart Software`. Click YES to confirm.
 After about 10 seconds you should hear one of the team members tell you the gate is ready.
 
-7. "Trust by verify"
+7. **"Trust but Verify"**
 - After adjusting the configurations we suggest testing individual Chevrons to confirm everything is correct. In the web interface, go to `Admin`-->`Testing / Debug`. In here you will find buttons that allow you to test all of the hardware. First, scroll down to the "Cycle Chevrons" section. Clicking one of these buttons will simulate a full unlock/light on/lock sequence for each chevron. You want to verify that:
   - The Chevrons activate in the correct sequence (see Kristian's site for details).
   - The Chevron moves "down" first, then turns it's light on, then moves up and the light stays on.
@@ -56,4 +56,4 @@ After about 10 seconds you should hear one of the team members tell you the gate
   - **Subspace IP Address:** [ _some IP_ ]
   - **Internet Connection:** [ _Connected_ ]
 
-8. Dial! If everything above looks good, you're ready to try dialing another Subspace-connected Stargate. In the web interface, go to `Address Book`. Click on one of the BLUE buttons to select a Subspace gate and watch the gate do it's thing! Remember, there is a chance that stargate is not currently online, so don't get discouraged if it doesn't work. Kristian's second gate, `Abythres` or `Abythres 2` is almost always online and makes a good test.
+8. **Dial!** If everything above looks good, you're ready to try dialing another Subspace-connected Stargate. In the web interface, go to `Address Book`. Click on one of the BLUE buttons to select a Subspace gate and watch the gate do it's thing! Remember, there is a chance that stargate is not currently online, so don't get discouraged if it doesn't work. Kristian's second gate, `Abythres` or `Abythres 2` is almost always online and makes a good test.
