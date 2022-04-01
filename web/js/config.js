@@ -23,6 +23,8 @@ function updateInfo(){
         var trHTML = '';
         var lastGroup = false
 
+        $('#records_table').html("");
+        
         $.each(response, function (paramName, item) {
 
             paramPrettyName = toProperCase(paramName)
