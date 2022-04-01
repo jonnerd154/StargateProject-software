@@ -51,8 +51,8 @@ Login credentials:
 1. Connect to the Pi using an SCP/SFTP file transfer client.
     - Windows: [WinSCP](https://winscp.net/eng/index.php) or [FileZilla](https://filezilla-project.org/download.php?type=client)
     - MacOS: [CyberDuck](https://cyberduck.io/) or [FileZilla](https://filezilla-project.org/download.php?type=client)
-2. Copy the sound effects folder (Kristian's repo `/soundfx/milkyway`) to the Raspi.
-    - Copy the folder to `/home/pi/sg1_v4/soundfx/milkyway`
+2. Copy the sound effects folder (Kristian's repo `/soundfx`) to the Raspi.
+    - Copy the folder to `/home/pi/sg1_v4/soundfx`
 
 ## Prepare & Run the Installer
 1. Go back to your SSH client and configure the Install Script's permissions:
