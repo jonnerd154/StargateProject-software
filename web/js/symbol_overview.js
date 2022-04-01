@@ -9,7 +9,7 @@ function updateInfo(){
         });
         $('#symbol_overview_table').html("\
             <tr>\
-                <th>Symbol Number</th>\
+                <th>Symbol</th>\
                 <th>Index</th>\
                 <th>Name</th>\
                 <th>Keyboard Mapping</th>\

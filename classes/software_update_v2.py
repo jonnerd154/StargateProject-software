@@ -42,6 +42,10 @@ class SoftwareUpdateV2:
     def get_available_updates(self):
         # Checks for newer software versions, returns the next-newest release
 
+        # Clean slate
+        self.repo.config_writer().set_value("core", "fileMode", "false").release() # ignore perms
+        self.delete_local_tags()
+
         # Fetch newest data from Github
         self.repo.remotes.origin.fetch()
 
