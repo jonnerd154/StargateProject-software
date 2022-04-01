@@ -144,7 +144,7 @@ function restart_apache() {
 function configure_crontab() {
   # Add the speaker-tickler to our crontab
   echo 'Configuring crontab (user: pi)'
-  (crontab -l; echo '*/8 * * * * /home/pi/venv_v4/bin/python3 /home/pi/sg1_v4/scripts/speaker_on.py')|awk '!x[$0]++'|crontab -
+  (crontab -l 2>/dev/null; echo "*/8 * * * * /home/pi/venv_v4/bin/python3 /home/pi/sg1_v4/scripts/speaker_on.py") | awk '!x[$0]++' | crontab -
 }
 
 function disable_pwr_mgmt() {
