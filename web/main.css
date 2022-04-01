@@ -410,3 +410,7 @@ html, body {
 .system-info-row:nth-of-type(even) {
   background-color: #e0e0e0;
 }
+
+.dd-select, .dd-option-description, .dd-desc{
+  color: black !important;
+}
