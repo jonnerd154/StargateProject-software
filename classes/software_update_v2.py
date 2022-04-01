@@ -35,6 +35,10 @@ class SoftwareUpdateV2:
     def get_current_version(self):
         return self.current_version
 
+    def delete_local_tags(self):
+        for tag in self.repo.tags:
+            self.repo.git.tag('-d', tag)
+
     def get_available_updates(self):
         # Checks for newer software versions, returns the next-newest release
 
