@@ -266,6 +266,31 @@ html, body {
     border: 1px solid white;
 }
 
+#address_book_summary{
+  padding: 10px;
+  display:flex;
+  width: 100%;
+
+}
+
+
+#address_book_summary span{
+  padding: 10px;
+
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: -20px;
+  font-size:calc(3px + 1vw);
+  width: 100%;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.gate_count{
+  font-size: 2vw !important;
+  font-weight: bold;
+}
+
 .address-book-row-standard{
   background-color: #52b69a;
 }

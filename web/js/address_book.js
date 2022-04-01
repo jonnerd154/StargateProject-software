@@ -6,6 +6,7 @@ function update_address_book(){
           type: "all"
       },
       success: function( json ) {
+          summary = json['summary']
           addresses = json['address_book']
           galaxy_path = json['galaxy_path']
           load_address_book()
@@ -21,6 +22,19 @@ function load_address_book(){
     $.each(addresses, function( index, value ) {
         address_raw = value.gate_address
         address_string = address_raw.join("-");
+
+        $("#address_book_summary").html('')
+        nameLookup = {
+          "fan": "Subspace Gates",
+          "lan": "LAN Gates",
+          "standard": "Standard Gates",
+
+        }
+        $.each(summary, function( name, count) {
+            $("#address_book_summary").append("<span class='address-book-row-"+name+"'><span class='gate_count' style='padding:0px;'>" + count + "</span> "+ nameLookup[name] + "</span>")
+        });
+
+
         $.each(address_raw, function( index, value) {
             value=("000" + value).substr(-3,3);
             address_raw[index] = '<img class="address-book-glyph" src="chevrons/'+galaxy_path+'/'+value+'.svg" />';

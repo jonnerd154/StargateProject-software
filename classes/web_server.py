@@ -39,6 +39,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     all_addr = self.stargate.addr_manager.get_book().get_all_nonlocal_addresses()
                     data['address_book'] = collections.OrderedDict(sorted(all_addr.items()))
 
+                data['summary'] = self.stargate.addr_manager.get_summary_from_book(data['address_book'], True)
                 data['galaxy_path'] = self.stargate.galaxy_path
 
             elif request_path == "/get/local_address":
