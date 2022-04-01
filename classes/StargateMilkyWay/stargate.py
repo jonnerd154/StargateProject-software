@@ -161,7 +161,11 @@ class Stargate:
                 self.chevrons.get(self.locked_chevrons_outgoing).cycle_outgoing()  # Do the chevron locking thing.
             except KeyError:  # If we dialed more chevrons than the stargate can handle.
                 pass  # Just pass without activating a chevron.
-            self.log.log(f'Chevron {self.locked_chevrons_outgoing} locked with symbol: {self.address_buffer_outgoing[self.locked_chevrons_outgoing - 1]}')
+
+            try:
+                self.log.log(f'Chevron {self.locked_chevrons_outgoing} locked with symbol: {self.address_buffer_outgoing[self.locked_chevrons_outgoing - 1]}')
+            except IndexError:
+                pass
             self.last_activity_time = time()  # update the last_activity_time
 
             # TODO: Some of this belongs in Subspace. For example, deciding whether to send a message based
