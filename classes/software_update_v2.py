@@ -27,6 +27,9 @@ class SoftwareUpdateV2:
 
         # Initialize the GitPython repo object
         self.repo = git.Repo('.')
+        self.repo.config_writer().set_value("core", "fileMode", "false").release() # ignore permission changes in DIFF
+
+        self.delete_local_tags()
 
         # Update the fan gates from the DB every x hours
         interval = self.cfg.get("software_update_interval")
@@ -34,6 +37,10 @@ class SoftwareUpdateV2:
 
     def get_current_version(self):
         return self.current_version
+
+    def delete_local_tags(self):
+        for tag in self.repo.tags:
+            tag.delete(self.repo)
 
     def get_available_updates(self):
         # Checks for newer software versions, returns the next-newest release
