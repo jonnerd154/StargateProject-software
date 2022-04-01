@@ -50,7 +50,7 @@ function load_address_book(){
 function poll_success(singleShot, data){
   // If we're coming back from being offline, update the address book
 
-  if (is_online){
+  if (!is_online){
     update_address_book()
   }
 

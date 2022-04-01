@@ -5,7 +5,7 @@ var poll_delay_established = 1000
 
 // State variables
 var poll_delay = poll_delay_default
-var is_online = true
+var is_online = false
 
 var offline_modal = $('<div id="offline-modal" title="Stargate is Offline"><span id="dialogMsg">Unable to communicate with the Stargate. <br><br>Ensure that the Stargate software is running.</span></div>');
 offline_modal.dialog({
@@ -38,8 +38,9 @@ function offline_handler(singleShot, jqXHR, textStatus, errorThrown){
 function doPoll( singleShot = false ){
     $.get('stargate/get/dialing_status')
         .done(function(data) {
-            is_online = true
             poll_success(singleShot, data) // Defined in specific pages, behavior varies
+            is_online = true
+
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
             is_online = false
