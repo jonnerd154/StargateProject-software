@@ -23,7 +23,7 @@ If you already have a Stargate built and running, you'll want to copy some confi
 ```
 4. The first time the V4 software starts, it will initialize it's config files from default configurations.
 If you used non-default chevron mappings (or other changes!) when building your 'gate, you'll need to adjust the new configuration as well
-- `/home/pi/sg1_v4/config/addresses.json` - adjust `local_stargate_address` with values from from your old `/home/sg1/sg1/stargate_address.py`
+- `/home/pi/sg1_v4/config/milkyway-addresses.json` - adjust `local_stargate_address` with values from from your old `/home/sg1/sg1/stargate_address.py`
 
 5. Open the web interface (http://stargate.local), go to `Admin`-->`Configuration`. Scroll down to the "Chevron GPIO Configurations" section. Copy the configurations into the appropriate fields, then press enter or scroll to the bottom and click "submit." Your changes will be confirmed in a dialog box.
 
