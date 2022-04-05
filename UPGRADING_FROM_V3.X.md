@@ -50,10 +50,9 @@ After about 10 seconds you should hear one of the team members tell you the gate
 - Next, we need to verify that the Gate is on the Subspace network. In the web interface, go to `Admin-->System Information`. In here you'll see a bunch of information about your gate. Verify that:
   - **Stargate Name:** [ _Your Stargate's Name as recorded with Kristian's servers_ ]
   - **Local Stargate Address:** [ _Your Stargate's Address as recorded with Kristian's servers_ ]
-  - **Local Stargate Address:** [ _Your Stargate's Address as recorded with Kristian's servers_ ]
   - **Subspace Status:** *ONLINE*
   - **Subspace Public Key:** [ _Your Public Key, as loaded from the V3 config file_ ]
   - **Subspace IP Address:** [ _some IP_ ]
-  - **Internet Connection:** [ _Connected_ ]
+  - **Internet Connection:** *Connected*
 
 8. **Dial!** If everything above looks good, you're ready to try dialing another Subspace-connected Stargate. In the web interface, go to `Address Book`. Click on one of the BLUE buttons to select a Subspace gate and watch the gate do it's thing! Remember, there is a chance that stargate is not currently online, so don't get discouraged if it doesn't work. Kristian's second gate, `Abythres` or `Abythres 2` is almost always online and makes a good test.
