@@ -19,6 +19,9 @@ html, body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
+.navbar-brand{
+  padding-left: 20px;
+}
 .header_image_container{
   max-height: 200px;
   width: 100%;
