@@ -42,7 +42,7 @@ function load_address_book(){
 
         address = address_raw.join("");
 
-        $("#presets").append('<div class="address-book-row address-book-row-'+value.type+'" onclick="window.location = \'index.htm?address=' +
+        $("#presets").append('<div class="address-book-row address-book-row-'+value.type+' col-sm " onclick="window.location = \'index.htm?address=' +
           address_string + '\';"><div class="address-book-col-planet-names">' + value.name + '</div><div class="address-book-col-glyphs">' + address +  '</div></div>' );
     });
 }
