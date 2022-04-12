@@ -327,7 +327,7 @@ html, body {
 /* CONFIGURATION STYLES */
 #records_table div{
   padding: 10px;
-  max-width: 700px;
+  
 }
 
 #records_table div input{
