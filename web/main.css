@@ -236,11 +236,14 @@ html, body {
 
 .address_book_container{
   padding-top:20px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;            /* default value; can be omitted */
+  justify-content: space-between;
 }
 
 .address-book-col-planet-names {
   float: left; /* fix for  buggy browsers */
-  display: table-column;
   width: 40%;
   min-width: 200px;
   font-size: 12px;
@@ -262,7 +265,7 @@ html, body {
     line-height:75px;
     cursor: pointer;
     display: flex;
-    max-width: 500px;
+    min-width: 500px;
 }
 
 .address-book-row:hover{
@@ -327,7 +330,7 @@ html, body {
 /* CONFIGURATION STYLES */
 #records_table div{
   padding: 10px;
-  
+
 }
 
 #records_table div input{
