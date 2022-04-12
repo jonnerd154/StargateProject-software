@@ -24,7 +24,7 @@ function updateInfo(){
         var lastGroup = false
 
         $('#records_table').html("");
-        
+
         $.each(response, function (paramName, item) {
 
             paramPrettyName = toProperCase(paramName)
@@ -91,7 +91,7 @@ function getHTMLTableRow(paramName, paramPrettyName, data, group){
   }
   return '<div class="form-group-'+group+'">\
     <label for="'+paramName+'">' + paramPrettyName + '</label>\
-    <span class="float-right">' + inputField + '</span>\
+    <span style="float: right;">' + inputField + '</span><br><br>\
     <small class="form-text">' + data.units + data.desc + '</small>\
   </div>'
 }

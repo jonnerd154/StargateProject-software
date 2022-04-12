@@ -22,9 +22,7 @@ class SoftwareUpdateV2:
 
         # Retrieve the configurations
         self.base_url = self.cfg.get("software_update_url")
-        self.file_download_username = self.cfg.get("software_update_username")
-        self.file_download_password = self.cfg.get("software_update_password")
-
+        
         # Initialize the GitPython repo object
         self.repo = git.Repo('.')
 
