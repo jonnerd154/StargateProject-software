@@ -373,11 +373,6 @@
     "type": "str-datetime",
     "protected": true
   },
-  "software_update_password": {
-    "value": "CarterSG1!",
-    "desc": "The BasicAuth Password to use to authenticate for downloads on the Software Update service",
-    "type": "str"
-  },
   "software_update_status": {
     "value": "up-to-date",
     "desc": "Status of Software Updates",
@@ -387,11 +382,6 @@
   "software_update_url": {
     "value": "https://thestargateproject.com/stargate_software_updates/",
     "desc": "The API Endpoint URL for the Software Update service",
-    "type": "str"
-  },
-  "software_update_username": {
-    "value": "Samantha",
-    "desc": "The BasicAuth Username to use to authenticate for downloads on the Software Update service",
     "type": "str"
   },
   "stepper_acceleration_steps": {
