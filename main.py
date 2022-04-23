@@ -13,6 +13,7 @@ from http.server import HTTPServer
 import threading
 import atexit
 import schedule
+import rollbar
 
 # Include the classes shared between galaxy variants
 sys.path.append('classes')
@@ -38,14 +39,27 @@ class GateApplication:
 
     def __init__(self):
 
+        # Configure Rollbar for uncaught exception logging and basic usage info
+        ROLLBAR_POST_ACCESS_TOKEN = 'a8c41fa13dfa4dd7ba6382b1c9dc6ebd'
+        rollbar.init(ROLLBAR_POST_ACCESS_TOKEN, 'production')
+        def rollbar_except_hook(exc_type, exc_value, traceback):
+           # Report the issue to rollbar here.
+           rollbar.report_exc_info((exc_type, exc_value, traceback))
+           # display the error as normal here
+           sys.__excepthook__(exc_type, exc_value, traceback)
+        sys.excepthook = rollbar_except_hook
+
+
         self.galaxy = GALAXY
         self.galaxy_path = self.galaxy.replace(" ", "").lower()
 
         # Check that we're running with root-like permissions (sudo)
         if not os.geteuid() == 0:
-            print("The Stargate software must run with root-like permissions (use sudo)")
+            message = "The Stargate software must run with root-like permissions (use sudo)"
+            print(message)
             print("Stopping startup.")
-            sys.exit(1)
+
+            raise PermissionError
 
         # Check if we're running in systemd, some functionality will change if so.
         self.is_daemon = self.check_is_daemon()

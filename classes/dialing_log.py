@@ -1,5 +1,6 @@
 from datetime import datetime,timezone
 from stargate_config import StargateConfig
+import rollbar
 
 class DialingLog():
 
@@ -53,6 +54,9 @@ class DialingLog():
         # Update the Summary
         self.datastore.set('dialing_failures', self.datastore.get('dialing_failures') + 1)
 
+        # Update Rollbar
+        rollbar.report_message('Failed Outbound Dialing', 'info')
+
     def established_inbound(self, dialing_gate_address):
         self.current_activity['activity'] = "Inbound"
         self.current_activity['start_time'] = self.__get_time_now()
@@ -63,6 +67,9 @@ class DialingLog():
         # Update the Summary
         self.summary['inbound_count'] += 1
         self.datastore.set('inbound_count', self.datastore.get('inbound_count') + 1)
+
+        # Update Rollbar
+        rollbar.report_message('Established Inbound', 'info')
 
     def established_outbound(self, receiver_address):
         self.current_activity['activity'] = "Outbound"
@@ -77,6 +84,9 @@ class DialingLog():
             self.datastore.set('established_standard_count', self.datastore.get('established_standard_count') + 1)
 
         self.log.log("Dialing Log: Established Outbound")
+
+        # Update Rollbar
+        rollbar.report_message('Established Outbound', 'info')
 
     def shutdown(self):
 
@@ -108,6 +118,9 @@ class DialingLog():
         else: # Inbound
             self.datastore.set('inbound_mins', self.datastore.get('inbound_mins') + elapsed)
 
+        # Update Rollbar
+        rollbar.report_message('Disengaged', 'info')
+
         # Reset the state vars to get ready for the next activity
         self.__reset_state()
 
@@ -118,6 +131,9 @@ class DialingLog():
         self.current_activity['dialer_address'] = None
         self.current_activity['receiver_address'] = None
         self.log.log("Dialing Log: Idle")
+
+        # Update Rollbar
+        rollbar.report_message('Gate Idle', 'info')
 
     @staticmethod
     def __get_time_now():
