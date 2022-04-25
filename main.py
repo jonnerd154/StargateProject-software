@@ -109,8 +109,8 @@ class GateApplication:
         if self.cfg.get("software_update_enabled"):
             self.sw_updater.check_and_install()
 
-        ### Create the Stargate object
         self.log.log(f'Booting up the Stargate! Version {self.sw_updater.get_current_version()}')
+        rollbar.report_message(f'Startup: v{self.sw_updater.get_current_version()}-{self.galaxy}', 'info')
 
         # Actually start it...
         self.stargate = Stargate(self)
@@ -125,6 +125,7 @@ class GateApplication:
             self.log.log(f'Web Services API running on: {self.net_tools.get_local_ip()}:{self.cfg.get("control_api_server_port")}')
         except:
             self.log.log("Failed to start webserver. Is the port in use?")
+            rollbar.report_message('API Server: Failed to start', 'error')
             raise
 
         ### Register atexit handler
@@ -139,6 +140,7 @@ class GateApplication:
         #self.log_tail_server.terminate()
 
         self.log.log('The Stargate program is no longer running\r\n\r\n')
+        rollbar.report_message('Software Shutdown', 'info')
         sys.exit(0)
 
     def restart(self):
