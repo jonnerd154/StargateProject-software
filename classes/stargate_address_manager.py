@@ -187,13 +187,14 @@ class StargateAddressManager:
                 return config['name']
         return 'Unknown'
 
-    def get_summary_from_book(self, book, omit_zeros):
+    @staticmethod
+    def get_summary_from_book( book, omit_zeros ):
         summary = {}
-        summary['fan'] = 0;
-        summary['lan'] = 0;
-        summary['standard'] = 0;
+        summary['fan'] = 0
+        summary['lan'] = 0
+        summary['standard'] = 0
 
-        for address, config in book.items():
+        for address, config in book.items(): # pylint: disable=unused-variable
             summary[config.get("type", "unknown")] +=1
 
         if omit_zeros:

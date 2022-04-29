@@ -12,6 +12,8 @@ from adafruit_pca9685 import PCA9685
 
 from hardware_simulation import DCMotorSim, StepperSim
 
+# pylint: disable=too-many-public-methods
+
 class ElectronicsMainBoard1V1:
 
     def __init__(self, app):

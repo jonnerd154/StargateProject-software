@@ -1,6 +1,8 @@
 import threading
 import subprocess
 
+# pylint: disable=consider-using-with
+
 class LogTailServerWrapper(threading.Thread):
     def __init__(self, log_path, port):
         self.stdout = None

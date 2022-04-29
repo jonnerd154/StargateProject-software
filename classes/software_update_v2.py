@@ -81,7 +81,7 @@ class SoftwareUpdateV2:
 
         # Update Rollbar
         rollbar.report_message(message, 'info')
-        
+
         # Play a random update-related clip
         self.audio.play_random_clip("update")
 
