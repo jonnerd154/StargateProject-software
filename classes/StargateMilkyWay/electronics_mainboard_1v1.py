@@ -4,13 +4,13 @@ import spidev # pylint: disable=import-error
 import neopixel # pylint: disable=import-error
 import board # pylint: disable=import-error
 from gpiozero import LED # pylint: disable=import-error
-#from busio import I2C
 
 from adafruit_motor import stepper as stp
 import adafruit_motor.motor
 from adafruit_pca9685 import PCA9685
 
 from hardware_simulation import DCMotorSim, StepperSim
+from stargate_config import StargateConfig
 
 # pylint: disable=too-many-public-methods
 
@@ -19,11 +19,17 @@ class ElectronicsMainBoard1V1:
     def __init__(self, app):
 
         self.cfg = app.cfg
+        self.log = app.log
 
         self.name = "Milky Way Main Board v1.1"
 
         self.stepper_motor_enable = self.cfg.get("stepper_motor_enable")
         self.chevron_motors_enable = self.cfg.get("chevron_motors_enable")
+
+        ### Load our board-specific config file.
+        self.board_cfg = StargateConfig(app.base_path, "hw_milkyway_mainboard1v1", app.galaxy_path)
+        self.board_cfg.set_log(app.log)
+        self.board_cfg.load()
 
         # Configuration
         self._pca_1_addr = 0x66
@@ -46,12 +52,15 @@ class ElectronicsMainBoard1V1:
     # ------------------------------------------
         self._pca_1 = None
         self._pca_2 = None
-        self.chevron_config = None
+
+        self.motor_channels = None
+        self.led_channels = None
         self.stepper1 = None
 
         # Initialize i2c & the motor control hardware
         self.i2c = board.I2C()
         self.init_motor_hardware()
+        self.init_led_gpio()
 
         self.drive_modes = {
             "double": stp.DOUBLE,
@@ -66,6 +75,8 @@ class ElectronicsMainBoard1V1:
         self.spi = None
         self.init_spi_for_adc()
 
+        self.log.log(f"Hardware Detected: {self.name}")
+
     def init_motor_hardware(self):
 
         # Initialize the PWM controllers
@@ -76,41 +87,61 @@ class ElectronicsMainBoard1V1:
         self._pca_2.frequency = self._pwm_frequency
 
         if self.chevron_motors_enable:
-            self.chevron_config =  {
-                3: self.motor1,
-                4: self.motor2,
-                5: self.motor3,
-                6: self.motor4,
-                7: self.motor5,
-                8: self.motor6,
-                9: self.motor7,
-                10: DCMotorSim(),
-                11: DCMotorSim(),
-                12: DCMotorSim(),
+            # This is the default configuration. When paired with a config file which
+            #   maps chevron N -> channel N, the gate will function normally.
+            # If the configuration file maps chevrons to different channels, different
+            #   physical wiring configurations can be supported.
+
+            self.motor_channels =  {
+                1: self.motor1,
+                2: self.motor2,
+                3: self.motor3,
+                4: self.motor4,
+                5: self.motor5,
+                6: self.motor6,
+                7: self.motor7
             }
         else:
-            self.chevron_config =  {
+            self.motor_channels =  {
+                1: DCMotorSim(),
+                2: DCMotorSim(),
                 3: DCMotorSim(),
                 4: DCMotorSim(),
                 5: DCMotorSim(),
                 6: DCMotorSim(),
-                7: DCMotorSim(),
-                8: DCMotorSim(),
-                9: DCMotorSim(),
-                10: DCMotorSim(),
-                11: DCMotorSim(),
-                12: DCMotorSim(),
+                7: DCMotorSim()
             }
-            
-        
+
         # Initialize the Stepper
         if self.stepper_motor_enable:
             self.stepper1 = self.stepper
         else:
             self.stepper1 = StepperSim()
 
+    def init_led_gpio(self):
+
+        # This is the default configuration. When paired with a config file which
+        #   maps chevron N -> channel N, the gate will function normally.
+        # If the configuration file maps chevrons to different channels, different
+        #   physical wiring configurations can be supported.
+
+        self.led_channels =  {
+            1: LED(22),
+            2: LED(25),
+            3: LED(5),
+            4: LED(19),
+            5: LED(26),
+            6: LED(21),
+            7: LED(20)
+        }
+
+    def get_chevron_led(self, chevron_number):
+        channel = self.board_cfg.get(f"chevron_{chevron_number}_led_channel")
+        return self.led_channels[channel]
+
     def get_chevron_motor(self, chevron_number):
-        return self.chevron_config[chevron_number]
+        channel = self.board_cfg.get(f"chevron_{chevron_number}_motor_channel")
+        return self.motor_channels[channel]
 
     def get_stepper(self):
         return self.stepper
@@ -164,10 +195,11 @@ class ElectronicsMainBoard1V1:
         # Convert ADC value to voltage
         return (self.adc_vref * adc_value) / (2^self.adc_resolution)-1
 
-    def homing_supported(self):
-        return False
-        
+    @staticmethod
+    def homing_supported():
         #TODO: #return True
+
+        return False
 
     def get_homing_sensor_voltage(self):
         return self.adc_to_voltage( self.get_adc_by_channel(0) )
@@ -180,13 +212,6 @@ class ElectronicsMainBoard1V1:
 
     def get_wormhole_pixel_count(self):
         return self.neopixel_led_count
-
-    @staticmethod
-    def get_led(gpio_number):
-        if gpio_number:
-            return LED(gpio_number)
-        return None
-
 
     def _motor(
         self, controller, motor_name: int, channels: Tuple[int, int, int]

@@ -17,9 +17,11 @@ class ElectronicsNone:
 
     # ------------------------------------------
 
-        self.shield_config = None
+        self.motor_channels = None
+        self.led_channels = None
         self.stepper = None
         self.init_motor_shields()
+        self.init_led_gpio()
 
         self.drive_modes = {}
 
@@ -28,24 +30,39 @@ class ElectronicsNone:
 
     def init_motor_shields(self):
         # Initialize all of the shields as DC motors
-        self.shield_config =  {
+        self.motor_channels =  {
+            1: DCMotorSim(),
+            2: DCMotorSim(),
             3: DCMotorSim(),
             4: DCMotorSim(),
             5: DCMotorSim(),
             6: DCMotorSim(),
             7: DCMotorSim(),
             8: DCMotorSim(),
-            9: DCMotorSim(),
-            10: DCMotorSim(),
-            11: DCMotorSim(),
-            12: DCMotorSim()
+            9: DCMotorSim()
         }
 
         # Initialize the Stepper
         self.stepper = StepperSim()
 
+    def init_led_gpio(self):
+        self.led_channels =  {
+            1: LEDSim(),
+            2: LEDSim(),
+            3: LEDSim(),
+            4: LEDSim(),
+            5: LEDSim(),
+            6: LEDSim(),
+            7: LEDSim(),
+            8: LEDSim(),
+            9: LEDSim()
+        }
+
     def get_chevron_motor(self, chevron_number):
-        return self.shield_config[chevron_number]
+        return self.motor_channels[chevron_number]
+
+    def get_chevron_led(self, chevron_number):
+        return self.led_channels[chevron_number]
 
     def get_stepper(self):
         return self.stepper
@@ -86,7 +103,3 @@ class ElectronicsNone:
 
     def get_wormhole_pixel_count(self):
         return self.neopixel_led_count
-
-    @staticmethod
-    def get_led(gpio_number): # pylint: disable=unused-argument
-        return LEDSim()

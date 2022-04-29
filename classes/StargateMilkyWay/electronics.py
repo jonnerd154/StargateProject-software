@@ -68,16 +68,12 @@ class HardwareDetector:
             devices = self.get_i2c_devices()
 
             if all( item in devices for item in self.signature_adafruit_shields ):
-                self.hardware_mode_name = "Adafruit Motor Shields (3)"
                 self.hardware_mode = HARDWARE_MODE_ORIGINAL
             elif all( item in devices for item in self.signature_mainboard_1v1 ):
-                self.hardware_mode_name = "Milky Way Main Board v1.1"
                 self.hardware_mode = HARDWARE_MODE_MAINBOARD_1V1
             else:
-                self.hardware_mode_name = False
                 self.hardware_mode = HARDWARE_MODE_NONE
-        
-        self.log.log(f"Hardware Detected: {self.hardware_mode_name}")
+
         return self.hardware_mode
 
     def get_hardware_mode_name(self):

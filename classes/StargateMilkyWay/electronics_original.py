@@ -6,18 +6,27 @@ import board # pylint: disable=import-error
 from gpiozero import LED # pylint: disable=import-error
 
 from hardware_simulation import DCMotorSim, StepperSim
+from stargate_config import StargateConfig
 
 class ElectronicsOriginal:
 
     def __init__(self, app):
 
         self.cfg = app.cfg
+        self.log = app.log
 
         self.name = "Kristian's Original 3-Shield Stack w/Optional Homing"
 
+        ### Load our board-specific config file.
+        self.board_cfg = StargateConfig(app.base_path, "hw_milkyway_original", app.galaxy_path)
+        self.board_cfg.set_log(app.log)
+        self.board_cfg.load()
+
+        # Load app-level configs
         self.stepper_motor_enable = self.cfg.get("stepper_motor_enable")
         self.chevron_motors_enable = self.cfg.get("chevron_motors_enable")
 
+        # Load board-level configs
         self.motor_shield_address_1 = 0x60
         self.motor_shield_address_2 = 0x61
         self.motor_shield_address_3 = 0x62
@@ -32,10 +41,12 @@ class ElectronicsOriginal:
 
     # ------------------------------------------
 
-        self.shield_config = None
+        self.motor_channels = None
+        self.led_channels = None
         self.stepper = None
 
         self.init_motor_shields()
+        self.init_led_gpio()
 
         self.drive_modes = {
             "double": stp.DOUBLE,
@@ -50,45 +61,67 @@ class ElectronicsOriginal:
         self.spi = None
         self.init_spi_for_adc()
 
+        self.log.log(f"Hardware Detected: {self.name}")
+
     def init_motor_shields(self):
         # Initialize all of the shields as DC motors
 
         if self.chevron_motors_enable:
-            self.shield_config =  {
-            #1: MotorKit(address=self.motor_shield_address_1).motor1, # Used for Stepper
-            #2: MotorKit(address=self.motor_shield_address_1).motor2, # Used for Stepper
-            3: MotorKit(address=self.motor_shield_address_1).motor3,
-            4: MotorKit(address=self.motor_shield_address_1).motor4,
-            5: MotorKit(address=self.motor_shield_address_2).motor1,
-            6: MotorKit(address=self.motor_shield_address_2).motor2,
-            7: MotorKit(address=self.motor_shield_address_2).motor3,
-            8: MotorKit(address=self.motor_shield_address_2).motor4,
-            9: MotorKit(address=self.motor_shield_address_3).motor1,
-            10: MotorKit(address=self.motor_shield_address_3).motor2,
-            11: MotorKit(address=self.motor_shield_address_3).motor3,
-            12: MotorKit(address=self.motor_shield_address_3).motor4
-        }
+            self.motor_channels =  {
+
+                # This is the default configuration. Paired with a config file which
+                #   maps chevron N -> channel N, the gate will function normally.
+                # If the configuration file maps to different channels, different
+                #   physical wiring configurations can be supported.
+
+                1: MotorKit(address=self.motor_shield_address_1).motor3, # Bottom shield, slot 3
+                2: MotorKit(address=self.motor_shield_address_1).motor4, # Bottom shield, slot 4
+                3: MotorKit(address=self.motor_shield_address_2).motor1, # Middle shield, slot 1
+                4: MotorKit(address=self.motor_shield_address_2).motor2, # Middle shield, slot 2
+                5: MotorKit(address=self.motor_shield_address_2).motor3, # Middle shield, slot 3
+                6: MotorKit(address=self.motor_shield_address_2).motor4, # Middle shield, slot 4
+                7: MotorKit(address=self.motor_shield_address_3).motor1  # Top shield, slot 1
+            }
         else:
-            self.shield_config =  {
-            3: DCMotorSim(),
-            4: DCMotorSim(),
-            5: DCMotorSim(),
-            6: DCMotorSim(),
-            7: DCMotorSim(),
-            8: DCMotorSim(),
-            9: DCMotorSim(),
-            10: DCMotorSim(),
-            11: DCMotorSim(),
-            12: DCMotorSim(),
-        }
+            self.motor_channels =  {
+                1: DCMotorSim(),
+                2: DCMotorSim(),
+                3: DCMotorSim(),
+                4: DCMotorSim(),
+                5: DCMotorSim(),
+                6: DCMotorSim(),
+                7: DCMotorSim()
+            }
         # Initialize the Stepper
         if self.stepper_motor_enable:
             self.stepper = MotorKit(address=self.motor_shield_address_1).stepper1
         else:
             self.stepper = StepperSim()
 
+    def init_led_gpio(self):
+
+        # This is the default configuration. When paired with a config file which
+        #   maps chevron N -> channel N, the gate will function normally.
+        # If the configuration file maps chevrons to different channels, different
+        #   physical wiring configurations can be supported.
+
+        self.led_channels =  {
+            1: LED(21),
+            2: LED(16),
+            3: LED(20),
+            4: LED(26),
+            5: LED(6),
+            6: LED(13),
+            7: LED(19)
+        }
+
+    def get_chevron_led(self, chevron_number):
+        channel = self.board_cfg.get(f"chevron_{chevron_number}_led_channel")
+        return self.led_channels[channel]
+
     def get_chevron_motor(self, chevron_number):
-        return self.shield_config[chevron_number]
+        channel = self.board_cfg.get(f"chevron_{chevron_number}_motor_channel")
+        return self.motor_channels[channel]
 
     def get_stepper(self):
         return self.stepper
@@ -159,9 +192,3 @@ class ElectronicsOriginal:
 
     def get_wormhole_pixel_count(self):
         return self.neopixel_led_count
-
-    @staticmethod
-    def get_led(gpio_number):
-        if gpio_number:
-            return LED(gpio_number)
-        return None

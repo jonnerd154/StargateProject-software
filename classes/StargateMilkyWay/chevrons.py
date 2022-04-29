@@ -5,36 +5,20 @@ class ChevronManager:
 
     def __init__(self, app):
 
+        self.app = app
         self.log = app.log
         self.cfg = app.cfg
         self.audio = app.audio
         self.electronics = app.electronics
 
-        # Quick hack to test
-        self.mainboard_led_map =  {
-            21: 22,
-            16: 25,
-            20: 5,
-            26: 19,
-            6:  26,
-            13: 21,
-            19: 20
-        }
-        
         self.chevrons = {}
         self.load_from_config()
-        
+
     def load_from_config(self):
         # Retrieve the Chevron config and initialize the Chevron objects
         self.chevrons = {}
-        for index in range(1,10):
-            led_pin = self.cfg.get("chevron_config_" + str(index) + "_led_pin")
-            
-            if led_pin is not None:
-              led_pin = self.mainboard_led_map[led_pin]
-
-            motor_number = self.cfg.get("chevron_config_" + str(index) + "_motor_number")
-            self.chevrons[index] = Chevron( self.electronics, led_pin, motor_number, self.audio, self.cfg )
+        for chevron_number in range(1,10):
+            self.chevrons[chevron_number] = Chevron( self.electronics, chevron_number, self.audio, self.cfg )
 
     def get( self, chevron_number ):
         return self.chevrons[int(chevron_number)]
@@ -73,7 +57,7 @@ class Chevron:
     The motor_number is the number for the motor as an int.
     """
 
-    def __init__(self, electronics, led_gpio, motor_number, audio, cfg):
+    def __init__(self, electronics, chevron_number, audio, cfg):
 
         self.cfg = cfg
         self.audio = audio
@@ -88,11 +72,8 @@ class Chevron:
         self.chevron_up_throttle = self.cfg.get("chevron_up_throttle") #0.65 # positive
         self.chevron_up_time = self.cfg.get("chevron_up_time") #0.2
 
-        self.motor_number = motor_number
-        self.motor = self.electronics.get_chevron_motor(self.motor_number)
-
-        self.led_gpio = led_gpio
-        self.led = self.electronics.get_led(self.led_gpio)
+        self.motor = self.electronics.get_chevron_motor(chevron_number)
+        self.led = self.electronics.get_chevron_led(chevron_number)
 
         self.position = "unknown"
         self.led_state = False
