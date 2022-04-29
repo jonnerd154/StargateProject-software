@@ -247,7 +247,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     self.stargate.keyboard.queue_symbol(symbol_number)
                 elif symbol_number == 0:
                     self.stargate.keyboard.queue_center_button()
-                elif symbol_number == -1 and self.stargate.wormhole_active == False and len(self.stargate.address_buffer_outgoing) > 0:
+                elif symbol_number == -1 and self.stargate.wormhole_active is False and len(self.stargate.address_buffer_outgoing) > 0:
                     # Abort dialing
                     self.stargate.dialing_log.dialing_fail(self.stargate.address_buffer_outgoing)
                     self.stargate.shutdown(cancel_sound=False, wormhole_fail_sound=False)

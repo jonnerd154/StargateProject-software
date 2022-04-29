@@ -10,14 +10,29 @@ class ChevronManager:
         self.audio = app.audio
         self.electronics = app.electronics
 
+        # Quick hack to test
+        self.mainboard_led_map =  {
+            21: 22,
+            16: 25,
+            20: 5,
+            26: 19,
+            6:  26,
+            13: 21,
+            19: 20
+        }
+        
         self.chevrons = {}
         self.load_from_config()
-
+        
     def load_from_config(self):
         # Retrieve the Chevron config and initialize the Chevron objects
         self.chevrons = {}
         for index in range(1,10):
             led_pin = self.cfg.get("chevron_config_" + str(index) + "_led_pin")
+            
+            if led_pin is not None:
+              led_pin = self.mainboard_led_map[led_pin]
+
             motor_number = self.cfg.get("chevron_config_" + str(index) + "_motor_number")
             self.chevrons[index] = Chevron( self.electronics, led_pin, motor_number, self.audio, self.cfg )
 

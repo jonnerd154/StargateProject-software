@@ -2,6 +2,7 @@
 # Hardware Mode enums
 HARDWARE_MODE_NONE = 0
 HARDWARE_MODE_ORIGINAL = 1
+HARDWARE_MODE_MAINBOARD_1V1 = 2
 
 class Electronics: # pylint: disable=too-few-public-methods
 
@@ -14,6 +15,9 @@ class Electronics: # pylint: disable=too-few-public-methods
             if hw_mode == HARDWARE_MODE_ORIGINAL:
                 from electronics_original import ElectronicsOriginal # pylint: disable=import-outside-toplevel
                 return ElectronicsOriginal(app)
+            if hw_mode == HARDWARE_MODE_MAINBOARD_1V1:
+                from electronics_mainboard_1v1 import ElectronicsMainBoard1V1 # pylint: disable=import-outside-toplevel
+                return ElectronicsMainBoard1V1(app)
 
         # Default: No Electronics, simulate everything
         from electronics_none import ElectronicsNone # pylint: disable=import-outside-toplevel
@@ -27,7 +31,9 @@ class HardwareDetector:
         self.hardware_mode = None
         self.hardware_mode_name = None
 
+        # TODO: Refactor this to loop over the signatures in an array
         self.signature_adafruit_shields = ['0x60', '0x61', '0x62'] # HARDWARE_MODE_ORIGINAL
+        self.signature_mainboard_1v1 = ['0x66', '0x6f'] # HARDWARE_MODE_MAINBOARD_1V1
 
         self.smbus = False
         self.import_smbus()
@@ -64,10 +70,14 @@ class HardwareDetector:
             if all( item in devices for item in self.signature_adafruit_shields ):
                 self.hardware_mode_name = "Adafruit Motor Shields (3)"
                 self.hardware_mode = HARDWARE_MODE_ORIGINAL
+            elif all( item in devices for item in self.signature_mainboard_1v1 ):
+                self.hardware_mode_name = "Milky Way Main Board v1.1"
+                self.hardware_mode = HARDWARE_MODE_MAINBOARD_1V1
             else:
                 self.hardware_mode_name = False
                 self.hardware_mode = HARDWARE_MODE_NONE
-
+        
+        self.log.log(f"Hardware Detected: {self.hardware_mode_name}")
         return self.hardware_mode
 
     def get_hardware_mode_name(self):
