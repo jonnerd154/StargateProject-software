@@ -1,0 +1,128 @@
+{
+  "chevron_1_led_channel": {
+    "value": 1,
+    "desc": "The LED Channel that Chevron 1 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 1
+  },
+  "chevron_1_motor_channel": {
+    "value": 1,
+    "desc": "The Motor Channel that Chevron 1 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 0
+  },
+  "chevron_2_led_channel": {
+    "value": 2,
+    "desc": "The LED Channel that Chevron 2 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 1
+  },
+  "chevron_2_motor_channel": {
+    "value": 2,
+    "desc": "The Motor Channel that Chevron 2 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 0
+  },
+  "chevron_3_led_channel": {
+    "value": 3,
+    "desc": "The LED Channel that Chevron 3 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 1
+  },
+  "chevron_3_motor_channel": {
+    "value": 3,
+    "desc": "The Motor Channel that Chevron 3 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 0
+  },
+  "chevron_4_led_channel": {
+    "value": 4,
+    "desc": "The LED Channel that Chevron 4 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 1
+  },
+  "chevron_4_motor_channel": {
+    "value": 4,
+    "desc": "The Motor Channel that Chevron 4 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 0
+  },
+  "chevron_5_led_channel": {
+    "value": 5,
+    "desc": "The LED Channel that Chevron 5 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 1
+  },
+  "chevron_5_motor_channel": {
+    "value": 5,
+    "desc": "The Motor Channel that Chevron 5 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 0
+  },
+  "chevron_6_led_channel": {
+    "value": 6,
+    "desc": "The LED Channel that Chevron 6 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 1
+  },
+  "chevron_6_motor_channel": {
+    "value": 6,
+    "desc": "The Motor Channel that Chevron 6 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 0
+  },
+  "chevron_7_led_channel": {
+    "value": 7,
+    "desc": "The LED Channel that Chevron 7 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 1
+  },
+  "chevron_7_motor_channel": {
+    "value": 7,
+    "desc": "The Motor Channel that Chevron 7 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 0
+  },
+  "chevron_8_led_channel": {
+    "value": 8,
+    "desc": "The LED Channel that Chevron 8 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 1
+  },
+  "chevron_8_motor_channel": {
+    "value": 8,
+    "desc": "The Motor Channel that Chevron 8 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 0
+  },
+  "chevron_9_led_channel": {
+    "value": 9,
+    "desc": "The LED Channel that Chevron 9 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 1
+  },
+  "chevron_9_motor_channel": {
+    "value": 9,
+    "desc": "The Motor Channel that Chevron 9 is connected to",
+    "type": "int",
+    "max_value": 9,
+    "min_value": 0
+  }
+}
