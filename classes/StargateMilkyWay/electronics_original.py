@@ -7,6 +7,8 @@ from gpiozero import LED # pylint: disable=import-error
 
 from hardware_simulation import DCMotorSim, StepperSim
 from stargate_config import StargateConfig
+from hardware_simulation import DCMotorSim
+from hardware_simulation import LEDSim
 
 class ElectronicsOriginal:
 
@@ -18,7 +20,7 @@ class ElectronicsOriginal:
         self.name = "Kristian's Original 3-Shield Stack w/Optional Homing"
 
         ### Load our board-specific config file.
-        self.board_cfg = StargateConfig(app.base_path, "hw_milkyway_original", app.galaxy_path)
+        self.board_cfg = StargateConfig(app.base_path, "board_original", app.galaxy_path)
         self.board_cfg.set_log(app.log)
         self.board_cfg.load()
 
@@ -80,7 +82,9 @@ class ElectronicsOriginal:
                 4: MotorKit(address=self.motor_shield_address_2).motor2, # Middle shield, slot 2
                 5: MotorKit(address=self.motor_shield_address_2).motor3, # Middle shield, slot 3
                 6: MotorKit(address=self.motor_shield_address_2).motor4, # Middle shield, slot 4
-                7: MotorKit(address=self.motor_shield_address_3).motor1  # Top shield, slot 1
+                7: MotorKit(address=self.motor_shield_address_3).motor1, # Top shield, slot 1
+                8: DCMotorSim(),
+                9: DCMotorSim()
             }
         else:
             self.motor_channels =  {
@@ -90,7 +94,9 @@ class ElectronicsOriginal:
                 4: DCMotorSim(),
                 5: DCMotorSim(),
                 6: DCMotorSim(),
-                7: DCMotorSim()
+                7: DCMotorSim(),
+                8: DCMotorSim(),
+                9: DCMotorSim()
             }
         # Initialize the Stepper
         if self.stepper_motor_enable:
@@ -112,7 +118,9 @@ class ElectronicsOriginal:
             4: LED(26),
             5: LED(6),
             6: LED(13),
-            7: LED(19)
+            7: LED(19),
+            8: LEDSim(),
+            9: LEDSim()
         }
 
     def get_chevron_led(self, chevron_number):

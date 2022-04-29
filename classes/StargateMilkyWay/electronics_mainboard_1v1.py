@@ -11,6 +11,8 @@ from adafruit_pca9685 import PCA9685
 
 from hardware_simulation import DCMotorSim, StepperSim
 from stargate_config import StargateConfig
+from hardware_simulation import DCMotorSim
+from hardware_simulation import LEDSim
 
 # pylint: disable=too-many-public-methods
 
@@ -27,7 +29,7 @@ class ElectronicsMainBoard1V1:
         self.chevron_motors_enable = self.cfg.get("chevron_motors_enable")
 
         ### Load our board-specific config file.
-        self.board_cfg = StargateConfig(app.base_path, "hw_milkyway_mainboard1v1", app.galaxy_path)
+        self.board_cfg = StargateConfig(app.base_path, "board_mainboard1v1", app.galaxy_path)
         self.board_cfg.set_log(app.log)
         self.board_cfg.load()
 
@@ -99,7 +101,9 @@ class ElectronicsMainBoard1V1:
                 4: self.motor4,
                 5: self.motor5,
                 6: self.motor6,
-                7: self.motor7
+                7: self.motor7,
+                8: DCMotorSim(),
+                9: DCMotorSim()
             }
         else:
             self.motor_channels =  {
@@ -109,7 +113,9 @@ class ElectronicsMainBoard1V1:
                 4: DCMotorSim(),
                 5: DCMotorSim(),
                 6: DCMotorSim(),
-                7: DCMotorSim()
+                7: DCMotorSim(),
+                8: DCMotorSim(),
+                9: DCMotorSim()
             }
 
         # Initialize the Stepper
@@ -132,7 +138,9 @@ class ElectronicsMainBoard1V1:
             4: LED(19),
             5: LED(26),
             6: LED(21),
-            7: LED(20)
+            7: LED(20),
+            8: LEDSim(),
+            9: LEDSim(),
         }
 
     def get_chevron_led(self, chevron_number):
