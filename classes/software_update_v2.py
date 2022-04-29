@@ -81,7 +81,7 @@ class SoftwareUpdateV2:
 
         # Update Rollbar
         rollbar.report_message(message, 'info')
-        
+
         # Play a random update-related clip
         self.audio.play_random_clip("update")
 
@@ -100,7 +100,7 @@ class SoftwareUpdateV2:
                 # OS lacks hardware support, install minimum requirements:
                 file_name = 'requirements_minimum.txt'
 
-            subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", self.app.base_path + "/" + file_name])
+            subprocess.check_call([sys.executable, "-m", "sudo", "pip", "install", "-r", self.app.base_path + "/" + file_name])
 
         except: # pylint: disable=bare-except
             self.log.log("pip update failed")
