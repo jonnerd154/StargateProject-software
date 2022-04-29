@@ -114,7 +114,7 @@ class WormholeManager:
             #    Maybe the Neopixel stuff should run in it's own thread?
 
             # Change the patterns/animations around with transitions
-            self.animation_manager.do_random_transitions(self.stargate)
+            self.animation_manager.do_random_transitions(self.stargate.black_hole)
 
             # Play random audio clips if wormhole not closing
             if self.audio_play_random_clips and self.stargate.wormhole_active and (time() - random_audio_start_time) > self.audio_clip_wait_time:  # If there has been "silence" for more than audio_clip_wait_time

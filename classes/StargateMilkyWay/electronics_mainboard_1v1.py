@@ -27,7 +27,7 @@ class ElectronicsMainBoard1V1:
 
         # Configuration
         self._pca_1_addr = 0x66
-        self._pca_2_addr = 0x6F
+        self._pca_2_addr = 0x6f
         self._pwm_frequency = 1600.0
         self._stepper_microsteps = 16
 
@@ -69,10 +69,10 @@ class ElectronicsMainBoard1V1:
     def init_motor_hardware(self):
 
         # Initialize the PWM controllers
-        self._pca_1 = PCA9685(self.i2c, self._pca_1_addr)
+        self._pca_1 = PCA9685(self.i2c, address=self._pca_1_addr)
         self._pca_1.frequency = self._pwm_frequency
 
-        self._pca_2 = PCA9685(self.i2c, self._pca_2_addr)
+        self._pca_2 = PCA9685(self.i2c, address=self._pca_2_addr)
         self._pca_2.frequency = self._pwm_frequency
 
         if self.chevron_motors_enable:
@@ -101,6 +101,8 @@ class ElectronicsMainBoard1V1:
                 11: DCMotorSim(),
                 12: DCMotorSim(),
             }
+            
+        
         # Initialize the Stepper
         if self.stepper_motor_enable:
             self.stepper1 = self.stepper
@@ -163,10 +165,9 @@ class ElectronicsMainBoard1V1:
         return (self.adc_vref * adc_value) / (2^self.adc_resolution)-1
 
     def homing_supported(self):
-        # Tie ADC CH1 HIGH to enable homing
-        if 0.000 < self.adc_to_voltage( self.get_adc_by_channel(1) ) < 1:
-            return True
         return False
+        
+        #TODO: #return True
 
     def get_homing_sensor_voltage(self):
         return self.adc_to_voltage( self.get_adc_by_channel(0) )
