@@ -6,6 +6,7 @@ from collections import OrderedDict
 from datetime import datetime
 from packaging import version
 import git
+import rollbar
 
 from network_tools import NetworkTools
 from version import VERSION as current_version
@@ -22,7 +23,7 @@ class SoftwareUpdateV2:
 
         # Retrieve the configurations
         self.base_url = self.cfg.get("software_update_url")
-        
+
         # Initialize the GitPython repo object
         self.repo = git.Repo('.')
 
@@ -69,13 +70,18 @@ class SoftwareUpdateV2:
         return OrderedDict(sorted(newer_versions.items()))
 
     def do_update(self, version_config):
-        self.log.log(f"Starting update from v{self.current_version} to v{version_config.get('tag_version')}.")
+        message = f"Starting update from v{self.current_version} to v{version_config.get('tag_version')}."
+        self.log.log(message)
 
         # Check if the local copy is dirty, if so, abort.
         if self.repo.is_dirty():
             self.log.log("!!!! Local copy of Gate has been modified, aborting update!")
+            rollbar.report_message("Update Abort: Dirty Local Repo", 'warning')
             return
 
+        # Update Rollbar
+        rollbar.report_message(message, 'info')
+        
         # Play a random update-related clip
         self.audio.play_random_clip("update")
 
@@ -103,6 +109,8 @@ class SoftwareUpdateV2:
         self.audio.random_clip_wait_done()
 
         self.log.log('Update installed -> restarting the program')
+        rollbar.report_message("Update Complete", 'info')
+
         self.app.restart()
 
     def check_and_install(self):
@@ -119,7 +127,9 @@ class SoftwareUpdateV2:
                 self.log.log(f"Found {len(updates_available)} available update(s)")
                 next_version = list(updates_available.values())[0]
                 most_recent_version = list(updates_available.values())[len(updates_available)-1]
-                self.cfg.set('software_update_status', f"Update Available: {most_recent_version.get('tag_name')}")
+                self.cfg.set('software_update_status', f"Update Available (next): {most_recent_version.get('tag_name')}")
+
+                rollbar.report_message(f"Update Available (next): {next_version.get('tag_name')}", 'info')
 
                 # Start the update process to move us up one version
                 self.do_update(next_version)
@@ -134,6 +144,8 @@ class SoftwareUpdateV2:
             self.cfg.set('software_update_last_check', str(datetime.now()))
             # Flag the problem in update_exception, not update_status so that update_status can show that an update is available.
             self.cfg.set('software_update_exception', True)
+
+            rollbar.report_message(f"Update Failed: {ex}", 'error')
 
     @staticmethod
     def is_raspi():

@@ -13,6 +13,7 @@ from http.server import HTTPServer
 import threading
 import atexit
 import schedule
+import rollbar
 
 # Include the classes shared between galaxy variants
 sys.path.append('classes')
@@ -38,14 +39,27 @@ class GateApplication:
 
     def __init__(self):
 
+        # Configure Rollbar for uncaught exception logging and basic usage info
+        ROLLBAR_POST_ACCESS_TOKEN = 'a8c41fa13dfa4dd7ba6382b1c9dc6ebd'
+        rollbar.init(ROLLBAR_POST_ACCESS_TOKEN, 'production')
+        def rollbar_except_hook(exc_type, exc_value, traceback):
+           # Report the issue to rollbar here.
+           rollbar.report_exc_info((exc_type, exc_value, traceback))
+           # display the error as normal here
+           sys.__excepthook__(exc_type, exc_value, traceback)
+        sys.excepthook = rollbar_except_hook
+
+
         self.galaxy = GALAXY
         self.galaxy_path = self.galaxy.replace(" ", "").lower()
 
         # Check that we're running with root-like permissions (sudo)
         if not os.geteuid() == 0:
-            print("The Stargate software must run with root-like permissions (use sudo)")
+            message = "The Stargate software must run with root-like permissions (use sudo)"
+            print(message)
             print("Stopping startup.")
-            sys.exit(1)
+
+            raise PermissionError
 
         # Check if we're running in systemd, some functionality will change if so.
         self.is_daemon = self.check_is_daemon()
@@ -95,8 +109,8 @@ class GateApplication:
         if self.cfg.get("software_update_enabled"):
             self.sw_updater.check_and_install()
 
-        ### Create the Stargate object
         self.log.log(f'Booting up the Stargate! Version {self.sw_updater.get_current_version()}')
+        rollbar.report_message(f'Startup: v{self.sw_updater.get_current_version()}-{self.galaxy}', 'info')
 
         # Actually start it...
         self.stargate = Stargate(self)
@@ -111,6 +125,7 @@ class GateApplication:
             self.log.log(f'Web Services API running on: {self.net_tools.get_local_ip()}:{self.cfg.get("control_api_server_port")}')
         except:
             self.log.log("Failed to start webserver. Is the port in use?")
+            rollbar.report_message('API Server: Failed to start', 'error')
             raise
 
         ### Register atexit handler
@@ -125,6 +140,7 @@ class GateApplication:
         #self.log_tail_server.terminate()
 
         self.log.log('The Stargate program is no longer running\r\n\r\n')
+        rollbar.report_message('Software Shutdown', 'info')
         sys.exit(0)
 
     def restart(self):
