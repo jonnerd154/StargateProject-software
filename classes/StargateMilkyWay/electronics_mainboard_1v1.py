@@ -47,9 +47,9 @@ class ElectronicsMainBoard1V1:
         self.spi_bit_rate = 1200000
         self.spi_ch = 1
 
+        # TODO: Implement these functions, enable homing
         self.aux_1_pin = 17
         self.calibration_led_pin = 24
-        self.adc_cs_pin = 8
 
     # ------------------------------------------
         self._pca_1 = None
