@@ -8,15 +8,13 @@ from adafruit_motor import stepper as stp
 import adafruit_motor.motor
 from adafruit_pca9685 import PCA9685
 
-import busio # SPI 
+import busio # SPI
 import digitalio # Used for SPI CS - switch to gpiozero?
-import adafruit_mcp3xxx.mcp3002 as MCP
-from adafruit_mcp3xxx.analog_in import AnalogIn
+import adafruit_mcp3xxx.mcp3002 as MCP # pylint: disable=import-error
+from adafruit_mcp3xxx.analog_in import AnalogIn # pylint: disable=import-error
 
-from hardware_simulation import DCMotorSim, StepperSim
+from hardware_simulation import DCMotorSim, StepperSim, LEDSim
 from stargate_config import StargateConfig
-from hardware_simulation import DCMotorSim
-from hardware_simulation import LEDSim
 
 # pylint: disable=too-many-public-methods
 
@@ -56,7 +54,7 @@ class ElectronicsMainBoard1V1:
         self.adc_cs_pin = board.D8
 
         # ------------------------------------------
-    
+
         self._pca_1 = None
         self._pca_2 = None
         self.motor_channels = None
@@ -66,32 +64,32 @@ class ElectronicsMainBoard1V1:
         self.neopixels = None
         self.spi = None
         self.adc_cs = None
-        
+
         self.drive_modes = {
             "double": stp.DOUBLE,
             "single": stp.SINGLE,
             "interleave": stp.INTERLEAVE,
             "microstep": stp.MICROSTEP
         }
-        
+
         # Initialize SPI
         self.init_spi_for_adc()
-        
+
         # Initialize i2c & the motor control hardware
         self.i2c = board.I2C()
         self.init_pwm_controllers()
-        
+
         # Initialize the Motor and LED channels
         self.init_motor_channels()
         self.init_led_channels()
 
         # Initialize the AUX_1 Digital IN
         self.init_aux_1_in()
-        
+
         # Initialize the Neopixels
         self.init_neopixels()
-            
-        self.log.log(f"Hardware Detected: {self.name}")           
+
+        self.log.log(f"Hardware Detected: {self.name}")
 
     def init_pwm_controllers(self):
         # Initialize the PWM controllers
@@ -100,10 +98,10 @@ class ElectronicsMainBoard1V1:
 
         self._pca_2 = PCA9685(self.i2c, address=self._pca_2_addr)
         self._pca_2.frequency = self._pwm_frequency
-        
+
     def init_aux_1_in(self):
         self.aux_1_in = Button(self.aux_1_pin)
-      
+
     def init_motor_channels(self):
 
         if self.chevron_motors_enable:
@@ -160,7 +158,7 @@ class ElectronicsMainBoard1V1:
             8: LEDSim(),
             9: LEDSim(),
         }
-        
+
         self.calibration_led = LED(self.calibration_led_pin)
 
     def get_chevron_led(self, chevron_number):
@@ -175,8 +173,8 @@ class ElectronicsMainBoard1V1:
         return self.stepper
 
     def get_aux_1_in(self):
-        return True if self.aux_1_in.value == 1 else False 
-        
+        return bool(self.aux_1_in.value)
+
     @staticmethod
     def get_stepper_forward():
         return stp.FORWARD
@@ -196,10 +194,10 @@ class ElectronicsMainBoard1V1:
         self.spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
         self.adc_cs = digitalio.DigitalInOut(self.adc_cs_pin)
         self.adc = MCP.MCP3002(self.spi, self.adc_cs)
-        
+
         self.adc_channel_0 = AnalogIn(self.adc, MCP.P0)
         self.adc_channel_1 = AnalogIn(self.adc, MCP.P1)
-        
+
     @staticmethod
     def homing_supported():
         #TODO: #return True
@@ -208,10 +206,10 @@ class ElectronicsMainBoard1V1:
 
     def get_homing_sensor_voltage(self):
         return self.adc_channel_0.voltage
-    
+
     def get_calibration_led(self):
         return self.calibration_led
-        
+
     # For future expansion
     def get_adc2_voltage(self):
         return self.adc_channel_1.voltage

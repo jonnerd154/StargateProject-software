@@ -5,10 +5,8 @@ import neopixel # pylint: disable=import-error
 import board # pylint: disable=import-error
 from gpiozero import LED # pylint: disable=import-error
 
-from hardware_simulation import DCMotorSim, StepperSim
+from hardware_simulation import DCMotorSim, StepperSim, LEDSim
 from stargate_config import StargateConfig
-from hardware_simulation import DCMotorSim
-from hardware_simulation import LEDSim
 
 class ElectronicsOriginal:
 
