@@ -58,7 +58,10 @@ class Stargate:
         self.subspace_client = SubspaceClient(self)
         self.addr_manager = StargateAddressManager(self)
         self.chevrons = ChevronManager(self)
+        
         self.ring = SymbolRing(self)
+        self.ring.homing_manager.ring = self.ring
+        
         self.dialer = Dialer(self) # A "Dialer" is either a Keyboard or DHDv2
         self.keyboard = KeyboardManager(self, app.is_daemon)
         self.wh_manager = WormholeManager(self)

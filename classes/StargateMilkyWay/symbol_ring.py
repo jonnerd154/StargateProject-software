@@ -95,6 +95,8 @@ class SymbolRing:
         self.current_speed = False
         self.drive_status = "Stopped"
 
+        self.one_revolution_steps = self.cfg.get("stepper_one_revolution_steps")
+        
         # Release the ring for safety
         self.release()
 
@@ -151,10 +153,13 @@ class SymbolRing:
         #TODO: Consider caching the configs here?
 
         # Move the ring one step at at time
-        for i in range(steps):
+        i=0
+        while self.steps_remaining > 0:
             # Check if the gate is still running, if not, break out of the loop.
             if not self.stargate.running:
                 break
+                
+            self.log.log(self.steps_remaining)
 
             # Move the stepper one step
             stepper_drive_mode = self.stargate.electronics.get_stepper_drive_mode(self.cfg.get("stepper_drive_mode"))
@@ -187,8 +192,14 @@ class SymbolRing:
             self.update_position(1, direction)
 
             # Checks if the ring is in the home position, and zeros the cached value if so
-            self.homing_manager.in_move_calibrate()
+            error = self.homing_manager.in_move_calibrate()
+            
+            self.steps_remaining -= error
+            if (self.steps_remaining > self.one_revolution_steps):
+                self.steps_remaining = self.steps_remaining-self.one_revolution_steps
 
+            i+=1
+            
         # After this move() is complete, save the position to persistent memory
         self.current_speed = False
         self.direction = False

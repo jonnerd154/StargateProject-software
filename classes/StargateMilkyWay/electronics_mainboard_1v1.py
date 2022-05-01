@@ -50,7 +50,7 @@ class ElectronicsMainBoard1V1:
         self.spi_ch = 1
 
         self.aux_1_pin = 17
-        self.calibration_led_pin = 24
+        self.homing_led_pin = 24
         self.adc_cs_pin = board.D8
 
         # ------------------------------------------
@@ -60,7 +60,7 @@ class ElectronicsMainBoard1V1:
         self.motor_channels = None
         self.led_channels = None
         self.glyph_stepper = None
-        self.calibration_led = None
+        self.homing_led = None
         self.neopixels = None
         self.spi = None
         self.adc_cs = None
@@ -90,6 +90,11 @@ class ElectronicsMainBoard1V1:
         self.init_neopixels()
 
         self.log.log(f"Hardware Detected: {self.name}")
+        
+        self.get_homing_led().on()
+        
+        # while 1:
+#             self.log.log(self.get_homing_sensor_voltage())
 
     def init_pwm_controllers(self):
         # Initialize the PWM controllers
@@ -159,7 +164,7 @@ class ElectronicsMainBoard1V1:
             9: LEDSim(),
         }
 
-        self.calibration_led = LED(self.calibration_led_pin)
+        self.homing_led = LED(self.homing_led_pin)
 
     def get_chevron_led(self, chevron_number):
         channel = self.board_cfg.get(f"chevron_{chevron_number}_led_channel")
@@ -200,15 +205,14 @@ class ElectronicsMainBoard1V1:
 
     @staticmethod
     def homing_supported():
-        #TODO: #return True
-
+        # TODO: Fix homing functionality and enable
         return False
 
     def get_homing_sensor_voltage(self):
         return self.adc_channel_0.voltage
 
-    def get_calibration_led(self):
-        return self.calibration_led
+    def get_homing_led(self):
+        return self.homing_led
 
     # For future expansion
     def get_adc2_voltage(self):

@@ -14,22 +14,30 @@ class SymbolRingHomingManager:
         # Retrieve the configurations
         self.auto_homing_enabled = self.cfg.get("stepper_auto_homing_enabled")
         self.auto_homing_threshold = self.cfg.get("stepper_auto_homing_threshold")
+        self.one_revolution_steps = self.cfg.get("stepper_one_revolution_steps")
 
     def in_move_calibrate( self ):
+        expected = self.stargate.ring.get_position()
+        self.log.log(f'               Expected:             {expected}')
+        error = 0
         if self.auto_homing_enabled and self.is_at_home():
             actual = 0
             expected = self.stargate.ring.get_position()
             error = actual - expected
 
-            if error > self.stargate.ring.total_steps // 2:
-                error = (self.stargate.ring.total_steps - error)*-1
+            if error > self.one_revolution_steps // 2:
+                error = (one_revolution_steps - error)*-1
 
+#             self.ring.steps_remaining += error
+            
             self.log.log(f'HOME detected! Expected:           {expected}')
             self.log.log(f'               Actual:             {actual}')
             self.log.log(f'               Accumulated Error : {error}')
             self.log.log('Setting Zero-Position.')
             self.ring.zero_position()
-
+          
+        return error
+            
     def is_at_home(self):
         if self.stargate.electronics.homing_supported():
             sensor_voltage = self.stargate.electronics.get_homing_sensor_voltage()
