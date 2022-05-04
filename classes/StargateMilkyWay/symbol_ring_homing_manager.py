@@ -90,7 +90,7 @@ class SymbolRingHomingManager:
         # Move the ring *at most* 1.1 full revolutions
         max_steps = int(self.one_revolution_steps * 1.1)
         self.stargate.audio.sound_start('rolling_ring')  # play the audio movement
-        for i in range(max_steps):
+        for i in range(max_steps): #pylint: disable=unused-variable
 
             # Check the homing sensor
             if self.is_at_home():

@@ -192,11 +192,11 @@ class SymbolRing:
             self.update_position(1, direction)
 
             # Checks if the ring is in the home position, and zeros the cached value if so
-            error = self.homing_manager.in_move_calibrate()
+            #self.homing_manager.in_move_calibrate()
 
-            self.steps_remaining -= error
-            if (self.steps_remaining > self.one_revolution_steps):
-                self.steps_remaining = self.steps_remaining-self.one_revolution_steps
+            # self.steps_remaining -= error
+            # if self.steps_remaining > self.one_revolution_steps:
+            #     self.steps_remaining = self.steps_remaining-self.one_revolution_steps
 
             i+=1
 
