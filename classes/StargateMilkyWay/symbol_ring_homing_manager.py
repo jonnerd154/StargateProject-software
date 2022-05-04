@@ -106,6 +106,8 @@ class SymbolRingHomingManager:
             sleep(self.cfg.get("stepper_speed_normal"))
          
         message = "Failed to find home"
-        self.stargate.audio.sound_stop('rolling_ring')  # stop the audio   
+        self.log.log("Self-homing: " + message)
+        self.stargate.audio.sound_stop('rolling_ring')  # stop the audio 
+        self.ring.release() 
         return { 'success': False, 'message': message}
         
