@@ -18,6 +18,9 @@ class SymbolRingHomingManager:
         self.one_revolution_steps = self.cfg.get("stepper_one_revolution_steps")
 
     def in_move_calibrate( self ):
+    
+    # TODO: Needs work/redo. Probably needs changes in/around the ring.move() loop, as well.
+    
         # expected = self.stargate.ring.get_position()
 #         self.log.log(f'               Expected:             {expected}')
 #         error = 0
