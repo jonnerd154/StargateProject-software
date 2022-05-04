@@ -73,9 +73,13 @@ class SymbolRingHomingManager:
             
         self.log.log("Self-homing: Start")
         
+        # Turn on the Homing LED
+        self.stargate.electronics.get_homing_led().on()
+        
         # Check if we're already at home
         if self.is_at_home():
             self.log.log("Self-homing: Ring already at home.")
+            self.stargate.electronics.get_homing_led().off()
             return { 'success': False, 'message': "" } 
           
         # TODO
@@ -94,6 +98,7 @@ class SymbolRingHomingManager:
                 self.log.log("Self-homing: " + message)
                 self.ring.zero_position()
                 self.ring.release()
+                self.stargate.electronics.get_homing_led().off()
                 self.stargate.audio.sound_stop('rolling_ring')  # stop the audio   
                 message = "Current Hardware does not support self-homing"
                 sleep(0.75)
@@ -109,5 +114,6 @@ class SymbolRingHomingManager:
         self.log.log("Self-homing: " + message)
         self.stargate.audio.sound_stop('rolling_ring')  # stop the audio 
         self.ring.release() 
+        self.stargate.electronics.get_homing_led().off()
         return { 'success': False, 'message': message}
         

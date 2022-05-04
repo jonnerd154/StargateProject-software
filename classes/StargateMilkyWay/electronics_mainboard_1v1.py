@@ -91,11 +91,6 @@ class ElectronicsMainBoard1V1:
 
         self.log.log(f"Hardware Detected: {self.name}")
         
-        self.get_homing_led().on()
-        
-        # while 1:
-#             self.log.log(self.get_homing_sensor_voltage())
-
     def init_pwm_controllers(self):
         # Initialize the PWM controllers
         self._pca_1 = PCA9685(self.i2c, address=self._pca_1_addr)
