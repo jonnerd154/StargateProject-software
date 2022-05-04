@@ -71,7 +71,14 @@ class ElectronicsMainBoard1V1:
             "interleave": stp.INTERLEAVE,
             "microstep": stp.MICROSTEP
         }
-
+        
+        self.neopixel_color_orders = {
+            "RGB": neopixel.RGB,
+            "GRB": neopixel.GRB, # default
+            "RGBW": neopixel.RGBW,
+            "GRBW": neopixel.GRBW,
+        }
+        
         # Initialize SPI
         self.init_spi_for_adc()
 
@@ -213,7 +220,11 @@ class ElectronicsMainBoard1V1:
         return self.adc_channel_1.voltage
 
     def init_neopixels(self):
-        self.neopixels = neopixel.NeoPixel(self.neopixel_pin, self.neopixel_led_count, auto_write=False, brightness=0.61)
+        # Look up the configured color order
+        color_order = self.cfg.get('wormhole_neopixel_color_order')
+        color_order = self.neopixel_color_orders[color_order]
+
+        self.neopixels = neopixel.NeoPixel(self.neopixel_pin, self.neopixel_led_count, auto_write=False, brightness=0.61, pixel_order=color_order)
 
     def get_wormhole_pixels(self):
         return self.neopixels

@@ -374,5 +374,16 @@
     "min_value": 0,
     "max_value": false,
     "units": "Minutes"
+  },
+  "wormhole_neopixel_color_order": {
+    "value": "GRB",
+    "desc": "What color order is used on the Wormhole Neopixel Strip?",
+    "type": "string-enum",
+    "enum_values": [
+      "GRB",
+      "GRBW",
+      "RGB",
+      "RGBW"
+    ]
   }
 }

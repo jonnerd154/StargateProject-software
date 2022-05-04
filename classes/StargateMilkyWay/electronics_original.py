@@ -33,7 +33,7 @@ class ElectronicsOriginal:
 
         self.neopixel_pin = board.D12
         self.neopixel_led_count = 122
-
+        
         self.adc_resolution = 10 # The MCP3002 is a 10-bit ADC
         self.adc_vref = 3.3
         self.spi_bit_rate = 1200000
@@ -54,7 +54,14 @@ class ElectronicsOriginal:
             "interleave": stp.INTERLEAVE,
             "microstep": stp.MICROSTEP
         }
-
+        
+        self.neopixel_color_orders = {
+            "RGB": neopixel.RGB,
+            "GRB": neopixel.GRB, # default
+            "RGBW": neopixel.RGBW,
+            "GRBW": neopixel.GRBW,
+        }
+        
         self.neopixels = None
         self.init_neopixels()
 
@@ -191,7 +198,11 @@ class ElectronicsOriginal:
         return self.adc_to_voltage( self.get_adc_by_channel(0) )
 
     def init_neopixels(self):
-        self.neopixels = neopixel.NeoPixel(self.neopixel_pin, self.neopixel_led_count, auto_write=False, brightness=0.61)
+        # Look up the configured color order
+        color_order = self.cfg.get('wormhole_neopixel_color_order')
+        color_order = self.neopixel_color_orders[color_order]
+        
+        self.neopixels = neopixel.NeoPixel(self.neopixel_pin, self.neopixel_led_count, auto_write=False, brightness=0.61, pixel_order=color_order)
 
     def get_wormhole_pixels(self):
         return self.neopixels
