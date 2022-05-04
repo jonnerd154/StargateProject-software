@@ -80,9 +80,14 @@ class Stargate:
                 self.log.log("Failed to start SubspaceServer thread")
                 raise
 
+        ### If enabled, home the ring
+        if self.cfg.get("self_homing_on_start_enabled"):
+            self.ring.home()
+        
         ### Notify that the Stargate is ready
         self.audio.play_random_clip("startup")
         self.log.log('The Stargate is started and ready!')
+      
 
     def initialize_gate_state_vars(self):
         """

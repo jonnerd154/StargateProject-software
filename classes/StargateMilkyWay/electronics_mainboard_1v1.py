@@ -205,8 +205,7 @@ class ElectronicsMainBoard1V1:
 
     @staticmethod
     def homing_supported():
-        # TODO: Fix homing functionality and enable
-        return False
+        return True
 
     def get_homing_sensor_voltage(self):
         return self.adc_channel_0.voltage

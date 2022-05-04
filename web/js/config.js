@@ -66,7 +66,9 @@ function getParamGroupByPrettyName(paramPrettyName){
 
   compound_groups = {
     "Chevron Config": "Chevron GPIO",
+    "Self Homing": "Self-Homing",
   }
+  
   group_basic = paramPrettyName.split(' ')[0]
   group_basic_2 = paramPrettyName.split(' ')[1]
   group_compound = group_basic + " " + group_basic_2

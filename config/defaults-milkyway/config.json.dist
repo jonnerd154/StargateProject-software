@@ -225,6 +225,11 @@
     "desc": "True to enable automatic software updates",
     "type": "bool"
   },
+  "self_homing_on_start_enabled": {
+    "value": false,
+    "desc": "True to enable self-homing of the ring on startup",
+    "type": "bool"
+  },
   "software_update_exception": {
     "value": false,
     "desc": "Was an exception encountered during the last Software Update attempt?",

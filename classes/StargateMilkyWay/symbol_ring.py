@@ -280,6 +280,9 @@ class SymbolRing:
         self.position_store.set_non_persistent('ring_position', 0)
         self.save_position()
 
+    def home(self):
+        self.homing_manager.find_home()
+        
     def release(self):
 
         """

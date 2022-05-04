@@ -1,3 +1,4 @@
+from time import sleep
 
 class SymbolRingHomingManager:
 
@@ -17,26 +18,27 @@ class SymbolRingHomingManager:
         self.one_revolution_steps = self.cfg.get("stepper_one_revolution_steps")
 
     def in_move_calibrate( self ):
-        expected = self.stargate.ring.get_position()
-        self.log.log(f'               Expected:             {expected}')
-        error = 0
-        if self.auto_homing_enabled and self.is_at_home():
-            actual = 0
-            expected = self.stargate.ring.get_position()
-            error = actual - expected
-
-            if error > self.one_revolution_steps // 2:
-                error = (one_revolution_steps - error)*-1
-
-#             self.ring.steps_remaining += error
-            
-            self.log.log(f'HOME detected! Expected:           {expected}')
-            self.log.log(f'               Actual:             {actual}')
-            self.log.log(f'               Accumulated Error : {error}')
-            self.log.log('Setting Zero-Position.')
-            self.ring.zero_position()
-          
-        return error
+        # expected = self.stargate.ring.get_position()
+#         self.log.log(f'               Expected:             {expected}')
+#         error = 0
+#         if self.auto_homing_enabled and self.is_at_home():
+#             actual = 0
+#             expected = self.stargate.ring.get_position()
+#             error = actual - expected
+# 
+#             if error > self.one_revolution_steps // 2:
+#                 error = (one_revolution_steps - error)*-1
+# 
+# #             self.ring.steps_remaining += error
+#             
+#             self.log.log(f'HOME detected! Expected:           {expected}')
+#             self.log.log(f'               Actual:             {actual}')
+#             self.log.log(f'               Accumulated Error : {error}')
+#             self.log.log('Setting Zero-Position.')
+#             self.ring.zero_position()
+#           
+#         return error
+        return 0
             
     def is_at_home(self):
         if self.stargate.electronics.homing_supported():
@@ -45,39 +47,62 @@ class SymbolRingHomingManager:
                 return True
         return False
 
-    # def find_home(self):
-    #     self.audio.sound_start('rolling_ring')  # play the audio movement
-    #     for i in range(self.ring.steps):
-    #         if self.ring.motor_hardware_mode > 0:
-    #             stepper_micro_pos = self.ring.move_raw_one_step() + 8 # this line moves the motor.
-    #         else:
-    #             try:
-    #                 stepper_micro_pos = stepper_micro_pos + 8
-    #             except NameError:
-    #                 stepper_micro_pos = 8
-    #         self.stepper_pos = (stepper_micro_pos // self.micro_steps) % self.total_steps # Update the self.stepper_pos value as the ring moves. Will have a value from 0 till self.total_steps = 1250.
-    #
-    #         ## homing sensor ##
-    #         try:
-    #             if self.electronics.homing_enabled(): # If the jumper for the sensor is present
-    #                 sensor_voltage = self.electronics.get_homing_sensor_voltage()
-    #                 if sensor_voltage < self.homing_sensor_home_threshold:  # if the ring is in the "home position"
-    #                     # print('HOME detected!')
-    #                     actual_position = (self.stepper_pos + self.saved_pos) % self.total_steps
-    #                     self.offset = (self.find_offset(actual_position, self.total_steps))
-    #         except:
-    #             pass
-    #
-    #         ## acceleration
-    #         if i < acceleration_length:
-    #             current_speed -= (slow_speed - normal_speed) / acceleration_length
-    #             sleep(current_speed)
-    #         ## de acceleration
-    #         elif i > (steps - acceleration_length):
-    #             current_speed += (slow_speed - normal_speed) / acceleration_length
-    #             sleep(current_speed)
-    #         ## slow without acceleration when short distance
-    #         elif steps < acceleration_length:
-    #             current_speed = normal_speed
-    #             sleep(current_speed)
-    #     self.audio.sound_stop('rolling_ring')  # stop the audio
+    def find_home(self):
+    
+        '''
+          This is a really simple stand-alone homing implementation. It would be fun
+          to implement functionality to check/compensate for backlash, and
+          to start from the current understanding of where home is, and more intelligently
+          search for home, rather than the current brute force method of
+          
+             "move clockwise 1.1x rotations until we find home"
+             
+          Some comments are below to help guide that effort in the future.
+             
+          ...gotta start somewhere. FISI!
+          
+        '''
+        
+        if not self.stargate.electronics.homing_supported():
+            message = "Current Hardware does not support self-homing"
+            self.log.log(message)
+            return { 'success': False, 'message': message }
+            
+        self.log.log("Self-homing: Start")
+        
+        # Check if we're already at home
+        if self.is_at_home():
+            self.log.log("Self-homing: Ring already at home.")
+            return { 'success': False, 'message': "" } 
+          
+        # TODO
+        # - Move Earth to symbol 7, which should bring us home
+        # - Overshoot by 2 symbols
+        # - If home still isn't found, continue moving in the same direction up to 1.1 revolutions total
+          
+        # Move the ring *at most* 1.1 full revolutions
+        max_steps = int(self.one_revolution_steps * 1.1)
+        self.stargate.audio.sound_start('rolling_ring')  # play the audio movement
+        for i in range(max_steps):
+            
+            # Check the homing sensor
+            if self.is_at_home():
+                message = "HOME detected!"
+                self.log.log("Self-homing: " + message)
+                self.ring.zero_position()
+                self.ring.release()
+                self.stargate.audio.sound_stop('rolling_ring')  # stop the audio   
+                message = "Current Hardware does not support self-homing"
+                sleep(0.75)
+                return { 'success': True, 'message': ""}
+                        
+            # Move one step forward at Normal speed
+            direction = self.stargate.electronics.get_stepper_forward()
+            stepper_drive_mode = self.stargate.electronics.get_stepper_drive_mode(self.cfg.get("stepper_drive_mode"))
+            self.stargate.electronics.stepper.onestep(direction=direction, style=stepper_drive_mode)
+            sleep(self.cfg.get("stepper_speed_normal"))
+         
+        message = "Failed to find home"
+        self.stargate.audio.sound_stop('rolling_ring')  # stop the audio   
+        return { 'success': False, 'message': message}
+        
