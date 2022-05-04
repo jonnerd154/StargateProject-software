@@ -269,7 +269,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             elif self.path == "/do/dhd_test_disable":
                 self.stargate.keyboard.enable_dhd_test(False)
                 data = { "success": True }
-                
+
             elif self.path == "/do/home_ring":
                 data = self.stargate.ring.home()
 

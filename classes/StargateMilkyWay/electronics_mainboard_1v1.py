@@ -90,7 +90,7 @@ class ElectronicsMainBoard1V1:
         self.init_neopixels()
 
         self.log.log(f"Hardware Detected: {self.name}")
-        
+
     def init_pwm_controllers(self):
         # Initialize the PWM controllers
         self._pca_1 = PCA9685(self.i2c, address=self._pca_1_addr)

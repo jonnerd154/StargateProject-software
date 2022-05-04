@@ -58,10 +58,10 @@ class Stargate:
         self.subspace_client = SubspaceClient(self)
         self.addr_manager = StargateAddressManager(self)
         self.chevrons = ChevronManager(self)
-        
+
         self.ring = SymbolRing(self)
         self.ring.homing_manager.ring = self.ring
-        
+
         self.dialer = Dialer(self) # A "Dialer" is either a Keyboard or DHDv2
         self.keyboard = KeyboardManager(self, app.is_daemon)
         self.wh_manager = WormholeManager(self)
@@ -83,11 +83,11 @@ class Stargate:
         ### If enabled, home the ring
         if self.cfg.get("self_homing_on_start_enabled"):
             self.ring.home()
-        
+
         ### Notify that the Stargate is ready
         self.audio.play_random_clip("startup")
         self.log.log('The Stargate is started and ready!')
-      
+
 
     def initialize_gate_state_vars(self):
         """
