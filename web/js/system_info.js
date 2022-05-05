@@ -79,7 +79,7 @@ function updateInfo(){
           }
       });
 
-      $('#gateName').html(data.gate_name)
+      $('#gateName').html(data.gate_name)    
       $('#galaxy').html(data.galaxy)
       $('#lanIPAddress').html(data.lan_ip_address)
       $('#softwareVersion').html(data.software_version)
@@ -93,6 +93,9 @@ function updateInfo(){
       $('#dialerMode').html(data.dialer_mode)
       $('#hardwareMode').html(data.hardware_mode)
       $('#volumeAsPercent').html(data.audio_volume)
+      
+      $('#hostUptime').html(data.host_uptime)
+      $('#processUptime').html(data.process_uptime)
 
       $('#stats_dialing_failures').html(data.stats_dialing_failures)
       $('#stats_established_fan_count').html(data.stats_established_fan_count)

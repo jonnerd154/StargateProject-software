@@ -66,6 +66,8 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             elif request_path == "/get/system_info":
                 data = {
                     "gate_name":                      self.stargate.addr_manager.get_book().get_local_gate_name(),
+                    "host_uptime":                    self.stargate.app.get_host_uptime(),
+                    "process_uptime":                 self.stargate.app.get_process_uptime(),
                     "local_stargate_address":         self.stargate.addr_manager.get_book().get_local_address(),
                     "local_stargate_address_string":  self.stargate.addr_manager.get_book().get_local_address_string(),
                     "subspace_public_key":            self.stargate.subspace_client.get_public_key(),

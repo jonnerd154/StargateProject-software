@@ -5,13 +5,15 @@
 This is the stargate program for running the stargate from https://thestargateproject.com
 This main.py file is run automatically on boot. It is executed in a systemd daemon/service.
 """
-
+            
 import sys
 import os
-from time import sleep
+from time import sleep, strftime, localtime
 from http.server import HTTPServer
 import threading
 import atexit
+import datetime as dt
+import psutil
 import schedule
 import rollbar
 
@@ -163,6 +165,43 @@ class GateApplication:
             if arg == '--daemon':
                 return True
         return False
+        
+    def get_host_uptime(self):
+        with open('/proc/uptime', 'r') as f:
+            uptime_seconds = float(f.readline().split()[0])
+        return self.display_time(uptime_seconds)
+    
+    def get_process_uptime(self):
+        p = psutil.Process(os.getpid())
+        start = dt.datetime.fromtimestamp(p.create_time())
+        now = dt.datetime.today()
+        uptime_seconds = (now-start).total_seconds()
+        return self.display_time(uptime_seconds)
+    
+    # ++++++++++++++ Helper Fns below
+
+    @staticmethod
+    def display_time(seconds, granularity=2):
+    
+        intervals = (
+            ('weeks', 604800),  # 60 * 60 * 24 * 7
+            ('days', 86400),    # 60 * 60 * 24
+            ('hours', 3600),    # 60 * 60
+            ('minutes', 60),
+            ('seconds', 1),
+        )
+    
+        result = []
+
+        for name, count in intervals:
+            value = seconds // count
+            if value:
+                seconds -= value * count
+                if value == 1:
+                    name = name.rstrip('s')
+                result.append("{} {}".format(int(value), name))
+        return ', '.join(result[:granularity])
+
 
 # Run the stargate application
 app = GateApplication()
