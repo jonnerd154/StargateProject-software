@@ -53,7 +53,7 @@ function apt_update_and_install() {
 
   # Install system-level dependencies
   echo 'Installing system-level dependencies...this may take a while.'
-  sudo apt-get install -y clang python3-dev python3-venv libasound2-dev avahi-daemon apache2 wireguard ufw python3-smbus i2c-tools | sed 's/^/     /'
+  sudo apt-get install -y clang python3-dev python3-venv libasound2-dev avahi-daemon apache2 wireguard ufw python3-smbus i2c-tools netcat-traditional | sed 's/^/     /'
 }
 
 function init_venv() {

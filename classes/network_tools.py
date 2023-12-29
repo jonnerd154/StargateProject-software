@@ -20,11 +20,11 @@ class NetworkTools:
         :return: True if there is a connection to the internet, and false if not.
         """
 
-        if 'succeeded' in self.check_net(self.cloudflare):
+        if 'open' in self.check_net(self.cloudflare):
             # self.log.log('We have Internet connection!')
             return True
 
-        if 'succeeded' in self.check_net(self.google):
+        if 'open' in self.check_net(self.google):
             # self.log.log('We have Internet connection!')
             return True
 

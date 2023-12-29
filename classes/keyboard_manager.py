@@ -81,6 +81,10 @@ class KeyboardManager:
         import keyboard # importing this on MacOS causes a seg fault
 
         for char_in in self.symbol_manager.get_symbol_key_map():
+
+            if not char_in:
+                continue
+
             # Transform upper case presses
             char = char_in
             if char_in != char_in.lower():

@@ -47,3 +47,7 @@ TheStargateProject.com is a fan-based project and is not intended to infringe up
 ## Running PyLint
  - To run for StargateMilkyWay: `pylint --rcfile=.pylintrc-milkyway ./*`
  - To run for StargatePegasus:  `pylint --rcfile=.pylintrc-pegasus ./*`
+
+## Helpful Commands
+ - Tail the software logs: `tail -f ~/sg1_v4/logs/*`
+ - Tail the systemd log: `journalctl -u stargate.service -f`
