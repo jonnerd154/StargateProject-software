@@ -21,8 +21,8 @@ The majority of the installation is completed by a script at `sg1_v4/install/ins
     - Enter your wifi AP credentials
     - Select your country code for Wi-Fi Compliance
   - Set Locale Settings: `YES`
-    - Time Zone
-    - Keyboard Layout
+    - Time Zone: Your timezone
+    - Keyboard Layout: `US` (important for DHD functionality)
     - Skip First Run Wizard: `YES`
   - Click SAVE.
 7. Click "Write." Accept any warnings, and you may need to enter an Admin password for the computer you're working on.
