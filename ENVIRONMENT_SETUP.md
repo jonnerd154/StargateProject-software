@@ -45,14 +45,14 @@ Login credentials:
   ```
 
 ## Copying the software bundle (git clone)
-1. Clone the Repo: `sudo apt-get install git -y && cd ~ && git clone https://github.com/jonnerd154/StargateProject-software.git sg1_v4`
+1. Clone the Repo: `sudo apt-get install git -y && cd ~ && git clone https://github.com/ajtudela/StargateProject-software.git sg1_v4`
 
 ## Upload audio files (Via SCP)
 1. Connect to the Pi using an SCP/SFTP file transfer client.
     - Windows: [WinSCP](https://winscp.net/eng/index.php) or [FileZilla](https://filezilla-project.org/download.php?type=client)
     - MacOS: [CyberDuck](https://cyberduck.io/) or [FileZilla](https://filezilla-project.org/download.php?type=client)
 2. Copy the sound effects folder (Kristian's repo `/soundfx`) to the Raspi.
-    - Copy the folder to `/home/pi/sg1_v4/soundfx`
+    - Copy the folder to `/home/pi/sg1_v4/soundfx/(milkyway|pegasus)`
 
 ## Prepare & Run the Installer
 1. Go back to your SSH client and configure the Install Script's permissions:

@@ -1,7 +1,7 @@
 
 function verify_stargate_software_or_exit() {
   [ ! -d '../classes' ] && echo 'Upload the Software /home/pi/sg1_v4/ before continuing' && exit 1
-  [ ! -d '../soundfx' ] && echo 'Upload the Audio clips /home/pi/sg1_v4/soundfx before continuing' && exit 1
+  [ ! -d '../soundfx' ] && echo 'Upload the Audio clips /home/pi/sg1_v4/soundfx/(milkyway|pegasus) before continuing' && exit 1
   echo 'Version 4.x Software installation detected'
 }
 
@@ -53,7 +53,7 @@ function apt_update_and_install() {
 
   # Install system-level dependencies
   echo 'Installing system-level dependencies...this may take a while.'
-  sudo apt-get install -y clang python3-dev python3-venv libasound2-dev avahi-daemon apache2 wireguard ufw python3-smbus i2c-tools netcat-traditional | sed 's/^/     /'
+  sudo apt-get install --no-install-recommends -y nano clang python3-dev python3-venv libasound2-dev avahi-daemon apache2 wireguard ufw python3-smbus i2c-tools netcat-traditional | sed 's/^/     /'
 }
 
 function init_venv() {
@@ -144,7 +144,7 @@ function restart_apache() {
 function configure_crontab() {
   # Add the speaker-tickler to our crontab
   echo 'Configuring crontab (user: pi)'
-  crontab -e # Creates the crontab, first
+  EDITOR=nano crontab -e # Creates the crontab, first
   (crontab -l 2>/dev/null; echo "*/8 * * * * /home/pi/venv_v4/bin/python3 /home/pi/sg1_v4/scripts/speaker_on.py") | awk '!x[$0]++' | crontab -
 }
 
@@ -164,7 +164,7 @@ function disable_onboard_audio() {
   # Disable the onboard audio adapter
   sudo cp /boot/config.txt /boot/config.bak
   echo 'Disabling RaspberryPi on-board audio adapter'
-  CONFIG='/boot/config.txt'
+  CONFIG='/boot/firmware/config.txt'
   SETTING='off'
   sudo sed $CONFIG -i -r -e "s/^((device_tree_param|dtparam)=([^,]*,)*audio?)(=[^,]*)?/\1=$SETTING/"
   if ! grep -q -E '^(device_tree_param|dtparam)=([^,]*,)*audio?=[^,]*' $CONFIG; then
@@ -270,4 +270,5 @@ function configure_firewall_ufw() {
 function configure_git() {
   cd /home/pi/sg1_v4/
   git config core.fileMode false
+  sudo git config --system --add safe.directory '*' # Remove warning of dubious ownership in the repository
 }
