@@ -45,7 +45,7 @@ Login credentials:
   ```
 
 ## Copying the software bundle (git clone)
-1. Clone the Repo: `sudo apt-get install git -y && cd ~ && git clone https://github.com/ajtudela/StargateProject-software.git sg1_v4`
+1. Clone the Repo: `sudo apt-get install git -y && cd ~ && git clone https://github.com/jonnerd154/StargateProject-software.git sg1_v4`
 
 ## Upload audio files (Via SCP)
 1. Connect to the Pi using an SCP/SFTP file transfer client.
