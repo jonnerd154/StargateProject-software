@@ -21,8 +21,8 @@ The majority of the installation is completed by a script at `sg1_v4/install/ins
     - Enter your wifi AP credentials
     - Select your country code for Wi-Fi Compliance
   - Set Locale Settings: `YES`
-    - Time Zone
-    - Keyboard Layout
+    - Time Zone: Your timezone
+    - Keyboard Layout: `US` (important for DHD functionality)
     - Skip First Run Wizard: `YES`
   - Click SAVE.
 7. Click "Write." Accept any warnings, and you may need to enter an Admin password for the computer you're working on.
@@ -52,7 +52,7 @@ Login credentials:
     - Windows: [WinSCP](https://winscp.net/eng/index.php) or [FileZilla](https://filezilla-project.org/download.php?type=client)
     - MacOS: [CyberDuck](https://cyberduck.io/) or [FileZilla](https://filezilla-project.org/download.php?type=client)
 2. Copy the sound effects folder (Kristian's repo `/soundfx`) to the Raspi.
-    - Copy the folder to `/home/pi/sg1_v4/soundfx`
+    - Copy the folder to `/home/pi/sg1_v4/soundfx/(milkyway|pegasus)`
 
 ## Prepare & Run the Installer
 1. Go back to your SSH client and configure the Install Script's permissions:
