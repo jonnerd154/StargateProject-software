@@ -55,7 +55,8 @@ function updateInfo(){
         // Load the current address in images
         html = ""
         for (i=0;i<6;i++){
-          imageUrl = "/chevrons/" + String(data.local_stargate_address[i]).padStart(3, '0');
+          galaxyName = data.galaxy = data.galaxy.toLowerCase().replace(/\s+/g, '');
+          imageUrl = "/chevrons/" + galaxyName + "/" + String(data.local_stargate_address[i]).padStart(3, '0') + ".svg";
           imageHtml = "<img src='" + imageUrl + "' alt='" + data.local_stargate_address[i] + "'>"
           html += imageHtml
         }
