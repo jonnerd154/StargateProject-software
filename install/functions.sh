@@ -79,7 +79,6 @@ function init_venv() {
 
   echo 'Deactivating the virtual environment'
   deactivate
-
 }
 
 function configure_hostname() {
@@ -131,8 +130,6 @@ EOT
   sudo ln -sf ../mods-available/proxy.conf proxy.conf
   sudo ln -sf ../mods-available/proxy.load proxy.load
   sudo ln -sf ../mods-available/proxy_http.load proxy_http.load
-
-  restart_apache
 }
 
 function restart_apache() {
@@ -149,7 +146,16 @@ function configure_crontab() {
 
 function disable_pwr_mgmt() {
   ## Disable power management/savings on the wifi adapter:
+  echo 'Disabling WiFi power management'
   CONFIG='/etc/rc.local'
+
+  if [ ! -f "$CONFIG" ]; then
+      echo '#!/bin/sh -e' | sudo tee "$CONFIG" > /dev/null
+      echo 'exit 0' | sudo tee -a "$CONFIG" > /dev/null
+      sudo chmod +x "$CONFIG"
+      echo "Created $CONFIG file"
+  fi
+
   if grep -Fq '/sbin/iw wlan0 set power_save off' $CONFIG
   then
       echo 'WiFi power management is already disabled'

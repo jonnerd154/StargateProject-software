@@ -1,0 +1,13 @@
+git
+nano
+clang
+python3-dev
+python3-venv
+libasound2-dev
+avahi-daemon
+apache2
+wireguard
+ufw
+python3-smbus
+i2c-tools
+netcat-traditional

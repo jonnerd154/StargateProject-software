@@ -1,0 +1,93 @@
+name: Generate Raspberry Pi OS Image
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+
+env:
+  ROLLBAR_TOKEN: ${{ secrets.ROLLBAR_TOKEN }}
+  SOUNDFX_URL: ${{ secrets.SOUNDFX_URL }}
+  IMG_DIR: ${{ github.workspace }}/image
+
+jobs:
+  build-pi-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get the software version
+        id: get_software_version
+        run: |
+          SOFTWARE_VERSION=$(grep -oP '(?<=VERSION = ")[^"]+' version.py)
+          echo "SOFTWARE_VERSION=v$SOFTWARE_VERSION" >> $GITHUB_ENV
+
+      - name: Set environment variables
+        run: |
+          echo '#!/bin/bash' > ./.github/stage-sg/01-configs/03-run-chroot.sh
+          echo "set -e" >> ./.github/stage-sg/01-configs/03-run-chroot.sh
+          echo "echo 'Setting rollbar token'" >> ./.github/stage-sg/01-configs/03-run-chroot.sh
+          echo "sudo echo "export ROLLBAR_TOKEN=${{ secrets.ROLLBAR_TOKEN }}" >> ~/.bashrc" >> ./.github/stage-sg/01-configs/03-run-chroot.sh
+          chmod +x ./.github/stage-sg/01-configs/03-run-chroot.sh
+
+      - name: Download the sound files
+        run: |
+          echo '#!/bin/bash' > ./.github/stage-sg/01-configs/04-run-chroot.sh
+          echo "set -e" >> ./.github/stage-sg/01-configs/04-run-chroot.sh
+          echo "echo 'Getting sound files'" >> ./.github/stage-sg/01-configs/04-run-chroot.sh
+          echo "cd /home/pi/sg1_v4/ && wget ${{ secrets.SOUNDFX_URL }} -O soundfx.zip" >> ./.github/stage-sg/01-configs/04-run-chroot.sh
+          echo "mkdir -p soundfx && unzip soundfx.zip -d soundfx && mv soundfx/soundfx soundfx/milkyway" >> ./.github/stage-sg/01-configs/04-run-chroot.sh
+          echo "rm soundfx.zip" >> ./.github/stage-sg/01-configs/04-run-chroot.sh
+          chmod +x ./.github/stage-sg/01-configs/04-run-chroot.sh
+
+      - name: Run pi-gen-action
+        uses: usimd/pi-gen-action@v1.10.0
+        id: build
+        with:
+          release: bookworm
+          hostname: stargate
+          username: pi
+          password: sg1
+          disable-first-boot-user-rename: 1
+          image-name: sg1_v4
+          keyboard-keymap: us
+          locale: en_GB.UTF-8
+          enable-ssh: 1
+          compression: none
+          stage-list: stage0 stage1 stage2 ./.github/stage-sg
+          verbose-output: true
+
+      - name: Rename image
+        env:
+          SOFTWARE_VERSION: ${{ env.SOFTWARE_VERSION }}
+        run: |
+          COMMIT_HASH=${{ github.sha }}
+          IMG_NAME="sg1_${{ env.SOFTWARE_VERSION }}_${COMMIT_HASH:0:7}.img"
+          echo "IMG_NAME=$IMG_NAME" >> $GITHUB_ENV
+          mkdir -p $IMG_DIR
+          mv ${{ steps.build.outputs.image-path }} $IMG_DIR/$IMG_NAME
+
+      # - name: Upload image artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: sg1-v4-image
+      #     path: ${{ env.IMG_DIR }}/${{ env.IMG_NAME }}
+
+      - name: Zip image
+        run: |
+          cd ${{ env.IMG_DIR }}
+          zip -r sg1-v4-image.zip ${{ env.IMG_NAME }}
+
+      # - name: Create tag
+      #   uses: rickstaa/action-create-tag@v1
+      #   with:
+      #     tag: ${{ env.SOFTWARE_VERSION }}
+
+      - name: Release image
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ env.SOFTWARE_VERSION }}
+          #tag_name: ${{ env.SOFTWARE_VERSION }}
+          files: ${{ env.IMG_DIR }}/sg1-v4-image.zip
