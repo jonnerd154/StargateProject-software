@@ -28,6 +28,7 @@ apt_update_and_install
 init_venv
 
 configure_apache
+restart_apache
 configure_crontab
 disable_pwr_mgmt
 disable_onboard_audio

@@ -1,4 +1,7 @@
 # [TheStargateProject.com](https://TheStargateProject.com)
+![GitHub License](https://img.shields.io/github/license/jonnerd154/StargateProject-software)
+[![Generate Raspberry Pi OS Image](https://github.com/jonnerd154/StargateProject-software/actions/workflows/rpi.yml/badge.svg)](https://github.com/jonnerd154/StargateProject-software/actions/workflows/rpi.yml)
+
 Software for Kristian's Fully Functional 3D Printed Stargate
 
 ## Setup Instructions:

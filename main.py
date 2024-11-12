@@ -40,7 +40,7 @@ class GateApplication:
     def __init__(self):
 
         # Configure Rollbar for uncaught exception logging and basic usage info
-        ROLLBAR_POST_ACCESS_TOKEN = 'a8c41fa13dfa4dd7ba6382b1c9dc6ebd' # pylint: disable=invalid-name
+        ROLLBAR_POST_ACCESS_TOKEN = os.getenv("ROLLBAR_TOKEN") # pylint: disable=invalid-name
         rollbar.init(ROLLBAR_POST_ACCESS_TOKEN, 'production')
         def rollbar_except_hook(exc_type, exc_value, traceback):
             # Report the issue to rollbar here.
