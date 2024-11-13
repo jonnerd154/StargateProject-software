@@ -10,6 +10,7 @@ import sys
 import os
 from time import sleep
 from http.server import HTTPServer
+from dotenv import load_dotenv, dotenv_values
 import threading
 import atexit
 import schedule
@@ -40,7 +41,8 @@ class GateApplication:
     def __init__(self):
 
         # Configure Rollbar for uncaught exception logging and basic usage info
-        ROLLBAR_POST_ACCESS_TOKEN = os.getenv("ROLLBAR_TOKEN") # pylint: disable=invalid-name
+        load_dotenv()
+        ROLLBAR_POST_ACCESS_TOKEN = os.getenv('ROLLBAR_TOKEN') # pylint: disable=invalid-name
         rollbar.init(ROLLBAR_POST_ACCESS_TOKEN, 'production')
         def rollbar_except_hook(exc_type, exc_value, traceback):
             # Report the issue to rollbar here.
