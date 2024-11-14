@@ -26,16 +26,14 @@ jobs:
 
       - name: Set environment variables
         run: |
-          echo '#!/bin/bash' > ./.github/stage-sg/01-configs/03-run-chroot.sh
-          echo "set -e" >> ./.github/stage-sg/01-configs/03-run-chroot.sh
-          echo "echo 'Setting rollbar token'" >> ./.github/stage-sg/01-configs/03-run-chroot.sh
-          echo "sudo echo "export ROLLBAR_TOKEN=${{ secrets.ROLLBAR_TOKEN }}" >> ~/.bashrc" >> ./.github/stage-sg/01-configs/03-run-chroot.sh
+          echo '#!/bin/bash -e' > ./.github/stage-sg/01-configs/03-run-chroot.sh
+          echo "echo 'Setting rollbar token in .env file'" >> ./.github/stage-sg/01-configs/03-run-chroot.sh
+          echo "echo \"ROLLBAR_TOKEN=${{ secrets.ROLLBAR_TOKEN }}\" > /home/pi/sg1_v4/.env" >> ./.github/stage-sg/01-configs/03-run-chroot.sh
           chmod +x ./.github/stage-sg/01-configs/03-run-chroot.sh
 
       - name: Download the sound files
         run: |
-          echo '#!/bin/bash' > ./.github/stage-sg/01-configs/04-run-chroot.sh
-          echo "set -e" >> ./.github/stage-sg/01-configs/04-run-chroot.sh
+          echo '#!/bin/bash -e' > ./.github/stage-sg/01-configs/04-run-chroot.sh
           echo "echo 'Getting sound files'" >> ./.github/stage-sg/01-configs/04-run-chroot.sh
           echo "cd /home/pi/sg1_v4/ && wget ${{ secrets.SOUNDFX_URL }} -O soundfx.zip" >> ./.github/stage-sg/01-configs/04-run-chroot.sh
           echo "mkdir -p soundfx && unzip soundfx.zip -d soundfx && mv soundfx/soundfx soundfx/milkyway" >> ./.github/stage-sg/01-configs/04-run-chroot.sh
@@ -89,5 +87,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: ${{ env.SOFTWARE_VERSION }}
-          #tag_name: ${{ env.SOFTWARE_VERSION }}
+          # tag_name: ${{ env.SOFTWARE_VERSION }}
           files: ${{ env.IMG_DIR }}/sg1-v4-image.zip

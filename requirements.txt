@@ -36,3 +36,4 @@ ipaddress~=1.0.23
 keyboard~=0.13.5
 gitpython~=3.1.27
 rollbar~=0.16.2
+python-dotenv~=1.0.1

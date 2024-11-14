@@ -273,6 +273,7 @@ function configure_firewall_ufw() {
 }
 
 function configure_git() {
+  echo 'Configuring git'
   cd /home/pi/sg1_v4/
   git config core.fileMode false
   sudo git config --system --add safe.directory '*' # Remove warning of dubious ownership in the repository
