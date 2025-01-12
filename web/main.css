@@ -244,7 +244,15 @@ html, body {
 
 .address-book-col-planet-names {
   float: left; /* fix for  buggy browsers */
-  width: 40%;
+  width: 20%;
+  min-width: 200px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.address-book-col-is-online {
+  float: left; /* fix for  buggy browsers */
+  width: 20%;
   min-width: 200px;
   font-size: 12px;
   font-weight: bold;
