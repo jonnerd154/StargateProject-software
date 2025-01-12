@@ -67,9 +67,10 @@ class StargateAddressManager:
                     name = gate_config['name']
                     gate_address = literal_eval(gate_config['sg_address'])
                     ip_address = self.net_tools.get_ip(gate_config['ip'])
+                    is_gate_online = gate_config['status']
 
                     # Add it to the datastore
-                    self.address_book.set_fan_gate(name, gate_address, ip_address)
+                    self.address_book.set_fan_gate(name, gate_address, ip_address, is_gate_online)
 
                 self.log.log("Fan Gate Update: Success!")
                 self.cfg.set('fan_gate_last_update', str(datetime.now()))
