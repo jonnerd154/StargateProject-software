@@ -331,8 +331,8 @@ html, body {
 .address-book-glyph {
   position:relative;
   float:left;
-  max-width:14%;
-  width: 14%
+  max-width:12%;
+  width: 12%
 }
 
 /* CONFIGURATION STYLES */
