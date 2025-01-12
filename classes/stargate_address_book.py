@@ -99,11 +99,11 @@ class StargateAddressBook:
 
         return False
 
-    def set_fan_gate(self, name, gate_address, ip_address, is_black_hole=False):
+    def set_fan_gate(self, name, gate_address, ip_address, is_gate_online, is_black_hole=False):
         # TODO: Validate gate_address, ip_address
         # TODO: Ensure unique address
         fan_gates = self.get_fan_gates()
-        fan_gates[name] = { "name": name, "gate_address": gate_address, "ip_address": ip_address, "is_black_hole": is_black_hole }
+        fan_gates[name] = { "name": name, "gate_address": gate_address, "ip_address": ip_address, "is_gate_online": is_gate_online, "is_black_hole": is_black_hole }
         self.datastore.set("fan_gates", fan_gates)
 
 # ----
