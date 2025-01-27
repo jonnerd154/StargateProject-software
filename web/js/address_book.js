@@ -22,7 +22,11 @@ function load_address_book(){
     $.each(addresses, function( index, value ) {
         address_raw = value.gate_address
         address_string = address_raw.join("-");
-
+        is_gate_online = value.is_gate_online
+        if (is_gate_online == 0){
+                is_gate_online = ""
+        } else {is_gate_online = "Online"}
+      
         $("#address_book_summary").html('')
         nameLookup = {
           "fan": "Subspace Gates",
@@ -43,7 +47,7 @@ function load_address_book(){
         address = address_raw.join("");
 
         $("#presets").append('<div class="address-book-row address-book-row-'+value.type+' col-sm " onclick="window.location = \'index.htm?address=' +
-          address_string + '\';"><div class="address-book-col-planet-names">' + value.name + '</div><div class="address-book-col-glyphs">' + address +  '</div></div>' );
+          address_string + '\';"><div class="address-book-col-planet-names">' + value.name + '</div><div class="address-book-col-glyphs">' + address + '</div><div class="address-book-is-online">' + is_gate_online + '</div></div>' );
     });
 }
 
