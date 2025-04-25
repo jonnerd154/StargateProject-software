@@ -38,7 +38,7 @@ class Dialer: # pylint: disable=too-few-public-methods
         try:
             # If The DHD is disabled, raise an exception to jump to the except block and use KeyboardMode
             if not self.dhd_enable:
-                raise AttributeError
+                raise SerialException
 
             self.hardware = self._connect_dhd()
             self.type = "DHDv2"
