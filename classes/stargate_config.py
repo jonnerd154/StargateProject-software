@@ -254,6 +254,10 @@ class StargateConfig:
         elif required_type == "dict":
             if not isinstance(test_value, dict ):
                 raise ValueError(f"{key} must be type `dict`")
+            
+        elif required_type == "list":
+            if not isinstance(test_value, list ):
+                raise ValueError(f"{key} must be type `list`")
 
         else:
             test_type = test_value.__class__.__name__
