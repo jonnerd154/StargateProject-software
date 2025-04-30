@@ -122,7 +122,7 @@ class StargateAudio:
             for line in audio_devices:
                 if 'USB' in line:
                     return line[5]
-                return 1
+            return 1
         except FileNotFoundError:
             return 1
 
