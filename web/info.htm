@@ -376,6 +376,7 @@
             $('#dialerMode').html(data.dialer_mode)
             $('#hardwareMode').html(data.hardware_mode)
             $('#volumeAsPercent').html(data.audio_volume)
+            $('#temperature').text(data.temperature)
 
             $('#stats_dialing_failures').html(data.stats_dialing_failures)
             $('#stats_established_fan_count').html(data.stats_established_fan_count)
@@ -558,6 +559,7 @@
           <div class="system-info-row"><span class="system-info-col-names">Dialer Mode:&nbsp;&nbsp;&nbsp;</span><span class="system-info-col-values" id="dialerMode"></span></div>
           <div class="system-info-row"><span class="system-info-col-names">Hardware in Use:&nbsp;&nbsp;&nbsp;</span><span class="system-info-col-values" id="hardwareMode"></span></div>
           <div class="system-info-row"><span class="system-info-col-names">Audio Volume (%):&nbsp;&nbsp;&nbsp;</span><span class="system-info-col-values" id="volumeAsPercent"></span></div>
+          <div class="system-info-row"><span class="system-info-col-names">Temperature:&nbsp;&nbsp;&nbsp;</span><span class="system-info-col-values" id="temperature"></span></div>
         </div>
         <br>
         <h3>Lifetime Statistics</h3>

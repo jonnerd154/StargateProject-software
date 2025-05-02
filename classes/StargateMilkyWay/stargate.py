@@ -27,6 +27,7 @@ class Stargate:
         self.electronics = app.electronics
         self.base_path = app.base_path
         self.net_tools = app.net_tools
+        self.temperature = app.temperature
         self.sw_updater = self.app.sw_updater
         self.schedule = app.schedule
         self.galaxy = app.galaxy
