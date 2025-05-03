@@ -35,6 +35,7 @@ if GALAXY == "Milky Way":
 from stargate import Stargate
 from electronics import Electronics
 from network_tools import NetworkTools
+from temperature import Temperature
 
 class GateApplication:
 
@@ -104,6 +105,11 @@ class GateApplication:
 
         ### We'll use NetworkTools and Schedule throughout the app, initialize them here.
         self.net_tools = NetworkTools(self.log)
+
+        ### Temperature
+        self.temperature = Temperature(self.log)
+
+        ### Schedule
         self.schedule = schedule # Alias the class here so it can be used in other areas with a clear interface
 
         ### Check for new software updates ###
