@@ -1,0 +1,503 @@
+@charset "UTF-8";
+:root {
+  /*! UPDATE COLORS HERE !!! -------------------------------------------------------------------------------------- */
+  --color: #37bfde;
+  --color-dark: #4a7297;
+  --color-danger: #c70036;
+  --color-good: #07ff0b;
+  --color-alt: white;
+  --background-color: #020f25;
+  --glyph-color: #fffea5;
+  /*! Calculate glyph-color-svg here: https://codepen.io/sosuke/pen/Pjoqqp */
+  --glyph-color-svg: invert(100%) sepia(21%) saturate(5367%) hue-rotate(312deg)
+    brightness(111%) contrast(103%);
+  --glyph-color-danger-svg: invert(16%) sepia(84%) saturate(3541%)
+    hue-rotate(331deg) brightness(81%) contrast(117%);
+  --color-wormhole-danger-1: yellow;
+  --color-wormhole-danger-2: orange;
+  --color-wormhole-danger-3: red;
+  --color-wormhole-1: royalblue;
+  --color-wormhole-2: cyan;
+  --color-wormhole-3: cornflowerblue;
+  --border: solid clamp(0px, 0.5vmin, 5px) var(--color);
+  --border-thin: solid clamp(0px, 0.3vmin, 3px) var(--color);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.genos-font {
+  font-family: "Genos", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-size: clamp(-100px, 3.5vmin, 35px);
+}
+
+.hidden {
+  display: none !important;
+}
+
+a:link {
+  text-decoration: inherit;
+  color: inherit;
+  cursor: auto;
+}
+
+a:visited {
+  text-decoration: inherit;
+  color: inherit;
+  cursor: auto;
+}
+
+.navigation-menu-wrapper {
+  height: 0;
+  position: relative;
+  margin: 0 auto;
+}
+
+.navigation-menu {
+  margin: auto;
+  width: clamp(-100px, 100vmin, 1000px);
+  display: flex;
+  align-items: center;
+  gap: clamp(-100px, 1vmin, 10px);
+  margin-bottom: 0;
+  margin-top: clamp(-100px, 0.5vmin, 5px);
+  padding-left: clamp(-100px, 4vmin, 40px);
+  opacity: 0.1;
+  transition: opacity 0.3s linear;
+  position: absolute;
+  left: 0;
+  font-size: clamp(-100px, 2vmin, 20px);
+}
+.navigation-menu:hover {
+  opacity: 1;
+}
+.navigation-menu a {
+  color: var(--color);
+  border: var(--border-thin);
+  border-radius: clamp(-100px, 1vmin, 10px);
+  padding: 0 clamp(-100px, 0.6vmin, 6px);
+  cursor: pointer;
+}
+.navigation-menu a:hover {
+  background-color: var(--color-dark);
+}
+.navigation-menu a.active-link {
+  color: var(--glyph-color);
+}
+
+.dropbtn {
+  cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover,
+.dropbtn:focus {
+  background-color: var(--color-dark);
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--background-color);
+  z-index: 9999;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: var(--color-alt);
+  padding: clamp(-100px, 1vmin, 10px);
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+  background-color: var(--color-dark);
+}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {
+  display: block;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--color);
+  margin: 0;
+  height: 100vh;
+  display: flex;
+}
+
+.navigation-menu-wrapper {
+  width: clamp(-100px, 98vmin, 980px);
+}
+
+.border {
+  border: var(--border);
+  border-radius: clamp(-100px, 6vmin, 60px);
+  width: clamp(-100px, 98vmin, 980px);
+  height: clamp(-100px, 93vmin, 930px);
+  margin: auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  gap: clamp(-100px, 1vmin, 10px);
+  margin-left: clamp(-100px, 4.2vmin, 42px);
+  margin-right: clamp(-100px, 8.5vmin, 85px);
+  margin-top: clamp(-100px, 0.8vmin, 8px);
+  position: relative;
+}
+.header .header-2 {
+  color: var(--color-alt);
+  font-size: clamp(-100px, 3.2vmin, 32px);
+  line-height: clamp(-100px, 4.1vmin, 41px);
+  align-content: end;
+}
+.header .header-3 {
+  color: var(--color-alt);
+  font-size: clamp(-100px, 2.9vmin, 29px);
+  line-height: clamp(-100px, 3.9vmin, 39px);
+  align-content: end;
+}
+.header .header-border {
+  border-top: var(--border);
+  position: absolute;
+  width: 100%;
+  bottom: clamp(-100px, 0.6vmin, 6px);
+}
+
+.address-book-glyph {
+  position: relative;
+  float: left;
+  max-width: clamp(-100px, 6vmin, 60px);
+  filter: var(--glyph-color-svg);
+}
+
+.address-counts {
+  position: absolute;
+  font-size: clamp(-100px, 2vmin, 20px);
+  line-height: clamp(-100px, 1.6vmin, 16px);
+  right: clamp(-100px, 1.3vmin, 13px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  text-align: end;
+  width: clamp(-100px, 12vmin, 120px);
+}
+.address-counts > div {
+  display: flex;
+  justify-content: space-between;
+}
+
+section {
+  margin: 0 clamp(-100px, 1vmin, 10px);
+  position: relative;
+}
+section header {
+  display: flex; /* aligns all child elements (flex items) in a row */
+  margin-bottom: clamp(-100px, 1.5vmin, 15px);
+  line-height: clamp(-100px, 3.5vmin, 35px);
+}
+section header .col {
+  width: clamp(-100px, 7.52vmin, 75.2px);
+  text-align: center;
+  border-bottom: var(--border);
+}
+section header .col.col-1 {
+  width: clamp(-100px, 3.2vmin, 32px);
+  border-bottom: unset;
+}
+section header .col.col-2 {
+  border-image: linear-gradient(to left, var(--color) 50%, transparent 50%) 100% 1;
+}
+section header .col.col-9 {
+  flex: 1;
+  text-align: start;
+}
+section .rows {
+  max-height: clamp(-100px, 66.5vmin, 665px);
+  min-height: clamp(-100px, 66.5vmin, 665px);
+  overflow-y: scroll;
+  scrollbar-color: var(--color);
+  scrollbar-width: auto;
+  position: relative;
+}
+section .row {
+  display: flex; /* aligns all child elements (flex items) in a row */
+  position: relative;
+  margin-bottom: clamp(-100px, 1vmin, 10px);
+  margin-right: clamp(-100px, 1.5vmin, 15px);
+  line-height: clamp(-100px, 3.5vmin, 35px);
+  max-height: clamp(-100px, 9.6vmin, 96px);
+  overflow: hidden;
+  cursor: pointer;
+}
+section .row.danger .glyph,
+section .row.danger .glyph > span,
+section .row.danger .info {
+  border-color: var(--color-danger) !important;
+}
+section .row.danger .small-box {
+  background-color: var(--color-danger) !important;
+}
+section .row.danger .address-book-glyph {
+  filter: var(--glyph-color-danger-svg) !important;
+}
+section .row.fan .info-name {
+  color: var(--color-alt) !important;
+}
+section .row.offline .status .glyph-color {
+  color: var(--color-danger) !important;
+}
+section .row .col {
+  width: clamp(-100px, 7.4vmin, 74px);
+  text-align: center;
+  border-bottom: var(--border);
+}
+section .row .col.box {
+  flex: 0;
+  align-content: end;
+  padding-right: clamp(-100px, 0.2vmin, 2px);
+  border: unset;
+}
+section .row .col.box div {
+  width: clamp(-100px, 3vmin, 30px);
+  line-height: clamp(-100px, 2vmin, 20px);
+  text-align: center;
+  background-color: var(--color);
+  color: var(--background-color);
+  padding-bottom: clamp(-100px, 1.5vmin, 15px);
+}
+section .row .col.glyph {
+  border: var(--border);
+  border-right: unset;
+  flex: 0;
+  min-width: clamp(-100px, 7vmin, 70px);
+  max-width: clamp(-100px, 7vmin, 70px);
+  font-size: clamp(-100px, 1.8vmin, 18px);
+  white-space: nowrap;
+  color: var(--glyph-color);
+  display: flex;
+  flex-direction: column;
+}
+section .row .col.glyph > img {
+  margin: auto;
+  text-shadow: unset;
+  height: clamp(-100px, 6vmin, 60px);
+}
+section .row .col.glyph > span {
+  text-align: center;
+  border-top: var(--border);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: clamp(-100px, 2.3vmin, 23px);
+}
+section .row .col.info {
+  flex: 1;
+  text-align: start;
+  border-bottom: unset;
+  border-top: var(--border);
+  border-left: var(--border);
+  font-size: clamp(-100px, 2.75vmin, 27.5px);
+  padding-left: clamp(-100px, 0.5vmin, 5px);
+  line-height: clamp(-100px, 2.3vmin, 23px);
+}
+section .row .col.info .info-title {
+  display: flex;
+  gap: clamp(-100px, 1vmin, 10px);
+}
+section .row .col.info .info-title .info-name {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+section .row .col.info .info-body {
+  display: flex;
+  gap: clamp(-100px, 2vmin, 20px);
+}
+section .row .col.info .info-body .info-a {
+  flex: 1;
+  font-size: clamp(-100px, 2vmin, 20px);
+  line-height: clamp(-100px, 1.7vmin, 17px);
+  margin-left: clamp(-100px, 1vmin, 10px);
+}
+section .row .col.info .info-body .info-b {
+  flex: 1;
+  font-size: clamp(-100px, 2vmin, 20px);
+  line-height: clamp(-100px, 1.7vmin, 17px);
+}
+section .row .col.info .info-body .info-b > div {
+  display: flex;
+  gap: clamp(-100px, 0.69vmin, 6.9px);
+}
+section .row .col.info .info-body .info-b .glyph-color {
+  color: var(--glyph-color);
+}
+section .row .col.info .info-body .info-b .alt-color {
+  color: var(--color-alt);
+}
+section .row::after {
+  content: "▼";
+  width: calc(100% - clamp(-100px, 1vmin, 10px));
+  height: calc(100% - clamp(-100px, 0.7vmin, 7px));
+  border: var(--border);
+  border-color: var(--color-good);
+  color: var(--color-good);
+  position: absolute;
+  font-size: clamp(-100px, 2.25vmin, 22.5px);
+  line-height: clamp(-100px, 2.25vmin, 22.5px);
+  padding-left: clamp(-100px, 0.2vmin, 2px);
+  pointer-events: none;
+  opacity: 0;
+}
+section .row:hover::after {
+  opacity: 1;
+}
+
+.table-footer {
+  border: var(--border);
+  border-left: unset;
+  border-right: unset;
+  color: var(--color-alt);
+  font-size: clamp(-100px, 2.5vmin, 25px);
+  padding-left: clamp(-100px, 0.5vmin, 5px);
+  line-height: clamp(-100px, 2.5vmin, 25px);
+}
+
+.footer {
+  display: flex;
+  border-bottom: var(--border);
+}
+.footer .footer-left {
+  flex: 1 0 auto;
+  max-width: clamp(-100px, 72vmin, 720px);
+  min-width: clamp(-100px, 72vmin, 720px);
+}
+.footer .footer-left > .footer-text {
+  border: var(--border);
+  border-left: unset;
+  border-bottom: unset;
+  margin-right: clamp(-100px, 0.5vmin, 5px);
+  font-size: clamp(-100px, 2vmin, 20px);
+  line-height: clamp(-100px, 1.6vmin, 16px);
+  padding-left: clamp(-100px, 0.5vmin, 5px);
+  height: clamp(-100px, 4vmin, 40px);
+  overflow: hidden;
+}
+.footer .footer-left > .footer-text div {
+  line-height: clamp(-100px, 1.6vmin, 16px);
+  animation: footer-text-anim 15s steps(1) forwards;
+}
+.footer .footer-right {
+  flex: 1 1 auto;
+  font-size: clamp(-100px, 1.6vmin, 16px);
+  color: var(--glyph-color);
+  max-height: clamp(-100px, 8vmin, 80px);
+  overflow: hidden;
+}
+
+@keyframes footer-text-anim {
+  0% {
+    transform: translateY(0%);
+  }
+  10% {
+    transform: translateY(-10%);
+  }
+  20% {
+    transform: translateY(-20%);
+  }
+  30% {
+    transform: translateY(-30%);
+  }
+  40% {
+    transform: translateY(-40%);
+  }
+  50% {
+    transform: translateY(-50%);
+  }
+  60% {
+    transform: translateY(-60%);
+  }
+  70% {
+    transform: translateY(-70%);
+  }
+  80% {
+    transform: translateY(-80%);
+  }
+  100% {
+    transform: translateY(-80%);
+  } /* Hold final position */
+}
+.footer-buttons {
+  display: flex;
+  font-size: clamp(-100px, 2.5vmin, 25px);
+  text-align: center;
+  margin: clamp(-100px, 0.5vmin, 5px);
+  gap: clamp(-100px, 0.5vmin, 5px);
+}
+.footer-buttons a {
+  flex: 1;
+  border: var(--border);
+  border-radius: clamp(-100px, 0.5vmin, 5px);
+  line-height: clamp(-100px, 2.5vmin, 25px);
+  cursor: pointer;
+  color: var(--color);
+  text-decoration: unset !important;
+}
+.footer-buttons a:hover {
+  color: var(--color-alt) !important;
+}
+.footer-buttons a.active-button {
+  color: var(--glyph-color) !important;
+}
+
+.scrolling-section-wrapper {
+  width: clamp(-100px, 87vmin, 870px);
+  border: var(--border-thin);
+  margin: clamp(-100px, 0.5vmin, 5px) clamp(-100px, 5vmin, 50px);
+  overflow: hidden;
+}
+
+.scrolling-section {
+  display: flex;
+  flex-wrap: nowrap;
+  width: max-content;
+  font-size: clamp(-100px, 2vmin, 20px);
+  animation: move 40s infinite linear;
+  line-height: clamp(-100px, 1.5vmin, 15px);
+}
+
+@keyframes move {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.scrolling-sectionY {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  line-height: clamp(-100px, 1.4vmin, 14px);
+  font-size: clamp(-100px, 2vmin, 20px);
+  animation: moveY 1.5s infinite linear;
+}
+
+@keyframes moveY {
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+/*# sourceMappingURL=address_book.css.map */
