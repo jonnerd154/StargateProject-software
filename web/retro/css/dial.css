@@ -1,0 +1,667 @@
+:root {
+  /*! UPDATE COLORS HERE !!! -------------------------------------------------------------------------------------- */
+  --color: #37bfde;
+  --color-dark: #4a7297;
+  --color-danger: #c70036;
+  --color-good: #07ff0b;
+  --color-alt: white;
+  --background-color: #020f25;
+  --glyph-color: #fffea5;
+  /*! Calculate glyph-color-svg here: https://codepen.io/sosuke/pen/Pjoqqp */
+  --glyph-color-svg: invert(100%) sepia(21%) saturate(5367%) hue-rotate(312deg)
+    brightness(111%) contrast(103%);
+  --glyph-color-danger-svg: invert(16%) sepia(84%) saturate(3541%)
+    hue-rotate(331deg) brightness(81%) contrast(117%);
+  --color-wormhole-danger-1: yellow;
+  --color-wormhole-danger-2: orange;
+  --color-wormhole-danger-3: red;
+  --color-wormhole-1: royalblue;
+  --color-wormhole-2: cyan;
+  --color-wormhole-3: cornflowerblue;
+  --border: solid clamp(0px, 0.5vmin, 5px) var(--color);
+  --border-thin: solid clamp(0px, 0.3vmin, 3px) var(--color);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.genos-font {
+  font-family: "Genos", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-size: clamp(-100px, 3.5vmin, 35px);
+}
+
+.hidden {
+  display: none !important;
+}
+
+a:link {
+  text-decoration: inherit;
+  color: inherit;
+  cursor: auto;
+}
+
+a:visited {
+  text-decoration: inherit;
+  color: inherit;
+  cursor: auto;
+}
+
+.navigation-menu-wrapper {
+  height: 0;
+  position: relative;
+  margin: 0 auto;
+}
+
+.navigation-menu {
+  margin: auto;
+  width: clamp(-100px, 100vmin, 1000px);
+  display: flex;
+  align-items: center;
+  gap: clamp(-100px, 1vmin, 10px);
+  margin-bottom: 0;
+  margin-top: clamp(-100px, 0.5vmin, 5px);
+  padding-left: clamp(-100px, 4vmin, 40px);
+  opacity: 0.1;
+  transition: opacity 0.3s linear;
+  position: absolute;
+  left: 0;
+  font-size: clamp(-100px, 2vmin, 20px);
+}
+.navigation-menu:hover {
+  opacity: 1;
+}
+.navigation-menu a {
+  color: var(--color);
+  border: var(--border-thin);
+  border-radius: clamp(-100px, 1vmin, 10px);
+  padding: 0 clamp(-100px, 0.6vmin, 6px);
+  cursor: pointer;
+}
+.navigation-menu a:hover {
+  background-color: var(--color-dark);
+}
+.navigation-menu a.active-link {
+  color: var(--glyph-color);
+}
+
+.dropbtn {
+  cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover,
+.dropbtn:focus {
+  background-color: var(--color-dark);
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: var(--background-color);
+  z-index: 9999;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: var(--color-alt);
+  padding: clamp(-100px, 1vmin, 10px);
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {
+  background-color: var(--color-dark);
+}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {
+  display: block;
+}
+
+.reference {
+  background-image: url("../../references/gate-ref.jpg");
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-size: cover;
+  opacity: 0.5;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--color);
+  margin: 0;
+  height: 100vh;
+  display: flex;
+}
+
+.navigation-menu-wrapper {
+  width: clamp(-100px, 98vmin, 980px);
+}
+
+.border {
+  border: var(--border);
+  border-radius: clamp(-100px, 3vmin, 30px);
+  width: clamp(-100px, 98vmin, 980px);
+  height: clamp(-100px, 72vmin, 720px);
+  margin: auto;
+  overflow: hidden;
+  position: relative;
+}
+
+.crosshair {
+  display: flex;
+  width: clamp(-100px, 45.1vmin, 451px);
+  align-items: center;
+  justify-content: center;
+}
+.crosshair div {
+  text-align: center;
+  align-content: center;
+  position: absolute;
+  color: var(--glyph-color);
+}
+
+.border.idle .crosshair .blink {
+  width: clamp(-100px, 16vmin, 160px);
+  height: clamp(-100px, 16vmin, 160px);
+  position: absolute;
+  background: radial-gradient(circle, var(--color-danger) 0%, transparent 70%);
+  animation: blink 3s infinite ease;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.chevron-box {
+  border: var(--border-thin);
+  width: clamp(-100px, 8.6vmin, 86px);
+  height: clamp(-100px, 6vmin, 60px);
+  left: clamp(-100px, 81.4vmin, 814px);
+  position: absolute;
+  border-radius: clamp(-100px, 1.5vmin, 15px) 0 0;
+  overflow: hidden;
+  text-shadow: unset !important;
+}
+.chevron-box.b1 {
+  top: clamp(-100px, 11vmin, 110px);
+}
+.chevron-box.b2 {
+  top: clamp(-100px, 19vmin, 190px);
+}
+.chevron-box.b3 {
+  top: clamp(-100px, 27vmin, 270px);
+}
+.chevron-box.b4 {
+  top: clamp(-100px, 35vmin, 350px);
+}
+.chevron-box.b5 {
+  top: clamp(-100px, 43vmin, 430px);
+}
+.chevron-box.b6 {
+  top: clamp(-100px, 51vmin, 510px);
+}
+.chevron-box.b7 {
+  top: clamp(-100px, 59vmin, 590px);
+}
+
+.chevron-box-labels {
+  position: absolute;
+  top: clamp(-100px, 14.2vmin, 142px);
+  right: clamp(-100px, 16.7vmin, 167px);
+  display: flex;
+  flex-direction: column;
+  color: var(--color-alt);
+}
+.chevron-box-labels > span {
+  margin-bottom: clamp(-100px, 3.8vmin, 38px);
+  line-height: clamp(-100px, 4.2vmin, 42px);
+  font-size: clamp(-100px, 2.6vmin, 26px);
+}
+
+.lst-code-1,
+.lst-code-2 {
+  position: absolute;
+  bottom: clamp(-100px, 15.8vmin, 158px);
+  color: var(--color-alt);
+  font-size: clamp(-100px, 1.8vmin, 18px);
+}
+.lst-code-1 span,
+.lst-code-2 span {
+  font-size: clamp(-100px, 2.5vmin, 25px);
+}
+
+.lst-code-1 {
+  left: clamp(-100px, 19.6vmin, 196px);
+}
+
+.lst-code-2 {
+  left: clamp(-100px, 67.6vmin, 676px);
+}
+
+.auth-code-label {
+  position: absolute;
+  bottom: clamp(-100px, 0.2vmin, 2px);
+  left: clamp(-100px, 17.7vmin, 177px);
+  color: var(--color-alt);
+  font-size: clamp(-100px, 2vmin, 20px);
+}
+
+.auth-code {
+  position: absolute;
+  bottom: clamp(-100px, 0.4vmin, 4px);
+  left: clamp(-100px, 37vmin, 370px);
+  color: var(--color-alt);
+  font-size: clamp(-100px, 2.3vmin, 23px);
+  display: flex;
+}
+.auth-code div {
+  width: clamp(-100px, 2.3vmin, 23px);
+  text-align: center;
+  border-bottom: var(--border-thin);
+  border-right: var(--border-thin);
+  border-color: var(--color-dark);
+}
+.auth-code div:nth-child(1) {
+  padding-left: clamp(-100px, 3.3vmin, 33px);
+  width: clamp(-100px, 6vmin, 60px);
+}
+.auth-code div:nth-child(7) {
+  padding: 0 clamp(-100px, 1vmin, 10px);
+  width: clamp(-100px, 5vmin, 50px);
+}
+.auth-code div:nth-child(15) {
+  padding-right: clamp(-100px, 0.7vmin, 7px);
+  width: clamp(-100px, 3vmin, 30px);
+}
+
+.system {
+  position: absolute;
+  bottom: clamp(-100px, 0.8vmin, 8px);
+  left: clamp(-100px, 78.8vmin, 788px);
+  color: var(--color-alt);
+  font-size: clamp(-100px, 1.1vmin, 11px);
+  display: flex;
+  flex-direction: column;
+}
+
+.info-box {
+  color: var(--color-danger);
+  font-weight: bold;
+  position: absolute;
+  bottom: clamp(-100px, 4.2vmin, 42px);
+  left: clamp(-100px, 20.9vmin, 209px);
+  border: var(--border);
+  width: clamp(-100px, 53.7vmin, 537px);
+  height: clamp(-100px, 7.9vmin, 79px);
+  text-align: center;
+  font-size: clamp(-100px, 9vmin, 90px);
+  line-height: clamp(-100px, 6vmin, 60px);
+  word-spacing: clamp(-100px, 14vmin, 140px);
+  letter-spacing: clamp(-100px, 1.5vmin, 15px);
+  padding-left: clamp(-100px, 1.3vmin, 13px);
+  animation: pulsingTextDanger 3.4s linear infinite;
+}
+
+.sidebar {
+  border: var(--border);
+  border-left: unset;
+  border-radius: 0 clamp(-100px, 2vmin, 20px) clamp(-100px, 2vmin, 20px) 0;
+  position: absolute;
+  top: clamp(-100px, 10.8vmin, 108px);
+  left: clamp(-100px, 0vmin, 0px);
+  width: clamp(-100px, 17.9vmin, 179px);
+  height: clamp(-100px, 56.1vmin, 561px);
+}
+.sidebar .keyboard {
+  width: clamp(-100px, 16vmin, 160px);
+  height: clamp(-100px, 39vmin, 390px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
+  align-content: start;
+  margin: auto;
+}
+.sidebar .keyboard div {
+  width: clamp(-100px, 3.9vmin, 39px);
+  height: clamp(-100px, 3.9vmin, 39px);
+  cursor: pointer;
+  border: var(--border-thin);
+  border-color: rgba(0, 0, 0, 0);
+  border-radius: clamp(-100px, 1vmin, 10px);
+}
+.sidebar .keyboard div:hover {
+  border-color: var(--color-dark);
+}
+.sidebar .keyboard div.disabled {
+  opacity: 0.4;
+}
+.sidebar .keyboard div img {
+  width: clamp(-100px, 3.6vmin, 36px);
+  height: clamp(-100px, 3.6vmin, 36px);
+  filter: var(--glyph-color-svg);
+}
+.sidebar .status {
+  color: var(--color-alt);
+  font-size: clamp(-100px, 1.1vmin, 11px);
+  padding-left: clamp(-100px, 1.5vmin, 15px);
+}
+
+.timer {
+  position: absolute;
+  bottom: clamp(-100px, 0.7vmin, 7px);
+  left: clamp(-100px, 1.4vmin, 14px);
+  font-size: clamp(-100px, 4vmin, 40px);
+  border: var(--border-thin);
+  width: clamp(-100px, 15vmin, 150px);
+  height: clamp(-100px, 3.2vmin, 32px);
+  text-align: center;
+  line-height: clamp(-100px, 2.3vmin, 23px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  animation: pulsingText 3s linear infinite;
+}
+
+.gate-name {
+  position: absolute;
+  top: clamp(-100px, 1.7vmin, 17px);
+  left: clamp(-100px, 10.9vmin, 109px);
+  font-size: clamp(-100px, 3.5vmin, 35px);
+  border: var(--border-thin);
+  border-color: var(--color-dark);
+  width: clamp(-100px, 48vmin, 480px);
+  height: clamp(-100px, 4.5vmin, 45px);
+  line-height: clamp(-100px, 4vmin, 40px);
+  padding-left: clamp(-100px, 0.6vmin, 6px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.destination-box {
+  position: absolute;
+  top: clamp(-100px, 1.7vmin, 17px);
+  right: clamp(-100px, 1.1vmin, 11px);
+  font-size: clamp(-100px, 1.9vmin, 19px);
+  border: var(--border-thin);
+  border-color: var(--color-dark);
+  width: clamp(-100px, 36vmin, 360px);
+  height: clamp(-100px, 4.5vmin, 45px);
+  line-height: clamp(-100px, 6.2vmin, 62px);
+  text-align: center;
+  color: white;
+}
+
+.destination {
+  position: absolute;
+  top: clamp(-100px, 1.7vmin, 17px);
+  right: clamp(-100px, 1.2vmin, 12px);
+  font-size: clamp(-100px, 3.5vmin, 35px);
+  width: clamp(-100px, 36.3vmin, 363px);
+  height: clamp(-100px, 3.2vmin, 32px);
+  line-height: clamp(-100px, 3vmin, 30px);
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.destination-glyphs {
+  position: absolute;
+  top: clamp(-100px, 1.7vmin, 17px);
+  right: clamp(-100px, 1.2vmin, 12px);
+  width: clamp(-100px, 36.3vmin, 363px);
+  height: clamp(-100px, 3.2vmin, 32px);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+.destination-glyphs img {
+  width: clamp(-100px, 2.5vmin, 25px);
+  filter: var(--glyph-color-svg);
+}
+
+.chevron-states {
+  font-size: clamp(-100px, 2vmin, 20px);
+  line-height: clamp(-100px, 1.6vmin, 16px);
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: clamp(-100px, 18vmin, 180px);
+}
+.chevron-states .chevron-open,
+.chevron-states .chevron-locked {
+  width: clamp(-100px, 5.2vmin, 52px);
+}
+.chevron-states .chevron-open > div,
+.chevron-states .chevron-locked > div {
+  border: clamp(-100px, 0.2vmin, 2px) solid var(--color-dark);
+  width: clamp(-100px, 3.5vmin, 35px);
+  height: clamp(-100px, 1vmin, 10px);
+  background-color: rgba(0, 0, 0, 0);
+  transition: background-color 0.5s ease;
+}
+.chevron-states .chevron-open > div {
+  background-color: var(--color-danger);
+}
+.chevron-states .chevron-number {
+  color: var(--color-alt);
+  width: clamp(-100px, 2vmin, 20px);
+}
+.chevron-states .chevron-state {
+  color: var(--color-good);
+  font-size: clamp(-100px, 1.3vmin, 13px);
+  visibility: hidden;
+}
+.chevron-states tr {
+  height: clamp(-100px, 2.1vmin, 21px);
+}
+.chevron-states td {
+  padding-left: clamp(-100px, 1.6vmin, 16px);
+}
+.chevron-states tr.locked .chevron-open > div {
+  background-color: rgba(0, 0, 0, 0);
+}
+.chevron-states tr.locked .chevron-locked > div {
+  background-color: var(--color-good);
+}
+.chevron-states tr.locked .chevron-state {
+  visibility: visible;
+}
+
+.dial-append {
+  position: relative;
+  top: 0;
+  left: 0;
+}
+
+div.shield {
+  position: absolute;
+  top: clamp(-100px, 1.5vmin, 15px);
+  left: clamp(-100px, 1.5vmin, 15px);
+  width: clamp(-100px, 8.8vmin, 88px);
+  height: clamp(-100px, 8.8vmin, 88px);
+  background-image: url("../images/shield.gif");
+  background-size: contain;
+  background-blend-mode: overlay;
+  filter: brightness(2) contrast(0.5);
+  border: var(--border);
+  border-right: unset;
+  border-radius: clamp(-100px, 2vmin, 20px) 0 0 clamp(-100px, 1vmin, 10px);
+}
+
+div.shield-buddy {
+  position: absolute;
+  top: clamp(-100px, 2.3vmin, 23px);
+  left: clamp(-100px, 9.5vmin, 95px);
+  width: clamp(-100px, 8vmin, 80px);
+  height: clamp(-100px, 8vmin, 80px);
+  border-bottom: var(--border);
+  text-shadow: unset !important;
+}
+
+div.clip-1 {
+  border-color: var(--color-danger);
+  clip-path: inset(0 100% 0 0); /* Hidden initially (right side at 100%) */
+  transition: clip-path 0.8s linear;
+}
+
+div.clip-2 {
+  border-color: var(--color-danger);
+  clip-path: inset(0 0 0 100%); /* Hidden initially (right side at 100%) */
+  transition: clip-path 0.8s linear;
+}
+
+div.locked {
+  clip-path: inset(0 0 0 0);
+}
+
+div:not(.active) .ring-1 circle {
+  fill: none !important;
+}
+
+img.glyph {
+  text-shadow: unset;
+  filter: var(--glyph-color-svg);
+  top: clamp(-100px, 19vmin, 190px);
+  left: clamp(-100px, 33.1vmin, 331px);
+  height: clamp(-100px, 30vmin, 300px);
+  position: absolute;
+  transition-property: top, left, height;
+  transition-duration: 0.8s;
+  transition-timing-function: ease;
+  animation: revealAnimation 0.8s forwards ease;
+}
+img.glyph.locked {
+  left: clamp(-100px, 82.2vmin, 822px);
+  height: clamp(-100px, 6.6vmin, 66px);
+}
+img.glyph.locked.g1 {
+  top: clamp(-100px, 10.7vmin, 107px);
+}
+img.glyph.locked.g2 {
+  top: clamp(-100px, 18.7vmin, 187px);
+}
+img.glyph.locked.g3 {
+  top: clamp(-100px, 26.7vmin, 267px);
+}
+img.glyph.locked.g4 {
+  top: clamp(-100px, 34.7vmin, 347px);
+}
+img.glyph.locked.g5 {
+  top: clamp(-100px, 42.7vmin, 427px);
+}
+img.glyph.locked.g6 {
+  top: clamp(-100px, 50.7vmin, 507px);
+}
+img.glyph.locked.g7 {
+  top: clamp(-100px, 58.7vmin, 587px);
+}
+img.glyph.locked.g8 {
+  top: clamp(-100px, 80vmin, 800px);
+}
+img.glyph.locked.g9 {
+  top: clamp(-100px, 80vmin, 800px);
+}
+img.glyph.blur {
+  filter: blur(clamp(-100px, 1vmin, 10px)) var(--glyph-color-svg);
+}
+
+div.chevron-link {
+  position: absolute;
+  left: clamp(-100px, 0vmin, 0px);
+  height: clamp(-100px, 73vmin, 730px);
+  pointer-events: none;
+  text-shadow: unset !important;
+  animation: none;
+}
+
+img.gate,
+div.gate {
+  position: absolute;
+  left: clamp(-100px, 25.6vmin, 256px);
+  top: clamp(-100px, 12.9vmin, 129px);
+  height: clamp(-100px, 44.8vmin, 448px);
+}
+
+@keyframes revealAnimation {
+  from {
+    transform: scale(0.1);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes pulsingText {
+  0% {
+    color: rgb(from var(--color) r g b/100%);
+  }
+  50% {
+    color: rgb(from var(--color) r g b/100%);
+  }
+  80% {
+    color: rgb(from var(--color) r g b/40%);
+  }
+  95% {
+    color: rgb(from var(--color) r g b/60%);
+  }
+  100% {
+    color: rgb(from var(--color) r g b/100%);
+  }
+}
+@keyframes pulsingTextDanger {
+  0% {
+    color: rgb(from var(--color-danger) r g b/100%);
+  }
+  50% {
+    color: rgb(from var(--color-danger) r g b/100%);
+  }
+  80% {
+    color: rgb(from var(--color-danger) r g b/60%);
+  }
+  95% {
+    color: rgb(from var(--color-danger) r g b/80%);
+  }
+  100% {
+    color: rgb(from var(--color-danger) r g b/100%);
+  }
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.rotating {
+  animation: spin 8s ease-in infinite;
+}
+
+.slow-rotate {
+  transition: transform 0.4s ease-out;
+}
+
+/*# sourceMappingURL=dial.css.map */
