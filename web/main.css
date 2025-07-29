@@ -455,3 +455,88 @@ html, body {
 .dd-select, .dd-option-description, .dd-desc{
   color: black !important;
 }
+
+/* SOUND BOARD STYLES */
+
+.sound_board_container{
+  padding-top:20px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;            /* default value; can be omitted */
+  justify-content: space-between;
+}
+
+.sound-board-col-names {
+  min-width: 200px;
+  font-size: 12px;
+  font-weight: bold;
+  white-space: pre-wrap;
+  align-content: center;
+  text-align: center;
+  width: 100%;
+}
+
+.sound-board-row {
+    height: 75px;
+    border: 1px solid black;
+    margin: 0 5px 5px;
+    padding: 0 10px;
+    cursor: pointer;
+    display: flex;
+    flex: 32%;
+    flex-grow: 0;
+    background-color: #52b69a;
+}
+
+.sound-board-row:hover{
+    border: 1px solid white;
+}
+
+.sound-board-row-header {
+    height: 75px;
+    border: 1px solid black;
+    margin: 0 5px 5px;
+    padding: 0 10px;
+    text-align: left;
+    line-height:75px;
+    cursor: pointer;
+    display: flex;
+    flex: 100%;
+    background-color: #168aad;
+}
+
+#sound_board_summary{
+  padding: 10px;
+  display:flex;
+  width: 100%;
+}
+
+#sound_board_summary span{
+  padding: 10px;
+
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: -20px;
+  font-size:calc(3px + 1vw);
+  width: 100%;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.sound-board-row-summary {
+  height: 75px;
+  border: 1px solid black;
+  margin: 0 5px 5px;
+  padding: 0 10px;
+  text-align: left;
+  line-height:75px;
+  cursor: pointer;
+  display: flex;
+  flex: 100%;
+  background-color: #168aad;
+}
+
+.clip-count{
+  font-size: 2vw !important;
+  font-weight: bold;
+}
