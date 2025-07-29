@@ -499,10 +499,13 @@ html, body {
     padding: 0 10px;
     text-align: left;
     line-height:75px;
-    cursor: pointer;
     display: flex;
     flex: 100%;
     background-color: #168aad;
+}
+.sound-board-col-header {
+  margin: auto;
+  font-weight: bold;
 }
 
 #sound_board_summary{
@@ -513,7 +516,6 @@ html, body {
 
 #sound_board_summary span{
   padding: 10px;
-
   margin-left: 10px;
   margin-right: 10px;
   margin-bottom: -20px;
@@ -521,18 +523,6 @@ html, body {
   width: 100%;
   text-align: center;
   vertical-align: middle;
-}
-
-.sound-board-row-summary {
-  height: 75px;
-  border: 1px solid black;
-  margin: 0 5px 5px;
-  padding: 0 10px;
-  text-align: left;
-  line-height:75px;
-  cursor: pointer;
-  display: flex;
-  flex: 100%;
   background-color: #168aad;
 }
 
