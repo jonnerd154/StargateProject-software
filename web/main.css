@@ -477,14 +477,13 @@ html, body {
 }
 
 .sound-board-row {
-    height: 75px;
+    height: 55px;
     border: 1px solid black;
     margin: 0 5px 5px;
     padding: 0 10px;
     cursor: pointer;
     display: flex;
-    flex: 32%;
-    flex-grow: 0;
+    flex: 30%;
     background-color: #52b69a;
 }
 
