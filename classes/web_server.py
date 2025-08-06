@@ -112,6 +112,9 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             elif request_path == "/get/config":
                 data = collections.OrderedDict(sorted(self.stargate.cfg.get_all_configs().items()))
 
+            elif request_path == '/get/audio_clips':
+                data = self.stargate.audio.list_clips()
+
             else:
                 # Unhandled GET request: send a 404
                 self.send_response(404, 'Not Found')
@@ -269,6 +272,30 @@ class StargateWebServer(SimpleHTTPRequestHandler):
             elif self.path == "/do/dhd_test_disable":
                 self.stargate.keyboard.enable_dhd_test(False)
                 data = { "success": True }
+
+            elif self.path == '/do/audio_play':
+                try:
+                    clip = data['clip']
+                except KeyError:
+                    data = { "success": False, "error": "Required fields missing or invalid request" }
+                    return
+
+                try:
+                    # Convert path into proper dictionary key
+                    clip_name = clip.replace('/', '_').split('.')[0]
+                    if clip_name[0] == '_':
+                        clip_name = clip_name[1:]
+
+                    # Clip has not been initialized
+                    if clip_name not in self.stargate.audio.sounds:
+                        self.stargate.audio.sounds[clip_name] = { 'file': self.stargate.audio.init_wav_file('/' + clip) }
+
+                    self.stargate.audio.sound_start(clip_name)
+                except ValueError as ex:
+                    data = { "success": False, "error": str(ex) }
+                    return
+                data = { "success": True }
+
 
             ##### UPDATE DATA HANDLERS BELOW ####
             elif self.path == '/update/local_stargate_address':

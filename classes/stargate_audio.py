@@ -1,4 +1,4 @@
-from os import listdir, path
+from os import listdir, path, walk
 from random import choice
 import subprocess
 import simpleaudio as sa
@@ -110,6 +110,15 @@ class StargateAudio:
     def random_clip_wait_done(self):
         if self.random_clip_is_playing():
             self.random_clip.wait_done()
+
+    def list_clips(self):
+        clips = []
+        path_to_folder = self.sound_fx_root
+        for root, dirs, files in walk(path_to_folder):
+            relative_path = root.replace(path_to_folder, '')
+            file_names = [path.join(relative_path, item) for item in files]
+            clips += file_names
+        return clips
 
     @staticmethod
     def get_usb_audio_device_card_number():

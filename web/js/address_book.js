@@ -19,6 +19,16 @@ function update_address_book(){
   });
 }
 function load_address_book(){
+    $("#address_book_summary").html('')
+    nameLookup = {
+      "fan": "Subspace Gates",
+      "lan": "LAN Gates",
+      "standard": "Standard Gates",
+    }
+    $.each(summary, function( name, count) {
+        $("#address_book_summary").append("<span class='address-book-row-"+name+"'><span class='gate_count' style='padding:0px;'>" + count + "</span> "+ nameLookup[name] + "</span>")
+    });
+
     $.each(addresses, function( index, value ) {
         address_raw = value.gate_address
         address_string = address_raw.join("-");
@@ -26,18 +36,6 @@ function load_address_book(){
         if (is_gate_online == 0){
                 is_gate_online = ""
         } else {is_gate_online = "Online"}
-      
-        $("#address_book_summary").html('')
-        nameLookup = {
-          "fan": "Subspace Gates",
-          "lan": "LAN Gates",
-          "standard": "Standard Gates",
-
-        }
-        $.each(summary, function( name, count) {
-            $("#address_book_summary").append("<span class='address-book-row-"+name+"'><span class='gate_count' style='padding:0px;'>" + count + "</span> "+ nameLookup[name] + "</span>")
-        });
-
 
         $.each(address_raw, function( index, value) {
             value=("000" + value).substr(-3,3);

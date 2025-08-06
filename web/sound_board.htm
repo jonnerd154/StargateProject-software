@@ -5,6 +5,7 @@
 ***                                                             ***
 ***   Original Software written by Kristian Tysse               ***
 ***   Restructuring and Development by Jonathan Moyes           ***
+***   Sound Board Page by Andrew Polk                           ***
 ***                                                             ***
 *******************************************************************
 -->
@@ -17,7 +18,7 @@
     <meta name="author" content="Jonathan Moyes">
     <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico"/>
 
-    <title>Wiring | Stargate Command</title>
+    <title>Sound Board | Stargate Command</title>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="lib/jquery-ui-1.13.0.custom/jquery-ui.min.css">
@@ -25,7 +26,6 @@
 
     <script type="text/javascript" src="lib/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" src="lib/jquery-ui-1.13.0.custom/jquery-ui.min.js"></script>
-    <script type="text/javascript" src="lib/moment.js"></script>
 
     <!-- Custom styles for this template -->
     <link rel="stylesheet" href="main.css" />
@@ -34,13 +34,11 @@
 
   <body>
 
-    <script type="text/javascript" >
-
+    <script type="text/javascript">
+      // This function is run on document-ready
       $( function() {
-        doPoll();
-        //updateInfo();
-      }); // End of on-ready function
-
+          doPoll()
+      })
     </script>
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
@@ -55,7 +53,7 @@
             <a class="nav-link" href="index.htm">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="address_book.htm">Address Book </a>
+            <a class="nav-link" href="address_book.htm">Address Book</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="symbol_overview.htm">Symbols</a>
@@ -64,11 +62,9 @@
             <a class="nav-link dropdown-toggle" href="#" id="dropdown01" role="button" data-bs-toggle="dropdown" aria-expanded="false">Admin</a>
             <div class="dropdown-menu" aria-labelledby="dropdown01">
               <a class="dropdown-item" href="debug.htm">Testing / Debug</a>
-              <a class="dropdown-item" href="sound_board.htm">Sound Board</a>
+              <a class="dropdown-item" href="#">Sound Board</a>
               <a><hr></a>
               <a class="dropdown-item" href="config.htm">Configuration</a>
-              <a class="dropdown-item  active" href="#">Wiring</a>
-              <a><hr></a>
               <a class="dropdown-item" href="info.htm">System Information</a>
               <a><hr></a>
               <a class="dropdown-item" href="#" onClick="software_restart()">Restart Software</a>
@@ -76,6 +72,7 @@
               <a class="dropdown-item" href="#" onClick="host_shutdown()">Shutdown Raspberry Pi</a>
             </div>
           </li>
+
           <li class="nav-item">
             <a class="nav-link" href="help.htm">Help</a>
           </li>
@@ -88,12 +85,10 @@
     </div>
 
     <main role="main" class="container">
+      <div id="sound_board_summary"></div>
+      <div class="sound_board_container" id="presets">
 
-      <div class="starter-template">
-
-        <form id='config'>
-          <div id='records_table'</div>
-        </form>
+            <!-- This div will be populated with entries from the API-sourced AddressBook -->
 
       </div>
 
@@ -106,6 +101,6 @@
     <script src="/lib/bootstrap-5/js/bootstrap.bundle.min.js"></script>
     <script src="/js/top_menu.js"></script>
     <script src="/js/gate_offline_polling.js"></script>
-    <script src="/js/wiring.js"></script>
+    <script src="/js/sound_board.js"></script>
   </body>
 </html>
