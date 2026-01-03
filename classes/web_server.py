@@ -85,6 +85,7 @@ class StargateWebServer(SimpleHTTPRequestHandler):
                     "dialer_mode":                    self.stargate.dialer.type,
                     "hardware_mode":                  self.stargate.electronics.name,
                     "audio_volume":                   self.stargate.audio.volume,
+                    "temperature":                    self.stargate.temperature.get_temperature(),
                     "galaxy":                         self.stargate.galaxy
                 }
 

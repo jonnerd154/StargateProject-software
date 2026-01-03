@@ -94,6 +94,7 @@ function updateInfo(){
       $('#dialerMode').html(data.dialer_mode)
       $('#hardwareMode').html(data.hardware_mode)
       $('#volumeAsPercent').html(data.audio_volume)
+      $('#temperature').html(data.temperature)
 
       $('#stats_dialing_failures').html(data.stats_dialing_failures)
       $('#stats_established_fan_count').html(data.stats_established_fan_count)
