@@ -369,5 +369,23 @@
     "min_value": 0,
     "max_value": false,
     "units": "Minutes"
+  },
+  "ui_dialing_template": {
+    "value": "default",
+    "desc": "What page design to use for Home/Dialing",
+    "type": "str-enum",
+    "enum_values": [
+      "default",
+      "dialing retro v1"
+    ]
+  },
+  "ui_address_book_template": {
+    "value": "default",
+    "desc": "What page design to use for Address Book",
+    "type": "str-enum",
+    "enum_values": [
+      "default",
+      "address retro v1"
+    ]
   }
 }

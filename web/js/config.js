@@ -61,7 +61,8 @@ function getParamGroupByPrettyName(paramPrettyName){
       "Software": "Software Update",
       "Stepper": "Stepper",
       "Subspace": "Subspace Network",
-      "Wormhole": "Wormhole Max Time"
+      "Wormhole": "Wormhole Max Time",
+      "Ui": "UI Templates"
   }
 
   compound_groups = {

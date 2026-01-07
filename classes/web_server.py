@@ -25,7 +25,29 @@ class StargateWebServer(SimpleHTTPRequestHandler):
         try:
             request_path, get_vars = self.parse_get_vars()
 
-            if request_path == "/get/is_alive":
+            if request_path == '/dial':
+                parsed = urllib.parse.urlparse(self.path)
+                template = self.stargate.cfg.get("ui_dialing_template")
+                
+                if template == 'dialing retro v1':
+                    new_path = "/retro/dial.html"
+                else:
+                    new_path = "/index.htm"
+                self.send_response(302)  # Temporary redirect
+                self.send_header("Location", new_path + ("?" + parsed.query if parsed.query else ""))
+                self.end_headers()
+                return
+            elif request_path == '/address_book':
+                template = self.stargate.cfg.get("ui_address_book_template")
+                self.send_response(302)  # Temporary redirect
+                if template == 'address retro v1':
+                    self.send_header("Location", "/retro/address_book.html")
+                else:
+                    self.send_header("Location", "/address_book.htm")
+                self.end_headers()
+                return
+            
+            elif request_path == "/get/is_alive":
                 data = { 'is_alive': True }
 
             elif request_path == "/get/address_book":
