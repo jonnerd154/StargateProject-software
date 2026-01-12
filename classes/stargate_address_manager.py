@@ -40,9 +40,14 @@ class StargateAddressManager:
         return self.validator.is_valid(address)
 
     def get_planet_name_by_address(self, address):
-        # Get all symbols except the last
-        # Works with 7,8, or 9 symbol addresses
-        address_compare = address[0:-1]
+        # Without the point of origin, smallest address is 6 symbols,
+        # Make sure we don't go less than 6
+        if len(address) <= 6:
+            address_compare = address[:]
+        else:
+            # Get all symbols except the last
+            # Works with 7,8, or 9 symbol addresses
+            address_compare = address[0:-1]
 
         entry = self.address_book.get_entry_by_address(address_compare)
         if entry:
