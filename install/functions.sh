@@ -53,7 +53,7 @@ function apt_update_and_install() {
 
   # Install system-level dependencies
   echo 'Installing system-level dependencies...this may take a while.'
-  sudo apt-get install --no-install-recommends -y nano clang python3-dev python3-venv libasound2-dev avahi-daemon apache2 wireguard ufw python3-smbus i2c-tools netcat-traditional | sed 's/^/     /'
+  sudo apt-get install --no-install-recommends -y nano clang python3-dev python3-venv libasound2-dev avahi-daemon apache2 wireguard ufw python3-smbus i2c-tools iw netcat-traditional | sed 's/^/     /'
 }
 
 function init_venv() {
@@ -156,25 +156,39 @@ function disable_pwr_mgmt() {
       echo "Created $CONFIG file"
   fi
 
-  if grep -Fq '/sbin/iw wlan0 set power_save off' $CONFIG
+  WIFI_POWER_SAVE_OFF='command -v iw >/dev/null 2>&1 && iw dev wlan0 set power_save off || true'
+
+  if grep -Fq "$WIFI_POWER_SAVE_OFF" $CONFIG
   then
       echo 'WiFi power management is already disabled'
   else
       echo 'Disabling WiFi power management'
-      sudo sed -i '$i\\r\n/sbin\/iw wlan0 set power_save off\r\n' $CONFIG
+      TEMP_CONFIG=$(mktemp)
+      awk -v wifi_power_save_off="$WIFI_POWER_SAVE_OFF" '
+        /\/sbin\/iw wlan0 set power_save off/ { next }
+        /^exit 0$/ && !inserted { print wifi_power_save_off; inserted=1 }
+        { print }
+        END { if (!inserted) print wifi_power_save_off }
+      ' "$CONFIG" > "$TEMP_CONFIG"
+      sudo cp "$TEMP_CONFIG" "$CONFIG"
+      rm "$TEMP_CONFIG"
   fi
 }
 
 function disable_onboard_audio() {
   # Disable the onboard audio adapter
-  sudo cp /boot/config.txt /boot/config.bak
   echo 'Disabling RaspberryPi on-board audio adapter'
-  CONFIG='/boot/firmware/config.txt'
+  if [ -f '/boot/firmware/config.txt' ]; then
+    CONFIG='/boot/firmware/config.txt'
+  else
+    CONFIG='/boot/config.txt'
+  fi
+  sudo cp "$CONFIG" "$CONFIG.bak"
   SETTING='off'
-  sudo sed $CONFIG -i -r -e "s/^((device_tree_param|dtparam)=([^,]*,)*audio?)(=[^,]*)?/\1=$SETTING/"
-  if ! grep -q -E '^(device_tree_param|dtparam)=([^,]*,)*audio?=[^,]*' $CONFIG; then
+  sudo sed "$CONFIG" -i -r -e "s/^((device_tree_param|dtparam)=([^,]*,)*audio?)(=[^,]*)?/\1=$SETTING/"
+  if ! grep -q -E '^(device_tree_param|dtparam)=([^,]*,)*audio?=[^,]*' "$CONFIG"; then
     echo 'pattern not found, creating'
-    printf "dtparam=audio=$SETTING\n" >> $CONFIG
+    printf "dtparam=audio=$SETTING\n" | sudo tee -a "$CONFIG" > /dev/null
   fi
 }
 

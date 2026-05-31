@@ -174,7 +174,7 @@
     "max_value": 115200
   },
   "dhd_serial_port": {
-    "value": "/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00",
+    "value": "/dev/serial/by-id/usb-SparkFun_SparkFun_Pro_Micro_HIDPC-if00",
     "desc": "The USB Serial Device path for the DHD",
     "type": "str"
   },

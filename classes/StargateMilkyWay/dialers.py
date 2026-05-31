@@ -1,4 +1,5 @@
 import os
+from glob import glob
 from time import sleep
 from serial.serialutil import SerialException
 import StargateCmdMessenger
@@ -52,7 +53,10 @@ class Dialer: # pylint: disable=too-few-public-methods
             # Get a Semaphore lock on the parent process so when the PyCmdMessenger class
             # prints to STDOUT, it doesn't step on STDOUT from other threads
             ### Connect to the DHD object. Will throw exception if not present
-            dhd = DHDv2(self.dhd_port, self.dhd_serial_baud_rate, self.log)
+            dhd_port = DHDv2.get_dhd_port(self.dhd_port)
+            if dhd_port is None:
+                raise SerialException
+            dhd = DHDv2(dhd_port, self.dhd_serial_baud_rate, self.log)
             self.log.log('DHDv2 Found. Connected.')
         except SerialException: # pylint: disable=try-except-raise
             raise
@@ -199,18 +203,26 @@ class DHDv2:
         self.color_symbols = color_tuple
 
     @staticmethod
-    def get_dhd_port():
+    def get_dhd_port(configured_port=None):
         """
         This is a simple helper function to help locate the port for the DHD
         :return: The file path for the DHD is returned. If it is not found, returns None.
         """
         # A list for places to check for the DHD
-        possible_files = ["/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00", "/dev/ttyACM0", "/dev/ttyACM1"]
+        possible_files = [
+            configured_port,
+            "/dev/serial/by-id/usb-SparkFun_SparkFun_Pro_Micro_HIDPC-if00",
+            *sorted(glob("/dev/serial/by-id/*SparkFun*Pro_Micro*")),
+            "/dev/serial/by-id/usb-Adafruit_ItsyBitsy_32u4_5V_16MHz_HIDPC-if00",
+            *sorted(glob("/dev/serial/by-id/*ItsyBitsy*")),
+            "/dev/ttyACM0",
+            "/dev/ttyACM1"
+        ]
 
         # Run through the list and check if the file exists.
         for file in possible_files:
             # If the file exists, return the path and end the function.
-            if os.path.exists(file):
+            if file and os.path.exists(file):
                 return file
 
         # If the DHD is not detected

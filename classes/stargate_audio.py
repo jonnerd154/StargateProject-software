@@ -169,8 +169,8 @@ class StargateAudio:
                 ctl = 'defaults.ctl.card ' + str(self.get_usb_audio_device_card_number())
                 pcm = 'defaults.pcm.card ' + str(self.get_usb_audio_device_card_number())
                 # replace the lines in the alsa.conf file.
-                subprocess.run(['sudo', 'sed', '-i', f"/defaults.ctl.card /c\{ctl}", '/usr/share/alsa/alsa.conf'], check=False) #TODO: Check should be true
-                subprocess.run(['sudo', 'sed', '-i', f"/defaults.pcm.card /c\{pcm}", '/usr/share/alsa/alsa.conf'], check=False) #TODO: Check should be true
+                subprocess.run(['sudo', 'sed', '-i', f"s/^defaults\\.ctl\\.card .*/{ctl}/", '/usr/share/alsa/alsa.conf'], check=False) #TODO: Check should be true
+                subprocess.run(['sudo', 'sed', '-i', f"s/^defaults\\.pcm\\.card .*/{pcm}/", '/usr/share/alsa/alsa.conf'], check=False) #TODO: Check should be true
         except subprocess.CalledProcessError:
             self.log.log("Failed to set audio adapter config")
 
